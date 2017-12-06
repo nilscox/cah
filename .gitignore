@@ -1,0 +1,4 @@
+*.pyc
+*.sh
+db.sqlite3
+data/
