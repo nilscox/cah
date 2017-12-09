@@ -15,7 +15,12 @@ class PlayerViews(views.APIView):
     authentication_classes = [PlayerAuthentication]
 
     def post(self, request, format=None):
-        player, created = Player.objects.get_or_create(nick=request.data.get('nick'))
+        nick = request.data.get('nick')
+
+        if not nick:
+            raise ValidationError('Missing nick field')
+
+        player, created = Player.objects.get_or_create(nick=nick)
         request.session['player_id'] = player.id
 
         return Response(FullPlayerSerializer(player).data,
@@ -26,6 +31,14 @@ class PlayerViews(views.APIView):
             raise PlayerNotFound
 
         return Response(FullPlayerSerializer(request.user).data)
+
+    def delete(self, request, format=None):
+        if not isinstance(request.user, Player):
+            raise PlayerNotFound
+
+        del request.session['player_id']
+
+        return Response({})
 
 
 @api_view(['POST'])
