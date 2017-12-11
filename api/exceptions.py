@@ -78,3 +78,9 @@ class InvalidSelection(APIException):
     status_code = status.HTTP_400_BAD_REQUEST
     default_code = 'INVALID_SELECTION'
     default_detail = 'Invalid selection'
+
+
+class NoMoreQuestions(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_code = 'NO_MORE_QUESTIONS'
+    default_detail = 'No more questions available'

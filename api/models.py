@@ -3,6 +3,7 @@ import random
 from django.db import models
 
 from api import data
+from api.exceptions import NoMoreQuestions
 
 GAME_STATES = (
     ('idle', 'idle'),
@@ -31,6 +32,7 @@ class Player(models.Model):
         - has_cards(int[]) -> boolean
         - get_score(Game=None) -> integer | None
         - win_card(AnsweredQuestion) -> None
+        - get_submitted() -> AnsweredQuestion
     """
 
     nick = models.CharField(max_length=255, unique=True)
@@ -64,10 +66,22 @@ class Player(models.Model):
         if game is None:
             game = self.game
 
-        if game is None or game.state == 'idle':
+        if game is None:
             return None
 
+        if game.state == 'idle':
+            return 0
+
         return self.won_cards.filter(game=game).count()
+
+    def get_submitted(self):
+        if self.game is None:
+            return None
+
+        try:
+            return self.game.answers.get(question=self.game.current_question, answered_by=self)
+        except AnsweredQuestion.DoesNotExist:
+            return None
 
 
 class Game(models.Model):
@@ -130,29 +144,40 @@ class Game(models.Model):
         for player in self.players.all():
             self.deal_cards(player)
 
-        self.current_question = random.choice(self.questions.filter(selected=False))
-        self.current_question.selected = True
+        available_questions = self.questions.filter(available=True)
+
+        if available_questions.count() == 0:
+            raise NoMoreQuestions
+
+        self.current_question = random.choice(available_questions)
+        self.current_question.available = False
         self.current_question.save()
 
         self.save()
 
     def deal_cards(self, player):
-        choices = list(self.choices.filter(selected=False))
+        choices = list(self.choices.filter(available=True))
 
         for i in range(11 - player.cards.count()):
             choice = random.choice(choices)
-            choice.selected = True
+            choice.available = False
             choice.save()
 
             player.cards.add(choice)
             choices.remove(choice)
+
+    def get_current_answers(self):
+        if self.state != 'started':
+            return None
+
+        return self.answers.filter(question=self.current_question)
 
 
 class Question(models.Model):
     """
     Question fields:
         - text: string
-        - selected: boolean
+        - available: boolean
 
     Question relations:
         - game: Game
@@ -166,7 +191,7 @@ class Question(models.Model):
     """
 
     text = models.CharField(max_length=255)
-    selected = models.BooleanField(default=False)
+    available = models.BooleanField(default=True)
     game = models.ForeignKey(Game, related_name='questions', on_delete=models.CASCADE)
 
     def __str__(self):
@@ -182,9 +207,13 @@ class Question(models.Model):
         for pos in self.choices_positions.all():
             if pos.place is None:
                 break
+
             place = pos.place + offset
             offset += 3
             text = text[:place] + '...' + text[place:]
+
+        if self.choices_positions.count() == 0:
+            text += ' ' + '...'
 
         return text
 
@@ -193,7 +222,8 @@ class Choice(models.Model):
     """
     Choice fields:
         - text: string
-        - selected: boolean
+        - available: boolean
+        - played: boolean
 
     Choice relations:
         - game: Game
@@ -201,7 +231,8 @@ class Choice(models.Model):
     """
 
     text = models.CharField(max_length=255)
-    selected = models.BooleanField(default=False)
+    available = models.BooleanField(default=True)
+    played = models.BooleanField(default=False)
     game = models.ForeignKey(Game, related_name='choices', on_delete=models.CASCADE)
     owner = models.ForeignKey(Player, related_name='cards', blank=True, null=True, on_delete=models.CASCADE)
 
@@ -236,7 +267,7 @@ class AnsweredQuestion(models.Model):
     """
 
     game = models.ForeignKey(Game, related_name='answers', on_delete=models.CASCADE)
-    question = models.OneToOneField(Question, related_name='answered', on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, related_name='answered', on_delete=models.CASCADE)
     answered_by = models.ForeignKey(Player, related_name='answered_question', on_delete=models.CASCADE)
     won_by = models.ForeignKey(Player, related_name='won_cards', blank=True, null=True, on_delete=models.CASCADE)
 
@@ -248,10 +279,12 @@ class AnsweredQuestion(models.Model):
         offset = 0
 
         for answer in self.answers.all():
+            answer_text = answer.choice.text
+
             if answer.position.place is None:
+                text += ' ' + answer_text
                 continue
 
-            answer_text = answer.choice.text
             place = answer.position.place + offset
             offset += len(answer_text)
             text = text[:place] + answer_text + text[place:]
@@ -268,7 +301,7 @@ class Answer(models.Model):
     """
 
     choice = models.OneToOneField(Choice, on_delete=models.CASCADE)
-    position = models.OneToOneField(ChoicePosition, on_delete=models.CASCADE)
+    position = models.ForeignKey(ChoicePosition, on_delete=models.CASCADE)
     question = models.ForeignKey(AnsweredQuestion, related_name='answers', on_delete=models.CASCADE)
 
     def __str__(self):

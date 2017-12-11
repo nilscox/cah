@@ -11,7 +11,6 @@ from api.serializers import GameSerializer, FullPlayerSerializer, AnsweredQuesti
 
 
 class PlayerViews(views.APIView):
-    queryset = Player.objects.all()
     authentication_classes = [PlayerAuthentication]
 
     def post(self, request, format=None):
@@ -41,32 +40,42 @@ class PlayerViews(views.APIView):
         return Response({})
 
 
+class GameViews(views.APIView):
+    authentication_classes = [PlayerAuthentication]
+    permission_classes = [IsPlayer]
+
+    def get(self, request, format=None):
+        player = request.user
+        game = player.game
+
+        if not game:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        return Response(GameSerializer(game).data)
+
+    def post(self, request, format=None):
+        player = request.user
+
+        if player.in_game():
+            raise PlayerAlreadyInGame
+
+        game_serializer = GameSerializer(data=request.data)
+        game_serializer.is_valid(raise_exception=True)
+        game_serializer.save(owner=player, players=[player])
+
+        return Response(game_serializer.data, status=status.HTTP_201_CREATED)
+
+
 @api_view(['POST'])
 @authentication_classes([PlayerAuthentication])
 @permission_classes([IsPlayer])
-def create_game(request):
+def join_game(request, pk):
     player = request.user
 
     if player.in_game():
         raise PlayerAlreadyInGame
 
-    game_serializer = GameSerializer(data=request.data)
-    game_serializer.is_valid(raise_exception=True)
-    game_serializer.save(owner=player, players=[player])
-
-    return Response(game_serializer.data, status=status.HTTP_201_CREATED)
-
-
-@api_view(['POST'])
-@authentication_classes([PlayerAuthentication])
-@permission_classes([IsPlayer])
-def join_game(request):
-    player = request.user
-
-    if player.in_game():
-        raise PlayerAlreadyInGame
-
-    game = Game.objects.get(pk=request.query_params.get('id'))
+    game = Game.objects.get(pk=pk)
     game.players.add(player)
 
     return Response(GameSerializer(game).data)
@@ -131,14 +140,15 @@ def answer(request):
     if not ids:
         raise ValidationError('Missing ids field')
 
-    ids = list(map(int, ids.split(',')))
+    if isinstance(ids, str):
+        ids = list(map(int, ids.split(',')))
 
     if len(ids) != question.get_nb_choices():
         raise InvalidAnswersCount
 
-    choices = list(player.cards.filter(pk__in=ids))
+    choices = player.cards.filter(pk__in=ids)
 
-    if len(ids) != len(choices):
+    if len(ids) != choices.count():
         raise InvalidAnswers
 
     answered_question = AnsweredQuestion(game=game, question=question, answered_by=player)
@@ -146,9 +156,14 @@ def answer(request):
 
     positions = list(question.choices_positions.all())
 
-    for i in range(len(choices)):
-        answered_question.answers.create(position=positions[i], choice=choices[i])
-        player.cards.remove(choices[i])
+    for i in range(choices.count()):
+        choice = choices[i]
+
+        answered_question.answers.create(position=positions[i], choice=choice)
+
+        choice.owner = None
+        choice.played = True
+        choice.save()
 
     return Response(AnsweredQuestionSerializer(answered_question).data)
 
@@ -156,7 +171,7 @@ def answer(request):
 @api_view(['POST'])
 @authentication_classes([PlayerAuthentication])
 @permission_classes([IsPlayer])
-def select(request):
+def select(request, pk):
     player = request.user
 
     if not player.in_game():
@@ -175,13 +190,8 @@ def select(request):
     if answers.count() != game.players.count() - 1:
         raise PlayerCantSelectAnswer
 
-    id = request.data.get('id')
-
-    if not id:
-        raise ValidationError('Missing id field')
-
     try:
-        selected = answers.get(pk=int(id))
+        selected = answers.get(pk=pk)
     except (ValueError, AnsweredQuestion.DoesNotExist):
         raise InvalidSelection
 

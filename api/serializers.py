@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from api.models import Game, Player, Question, Choice, AnsweredQuestion
+from api.models import Game, Player, Question, Choice, AnsweredQuestion, Answer
 
 
 class QuestionSerializer(serializers.ModelSerializer):
@@ -59,14 +59,25 @@ class FullPlayerSerializer(PlayerSerializer):
         nick: string,
         score: integer,
         cards: Choice[],
+        submitted: FullAnsweredQuestion,
     }
     """
 
     cards = ChoiceSerializer(many=True, read_only=True)
+    game = serializers.PrimaryKeyRelatedField(read_only=True)
+    submitted = serializers.SerializerMethodField()
 
     class Meta:
         model = Player
-        fields = ('nick', 'score', 'cards')
+        fields = ('nick', 'score', 'cards', 'game', 'submitted')
+
+    def get_submitted(self, player):
+        submitted = player.get_submitted()
+
+        if submitted is None:
+            return None
+
+        return FullAnsweredQuestionSerializer(submitted).data
 
 
 class GameSerializer(serializers.ModelSerializer):
@@ -77,7 +88,8 @@ class GameSerializer(serializers.ModelSerializer):
         owner: string,
         players: Player[],
         current_player: string,
-        current_question: Question
+        question: Question,
+        propositions: AnsweredQuestion[],
     }
     """
 
@@ -85,30 +97,74 @@ class GameSerializer(serializers.ModelSerializer):
     state = serializers.ReadOnlyField()
     owner = serializers.ReadOnlyField(source='owner.nick')
     current_player = serializers.ReadOnlyField(source='current_player.nick')
-    current_question = QuestionSerializer(read_only=True)
+    question = QuestionSerializer(source='current_question', read_only=True)
+    propositions = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Game
-        fields = ('id', 'state', 'owner', 'players', 'current_player', 'current_question')
+        fields = ('id', 'state', 'owner', 'players', 'current_player', 'question', 'propositions')
+
+    def get_propositions(self, game):
+        answers = game.get_current_answers()
+
+        if answers is None:
+            return None
+
+        return AnsweredQuestionSerializer(answers, many=True).data
+
+
+class AnswerSerializer(serializers.ModelSerializer):
+    """
+    Answer: {
+        choice: Choice,
+        position: integer,
+    }
+    """
+
+    choice = ChoiceSerializer(read_only=True)
+    position = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Answer
+        fields = ('choice', 'position')
+
+    def get_position(self, answer):
+        return answer.position.place
 
 
 class AnsweredQuestionSerializer(serializers.ModelSerializer):
     """
     AnsweredQuestion: {
         id: integer,
-        answered_by: Player,
+        question: Question,
+        answered_by: string,
+        won_by: string,
         text: string,
-        answers: string[],
+        choices: Answer[],
+    }
+    """
+
+    text = serializers.ReadOnlyField(source='__str__')
+    answers = AnswerSerializer(many=True)
+
+    class Meta:
+        model = AnsweredQuestion
+        fields = ('id', 'question', 'text', 'answers')
+
+
+class FullAnsweredQuestionSerializer(AnsweredQuestionSerializer):
+    """
+    FullAnsweredQuestion: {
+        id: integer,
+        question: Question,
+        text: string,
+        choices: Answer[],
     }
     """
 
     answered_by = serializers.ReadOnlyField(source='answered_by.nick')
-    text = serializers.ReadOnlyField(source='__str__')
-    answers = serializers.SerializerMethodField()
+    won_by = serializers.ReadOnlyField(source='won_by.nick')
 
     class Meta:
         model = AnsweredQuestion
-        fields = ('id', 'answered_by', 'text', 'answers')
-
-    def get_answers(self, aq):
-        return map(str, aq.answers.all())
+        fields = ('id', 'question', 'answered_by', 'won_by', 'text', 'answers')
