@@ -197,7 +197,8 @@ class Question(models.Model):
 
     Question methods:
         - get_nb_choices() -> integer
-        - get_filled_text() -> string
+        - get_filled_text(string) -> string
+        - get_split_text() -> (string | None)[]
     """
 
     text = models.CharField(max_length=255)
@@ -205,27 +206,26 @@ class Question(models.Model):
     game = models.ForeignKey(Game, related_name='questions', on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.get_filled_text()
+        return self.get_filled_text('...')
 
     def get_nb_choices(self):
-        return len(self.choices_positions.all())
+        return self.choices_positions.count()
 
-    def get_filled_text(self):
-        text = self.text
-        offset = 0
+    def get_filled_text(self, blank):
+        return ' '.join(map(lambda t: t if t else blank, self.get_text_as_array()))
+
+    def get_split_text(self):
+        result = []
+        last = None
 
         for pos in self.choices_positions.all():
             if pos.place is None:
-                break
+                return [self.text, None]
 
-            place = pos.place + offset
-            offset += 3
-            text = text[:place] + '...' + text[place:]
+            result.append(self.text[last:pos.place])
+            last = pos.place
 
-        if self.choices_positions.count() == 0:
-            text += ' ' + '...'
-
-        return text
+        return result
 
 
 class Choice(models.Model):
