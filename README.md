@@ -23,6 +23,7 @@ FullPlayer: {
 ```
 Player: {
     nick: string,
+    score: integer | null,
 }
 ```
 
@@ -72,7 +73,7 @@ Game: {
     owner: string,
     players: Player[],
     current_player: string,
-    question: Question,
+    question: Question | null,
     propositions: AnsweredQuestion[],
 }
 ```
