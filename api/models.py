@@ -214,10 +214,11 @@ class Question(models.Model):
         return ' '.join(map(lambda t: t.strip() if t else blank, self.get_split_text()))
 
     def get_split_text(self):
+        text = self.text
         pos = list(map(lambda pos: pos.place, self.blanks.all()))
 
         if pos[0] is None:
-            return [self.text, None]
+            return [text, None]
 
         result = []
         last = 0
@@ -227,11 +228,11 @@ class Question(models.Model):
             pos = pos[1:]
 
         for p in pos:
-            result.append(self.text[last:p])
+            result.append(text[last:p])
             result.append(None)
             last = p
 
-        result.append(self.text[last:])
+        result.append(text[last:])
 
         return result
 
@@ -281,6 +282,7 @@ class AnsweredQuestion(models.Model):
 
     AnsweredQuestion methods:
         - get_filled_text() -> string
+        - get_split_text() -> string[]
     """
 
     game = models.ForeignKey(Game, related_name='answers', on_delete=models.CASCADE)
@@ -292,21 +294,31 @@ class AnsweredQuestion(models.Model):
         return self.get_filled_text()
 
     def get_filled_text(self):
+        return ' '.join(map(lambda t: t.strip(), self.get_split_text()))
+
+    def get_split_text(self):
         text = self.question.text
-        offset = 0
+        answers = list(self.answers.all())
 
-        for answer in self.answers.all():
-            answer_text = answer.choice.text
+        if answers[0].position.place is None:
+            return [text, str(answers[0])]
 
-            if answer.position.place is None:
-                text += ' ' + answer_text
-                continue
+        result = []
+        last = 0
 
-            place = answer.position.place + offset
-            offset += len(answer_text)
-            text = text[:place] + answer_text + text[place:]
+        if answers[0] == 0:
+            result.append(str(answers[0]))
+            pos = pos[1:]
 
-        return text
+        for answer in answers:
+            place = answer.position.place
+            result.append(text[last:place])
+            result.append(str(answer))
+            last = place
+
+        result.append(text[last:])
+
+        return result
 
 
 class Answer(models.Model):
