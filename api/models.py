@@ -49,7 +49,7 @@ class Player(models.Model):
         return self.game is not None
 
     def is_owner(self, game):
-        return game.owner === self
+        return game.owner == self
 
     def has_played(self):
         if self.game is None:
@@ -113,10 +113,11 @@ class Game(models.Model):
         return ''.join(['Game #', str(self.id), ' (', self.state, ')'])
 
     def init(self):
-        def create_questions():
-            questions, places = data.get_questions()
+        data_questions, data_places = data.get_questions()
+        data_choices = data.get_choices()
 
-            questions = list(map(lambda text: Question(game=self, text=text), questions))
+        def create_questions():
+            questions = list(map(lambda text: Question(game=self, text=text), data_questions))
             Question.objects.bulk_create(questions)
 
         def create_choices_positions():
@@ -124,15 +125,13 @@ class Game(models.Model):
             choices_positions = []
 
             for i in range(len(questions)):
-                for place in places[i]:
-                    choices_positions.append(ChoicePosition(question=questions[i]), place=place)
+                for place in data_places[i]:
+                    choices_positions.append(ChoicePosition(question=questions[i], place=place))
 
             ChoicePosition.objects.bulk_create(choices_positions)
 
         def create_choices():
-            choices = data.get_choices()
-
-            choices = map(lambda text: Choice(game=self, text=text), choices)
+            choices = map(lambda text: Choice(game=self, text=text), data_choices)
             Choice.objects.bulk_create(choices)
 
         create_questions()
@@ -212,21 +211,29 @@ class Question(models.Model):
         return self.choices_positions.count()
 
     def get_filled_text(self, blank):
-        return ' '.join(map(lambda t: t if t else blank, self.get_text_as_array()))
+        return ' '.join(map(lambda t: t.strip() if t else blank, self.get_split_text()))
 
     def get_split_text(self):
+        pos = list(map(lambda pos: pos.place, self.choices_positions.all()))
+
+        if pos[0] is None:
+            return [self.text, None]
+
         result = []
-        last = None
+        last = 0
 
-        for pos in self.choices_positions.all():
-            if pos.place is None:
-                return [self.text, None]
+        if pos[0] == 0:
+            result.append(None)
+            pos = pos[1:]
 
-            result.append(self.text[last:pos.place])
-            last = pos.place
+        for p in pos:
+            result.append(self.text[last:p])
+            result.append(None)
+            last = p
+
+        result.append(self.text[last:])
 
         return result
-
 
 class Choice(models.Model):
     """
