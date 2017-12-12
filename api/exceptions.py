@@ -84,3 +84,15 @@ class NoMoreQuestions(APIException):
     status_code = status.HTTP_400_BAD_REQUEST
     default_code = 'NO_MORE_QUESTIONS'
     default_detail = 'No more questions available'
+
+
+class NoMoreChoices(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_code = 'NO_MORE_CHOICES'
+    default_detail = 'No more choices available'
+
+
+class NotEnoughPlayers(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_code = 'NOT_ENOUGH_PLAYERS'
+    default_detail = 'Not enough players to start the game'

@@ -3,7 +3,7 @@ import random
 from django.db import models
 
 from api import data
-from api.exceptions import NoMoreQuestions
+from api.exceptions import *
 
 GAME_STATES = (
     ('idle', 'idle'),
@@ -90,7 +90,6 @@ class Game(models.Model):
     Game relations:
         - owner: Player
         - players: Player[]
-        - player_scores: PlayerScore[]
         - current_player: Player
         - questions: Question[]
         - current_question: Question
@@ -98,10 +97,11 @@ class Game(models.Model):
         - answers: AnsweredQuestion[]
 
     Game methods:
+        - init() -> None
         - start() -> None
-        - next_turn() -> None
+        - next_turn(player) -> None
         - deal_cards() -> None
-        - get_current_answers() -> AnsweredQuestion[] | None
+        - get_propositions() -> AnsweredQuestion[] | None
     """
 
     state = models.CharField(max_length=8, default='idle', choices=GAME_STATES)
@@ -112,28 +112,39 @@ class Game(models.Model):
     def __str__(self):
         return ''.join(['Game #', str(self.id), ' (', self.state, ')'])
 
-    def start(self):
-        questions, places = data.get_questions()
+    def init(self):
+        def create_questions():
+            questions, places = data.get_questions()
 
-        questions = list(map(lambda text: Question(game=self, text=text), questions))
-        Question.objects.bulk_create(questions)
+            questions = list(map(lambda text: Question(game=self, text=text), questions))
+            Question.objects.bulk_create(questions)
 
-        questions = list(self.questions.all())
-        choices_positions = []
+        def create_choices_positions():
+            questions = list(self.questions.all())
+            choices_positions = []
 
-        for i in range(len(questions)):
-            for place in places[i]:
-                choices_positions.append(ChoicePosition(place=place, question=questions[i]))
+            for i in range(len(questions)):
+                for place in places[i]:
+                    choices_positions.append(ChoicePosition(question=questions[i]), place=place)
 
-        ChoicePosition.objects.bulk_create(choices_positions)
+            ChoicePosition.objects.bulk_create(choices_positions)
 
-        choices = data.get_choices()
-        choices = map(lambda text: Choice(game=self, text=text), choices)
-        self.choices.bulk_create(choices)
+        def create_choices():
+            choices = data.get_choices()
+
+            choices = map(lambda text: Choice(game=self, text=text), choices)
+            Choice.objects.bulk_create(choices)
+
+        create_questions()
+        create_choices_positions()
+        create_choices()
+
+    def start():
+        if self.players.count() < 3:
+            raise NotEnoughPlayers
 
         self.state = 'started'
         self.next_turn(random.choice(self.players.all()))
-
         self.save()
 
     def next_turn(self, player):
@@ -151,12 +162,13 @@ class Game(models.Model):
         self.current_question.available = False
         self.current_question.save()
 
-        self.save()
-
     def deal_cards(self, player):
         choices = list(self.choices.filter(available=True))
 
         for i in range(11 - player.cards.count()):
+            if len(choices) == 0:
+                raise NoMoreChoices
+
             choice = random.choice(choices)
             choice.available = False
             choice.save()
@@ -164,7 +176,7 @@ class Game(models.Model):
             player.cards.add(choice)
             choices.remove(choice)
 
-    def get_current_answers(self):
+    def get_propositions(self):
         if self.state != 'started':
             return None
 
