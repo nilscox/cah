@@ -120,22 +120,22 @@ class Game(models.Model):
             questions = list(map(lambda text: Question(game=self, text=text), data_questions))
             Question.objects.bulk_create(questions)
 
-        def create_choices_positions():
+        def create_blanks():
             questions = list(self.questions.all())
-            choices_positions = []
+            blanks = []
 
             for i in range(len(questions)):
                 for place in data_places[i]:
-                    choices_positions.append(ChoicePosition(question=questions[i], place=place))
+                    blanks.append(Blank(question=questions[i], place=place))
 
-            ChoicePosition.objects.bulk_create(choices_positions)
+            Blank.objects.bulk_create(blanks)
 
         def create_choices():
             choices = map(lambda text: Choice(game=self, text=text), data_choices)
             Choice.objects.bulk_create(choices)
 
         create_questions()
-        create_choices_positions()
+        create_blanks()
         create_choices()
 
     def start():
@@ -191,7 +191,7 @@ class Question(models.Model):
     Question relations:
         - game: Game
         - current: Game
-        - choices_positions: ChoicePosition[]
+        - blanks: Blank[]
         - answered: AnsweredQuestion
 
     Question methods:
@@ -208,13 +208,13 @@ class Question(models.Model):
         return self.get_filled_text('...')
 
     def get_nb_choices(self):
-        return self.choices_positions.count()
+        return self.blanks.count()
 
     def get_filled_text(self, blank):
         return ' '.join(map(lambda t: t.strip() if t else blank, self.get_split_text()))
 
     def get_split_text(self):
-        pos = list(map(lambda pos: pos.place, self.choices_positions.all()))
+        pos = list(map(lambda pos: pos.place, self.blanks.all()))
 
         if pos[0] is None:
             return [self.text, None]
@@ -257,17 +257,17 @@ class Choice(models.Model):
         return self.text
 
 
-class ChoicePosition(models.Model):
+class Blank(models.Model):
     """
-    ChoicePosition fields:
+    Blank fields:
         - place: integer
 
-    ChoicePosition relations:
+    Blank relations:
         - question: Question
     """
 
     place = models.IntegerField(blank=True, null=True)
-    question = models.ForeignKey(Question, related_name='choices_positions', on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, related_name='blanks', on_delete=models.CASCADE)
 
 
 class AnsweredQuestion(models.Model):
@@ -313,12 +313,12 @@ class Answer(models.Model):
     """
     Answer relations:
         - choice: Choice
-        - position: ChoicePosition
+        - position: Blank
         - question: Question
     """
 
     choice = models.OneToOneField(Choice, on_delete=models.CASCADE)
-    position = models.ForeignKey(ChoicePosition, on_delete=models.CASCADE)
+    position = models.ForeignKey(Blank, on_delete=models.CASCADE)
     question = models.ForeignKey(AnsweredQuestion, related_name='answers', on_delete=models.CASCADE)
 
     def __str__(self):
