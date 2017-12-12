@@ -28,7 +28,7 @@ Player: {
 ```
 
 - nick: The player's nickname
-- score: His score
+- score: His score, if he is in game
 - cards: The set of white cards he owns
 - submitted: The set of white cards he submitted, if any
 

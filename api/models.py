@@ -27,9 +27,10 @@ class Player(models.Model):
         - won_cards: AnsweredQuestion[]
 
     Player methods:
-        - is_in_game(Game=None) -> boolean
+        - in_game(Game=None) -> boolean
+        - is_owner(Game) -> boolean
         - has_played() -> boolean | None
-        - has_cards(int[]) -> boolean
+        - has_cards(integer[]) -> boolean
         - get_score(Game=None) -> integer | None
         - win_card(AnsweredQuestion) -> None
         - get_submitted() -> AnsweredQuestion
@@ -42,19 +43,19 @@ class Player(models.Model):
         return self.nick
 
     def in_game(self, game=None):
-        if game is None:
-            game = self.game
+        if game is not None:
+            return game == self.game
 
-        return game is not None
+        return self.game is not None
 
     def is_owner(self, game):
-        return self.game is not None and self.game == game
+        return game.owner === self
 
     def has_played(self):
         if self.game is None:
             return None
 
-        return bool(self.game.answers.filter(question=self.game.current_question, answered_by=self))
+        return self.get_submitted() is not None
 
     def has_cards(self, choice_ids):
         return self.cards.filter(pk__in=choice_ids).count() == len(choice_ids)
@@ -62,11 +63,8 @@ class Player(models.Model):
     def win_card(self, answered_question):
         return self.won_cards.add(answered_question)
 
-    def get_score(self, game=None):
-        if game is None:
-            game = self.game
-
-        if game is None:
+    def get_score(self):
+        if self.game is None:
             return None
 
         if game.state == 'idle':
