@@ -5,12 +5,6 @@ from django.db import models
 from api import data
 from api.exceptions import *
 
-GAME_STATES = (
-    ('idle', 'idle'),
-    ('started', 'started'),
-    ('finished', 'finished'),
-)
-
 
 class Player(models.Model):
     """
@@ -80,6 +74,13 @@ class Player(models.Model):
             return self.game.answers.get(question=self.game.current_question, answered_by=self)
         except AnsweredQuestion.DoesNotExist:
             return None
+
+
+GAME_STATES = (
+    ('idle', 'idle'),
+    ('started', 'started'),
+    ('finished', 'finished'),
+)
 
 
 class Game(models.Model):
@@ -235,6 +236,7 @@ class Question(models.Model):
         result.append(text[last:])
 
         return result
+
 
 class Choice(models.Model):
     """
