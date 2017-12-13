@@ -119,19 +119,16 @@ class AnswerSerializer(serializers.ModelSerializer):
     """
     Answer: {
         choice: Choice,
-        position: integer,
+        place: integer,
     }
     """
 
     choice = ChoiceSerializer(read_only=True)
-    position = serializers.SerializerMethodField()
+    place = serializers.ReadOnlyField(source='get_place')
 
     class Meta:
         model = Answer
-        fields = ('choice', 'position')
-
-    def get_position(self, answer):
-        return answer.position.place
+        fields = ('choice', 'place')
 
 
 class AnsweredQuestionSerializer(serializers.ModelSerializer):
@@ -139,10 +136,8 @@ class AnsweredQuestionSerializer(serializers.ModelSerializer):
     AnsweredQuestion: {
         id: integer,
         question: Question,
-        answered_by: string,
-        won_by: string,
         text: string,
-        splitted: string[]
+        splitted,
         choices: Answer[],
     }
     """
@@ -153,7 +148,7 @@ class AnsweredQuestionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = AnsweredQuestion
-        fields = ('id', 'question', 'text', 'splitted', 'answers')
+        fields = ('id', 'question', 'text', 'splitted', 'choices')
 
 
 class FullAnsweredQuestionSerializer(AnsweredQuestionSerializer):
@@ -162,7 +157,10 @@ class FullAnsweredQuestionSerializer(AnsweredQuestionSerializer):
         id: integer,
         question: Question,
         text: string,
+        splitted: string[]
         choices: Answer[],
+        answered_by: string,
+        won_by: string,
     }
     """
 
@@ -171,4 +169,4 @@ class FullAnsweredQuestionSerializer(AnsweredQuestionSerializer):
 
     class Meta:
         model = AnsweredQuestion
-        fields = ('id', 'question', 'answered_by', 'won_by', 'text', 'splitted', 'answers')
+        fields = ('id', 'question', 'text', 'splitted', 'choices', 'answered_by', 'won_by')

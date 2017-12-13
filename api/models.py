@@ -337,3 +337,12 @@ class Answer(models.Model):
 
     def __str__(self):
         return str(self.choice)
+
+    def get_place(self):
+        idx = 0
+
+        for blank in self.question.question.blanks.all():
+            if blank == self.position:
+                return idx
+
+            idx += 1

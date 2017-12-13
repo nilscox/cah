@@ -7,7 +7,7 @@ from api.authentication import PlayerAuthentication
 from api.exceptions import *
 from api.models import Game, Player, AnsweredQuestion
 from api.permissions import IsPlayer
-from api.serializers import GameSerializer, FullPlayerSerializer, AnsweredQuestionSerializer
+from api.serializers import GameSerializer, PlayerSerializer, FullPlayerSerializer, AnsweredQuestionSerializer
 
 
 class PlayerViews(views.APIView):
@@ -21,15 +21,19 @@ class PlayerViews(views.APIView):
 
         player, created = Player.objects.get_or_create(nick=nick)
         request.session['player_id'] = player.id
+        serializer = FullPlayerSerializer if player.in_game() else PlayerSerializer
 
-        return Response(FullPlayerSerializer(player).data,
+        return Response(serializer(player).data,
                         status.HTTP_201_CREATED if created else status.HTTP_200_OK)
 
     def get(self, request, format=None):
         if not isinstance(request.user, Player):
             raise PlayerNotFound
 
-        return Response(FullPlayerSerializer(request.user).data)
+        player = request.user
+        serializer = FullPlayerSerializer if player.in_game() else PlayerSerializer
+
+        return Response(serializer(player).data)
 
     def delete(self, request, format=None):
         if not isinstance(request.user, Player):
