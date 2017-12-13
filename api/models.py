@@ -306,9 +306,9 @@ class AnsweredQuestion(models.Model):
         result = []
         last = 0
 
-        if answers[0] == 0:
+        if answers[0].position.place == 0:
             result.append(str(answers[0]))
-            pos = pos[1:]
+            answers = answers[1:]
 
         for answer in answers:
             place = answer.position.place
