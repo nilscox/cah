@@ -135,13 +135,18 @@ possibly with blanks in it.
 Question: {
     id: integer,
     text: string,
+    splitted: (string | null)[],
     nb_choices: integer,
 }
 ```
 
 - id: The question's id
 - text: The actual question, with blanks filled with `...` (if any)
+- splitted: The question's text, as an array
 - nb_choices: The number of choices that fits the question
+
+> The splitted field is an array of strings representing the actual question's
+> text, and null values representing a blank.
 
 ### Choice
 
@@ -185,6 +190,7 @@ FullAnsweredQuestion: {
     id: integer,
     question: Question,
     text: string,
+    splitted: string[],
     choices: Answer[],
     answered_by: string,
     won_by: string | null,
@@ -196,6 +202,7 @@ AnsweredQuestion: {
     id: integer,
     question: Question,
     text: string,
+    splitted: string[],
     choices: Answer[],
 }
 ```
@@ -203,6 +210,7 @@ AnsweredQuestion: {
 - id: The answer's id
 - question: The question to which the player answered
 - text: The final text of the question, with blanks filled with choice's
+- splitted: The final text of the question, as an array (see `Question.splitted`)
 - choices: The submitted choices
 - answered_by: The player who answered the question
 - won_by: The player won the black card, if any
