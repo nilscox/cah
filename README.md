@@ -82,11 +82,11 @@ Game: {
 - state: One of `["idle", "started", "finished"]`
 - owner: The owner's nickname
 - players: A list of `Player` who joined this game
-- current_player: The nickname of the player who either waits for the other
-players answers, or have to choose between one
+- current_player: The nickname of the player who either waits for the other players answers, or have to choose between one
 - question: The current black card
-- propositions: The set of answers given by the players (empty if not all
-players have answered yet)
+- propositions: The set of answers given by the players
+
+> The propositions array is empty when not all player have submitted an answer.
 
 #### Routes
 
@@ -171,19 +171,27 @@ An answer is one white card given to answer (or fill) a `Question`.
 Answer: {
     choice: Choice,
     place: integer,
-    length: integer,
 }
 ```
 
 - choice: The black card answered
-- position: The starting place of the choice's text in the question's text
-- length: The choice's text length
+- place: The index of the answer in the question's splitted field
 
 ### AnsweredQuestion
 
 An answer given to a `Question` by a `Player`, containing one or more `Answer`.
 
 #### Data
+
+```
+AnsweredQuestion: {
+    id: integer,
+    question: Question,
+    text: string,
+    splitted: string[],
+    choices: Answer[],
+}
+```
 
 ```
 FullAnsweredQuestion: {
@@ -194,16 +202,6 @@ FullAnsweredQuestion: {
     choices: Answer[],
     answered_by: string,
     won_by: string | null,
-}
-```
-
-```
-AnsweredQuestion: {
-    id: integer,
-    question: Question,
-    text: string,
-    splitted: string[],
-    choices: Answer[],
 }
 ```
 
@@ -226,11 +224,15 @@ body: {
 ```
 
 Submit an answer to a question. `ids` is an array of the `Choice` ids.
+This route represents a `Player` giving a set of his black cards to the question master.
+
+> For consistency with the number of choices, `id` can be used instead of `ids`.
 
 ```
 POST /api/answer/select/:id
 returns: FullAnsweredQuestion
-body: {
-    id: integer,
-}
 ```
+
+Select a set of choices in the submitted propositions. `id` is the id of the selected AnsweredQuestion.
+This route represents the question master selecting is favorite set of black
+cards within all black cards submitted by the other players.
