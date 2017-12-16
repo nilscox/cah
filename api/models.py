@@ -18,7 +18,7 @@ class Player(models.Model):
         - current_of: Game
         - cards: Choice[]
         - questions_answered: AnsweredQuestion[]
-        - won_cards: AnsweredQuestion[]
+        - selected_cards: AnsweredQuestion[]
 
     Player methods:
         - in_game(Game=None) -> boolean
@@ -54,9 +54,6 @@ class Player(models.Model):
     def has_cards(self, choice_ids):
         return self.cards.filter(pk__in=choice_ids).count() == len(choice_ids)
 
-    def win_card(self, answered_question):
-        return self.won_cards.add(answered_question)
-
     def get_score(self):
         if self.game is None:
             return None
@@ -64,7 +61,7 @@ class Player(models.Model):
         if self.game.state == 'idle':
             return 0
 
-        return self.won_cards.all().count()
+        return self.game.answers.filter(answered_by=self, selected_by__isnull=False).count()
 
     def get_submitted(self):
         if self.game is None:
@@ -91,7 +88,7 @@ class Game(models.Model):
     Game relations:
         - owner: Player
         - players: Player[]
-        - current_player: Player
+        - question_master: Player
         - questions: Question[]
         - current_question: Question
         - choices: Choice[]
@@ -107,7 +104,7 @@ class Game(models.Model):
 
     state = models.CharField(max_length=8, default='idle', choices=GAME_STATES)
     owner = models.ForeignKey(Player, related_name='owns', on_delete=models.CASCADE)
-    current_player = models.ForeignKey(Player, blank=True, null=True, related_name='current_of', on_delete=models.CASCADE)
+    question_master = models.ForeignKey(Player, blank=True, null=True, related_name='current_of', on_delete=models.CASCADE)
     current_question = models.ForeignKey('Question', blank=True, null=True, related_name='current', on_delete=models.CASCADE)
 
     def __str__(self):
@@ -148,7 +145,7 @@ class Game(models.Model):
         self.save()
 
     def next_turn(self, player):
-        self.current_player = player
+        self.question_master = player
 
         for player in self.players.all():
             self.deal_cards(player)
@@ -279,7 +276,7 @@ class AnsweredQuestion(models.Model):
         - game: Game
         - question: Question
         - answered_by: Player
-        - won_by: Player
+        - selected_by: Player
         - answers: Answer[]
 
     AnsweredQuestion methods:
@@ -290,7 +287,7 @@ class AnsweredQuestion(models.Model):
     game = models.ForeignKey(Game, related_name='answers', on_delete=models.CASCADE)
     question = models.ForeignKey(Question, related_name='answered', on_delete=models.CASCADE)
     answered_by = models.ForeignKey(Player, related_name='answered_question', on_delete=models.CASCADE)
-    won_by = models.ForeignKey(Player, related_name='won_cards', blank=True, null=True, on_delete=models.CASCADE)
+    selected_by = models.ForeignKey(Player, related_name='selected_cards', blank=True, null=True, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.get_filled_text()

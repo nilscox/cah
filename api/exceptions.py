@@ -26,6 +26,12 @@ class PlayerNotGameOwner(APIException):
     default_detail = 'Player is not the owner of this game'
 
 
+class GameNotFound(APIException):
+    status_code = 404
+    default_code = 'GAME_NOT_FOUND'
+    default_detail = 'Game not found'
+
+
 class GameAlreadyStarted(APIException):
     status_code = status.HTTP_400_BAD_REQUEST
     default_code = 'GAME_ALREADY_STARTED'
@@ -38,16 +44,16 @@ class GameNotStarted(APIException):
     default_detail = 'Game is not started'
 
 
-class PlayerCurrentPlayer(APIException):
+class PlayerQuestionMaster(APIException):
     status_code = status.HTTP_400_BAD_REQUEST
-    default_code = 'PLAYER_IS_CURRENT'
-    default_detail = 'Player is the current player'
+    default_code = 'PLAYER_IS_QUESTION_MASTER'
+    default_detail = 'Player is the question master'
 
 
-class PlayerNotCurrentPlayer(APIException):
+class PlayerNotQuestionMaster(APIException):
     status_code = status.HTTP_400_BAD_REQUEST
-    default_code = 'PLAYER_IS_NOT_CURRENT'
-    default_detail = 'Player is not the current player'
+    default_code = 'PLAYER_IS_NOT_QUESTION_MASTER'
+    default_detail = 'Player is not the question master'
 
 
 class PlayerAlreadyAnswered(APIException):

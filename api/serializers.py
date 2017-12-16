@@ -95,7 +95,7 @@ class GameSerializer(serializers.ModelSerializer):
     players = PlayerSerializer(many=True, read_only=True)
     state = serializers.ReadOnlyField()
     owner = serializers.ReadOnlyField(source='owner.nick')
-    question_master = serializers.ReadOnlyField(source='current_player.nick')
+    question_master = serializers.ReadOnlyField(source='question_master.nick')
     question = QuestionSerializer(source='current_question', read_only=True)
     propositions = serializers.SerializerMethodField()
 
@@ -148,13 +148,13 @@ class FullAnsweredQuestionSerializer(AnsweredQuestionSerializer):
         split: string[]
         answers: Choice[],
         answered_by: string,
-        won_by: string | null,
+        selected_by: string | null,
     }
     """
 
     answered_by = serializers.ReadOnlyField(source='answered_by.nick')
-    won_by = serializers.ReadOnlyField(source='won_by.nick')
+    selected_by = serializers.ReadOnlyField(source='selected_by.nick')
 
     class Meta:
         model = AnsweredQuestion
-        fields = ('id', 'question', 'text', 'split', 'answers', 'answered_by', 'won_by')
+        fields = ('id', 'question', 'text', 'split', 'answers', 'answered_by', 'selected_by')

@@ -7,7 +7,8 @@ from api.authentication import PlayerAuthentication
 from api.exceptions import *
 from api.models import Game, Player, AnsweredQuestion
 from api.permissions import IsPlayer
-from api.serializers import GameSerializer, PlayerSerializer, FullPlayerSerializer, AnsweredQuestionSerializer
+from api.serializers import GameSerializer, PlayerSerializer, FullPlayerSerializer, AnsweredQuestionSerializer, \
+    FullAnsweredQuestionSerializer
 
 
 class PlayerViews(views.APIView):
@@ -80,7 +81,11 @@ def join_game(request, pk):
     if player.in_game():
         raise PlayerAlreadyInGame
 
-    game = Game.objects.get(pk=pk)
+    try:
+        game = Game.objects.get(pk=pk)
+    except Game.DoesNotExist:
+        raise GameNotFound
+
     game.players.add(player)
 
     return Response(GameSerializer(game).data)
@@ -133,8 +138,8 @@ def answer(request):
     if game.state != 'started':
         raise GameNotStarted
 
-    if game.current_player == player:
-        raise PlayerCurrentPlayer
+    if game.question_master == player:
+        raise PlayerQuestionMaster
 
     if player.has_played():
         raise PlayerAlreadyAnswered
@@ -151,9 +156,9 @@ def answer(request):
     if len(ids) != question.get_nb_choices():
         raise InvalidAnswersCount
 
-    choices = player.cards.filter(pk__in=ids)
+    choices = list(player.cards.filter(pk__in=ids))
 
-    if len(ids) != choices.count():
+    if len(ids) != len(choices):
         raise InvalidAnswers
 
     answered_question = AnsweredQuestion(game=game, question=question, answered_by=player)
@@ -161,7 +166,7 @@ def answer(request):
 
     blanks = list(question.blanks.all())
 
-    for i in range(choices.count()):
+    for i in range(len(choices)):
         choice = choices[i]
 
         answered_question.answers.create(position=blanks[i], choice=choice)
@@ -187,8 +192,8 @@ def select(request, pk):
     if game.state != 'started':
         raise GameNotStarted
 
-    if player != game.current_player:
-        raise PlayerNotCurrentPlayer
+    if player != game.question_master:
+        raise PlayerNotQuestionMaster
 
     answers = game.answers.filter(question=game.current_question)
 
@@ -200,7 +205,10 @@ def select(request, pk):
     except (ValueError, AnsweredQuestion.DoesNotExist):
         raise InvalidSelection
 
-    selected.answered_by.win_card(selected)
+    selected.selected_by = player
     game.next_turn(selected.answered_by)
 
-    return Response(AnsweredQuestionSerializer(selected).data)
+    selected.save()
+    game.save()
+
+    return Response(FullAnsweredQuestionSerializer(selected).data)

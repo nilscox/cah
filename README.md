@@ -187,7 +187,7 @@ FullAnsweredQuestion: {
     split: string[],
     answers: Choice[],
     answered_by: string,
-    won_by: string | null,
+    selected_by: string | null,
 }
 ```
 
@@ -197,7 +197,7 @@ FullAnsweredQuestion: {
 - split: The final text of the question, as an array
 - choices: The submitted choices
 - answered_by: The player who answered the question
-- won_by: The player won the black card, if any
+- selected_by: The player who selected this choices to answer his question (the former question master)
 
 #### Routes
 
