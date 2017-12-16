@@ -72,7 +72,7 @@ Game: {
     state: string,
     owner: string,
     players: Player[],
-    current_player: string,
+    question_master: string,
     question: Question | null,
     propositions: AnsweredQuestion[],
 }
@@ -82,7 +82,7 @@ Game: {
 - state: One of `["idle", "started", "finished"]`
 - owner: The owner's nickname
 - players: A list of `Player` who joined this game
-- current_player: The nickname of the player who either waits for the other players answers, or have to choose between one
+- question_master: The nickname of the player who either waits for the other players answers, or have to choose between one
 - question: The current black card
 - propositions: The set of answers given by the players
 
@@ -135,17 +135,17 @@ possibly with blanks in it.
 Question: {
     id: integer,
     text: string,
-    splitted: (string | null)[],
+    split: (string | null)[],
     nb_choices: integer,
 }
 ```
 
 - id: The question's id
 - text: The actual question, with blanks filled with `...` (if any)
-- splitted: The question's text, as an array
+- split: The question's text, as an array
 - nb_choices: The number of choices that fits the question
 
-> The splitted field is an array of strings representing the actual question's
+> The split field is an array of strings representing the actual question's
 > text, and null values representing a blank.
 
 ### Choice
@@ -163,23 +163,9 @@ Choice: {
 - id: The choice's id
 - text: The actual choice text
 
-### Answer
-
-An answer is one white card given to answer (or fill) a `Question`.
-
-```
-Answer: {
-    choice: Choice,
-    place: integer,
-}
-```
-
-- choice: The black card answered
-- place: The index of the answer in the question's splitted field
-
 ### AnsweredQuestion
 
-An answer given to a `Question` by a `Player`, containing one or more `Answer`.
+An answer given to a `Question` by a `Player`, containing one or more `Choice`.
 
 #### Data
 
@@ -188,8 +174,8 @@ AnsweredQuestion: {
     id: integer,
     question: Question,
     text: string,
-    splitted: string[],
-    choices: Answer[],
+    split: string[],
+    answers: Choice[],
 }
 ```
 
@@ -198,8 +184,8 @@ FullAnsweredQuestion: {
     id: integer,
     question: Question,
     text: string,
-    splitted: string[],
-    choices: Answer[],
+    split: string[],
+    answers: Choice[],
     answered_by: string,
     won_by: string | null,
 }
@@ -208,7 +194,7 @@ FullAnsweredQuestion: {
 - id: The answer's id
 - question: The question to which the player answered
 - text: The final text of the question, with blanks filled with choice's
-- splitted: The final text of the question, as an array (see `Question.splitted`)
+- split: The final text of the question, as an array
 - choices: The submitted choices
 - answered_by: The player who answered the question
 - won_by: The player won the black card, if any

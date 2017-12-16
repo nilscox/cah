@@ -8,21 +8,18 @@ class QuestionSerializer(serializers.ModelSerializer):
     Question: {
         id: integer,
         text: string,
-        splitted: string[],
+        split: string[],
         nb_choices: integer,
     }
     """
 
-    text = serializers.SerializerMethodField(source='__str__', read_only=True)
-    splitted = serializers.ReadOnlyField(source='get_split_text')
+    text = serializers.ReadOnlyField(source='__str__')
+    split = serializers.ReadOnlyField(source='get_split_text')
     nb_choices = serializers.ReadOnlyField(source='get_nb_choices')
 
     class Meta:
         model = Question
-        fields = ('id', 'text', 'splitted', 'nb_choices')
-
-    def get_text(self, gq):
-        return str(gq)
+        fields = ('id', 'text', 'split', 'nb_choices')
 
 
 class ChoiceSerializer(serializers.ModelSerializer):
@@ -89,7 +86,7 @@ class GameSerializer(serializers.ModelSerializer):
         state: string,
         owner: string,
         players: Player[],
-        current_player: string,
+        question_master: string,
         question: Question,
         propositions: AnsweredQuestion[],
     }
@@ -98,37 +95,24 @@ class GameSerializer(serializers.ModelSerializer):
     players = PlayerSerializer(many=True, read_only=True)
     state = serializers.ReadOnlyField()
     owner = serializers.ReadOnlyField(source='owner.nick')
-    current_player = serializers.ReadOnlyField(source='current_player.nick')
+    question_master = serializers.ReadOnlyField(source='current_player.nick')
     question = QuestionSerializer(source='current_question', read_only=True)
-    propositions = serializers.SerializerMethodField(read_only=True)
+    propositions = serializers.SerializerMethodField()
 
     class Meta:
         model = Game
-        fields = ('id', 'state', 'owner', 'players', 'current_player', 'question', 'propositions')
+        fields = ('id', 'state', 'owner', 'players', 'question_master', 'question', 'propositions')
 
     def get_propositions(self, game):
-        answers = game.get_current_answers()
+        answers = game.get_propositions()
 
         if answers is None:
             return None
 
+        if len(answers) != game.players.count() - 1:
+            return []
+
         return AnsweredQuestionSerializer(answers, many=True).data
-
-
-class AnswerSerializer(serializers.ModelSerializer):
-    """
-    Answer: {
-        choice: Choice,
-        place: integer,
-    }
-    """
-
-    choice = ChoiceSerializer(read_only=True)
-    place = serializers.ReadOnlyField(source='get_place')
-
-    class Meta:
-        model = Answer
-        fields = ('choice', 'place')
 
 
 class AnsweredQuestionSerializer(serializers.ModelSerializer):
@@ -137,18 +121,22 @@ class AnsweredQuestionSerializer(serializers.ModelSerializer):
         id: integer,
         question: Question,
         text: string,
-        splitted,
-        choices: Answer[],
+        split: string[],
+        answers: Choice[],
     }
     """
 
     text = serializers.ReadOnlyField(source='__str__')
-    splitted = serializers.ReadOnlyField(source='get_split_text')
-    answers = AnswerSerializer(many=True)
+    split = serializers.ReadOnlyField(source='get_split_text')
+    answers = serializers.SerializerMethodField()
 
     class Meta:
         model = AnsweredQuestion
-        fields = ('id', 'question', 'text', 'splitted', 'choices')
+        fields = ('id', 'question', 'text', 'split', 'answers')
+
+    def get_answers(self, aq):
+        choices = list(map(lambda a: a.choice, aq.answers.all()))
+        return ChoiceSerializer(choices, many=True).data
 
 
 class FullAnsweredQuestionSerializer(AnsweredQuestionSerializer):
@@ -157,10 +145,10 @@ class FullAnsweredQuestionSerializer(AnsweredQuestionSerializer):
         id: integer,
         question: Question,
         text: string,
-        splitted: string[]
-        choices: Answer[],
+        split: string[]
+        answers: Choice[],
         answered_by: string,
-        won_by: string,
+        won_by: string | null,
     }
     """
 
@@ -169,4 +157,4 @@ class FullAnsweredQuestionSerializer(AnsweredQuestionSerializer):
 
     class Meta:
         model = AnsweredQuestion
-        fields = ('id', 'question', 'text', 'splitted', 'choices', 'answered_by', 'won_by')
+        fields = ('id', 'question', 'text', 'split', 'answers', 'answered_by', 'won_by')

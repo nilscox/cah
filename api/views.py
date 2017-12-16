@@ -65,7 +65,8 @@ class GameViews(views.APIView):
 
         game_serializer = GameSerializer(data=request.data)
         game_serializer.is_valid(raise_exception=True)
-        game_serializer.save(owner=player, players=[player])
+        game = game_serializer.save(owner=player, players=[player])
+        game.init()
 
         return Response(game_serializer.data, status=status.HTTP_201_CREATED)
 
@@ -158,12 +159,12 @@ def answer(request):
     answered_question = AnsweredQuestion(game=game, question=question, answered_by=player)
     answered_question.save()
 
-    positions = list(question.choices_positions.all())
+    blanks = list(question.blanks.all())
 
     for i in range(choices.count()):
         choice = choices[i]
 
-        answered_question.answers.create(position=positions[i], choice=choice)
+        answered_question.answers.create(position=blanks[i], choice=choice)
 
         choice.owner = None
         choice.played = True

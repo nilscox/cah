@@ -61,10 +61,10 @@ class Player(models.Model):
         if self.game is None:
             return None
 
-        if game.state == 'idle':
+        if self.game.state == 'idle':
             return 0
 
-        return self.won_cards.filter(game=game).count()
+        return self.won_cards.all().count()
 
     def get_submitted(self):
         if self.game is None:
@@ -139,7 +139,7 @@ class Game(models.Model):
         create_blanks()
         create_choices()
 
-    def start():
+    def start(self):
         if self.players.count() < 3:
             raise NotEnoughPlayers
 
@@ -219,7 +219,7 @@ class Question(models.Model):
         pos = list(map(lambda pos: pos.place, self.blanks.all()))
 
         if pos[0] is None:
-            return [text, None]
+            return [text]
 
         result = []
         last = 0
@@ -303,7 +303,7 @@ class AnsweredQuestion(models.Model):
         answers = list(self.answers.all())
 
         if answers[0].position.place is None:
-            return [text, str(answers[0])]
+            return [str(answers[0])]
 
         result = []
         last = 0
@@ -314,7 +314,7 @@ class AnsweredQuestion(models.Model):
 
         for answer in answers:
             place = answer.position.place
-            result.append(text[last:place])
+            result.append(text[last:place].strip())
             result.append(str(answer))
             last = place
 
