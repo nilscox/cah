@@ -1,26 +1,8 @@
 import React, {Component} from 'react';
-import Login from './Login';
 import './App.css';
-
-const request = (method, route, body) => {
-    const opts = {
-      method: method,
-      credentials: 'include',
-    };
-
-    if (body) {
-      opts.body = JSON.stringify(body);
-      opts.headers = { 'Content-Type': 'application/json' };
-    }
-
-    return fetch('http://localhost:8000' + route, opts)
-      .then(res => {
-        if (res.status !== 200)
-          throw new Error([method, route, '->', res.status].join(' '))
-
-        return res.json();
-      });
-};
+import request from './request';
+import Login from './Login';
+import Game from './Game';
 
 class App extends Component {
 
@@ -52,7 +34,7 @@ class App extends Component {
   }
 
   logout() {
-    return request('DELETE', '/api/player')
+    return request('DELETE', '/api/player/')
       .then(() => {
         this.setState({
           player: null,
@@ -62,11 +44,13 @@ class App extends Component {
   }
 
   render() {
-    const nick = this.state.player && this.state.player.nick;
+    const player = this.state.player;
 
     return (
       <div className="app">
-        <Login onSubmit={nick => this.login(nick)} onLogout={() => this.logout()} nick={nick} />
+        <Login onSubmit={nick => this.login(nick)} onLogout={() => this.logout()} nick={player && player.nick} />
+        <hr />
+        <Game player={player} />
       </div>
     );
   }
