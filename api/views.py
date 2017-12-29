@@ -54,7 +54,7 @@ class GameViews(views.APIView):
         game = player.game
 
         if not game:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            raise GameNotFound
 
         return Response(GameSerializer(game).data)
 
