@@ -2,7 +2,67 @@ body {
   margin: 0;
   padding: 0;
   font-family: sans-serif;
+}
+
+html, body, #root, .app, .route, .page {
+  width: 100%;
+  height: 100%;
+}
+
+.loader {
+  padding-top: 20%;
+  text-align: center;
+}
+
+.page {
   background: #EEE;
+}
+
+.page#page-login {
+  background: #FFF;
+}
+
+.page#page-login .content {
+  position: absolute;
+  top: 25%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.page#page-login h2 {
+  text-align: center;
+}
+
+.page#page-login .login-form {
+  max-width: 300px;
+  border: 1px solid #999;
+  padding: 15px 40px;
+}
+
+.page#page-lobby .game-form,
+.page#page-lobby .game-form-loader {
+  display: inline-block;
+  position: absolute;
+  top: 25%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.page#page-lobby .game-form form,
+.page#page-lobby .game-form .or,
+.page#page-lobby .game-form .new-game-button {
+  display: inline-block;
+  margin: 0 15px;
+}
+
+.page#page-lobby .game-form .new-game-button {
+  position: relative;
+  top: -5px;
+}
+
+.game-board {
+  width: 100%;
+  height: 100%;
 }
 
 .card {
@@ -28,6 +88,7 @@ body {
   background: #FFF;
   color: #000;
   font-weight: bold;
+  font-size: 1.2em;
 }
 
 .card.choice.selected {
@@ -44,4 +105,20 @@ body {
   display: inline-block;
   margin: 0 5px;
   border-bottom: 1px solid #FFF;
+}
+
+.card.question .filled {
+  font-weight: bold;
+  margin: 0 5px;
+  text-decoration: underline;
+}
+
+.logout-button {
+  position: absolute;
+  margin: 10px;
+}
+
+.logout-button .player-nick {
+  text-align: center;
+  margin-bottom: 5px;
 }

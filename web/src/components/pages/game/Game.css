@@ -1,0 +1,56 @@
+.game-idle {
+  display: inline-block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.game-idle .start-button {
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+.question-view {
+  width: 100%;
+  height: 100%;
+  text-align: center;
+}
+
+.question-view .question-card {
+  padding-top: 10%;
+}
+
+.question-view .question-card.can-submit .card.question {
+  cursor: pointer;
+}
+
+.question-view .question-master {
+  font-weight: bold;
+}
+
+.choices-view {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+}
+
+.choices-list {
+  background: linear-gradient(to bottom, #AAA 0, #DDD 5px);
+  white-space: nowrap;
+  overflow-x: scroll;
+  padding: 15px;
+}
+
+.choices-list .choice {
+  white-space: initial;
+}
+
+.choices-list .choice.selected {
+  cursor: pointer;
+}
+
+.choices-list.can-select .choice {
+  cursor: pointer;
+}
