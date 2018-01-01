@@ -7,6 +7,7 @@ class QuestionSerializer(serializers.ModelSerializer):
     """
     Question: {
         id: integer,
+        type: string,
         text: string,
         split: string[],
         nb_choices: integer,
@@ -14,12 +15,17 @@ class QuestionSerializer(serializers.ModelSerializer):
     """
 
     text = serializers.ReadOnlyField(source='__str__')
+    type = serializers.SerializerMethodField()
     split = serializers.ReadOnlyField(source='get_split_text')
     nb_choices = serializers.ReadOnlyField(source='get_nb_choices')
 
     class Meta:
         model = Question
-        fields = ('id', 'text', 'split', 'nb_choices')
+        fields = ('id', 'type', 'text', 'split', 'nb_choices')
+
+    def get_type(self, question):
+        blanks = filter(lambda s: s is None, question.get_split_text())
+        return "question" if len(list(blanks)) == 0 else "fill"
 
 
 class ChoiceSerializer(serializers.ModelSerializer):

@@ -134,6 +134,7 @@ possibly with blanks in it.
 ```
 Question: {
     id: integer,
+    type: string,
     text: string,
     split: (string | null)[],
     nb_choices: integer,
@@ -141,6 +142,7 @@ Question: {
 ```
 
 - id: The question's id
+- type: `"fill"` if the question contain at least one blank else `"question"`
 - text: The actual question, with blanks filled with `...` (if any)
 - split: The question's text, as an array
 - nb_choices: The number of choices that fits the question
