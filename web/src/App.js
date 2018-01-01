@@ -20,6 +20,10 @@ class App extends Component {
       error: null,
     };
 
+    this.reload();
+  }
+
+  reload() {
     fetchPlayer()
       .then(player => this.setPlayer(player));
   }
@@ -58,7 +62,7 @@ class App extends Component {
     else if (!game)
       content = <Lobby player={player} setGame={setGame} onError={setError} />;
     else
-      content = <Game player={player} game={game} onError={setError} />;
+      content = <Game player={player} game={game} reload={() => this.reload} onError={setError} />;
 
     const errorSnackBar = (
       <ErrorSnackBar error={error} onClose={() => setError(null)} />

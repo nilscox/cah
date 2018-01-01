@@ -5,20 +5,36 @@ import './Game.css';
 import GameIdle from './GameIdle';
 import {
   start as startGame,
-  answer as submitChoices
+  answer as submitChoices,
+  select as selectAnswer,
 } from '../../../services/game';
+import AnswerSelectionView from "./components/AnswerSelectionView";
 
 class Game extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      game: props.game,
+      game: props.game || null,
       selectedChoices: [],
-      answeredQuestion: props.player.submitted,
+      answeredQuestion: null,
     };
 
+    if (props.player && props.player.submitted)
+      this.state.answeredQuestion = props.player.submitted;
+
     this.onError = props.onError;
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const nextState = {};
+
+    if (nextProps.game)
+      nextState.game = nextProps.game;
+    if (nextProps.player && nextProps.player.submitted)
+      nextState.answeredQuestion = nextProps.player.submitted;
+
+    this.setState(nextState);
   }
 
   onStart() {
@@ -43,6 +59,16 @@ class Game extends Component {
       .catch(this.onError);
   }
 
+  onSelect(id) {
+    selectAnswer(id)
+      .then(() => this.setState({
+        selectedChoices: [],
+        answeredQuestion: null,
+      }))
+      .then(this.props.reload)
+      .catch(this.onError);
+  }
+
   render() {
     const { player } = this.props;
     const { game, selectedChoices, answeredQuestion } = this.state;
@@ -51,15 +77,27 @@ class Game extends Component {
     if (game.state === 'idle')
       return <GameIdle player={player} game={game} onStart={() => this.onStart()} />;
 
+    let content = null;
+    if (game.propositions.length > 0) {
+      content = <AnswerSelectionView
+        question={game.question}
+        answers={game.propositions}
+        canSelect={game.question_master === player.nick}
+        onSelect={(id) => this.onSelect(id)}
+      />;
+    } else {
+      content = <QuestionView
+        questionMaster={game.question_master}
+        question={game.question}
+        choices={choices}
+        onSubmit={() => this.onSubmit()}
+        submitted={!!answeredQuestion}
+      />;
+    }
+
     return (
       <div id="page-game" className="page">
-        <QuestionView
-          questionMaster={game.question_master}
-          question={game.question}
-          choices={choices}
-          onSubmit={() => this.onSubmit()}
-          disabled={!!answeredQuestion}
-        />
+        { content }
         <ChoicesView
           choices={player.cards}
           canSelect={!answeredQuestion && player.nick !== game.question_master}

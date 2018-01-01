@@ -18,6 +18,12 @@ const QuestionCard = ({ question, choices, onClick }) => {
     return <span key={idx} className={className}>{text}</span>;
   });
 
+  if (question.type === "question") {
+    const choice = choices[0] && choices[0].text;
+    text.push(<br key={null} />);
+    text.push(<span key={text.length} className={choice ? 'filled' : 'blank'}>{choice}</span>);
+  }
+
   return (
     <div className="card question" onClick={onClick}>
       <div className="text">{text}</div>

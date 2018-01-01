@@ -24,3 +24,8 @@ export function answer(ids) {
   return request('POST', '/api/answer/', { ids })
     .then(res => res.body);
 }
+
+export function select(id) {
+  return request('POST', '/api/answer/select/' + id)
+    .then(res => res.body);
+}

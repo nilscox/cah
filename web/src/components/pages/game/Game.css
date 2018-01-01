@@ -26,8 +26,22 @@
   cursor: pointer;
 }
 
+.question-view .question-card.submitted .card.question {
+  color: #CCC;
+  background: #444;
+}
+
 .question-view .question-master {
   font-weight: bold;
+}
+
+.answer-selection-view {
+  padding-top: 10%;
+  text-align: center;
+}
+
+.answer-selection-view .answers-list.can-select .card.question {
+  cursor: pointer;
 }
 
 .choices-view {
