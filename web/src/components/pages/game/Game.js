@@ -11,12 +11,16 @@ const STATE = {
   QUESTION_MASTER_SELECTION: 'QUESTION_MASTER_SELECTION',
 };
 
-const mapStateToProps = state => ({
-  gameIsIdle: state.game.state === 'idle',
-  playState: state.game.propositions.length === 0
-    ? STATE.PLAYERS_ANSWER
-    : STATE.QUESTION_MASTER_SELECTION,
-});
+const mapStateToProps = state => {
+  const { game } = state;
+
+  return {
+    gameIsIdle: game.state === 'idle',
+    playState: game.propositions && game.propositions.length === 0
+      ? STATE.PLAYERS_ANSWER
+      : STATE.QUESTION_MASTER_SELECTION,
+  };
+};
 
 const Game = ({ gameIsIdle, playState }) => {
   if (gameIsIdle)
