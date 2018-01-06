@@ -65,6 +65,6 @@
   cursor: pointer;
 }
 
-.choices-list.can-select .choice {
+.choices-list .choice.can-select {
   cursor: pointer;
 }

@@ -1,30 +1,32 @@
 import React from 'react';
+import {connect} from 'react-redux';
+import PropTypes from 'prop-types';
 import TextField from 'material-ui/TextField';
 import Tooltip from 'material-ui/Tooltip';
 import Button from 'material-ui/Button';
 import AddIcon from 'material-ui-icons/Add';
-import {
-  create as createGame,
-  join as joinGame
-} from '../../services/game';
+import {createGame, joinGame} from '../../actions';
 
-const Lobby = ({ setGame, onError }) => {
+const mapStateToProps = state => ({
+
+});
+
+const mapDispatchToProps = dispatch => ({
+  createGame: () => dispatch(createGame()),
+  joinGame: id => dispatch(joinGame(id)),
+});
+
+const Lobby = ({ createGame, joinGame }) => {
   let inputGameId = null;
 
   const onCreate = () => {
-    createGame()
-      .then(setGame)
-      .catch(onError);
+    createGame();
   };
 
   const onJoin = (e) => {
     e.preventDefault();
-
-    joinGame(inputGameId)
-      .then(setGame)
-      .catch(onError);
+    joinGame(inputGameId);
   };
-
 
   return (
     <div id="page-lobby" className="page">
@@ -51,4 +53,9 @@ const Lobby = ({ setGame, onError }) => {
   );
 };
 
-export default Lobby;
+Lobby.propTypes = {
+  createGame: PropTypes.func.isRequired,
+  joinGame: PropTypes.func.isRequired,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Lobby);

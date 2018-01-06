@@ -1,112 +1,40 @@
-import React, {Component} from 'react';
-import QuestionView from './components/QuestionView';
-import ChoicesView from './components/ChoicesView';
+import React from 'react';
+import {connect} from 'react-redux';
+import QuestionView from './views/QuestionView';
+import ChoicesView from './views/ChoicesView';
 import './Game.css';
 import GameIdle from './GameIdle';
-import {
-  start as startGame,
-  answer as submitChoices,
-  select as selectAnswer,
-} from '../../../services/game';
-import AnswerSelectionView from "./components/AnswerSelectionView";
+import AnswerSelectionView from './views/AnswerSelectionView';
 
-class Game extends Component {
-  constructor(props) {
-    super(props);
+const STATE = {
+  PLAYERS_ANSWER: 'PLAYERS_ANSWER',
+  QUESTION_MASTER_SELECTION: 'QUESTION_MASTER_SELECTION',
+};
 
-    this.state = {
-      game: props.game || null,
-      selectedChoices: [],
-      answeredQuestion: null,
-    };
+const mapStateToProps = state => ({
+  gameIsIdle: state.game.state === 'idle',
+  playState: state.game.propositions.length === 0
+    ? STATE.PLAYERS_ANSWER
+    : STATE.QUESTION_MASTER_SELECTION,
+});
 
-    if (props.player && props.player.submitted)
-      this.state.answeredQuestion = props.player.submitted;
+const Game = ({ gameIsIdle, playState }) => {
+  if (gameIsIdle)
+    return <GameIdle />;
 
-    this.onError = props.onError;
-  }
+  let mainView = null;
 
-  componentWillReceiveProps(nextProps) {
-    const nextState = {};
+  if (playState === STATE.QUESTION_MASTER_SELECTION)
+    mainView = <AnswerSelectionView />;
+  else
+    mainView = <QuestionView />;
 
-    if (nextProps.game)
-      nextState.game = nextProps.game;
-    if (nextProps.player && nextProps.player.submitted)
-      nextState.answeredQuestion = nextProps.player.submitted;
+  return (
+    <div id="page-game" className="page">
+      { mainView }
+      <ChoicesView />
+   </div>
+  );
+};
 
-    this.setState(nextState);
-  }
-
-  onStart() {
-    startGame()
-      .then(game => this.setState({ game }))
-      .catch(this.onError);
-  }
-
-  onChoiceSelected(selected) {
-    this.setState({
-      selectedChoices: selected,
-    });
-  }
-
-  onSubmit() {
-    const selection = this.state.selectedChoices;
-
-    submitChoices(selection.map(choice => choice.id))
-      .then(answeredQuestion => this.setState({
-        answeredQuestion,
-      }))
-      .catch(this.onError);
-  }
-
-  onSelect(id) {
-    selectAnswer(id)
-      .then(() => this.setState({
-        selectedChoices: [],
-        answeredQuestion: null,
-      }))
-      .then(this.props.reload)
-      .catch(this.onError);
-  }
-
-  render() {
-    const { player } = this.props;
-    const { game, selectedChoices, answeredQuestion } = this.state;
-    const choices = answeredQuestion ? answeredQuestion.answers : selectedChoices;
-
-    if (game.state === 'idle')
-      return <GameIdle player={player} game={game} onStart={() => this.onStart()} />;
-
-    let content = null;
-    if (game.propositions.length > 0) {
-      content = <AnswerSelectionView
-        question={game.question}
-        answers={game.propositions}
-        canSelect={game.question_master === player.nick}
-        onSelect={(id) => this.onSelect(id)}
-      />;
-    } else {
-      content = <QuestionView
-        questionMaster={game.question_master}
-        question={game.question}
-        choices={choices}
-        onSubmit={() => this.onSubmit()}
-        submitted={!!answeredQuestion}
-      />;
-    }
-
-    return (
-      <div id="page-game" className="page">
-        { content }
-        <ChoicesView
-          choices={player.cards}
-          canSelect={!answeredQuestion && player.nick !== game.question_master}
-          maxSelection={game.question.nb_choices}
-          onChoiceSelected={choice => this.onChoiceSelected(choice)}
-        />
-     </div>
-    );
-  }
-}
-
-export default Game;
+export default connect(mapStateToProps)(Game);

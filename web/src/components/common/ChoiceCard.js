@@ -1,7 +1,13 @@
 import React from 'react';
 
-const ChoiceCard = ({ choice, selected, onSelect }) => (
-  <div className={'card choice' + (selected ? ' selected' : '')} onClick={onSelect}>
+const ChoiceCard = ({ choice, selected, canSelect, onSelect }) => (
+  <div
+    className={[
+      'card choice',
+      (canSelect ? ' can-select' : ''),
+      (selected ? ' selected' : '')
+    ].join('')}
+    onClick={() => canSelect ? onSelect() : null}>
     <div className="text">{choice.text}</div>
   </div>
 );
