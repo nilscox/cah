@@ -12,6 +12,37 @@
   font-size: 1.2em;
 }
 
+.game-idle .players-list {
+  width: 100%;
+  margin-top: 30px;
+  background: #FFF;
+  text-align: initial;
+  font-weight: bold;
+}
+
+.game-idle ul.players-list {
+  width: 100%;
+  margin-top: 30px;
+  background: #FFF;
+  text-align: initial;
+  font-weight: bold;
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.game-idle ul.players-list li {
+  padding: 15px;
+  border-bottom: 2px solid #EEE;
+}
+
+.game-idle ul.players-list li:last-child {
+  border-bottom: none;
+}
+
+.game-idle ul.players-list li.player-offline {
+  color: #933;
+}
+
 .question-view {
   width: 100%;
   height: 100%;

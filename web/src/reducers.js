@@ -29,6 +29,73 @@ const player = (state = null, action) => {
   }
 };
 
+const game_ws = (state, message) => {
+  if (!state || !state.id)
+    return state;
+
+  if (message.type === 'joined') {
+    if (state.players.map(p => p.nick).indexOf(message.player.nick) >= 0)
+      return state;
+
+    return {
+      ...state,
+      players: [
+        ...state.players,
+        message.player
+      ],
+    };
+  }
+
+  if (message.type === 'left') {
+    const idx = state.players.map(p => p.nick).indexOf(message.player.nick);
+
+    if (idx < 0)
+      return state;
+
+    return {
+      ...state,
+      players: [
+        ...state.players.slice(0, idx),
+        ...state.players.slice(idx + 1)
+      ],
+    };
+  }
+
+  if (message.type === 'connected') {
+    const idx = state.players.map(p => p.nick).indexOf(message.player.nick);
+
+    if (idx < 0)
+      return state;
+
+    return {
+      ...state,
+      players: [
+        ...state.players.slice(0, idx),
+        { ...state.players[idx], connected: true },
+        ...state.players.slice(idx + 1)
+      ],
+    };
+  }
+
+  if (message.type === 'disconnected') {
+    const idx = state.players.map(p => p.nick).indexOf(message.player.nick);
+
+    if (idx < 0)
+      return state;
+
+    return {
+      ...state,
+      players: [
+        ...state.players.slice(0, idx),
+        { ...state.players[idx], connected: false },
+        ...state.players.slice(idx + 1)
+      ],
+    };
+  }
+
+  return state;
+};
+
 const game = (state = null, action) => {
   if (action.type === 'GAME_FETCH_REQUEST')
     return { ...state, fetching: true };
@@ -47,6 +114,9 @@ const game = (state = null, action) => {
 
   if (action.type === 'GAME_FETCH_FAILURE')
     return { ...state, fetching: false };
+
+  if (action.type === 'WS_MESSAGE')
+    state = game_ws(state, action.message);
 
   return state;
 };
@@ -81,6 +151,16 @@ const selection = (state = [], action) => {
       ];
     }
   }
+
+  return state;
+};
+
+const wsState = (state = null, action) => {
+  if (action.type === 'WS_CREATED')
+    return 'created';
+
+  if (action.type === 'WS_CONNECTED')
+    return 'connected';
 
   return state;
 };
@@ -131,6 +211,7 @@ export default combineReducers({
   player,
   game,
   selection,
+  wsState,
   error,
   loading,
 });

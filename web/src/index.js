@@ -9,6 +9,7 @@ import { createLogger } from 'redux-logger';
 
 import rootReducer from './reducers';
 import {fetchPlayer, fetchGame, initializationFinished } from './actions';
+import websocket, {send as wsSend} from './websocket';
 import App from './App';
 
 import './index.css';
@@ -22,6 +23,22 @@ const store = createStore(
     loggerMiddleware
   )
 );
+
+websocket(store.dispatch);
+
+let wsConnected = false;
+
+store.subscribe(() => {
+  if (wsConnected)
+    return;
+
+  const { player, wsState } = store.getState();
+
+  if (wsState === 'connected' && player && player.nick) {
+    wsSend({ action: 'connected', nick: player.nick });
+    wsConnected = true;
+  }
+});
 
 let gameFetched = false;
 
