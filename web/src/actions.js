@@ -1,4 +1,4 @@
-import request from './services/request';
+import request from './request';
 
 function asyncRequest(prefix, opts) {
   let { method, route, body, expected, dispatchRequest, dispatchSuccess, dispatchFailure } = opts;
