@@ -3,6 +3,7 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
+from api import events
 from api.authentication import PlayerAuthentication
 from api.exceptions import *
 from api.models import Game, Player, AnsweredQuestion
@@ -69,6 +70,8 @@ class GameViews(views.APIView):
         game = game_serializer.save(owner=player, players=[player])
         game.init()
 
+        events.on_create_game(player)
+
         return Response(game_serializer.data, status=status.HTTP_201_CREATED)
 
 
@@ -87,6 +90,7 @@ def join_game(request, pk):
         raise GameNotFound
 
     game.players.add(player)
+    events.on_join_game(player)
 
     return Response(GameSerializer(game).data)
 
@@ -102,6 +106,7 @@ def leave_game(request):
 
     game = player.game
     game.players.remove(player)
+    events.on_leave_game(player)
 
     return Response(GameSerializer(game).data)
 

@@ -10,6 +10,7 @@ class Player(models.Model):
     """
     Player fields:
         - nick: string
+        - socket_id: string
 
     Player relations:
         - game: Game
@@ -32,6 +33,7 @@ class Player(models.Model):
 
     nick = models.CharField(max_length=255, unique=True)
     game = models.ForeignKey('Game', related_name='players', blank=True, null=True, on_delete=models.CASCADE)
+    socket_id = models.CharField(max_length=64, unique=True, blank=True, null=True)
 
     def __str__(self):
         return self.nick

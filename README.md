@@ -15,6 +15,7 @@ Black cards, white cards, much fun.
 FullPlayer: {
     nick: string,
     score: integer,
+    connected: boolean,
     cards: Choice[],
     submitted: FullAnsweredQuestion | null,
 }
@@ -24,6 +25,7 @@ FullPlayer: {
 Player: {
     nick: string,
     score: integer | null,
+    connected: boolean,
 }
 ```
 

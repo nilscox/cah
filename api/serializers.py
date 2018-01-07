@@ -48,14 +48,19 @@ class PlayerSerializer(serializers.ModelSerializer):
     Player: {
         nick: string,
         score: integer,
+        connected: boolean,
     }
     """
 
     score = serializers.ReadOnlyField(source='get_score')
+    connected = serializers.SerializerMethodField()
 
     class Meta:
         model = Player
-        fields = ('nick', 'score')
+        fields = ('nick', 'score', 'connected')
+
+    def get_connected(self, player):
+        return bool(player.socket_id)
 
 
 class FullPlayerSerializer(PlayerSerializer):

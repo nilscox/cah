@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',
+    'channels',
     'rest_framework',
     'api.apps.ApiConfig',
 ]
@@ -106,6 +107,12 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "asgiref.inmemory.ChannelLayer",
+        "ROUTING": "cah.routing.channel_routing",
+    },
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
