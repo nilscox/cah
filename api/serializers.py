@@ -137,6 +137,7 @@ class AnsweredQuestionSerializer(serializers.ModelSerializer):
     }
     """
 
+    question = QuestionSerializer(read_only=True)
     text = serializers.ReadOnlyField(source='__str__')
     split = serializers.ReadOnlyField(source='get_split_text')
     answers = serializers.SerializerMethodField()

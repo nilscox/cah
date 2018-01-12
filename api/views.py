@@ -177,7 +177,7 @@ def answer(request):
         choice.played = True
         choice.save()
 
-    return Response(AnsweredQuestionSerializer(answered_question).data)
+    return Response(FullAnsweredQuestionSerializer(answered_question).data)
 
 
 @api_view(['POST'])
