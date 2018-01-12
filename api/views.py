@@ -70,8 +70,6 @@ class GameViews(views.APIView):
         game = game_serializer.save(owner=player, players=[player])
         game.init()
 
-        events.on_create_game(player)
-
         return Response(game_serializer.data, status=status.HTTP_201_CREATED)
 
 
@@ -90,7 +88,6 @@ def join_game(request, pk):
         raise GameNotFound
 
     game.players.add(player)
-    events.on_join_game(player)
 
     return Response(GameSerializer(game).data)
 
@@ -106,7 +103,6 @@ def leave_game(request):
 
     game = player.game
     game.players.remove(player)
-    events.on_leave_game(player)
 
     return Response(GameSerializer(game).data)
 

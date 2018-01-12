@@ -1,8 +1,11 @@
+import json
 import random
 
+from channels import Channel, Group
 from django.db import models
 
-from api import data
+from api import events, data
+from api.events import *
 from api.exceptions import *
 
 
@@ -73,6 +76,21 @@ class Player(models.Model):
             return self.game.answers.get(question=self.game.current_question, answered_by=self)
         except AnsweredQuestion.DoesNotExist:
             return None
+
+    def send(self, message):
+        Channel(self.socket_id).send({"text": json.dumps(message)})
+
+    def on_connected(self, socket_id):
+        self.socket_id = socket_id
+        self.save()
+
+        events.on_player_connected(self)
+
+    def on_disconnected(self):
+        events.on_player_disconnected(self)
+
+        self.socket_id = None
+        self.save()
 
 
 GAME_STATES = (
@@ -180,6 +198,9 @@ class Game(models.Model):
             return None
 
         return self.answers.filter(question=self.current_question)
+
+    def broadcast(self, message):
+        Group("game-" + str(self.id)).send({"text": json.dumps(message)})
 
 
 class Question(models.Model):
