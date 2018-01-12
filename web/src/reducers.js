@@ -17,6 +17,9 @@ const player = (state = null, action) => {
     case 'PLAYER_FETCH_FAILURE':
       return { ...state, fetching: false };
 
+    case 'PLAYER_LOGOUT_SUCCESS':
+      return null;
+
     case 'GAME_SUBMIT_ANSWER_SUCCESS':
       const submitted = action.body;
       const cardsIdx = submitted.answers.map(choice => choice.id);

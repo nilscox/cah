@@ -17,6 +17,9 @@ const App = ({ loading, player, game, error, clearError }) => {
   if (loading)
     return <div className="loader"><CircularProgress size={80} thickness={2} /></div>;
 
+  const isLoggedIn = player && player.nick;
+  const isInGame = game && game.id;
+
   const errorSnackBar = (
     <ErrorSnackBar error={error} onClose={clearError} />
   );
@@ -27,16 +30,16 @@ const App = ({ loading, player, game, error, clearError }) => {
 
   let content = null;
 
-  if (!player || !player.nick)
+  if (!isLoggedIn)
     content = <Login />;
-  else if (!game || !game.id)
+  else if (isInGame)
     content = <Lobby />;
   else
     content = <Game />;
 
   return (
     <div className="app">
-      { player && logoutButton }
+      { isLoggedIn && logoutButton }
       { errorSnackBar }
       { content }
     </div>
