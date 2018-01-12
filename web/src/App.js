@@ -32,7 +32,7 @@ const App = ({ loading, player, game, error, clearError }) => {
 
   if (!isLoggedIn)
     content = <Login />;
-  else if (isInGame)
+  else if (!isInGame)
     content = <Lobby />;
   else
     content = <Game />;
