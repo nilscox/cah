@@ -15,6 +15,11 @@ from api.serializers import GameSerializer, PlayerSerializer, FullPlayerSerializ
 class PlayerViews(views.APIView):
     authentication_classes = [PlayerAuthentication]
 
+    @staticmethod
+    def serialize_player(player):
+        serializer = FullPlayerSerializer if player.in_game() else PlayerSerializer
+        return serializer(player).data
+
     def post(self, request, format=None):
         nick = request.data.get('nick')
 
@@ -23,19 +28,15 @@ class PlayerViews(views.APIView):
 
         player, created = Player.objects.get_or_create(nick=nick)
         request.session['player_id'] = player.id
-        serializer = FullPlayerSerializer if player.in_game() else PlayerSerializer
 
-        return Response(serializer(player).data,
+        return Response(PlayerViews.serialize_player(player),
                         status.HTTP_201_CREATED if created else status.HTTP_200_OK)
 
     def get(self, request, format=None):
         if not isinstance(request.user, Player):
             raise PlayerNotFound
 
-        player = request.user
-        serializer = FullPlayerSerializer if player.in_game() else PlayerSerializer
-
-        return Response(serializer(player).data)
+        return Response(PlayerViews.serialize_player(request.user))
 
     def delete(self, request, format=None):
         if not isinstance(request.user, Player):
