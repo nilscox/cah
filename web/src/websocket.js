@@ -1,23 +1,18 @@
+import { wsCreated, wsConnected, wsMessage } from './actions';
+
 let socket = null;
 
-export default function(dispatch) {
+export function connect(dispatch) {
   socket = new WebSocket('ws://localhost:8000/game/');
 
-  dispatch({
-    type: 'WS_CREATED',
-  });
+  dispatch(wsCreated());
 
   socket.onopen = function(e) {
-    dispatch({
-      type: 'WS_CONNECTED',
-    });
+    dispatch(wsConnected(e));
   };
 
-  socket.onmessage = function(e) {
-    dispatch({
-      type: 'WS_MESSAGE',
-      message: JSON.parse(e.data),
-    });
+  socket.onmessage = function(event) {
+    dispatch(wsMessage(event, JSON.parse(event.data)));
   };
 }
 

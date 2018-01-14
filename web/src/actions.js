@@ -1,24 +1,37 @@
 import request from './request';
+import {connect as connectWS, send as wsSend} from './websocket';
 
 function asyncRequest(prefix, opts) {
-  let { method, route, body, expected, dispatchRequest, dispatchSuccess, dispatchFailure } = opts;
+  let { method, route, body, expected } = opts;
 
-  if (!dispatchRequest)
-    dispatchRequest = dispatch => dispatch({ type: prefix + '_REQUEST' });
+  return function(dispatch, getState) {
+    dispatch({ type: prefix + '_REQUEST' });
 
-  if (!dispatchSuccess)
-    dispatchSuccess = (dispatch, status, body) => dispatch({ type: prefix + '_SUCCESS', status, body });
-
-  if (!dispatchFailure)
-    dispatchFailure = (dispatch, error) => dispatch({ type: prefix + '_FAILURE', error });
-
-  return function(dispatch) {
-    dispatchRequest(dispatch);
     return request(method, route, body, expected)
       .then(
-        ({ status, body }) => dispatchSuccess(dispatch, status, body),
-        error => dispatchFailure(dispatch, error)
-      );
+        ({ status, body }) => {
+          dispatch({type: prefix + '_SUCCESS', status, body});
+          return { status, body };
+        },
+        error => {
+          dispatch({ type: prefix + '_FAILURE', error });
+          return { status: null, error };
+        }
+      )
+      .then(result => ({ dispatch, getState, result }));
+  };
+}
+
+export function initializationStart() {
+  return (dispatch, getState) => {
+    dispatch(fetchPlayer())
+      .then(() => {
+        const { player } = getState();
+
+        if (player)
+          return dispatch(fetchGame());
+      })
+      .then(() => dispatch(initializationFinished()));
   };
 }
 
@@ -42,12 +55,20 @@ const ANSWER_ROUTE = '/api/answer';
 
 export const PLAYER_LOGIN = 'PLAYER_LOGIN';
 export function loginPlayer(nick) {
-  return asyncRequest(PLAYER_LOGIN, {
-    method: 'POST',
-    route: PLAYER_ROUTE,
-    body: { nick },
-    expected: [200, 201],
-  });
+  return (dispatch, getState) => {
+    return dispatch(asyncRequest(PLAYER_LOGIN, {
+      method: 'POST',
+      route: PLAYER_ROUTE,
+      body: { nick },
+      expected: [200, 201],
+    }))
+      .then(({ dispatch, getState }) => {
+        const { player } = getState();
+
+        if (player)
+          connectWS(dispatch, player.nick);
+      });
+  };
 }
 
 export const PLAYER_LOGOUT = 'PLAYER_LOGOUT';
@@ -60,11 +81,19 @@ export function logoutPlayer() {
 
 export const PLAYER_FETCH = 'PLAYER_FETCH';
 export function fetchPlayer() {
-  return asyncRequest(PLAYER_FETCH, {
-    method: 'GET',
-    route: PLAYER_ROUTE,
-    expected: [200, 404],
-  });
+  return (dispatch, getState) => {
+    return dispatch(asyncRequest(PLAYER_FETCH, {
+      method: 'GET',
+      route: PLAYER_ROUTE,
+      expected: [200, 404],
+    }))
+      .then(({ dispatch, getState }) => {
+        const { player } = getState();
+
+        if (player)
+          connectWS(dispatch, player.nick);
+      });
+  };
 }
 
 export const GAME_FETCH = 'GAME_FETCH';
@@ -135,4 +164,37 @@ export function selectAnswer(answerId) {
     method: 'POST',
     route: ANSWER_ROUTE + '/select/' + answerId,
   });
+}
+
+export const WS_CREATED = 'WS_CREATED';
+export function wsCreated() {
+  return {
+    type: WS_CREATED,
+  };
+}
+
+export const WS_CONNECTED = 'WS_CONNECTED';
+export function wsConnected(event) {
+  return (dispatch, getState) => {
+    const { player }= getState();
+
+    wsSend({
+      action: 'connected',
+      nick: player.nick,
+    });
+
+    dispatch({
+      type: WS_CONNECTED,
+      event,
+    });
+  };
+}
+
+export const WS_MESSAGE = 'WS_MESSAGE';
+export function wsMessage(event, message) {
+  return {
+    type: WS_MESSAGE,
+    event,
+    message,
+  };
 }
