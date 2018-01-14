@@ -156,6 +156,14 @@ class Game(models.Model):
         create_blanks()
         create_choices()
 
+    def add_player(self, player):
+        self.players.add(player)
+        events.on_game_joined(player)
+
+    def remove_player(self, player):
+        self.players.remove(player)
+        events.on_game_left(player)
+
     def start(self):
         if self.players.count() < 3:
             raise NotEnoughPlayers
@@ -163,6 +171,8 @@ class Game(models.Model):
         self.state = 'started'
         self.next_turn(random.choice(self.players.all()))
         self.save()
+
+        events.on_game_started(self)
 
     def next_turn(self, player):
         self.question_master = player
@@ -181,6 +191,7 @@ class Game(models.Model):
 
     def deal_cards(self, player):
         choices = list(self.choices.filter(available=True))
+        dealt = []
 
         for i in range(11 - player.cards.count()):
             if len(choices) == 0:
@@ -189,9 +200,12 @@ class Game(models.Model):
             choice = random.choice(choices)
             choice.available = False
             choice.save()
+            dealt.append(choice)
 
             player.cards.add(choice)
             choices.remove(choice)
+
+        events.on_cards_dealt(player, dealt)
 
     def get_propositions(self):
         if self.state != 'started':

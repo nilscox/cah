@@ -88,7 +88,7 @@ def join_game(request, pk):
     except Game.DoesNotExist:
         raise GameNotFound
 
-    game.players.add(player)
+    game.add_player(player)
 
     return Response(GameSerializer(game).data)
 
@@ -103,7 +103,7 @@ def leave_game(request):
         raise PlayerNotInGame
 
     game = player.game
-    game.players.remove(player)
+    game.remove_player(player)
 
     return Response(GameSerializer(game).data)
 

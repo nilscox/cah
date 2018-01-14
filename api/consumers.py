@@ -42,7 +42,7 @@ def ws_message(message):
     action = actions[data["action"]]
 
     try:
-        response = action(message.reply_channel, data)
+        response = action(str(message.reply_channel), data)
     except RuntimeError as e:
         response = {"error": str(e)}
 
@@ -51,4 +51,4 @@ def ws_message(message):
 
 
 def ws_disconnect(message):
-    on_disconnected(message.reply_channel)
+    on_disconnected(str(message.reply_channel))
