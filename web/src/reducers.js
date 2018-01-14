@@ -1,5 +1,12 @@
 import { combineReducers } from 'redux';
 
+const player_ws = (state, message) => {
+  if (message.type === 'cards_dealt')
+    return { ...state, cards: [ ...state.cards, ...message.cards ] };
+
+  return state;
+};
+
 const player = (state = null, action) => {
   switch (action.type) {
     case 'PLAYER_LOGIN_REQUEST':
@@ -26,6 +33,9 @@ const player = (state = null, action) => {
       const cards = state.cards.filter(card => cardsIdx.indexOf(card.id) < 0);
 
       return { ...state, cards, submitted };
+
+    case 'WS_MESSAGE':
+      return player_ws(state, action.message);
 
     default:
       return state;
@@ -95,6 +105,9 @@ const game_ws = (state, message) => {
       ],
     };
   }
+
+  if (message.type === 'game_started')
+    return message.game;
 
   return state;
 };
