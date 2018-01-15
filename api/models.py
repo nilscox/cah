@@ -174,6 +174,15 @@ class Game(models.Model):
 
         events.on_game_started(self)
 
+    def select_answer(self, selected, selected_by):
+        selected.selected_by = selected_by
+        selected.save()
+
+        self.next_turn(selected.answered_by)
+        self.save()
+
+        events.on_answer_selected(self, selected, self.get_propositions())
+
     def next_turn(self, player):
         self.question_master = player
 
@@ -188,6 +197,8 @@ class Game(models.Model):
         self.current_question = random.choice(available_questions)
         self.current_question.available = False
         self.current_question.save()
+
+        events.on_next_turn(self, self.current_question)
 
     def deal_cards(self, player):
         choices = list(self.choices.filter(available=True))
@@ -241,6 +252,30 @@ class Question(models.Model):
 
     def __str__(self):
         return self.get_filled_text('...')
+
+    def answer(self, choices, answered_by):
+        game = self.game
+
+        answered_question = AnsweredQuestion(game=game, question=self, answered_by=answered_by)
+        answered_question.save()
+
+        blanks = list(self.blanks.all())
+
+        for i in range(len(choices)):
+            choice = choices[i]
+
+            answered_question.answers.create(position=blanks[i], choice=choice)
+
+            choice.owner = None
+            choice.played = True
+            choice.save()
+
+        events.on_answer_submitted(game, answered_question)
+
+        if game.get_propositions().count() == game.players.count() - 1:
+            events.on_all_answers_submitted(game, game.get_propositions())
+
+        return answered_question
 
     def get_nb_choices(self):
         return self.blanks.count()

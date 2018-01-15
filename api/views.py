@@ -163,19 +163,7 @@ def answer(request):
     if len(ids) != len(choices):
         raise InvalidAnswers
 
-    answered_question = AnsweredQuestion(game=game, question=question, answered_by=player)
-    answered_question.save()
-
-    blanks = list(question.blanks.all())
-
-    for i in range(len(choices)):
-        choice = choices[i]
-
-        answered_question.answers.create(position=blanks[i], choice=choice)
-
-        choice.owner = None
-        choice.played = True
-        choice.save()
+    answered_question = question.answer(choices, player)
 
     return Response(FullAnsweredQuestionSerializer(answered_question).data)
 
@@ -207,10 +195,6 @@ def select(request, pk):
     except (ValueError, AnsweredQuestion.DoesNotExist):
         raise InvalidSelection
 
-    selected.selected_by = player
-    game.next_turn(selected.answered_by)
-
-    selected.save()
-    game.save()
+    game.select_answer(selected, player)
 
     return Response(FullAnsweredQuestionSerializer(selected).data)

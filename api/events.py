@@ -66,3 +66,32 @@ def on_cards_dealt(player, cards):
         "type": "cards_dealt",
         "cards": serialize("ChoiceSerializer", cards, many=True),
     })
+
+
+def on_answer_submitted(game, answer):
+    game.broadcast({
+        "type": "answer_submitted",
+        "answer": serialize("AnsweredQuestionSerializer", answer),
+    })
+
+
+def on_all_answers_submitted(game, all_answers):
+    game.broadcast({
+        "type": "all_answers_submitted",
+        "answers": serialize("AnsweredQuestionSerializer", all_answers, many=True),
+    })
+
+
+def on_answer_selected(game, answer, all_answers):
+    game.broadcast({
+        "type": "answer_submitted",
+        "answer": serialize("FullAnsweredQuestionSerializer", answer),
+        "answers": serialize("FullAnsweredQuestionSerializer", all_answers, many=True),
+    })
+
+
+def on_next_turn(game, question):
+    game.broadcast({
+        "type": "next_turn",
+        "question": serialize("QuestionSerializer", question),
+    })
