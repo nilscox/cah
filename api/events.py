@@ -68,10 +68,10 @@ def on_cards_dealt(player, cards):
     })
 
 
-def on_answer_submitted(game, answer):
+def on_answer_submitted(game, player):
     game.broadcast({
         "type": "answer_submitted",
-        "answer": serialize("AnsweredQuestionSerializer", answer),
+        "nick": player.nick,
     })
 
 

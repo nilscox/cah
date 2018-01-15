@@ -109,6 +109,12 @@ const game_ws = (state, message) => {
   if (message.type === 'game_started')
     return message.game;
 
+  if (message.type === 'answer_submitted')
+    return { ...state, has_submitted: [ ...state.has_submitted, message.nick ] };
+
+  if (message.type === 'all_answers_submitted')
+    return { ...state, propositions: message.answers };
+
   return state;
 };
 
@@ -125,7 +131,7 @@ const game = (state = null, action) => {
     if (action.status === 404)
       return null;
 
-    return { ...action.body, selectedChoices: [], fetching: false };
+    return { ...action.body, selectedChoices: [], has_submitted: [], fetching: false };
   }
 
   if (action.type === 'GAME_FETCH_FAILURE')

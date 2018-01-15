@@ -78,6 +78,7 @@ class Player(models.Model):
             return None
 
     def send(self, message):
+        print("send: " + self.nick + ": " + str(message))
         Channel(self.socket_id).send({"text": json.dumps(message)})
 
     def on_connected(self, socket_id):
@@ -225,6 +226,7 @@ class Game(models.Model):
         return self.answers.filter(question=self.current_question)
 
     def broadcast(self, message):
+        print("broadcast: game-" + str(self.id) + ": " + str(message))
         Group("game-" + str(self.id)).send({"text": json.dumps(message)})
 
 
@@ -270,7 +272,7 @@ class Question(models.Model):
             choice.played = True
             choice.save()
 
-        events.on_answer_submitted(game, answered_question)
+        events.on_answer_submitted(game, answered_by)
 
         if game.get_propositions().count() == game.players.count() - 1:
             events.on_all_answers_submitted(game, game.get_propositions())
