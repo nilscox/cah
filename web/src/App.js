@@ -20,8 +20,8 @@ const App = ({ loading, player, game, error, api, clearError }) => {
   if (api.down)
     return <h4 className="api-down">API is down... Please wait, happy monkeys are fixing the problem.</h4>;
 
-  const isLoggedIn = player && player.nick;
-  const isInGame = game && game.id;
+  const isLoggedIn = !!(player && player.nick);
+  const isInGame = !!(game && game.id);
 
   const errorSnackBar = (
     <ErrorSnackBar error={error} onClose={clearError} />

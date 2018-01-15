@@ -110,6 +110,9 @@ export function loginPlayer(nick) {
 
         if (player && player.nick)
           connectWS(dispatch, player.nick);
+
+        if (player && player.nick)
+          return dispatch(fetchGame());
       });
   };
 }
