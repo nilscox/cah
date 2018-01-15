@@ -1,24 +1,67 @@
 import request from './request';
-import {connect as connectWS, send as wsSend} from './websocket';
+import {
+  connect as connectWS,
+  send as wsSend,
+  close as wsClose
+} from './websocket';
 
 function asyncRequest(prefix, opts) {
   let { method, route, body, expected } = opts;
 
   return function(dispatch, getState) {
+    const { api } = getState();
+
     dispatch({ type: prefix + '_REQUEST' });
 
     return request(method, route, body, expected)
       .then(
         ({ status, body }) => {
           dispatch({type: prefix + '_SUCCESS', status, body});
+          dispatch(apiUp());
+
           return { status, body };
         },
         error => {
           dispatch({ type: prefix + '_FAILURE', error });
+          dispatch(apiDown());
+
           return { status: null, error };
         }
       )
       .then(result => ({ dispatch, getState, result }));
+  };
+}
+
+export const API_DOWN = 'API_DOWN';
+export function apiDown() {
+  return (dispatch, getState) => {
+    const { api, wsState } = getState();
+
+    if (wsState === WS_CONNECTED)
+      wsClose();
+
+    setTimeout(() => dispatch(initializationStart()), 5000);
+
+    if (api.down)
+      return;
+
+    dispatch({
+      type: API_DOWN,
+    });
+  };
+}
+
+export const API_UP = 'API_UP';
+export function apiUp() {
+  return (dispatch, getState) => {
+    const { api } = getState();
+
+    if (!api.down)
+      return;
+
+    dispatch({
+      type: API_UP,
+    });
   };
 }
 
@@ -28,7 +71,7 @@ export function initializationStart() {
       .then(() => {
         const { player } = getState();
 
-        if (player)
+        if (player && player.nick)
           return dispatch(fetchGame());
       })
       .then(() => dispatch(initializationFinished()));
@@ -65,7 +108,7 @@ export function loginPlayer(nick) {
       .then(({ dispatch, getState }) => {
         const { player } = getState();
 
-        if (player)
+        if (player && player.nick)
           connectWS(dispatch, player.nick);
       });
   };
@@ -90,7 +133,7 @@ export function fetchPlayer() {
       .then(({ dispatch, getState }) => {
         const { player } = getState();
 
-        if (player)
+        if (player && player.nick)
           connectWS(dispatch, player.nick);
       });
   };

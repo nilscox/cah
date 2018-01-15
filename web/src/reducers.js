@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux';
+import {WS_STATE} from "./websocket";
 
 const player_ws = (state, message) => {
   if (message.type === 'cards_dealt')
@@ -84,7 +85,7 @@ const game_ws = (state, message) => {
       ...state,
       players: [
         ...state.players.slice(0, idx),
-        { ...state.players[idx], connected: true },
+        message.player,
         ...state.players.slice(idx + 1)
       ],
     };
@@ -107,7 +108,7 @@ const game_ws = (state, message) => {
   }
 
   if (message.type === 'game_started')
-    return message.game;
+    return { ...message.game, selectedChoices: [], has_submitted: [] };
 
   if (message.type === 'answer_submitted')
     return { ...state, has_submitted: [ ...state.has_submitted, message.nick ] };
@@ -144,8 +145,10 @@ const game = (state = null, action) => {
 };
 
 const error = (state = null, action) => {
-  if (action.type.endsWith('_FAILURE'))
-    return { ...action.error };
+  if (action.type.endsWith('_FAILURE')) {
+    if (action.error && action.error.body)
+      return { ...action.error.body };
+  }
 
   if (action.type === 'CLEAR_ERROR')
     return null;
@@ -177,12 +180,22 @@ const selection = (state = [], action) => {
   return state;
 };
 
-const wsState = (state = null, action) => {
+const wsState = (state = WS_STATE.CLOSED, action) => {
   if (action.type === 'WS_CREATED')
-    return 'created';
+    return WS_STATE.CREATED;
 
   if (action.type === 'WS_CONNECTED')
     return 'connected';
+
+  return state;
+};
+
+const api = (state = { down: false }, action) => {
+  if (action.type === 'API_DOWN')
+    return { ...state, down: true };
+
+  if (action.type === 'API_UP')
+    return { ...state, down: false };
 
   return state;
 };
@@ -234,6 +247,7 @@ export default combineReducers({
   game,
   selection,
   wsState,
+  api,
   error,
   loading,
 });

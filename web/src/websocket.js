@@ -1,5 +1,11 @@
 import { wsCreated, wsConnected, wsMessage } from './actions';
 
+export const WS_STATE = {
+  CLOSED: 'CLOSED',
+  CREATED: 'CREATED',
+  CONNECTED: 'CONNECTED',
+};
+
 let socket = null;
 
 export function connect(dispatch) {
@@ -14,6 +20,13 @@ export function connect(dispatch) {
   socket.onmessage = function(event) {
     dispatch(wsMessage(event, JSON.parse(event.data)));
   };
+}
+
+export function close() {
+  if (!socket)
+    throw new Error('socket is not connected');
+
+  socket.close();
 }
 
 export function send(message) {
