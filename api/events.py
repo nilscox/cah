@@ -41,7 +41,7 @@ def on_game_created(player):
 def on_game_joined(player):
     player_group(player).add(player.socket_id)
     player.game.broadcast({
-        "type": "connected",
+        "type": "joined",
         "player": serialize("PlayerSerializer", player),
     })
 
@@ -49,7 +49,7 @@ def on_game_joined(player):
 def on_game_left(player):
     player_group(player).discard(player.socket_id)
     player.game.broadcast({
-        "type": "disconnected",
+        "type": "left",
         "player": serialize("PlayerSerializer", player),
     })
 

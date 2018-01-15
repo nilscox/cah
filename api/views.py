@@ -71,6 +71,8 @@ class GameViews(views.APIView):
         game = game_serializer.save(owner=player, players=[player])
         game.init()
 
+        events.on_game_created(player)
+
         return Response(game_serializer.data, status=status.HTTP_201_CREATED)
 
 
