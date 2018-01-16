@@ -3,13 +3,11 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
-from api import events
 from api.authentication import PlayerAuthentication
 from api.exceptions import *
 from api.models import Game, Player, AnsweredQuestion
 from api.permissions import IsPlayer
-from api.serializers import GameSerializer, PlayerSerializer, FullPlayerSerializer, AnsweredQuestionSerializer, \
-    FullAnsweredQuestionSerializer
+from api.serializers import GameSerializer, PlayerSerializer, FullPlayerSerializer, FullAnsweredQuestionSerializer
 
 
 class PlayerViews(views.APIView):
@@ -70,8 +68,6 @@ class GameViews(views.APIView):
         game_serializer.is_valid(raise_exception=True)
         game = game_serializer.save(owner=player, players=[player])
         game.init()
-
-        events.on_game_created(player)
 
         return Response(game_serializer.data, status=status.HTTP_201_CREATED)
 

@@ -32,11 +32,13 @@ class Player(models.Model):
         - get_score(Game=None) -> integer | None
         - win_card(AnsweredQuestion) -> None
         - get_submitted() -> AnsweredQuestion
+        - on_connected(socket_id) -> None
+        - on_disconnected() -> None
     """
 
     nick = models.CharField(max_length=255, unique=True)
-    game = models.ForeignKey('Game', related_name='players', blank=True, null=True, on_delete=models.CASCADE)
     socket_id = models.CharField(max_length=64, unique=True, blank=True, null=True)
+    game = models.ForeignKey('Game', related_name='players', blank=True, null=True, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.nick
@@ -77,10 +79,6 @@ class Player(models.Model):
         except AnsweredQuestion.DoesNotExist:
             return None
 
-    def send(self, message):
-        print("send: " + self.nick + ": " + str(message))
-        Channel(self.socket_id).send({"text": json.dumps(message)})
-
     def on_connected(self, socket_id):
         self.socket_id = socket_id
         self.save()
@@ -117,10 +115,13 @@ class Game(models.Model):
 
     Game methods:
         - init() -> None
+        - add_player(player) -> None
+        - remove_player(player) -> None
         - start() -> None
         - next_turn(player) -> None
         - deal_cards() -> None
         - get_propositions() -> AnsweredQuestion[] | None
+        - select_answer(selected, selected_by) -> None
     """
 
     state = models.CharField(max_length=8, default='idle', choices=GAME_STATES)
@@ -157,6 +158,8 @@ class Game(models.Model):
         create_blanks()
         create_choices()
 
+        events.on_game_created(self.owner)
+
     def add_player(self, player):
         self.players.add(player)
         events.on_game_joined(player)
@@ -174,15 +177,6 @@ class Game(models.Model):
         self.save()
 
         events.on_game_started(self)
-
-    def select_answer(self, selected, selected_by):
-        selected.selected_by = selected_by
-        selected.save()
-
-        events.on_answer_selected(self, selected, self.get_propositions())
-
-        self.next_turn(selected.answered_by)
-        self.save()
 
     def next_turn(self, player):
         self.question_master = player
@@ -226,9 +220,14 @@ class Game(models.Model):
 
         return self.answers.filter(question=self.current_question)
 
-    def broadcast(self, message):
-        print("broadcast: game-" + str(self.id) + ": " + str(message))
-        Group("game-" + str(self.id)).send({"text": json.dumps(message)})
+    def select_answer(self, selected, selected_by):
+        selected.selected_by = selected_by
+        selected.save()
+
+        events.on_answer_selected(self, selected, self.get_propositions())
+
+        self.next_turn(selected.answered_by)
+        self.save()
 
 
 class Question(models.Model):
@@ -247,6 +246,7 @@ class Question(models.Model):
         - get_nb_choices() -> integer
         - get_filled_text(string) -> string
         - get_split_text() -> (string | None)[]
+        - answer(choices, answered_by) -> None
     """
 
     text = models.CharField(max_length=255)
@@ -255,30 +255,6 @@ class Question(models.Model):
 
     def __str__(self):
         return self.get_filled_text('...')
-
-    def answer(self, choices, answered_by):
-        game = self.game
-
-        answered_question = AnsweredQuestion(game=game, question=self, answered_by=answered_by)
-        answered_question.save()
-
-        blanks = list(self.blanks.all())
-
-        for i in range(len(choices)):
-            choice = choices[i]
-
-            answered_question.answers.create(position=blanks[i], choice=choice)
-
-            choice.owner = None
-            choice.played = True
-            choice.save()
-
-        events.on_answer_submitted(game, answered_by)
-
-        if game.get_propositions().count() == game.players.count() - 1:
-            events.on_all_answers_submitted(game, game.get_propositions())
-
-        return answered_question
 
     def get_nb_choices(self):
         return self.blanks.count()
@@ -308,6 +284,30 @@ class Question(models.Model):
         result.append(text[last:])
 
         return result
+
+    def answer(self, choices, answered_by):
+        game = self.game
+
+        answered_question = AnsweredQuestion(game=game, question=self, answered_by=answered_by)
+        answered_question.save()
+
+        blanks = list(self.blanks.all())
+
+        for i in range(len(choices)):
+            choice = choices[i]
+
+            answered_question.answers.create(position=blanks[i], choice=choice)
+
+            choice.owner = None
+            choice.played = True
+            choice.save()
+
+        events.on_answer_submitted(game, answered_by)
+
+        if game.get_propositions().count() == game.players.count() - 1:
+            events.on_all_answers_submitted(game, game.get_propositions())
+
+        return answered_question
 
 
 class Choice(models.Model):

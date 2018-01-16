@@ -34,8 +34,8 @@ def on_player_disconnected(player):
         })
 
 
-def on_game_created(player):
-    player_group(player).add(player.socket_id)
+def on_game_created(owner):
+    player_group(owner).add(owner.socket_id)
 
 
 def on_game_joined(player):
