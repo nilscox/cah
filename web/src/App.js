@@ -5,7 +5,7 @@ import Lobby from './components/pages/Lobby';
 import Game from './components/pages/game/Game';
 import {CircularProgress} from 'material-ui';
 import ErrorSnackBar from './components/common/ErrorSnackbar';
-import {API_STATE, clearError} from "./actions";
+import {API_STATE, clearError} from './actions';
 
 const mapStateToProps = state => state;
 
