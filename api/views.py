@@ -10,6 +10,11 @@ from api.permissions import IsPlayer
 from api.serializers import GameSerializer, PlayerSerializer, FullPlayerSerializer, FullAnsweredQuestionSerializer
 
 
+@api_view()
+def root(request):
+    return Response()
+
+
 class PlayerViews(views.APIView):
     authentication_classes = [PlayerAuthentication]
 

@@ -4,6 +4,7 @@ from api import views
 from api import views_debug
 
 urlpatterns = [
+    path('', views.root),
     path('player', views.PlayerViews.as_view()),
     path('game', views.GameViews.as_view()),
     path('game/join/<int:pk>', views.join_game),
