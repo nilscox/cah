@@ -1,13 +1,6 @@
 import { combineReducers } from 'redux';
 import {WS_STATE} from './websocket';
 
-const player_ws = (state, message) => {
-  if (message.type === 'cards_dealt')
-    return { ...state, cards: [ ...state.cards, ...message.cards ] };
-
-  return state;
-};
-
 const player = (state = null, action) => {
   switch (action.type) {
     case 'PLAYER_LOGIN_REQUEST':
@@ -35,111 +28,115 @@ const player = (state = null, action) => {
 
       return { ...state, cards, submitted };
 
-    case 'WS_MESSAGE':
-      return player_ws(state, action.message);
+    case 'WS_CARDS_DEALT':
+      const message = action.message;
+
+      return { ...state, cards: [ ...(state.cards || []), ...message.cards ] };
 
     default:
       return state;
   }
 };
 
-const game_ws = (state, message) => {
-  if (!state || !state.id)
+const game = (state = null, action) => {
+  const message = action.message;
+  let idx;
+
+  switch (action.type) {
+    case 'GAME_FETCH_REQUEST':
+      return {...state, fetching: true};
+
+    case 'GAME_FETCH_SUCCESS':
+    case 'GAME_CREATE_SUCCESS':
+    case 'GAME_JOIN_SUCCESS':
+    case 'GAME_START_SUCCESS':
+      if (action.status === 404)
+        return null;
+
+      return {...action.body, selectedChoices: [], has_submitted: [], fetching: false};
+
+    case 'GAME_FETCH_FAILURE':
+      return {...state, fetching: false};
+
+    default:
+      break;
+  }
+
+  if (!state || !state.id || !message)
     return state;
 
-  if (message.type === 'joined') {
-    if (state.players.map(p => p.nick).indexOf(message.player.nick) >= 0)
-      return state;
+  switch (action.type) {
+    case 'WS_JOINED':
+      if (state.players.map(p => p.nick).indexOf(message.player.nick) >= 0)
+        return state;
 
-    return {
-      ...state,
-      players: [
-        ...state.players,
-        message.player
-      ],
-    };
+      return {
+        ...state,
+        players: [
+          ...state.players,
+          message.player
+        ],
+      };
+
+    case 'WS_LEFT':
+      idx = state.players.map(p => p.nick).indexOf(message.player.nick);
+
+      if (idx < 0)
+        return state;
+
+      return {
+        ...state,
+        players: [
+          ...state.players.slice(0, idx),
+          ...state.players.slice(idx + 1)
+        ],
+      };
+
+    case 'WS_CONNECTED':
+      idx = state.players.map(p => p.nick).indexOf(message.player.nick);
+
+      if (idx < 0)
+        return state;
+
+      return {
+        ...state,
+        players: [
+          ...state.players.slice(0, idx),
+          message.player,
+          ...state.players.slice(idx + 1)
+        ],
+      };
+
+    case 'WS_DISCONNECTED':
+      idx = state.players.map(p => p.nick).indexOf(message.player.nick);
+
+      if (idx < 0)
+        return state;
+
+      return {
+        ...state,
+        players: [
+          ...state.players.slice(0, idx),
+          {...state.players[idx], connected: false},
+          ...state.players.slice(idx + 1)
+        ],
+      };
+
+    case 'WS_GAME_STARTED':
+      return {...message.game, selectedChoices: [], has_submitted: []};
+
+    case 'WS_ANSWER_SUBMITTED':
+      return {...state, has_submitted: [...state.has_submitted, message.nick]};
+
+    case 'WS_ALL_ANSWERS_SUBMITTED':
+      return {...state, propositions: message.answers};
+
+    case 'WS_NEXT_TURN':
+      return { ...state, ...message.game };
+
+    default:
+      break;
   }
-
-  if (message.type === 'left') {
-    const idx = state.players.map(p => p.nick).indexOf(message.player.nick);
-
-    if (idx < 0)
-      return state;
-
-    return {
-      ...state,
-      players: [
-        ...state.players.slice(0, idx),
-        ...state.players.slice(idx + 1)
-      ],
-    };
-  }
-
-  if (message.type === 'connected') {
-    const idx = state.players.map(p => p.nick).indexOf(message.player.nick);
-
-    if (idx < 0)
-      return state;
-
-    return {
-      ...state,
-      players: [
-        ...state.players.slice(0, idx),
-        message.player,
-        ...state.players.slice(idx + 1)
-      ],
-    };
-  }
-
-  if (message.type === 'disconnected') {
-    const idx = state.players.map(p => p.nick).indexOf(message.player.nick);
-
-    if (idx < 0)
-      return state;
-
-    return {
-      ...state,
-      players: [
-        ...state.players.slice(0, idx),
-        { ...state.players[idx], connected: false },
-        ...state.players.slice(idx + 1)
-      ],
-    };
-  }
-
-  if (message.type === 'game_started')
-    return { ...message.game, selectedChoices: [], has_submitted: [] };
-
-  if (message.type === 'answer_submitted')
-    return { ...state, has_submitted: [ ...state.has_submitted, message.nick ] };
-
-  if (message.type === 'all_answers_submitted')
-    return { ...state, propositions: message.answers };
-
-  return state;
-};
-
-const game = (state = null, action) => {
-  if (action.type === 'GAME_FETCH_REQUEST')
-    return { ...state, fetching: true };
-
-  if ([
-    'GAME_FETCH_SUCCESS',
-    'GAME_CREATE_SUCCESS',
-    'GAME_JOIN_SUCCESS',
-    'GAME_START_SUCCESS',
-  ].indexOf(action.type) >= 0) {
-    if (action.status === 404)
-      return null;
-
-    return { ...action.body, selectedChoices: [], has_submitted: [], fetching: false };
-  }
-
-  if (action.type === 'GAME_FETCH_FAILURE')
-    return { ...state, fetching: false };
-
-  if (action.type === 'WS_MESSAGE')
-    state = game_ws(state, action.message);
 
   return state;
 };

@@ -9,8 +9,6 @@ function asyncRequest(prefix, opts) {
   let { method, route, body, expected } = opts;
 
   return function(dispatch, getState) {
-    const { api } = getState();
-
     dispatch({ type: prefix + '_REQUEST' });
 
     return request(method, route, body, expected)
@@ -241,9 +239,13 @@ export function wsConnected(event) {
 
 export const WS_MESSAGE = 'WS_MESSAGE';
 export function wsMessage(event, message) {
-  return {
-    type: WS_MESSAGE,
-    event,
-    message,
+  if (!message.type)
+    throw new Error('No action in message: ' + message);
+
+  return dispatch => {
+    dispatch({
+      type: 'WS_' + message.type,
+      message,
+    });
   };
 }
