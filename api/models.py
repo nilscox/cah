@@ -179,10 +179,10 @@ class Game(models.Model):
         selected.selected_by = selected_by
         selected.save()
 
+        events.on_answer_selected(self, selected, self.get_propositions())
+
         self.next_turn(selected.answered_by)
         self.save()
-
-        events.on_answer_selected(self, selected, self.get_propositions())
 
     def next_turn(self, player):
         self.question_master = player
@@ -200,7 +200,7 @@ class Game(models.Model):
         self.current_question.save()
 
         if self.state == 'started':
-            events.on_next_turn(self, self.current_question)
+            events.on_next_turn(self)
 
     def deal_cards(self, player):
         choices = list(self.choices.filter(available=True))

@@ -19,7 +19,7 @@ def on_player_connected(player):
         player_group(player).add(player.socket_id)
 
         player.game.broadcast({
-            "type": "connected",
+            "type": "CONNECTED",
             "player": serialize("PlayerSerializer", player),
         })
 
@@ -29,7 +29,7 @@ def on_player_disconnected(player):
         player_group(player).discard(player.socket_id)
 
         player.game.broadcast({
-            "type": "disconnected",
+            "type": "DISCONNECTED",
             "player": serialize("PlayerSerializer", player),
         })
 
@@ -41,7 +41,7 @@ def on_game_created(player):
 def on_game_joined(player):
     player_group(player).add(player.socket_id)
     player.game.broadcast({
-        "type": "joined",
+        "type": "JOINED",
         "player": serialize("PlayerSerializer", player),
     })
 
@@ -49,49 +49,49 @@ def on_game_joined(player):
 def on_game_left(player):
     player_group(player).discard(player.socket_id)
     player.game.broadcast({
-        "type": "left",
+        "type": "LEFT",
         "player": serialize("PlayerSerializer", player),
     })
 
 
 def on_game_started(game):
     game.broadcast({
-        "type": "game_started",
+        "type": "GAME_STARTED",
         "game": serialize("GameSerializer", game),
     })
 
 
 def on_cards_dealt(player, cards):
     player.send({
-        "type": "cards_dealt",
+        "type": "CARDS_DEALT",
         "cards": serialize("ChoiceSerializer", cards, many=True),
     })
 
 
 def on_answer_submitted(game, player):
     game.broadcast({
-        "type": "answer_submitted",
+        "type": "ANSWER_SUBMITTED",
         "nick": player.nick,
     })
 
 
 def on_all_answers_submitted(game, all_answers):
     game.broadcast({
-        "type": "all_answers_submitted",
+        "type": "ALL_ANSWERS_SUBMITTED",
         "answers": serialize("AnsweredQuestionSerializer", all_answers, many=True),
     })
 
 
 def on_answer_selected(game, answer, all_answers):
     game.broadcast({
-        "type": "answer_submitted",
+        "type": "ANSWER_SELECTED",
         "answer": serialize("FullAnsweredQuestionSerializer", answer),
         "answers": serialize("FullAnsweredQuestionSerializer", all_answers, many=True),
     })
 
 
-def on_next_turn(game, question):
+def on_next_turn(game):
     game.broadcast({
-        "type": "next_turn",
-        "question": serialize("QuestionSerializer", question),
+        "type": "NEXT_TURN",
+        "game": serialize("GameSerializer", game),
     })
