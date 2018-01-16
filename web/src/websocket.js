@@ -1,24 +1,27 @@
-import { wsCreated, wsConnected, wsMessage } from './actions';
-
-export const WS_STATE = {
-  CLOSED: 'CLOSED',
-  CREATED: 'CREATED',
-  CONNECTED: 'CONNECTED',
-};
+import {
+  websocketConnected,
+  websocketCreated,
+  websocketMessage,
+  websocketClosed
+} from './actions';
 
 let socket = null;
 
 export function connect(dispatch) {
   socket = new WebSocket('ws://localhost:8000/game/');
 
-  dispatch(wsCreated());
+  dispatch(websocketCreated());
 
   socket.onopen = function(e) {
-    dispatch(wsConnected(e));
+    dispatch(websocketConnected(e));
   };
 
   socket.onmessage = function(event) {
-    dispatch(wsMessage(event, JSON.parse(event.data)));
+    dispatch(websocketMessage(event, JSON.parse(event.data)));
+  };
+
+  socket.onclose = function() {
+    dispatch(websocketClosed());
   };
 }
 

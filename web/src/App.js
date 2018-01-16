@@ -5,7 +5,7 @@ import Lobby from './components/pages/Lobby';
 import Game from './components/pages/game/Game';
 import {CircularProgress} from 'material-ui';
 import ErrorSnackBar from './components/common/ErrorSnackbar';
-import {clearError} from "./actions";
+import {API_STATE, clearError} from "./actions";
 
 const mapStateToProps = state => state;
 
@@ -13,11 +13,11 @@ const mapDispatchToProps = dispatch => ({
   clearError: () => dispatch(clearError()),
 });
 
-const App = ({ loading, player, game, error, api, clearError }) => {
+const App = ({ loading, player, game, error, status, clearError }) => {
   if (loading)
     return <div className="loader"><CircularProgress size={80} thickness={2} /></div>;
 
-  if (api.down)
+  if (status.api === API_STATE.DOWN)
     return <h4 className="api-down">API is down... Please wait, happy monkeys are fixing the problem.</h4>;
 
   const isLoggedIn = !!(player && player.nick);

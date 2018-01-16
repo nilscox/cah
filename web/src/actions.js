@@ -1,9 +1,20 @@
 import request from './request';
 import {
   connect as connectWS,
-  send as wsSend,
-  close as wsClose
+  send as sendToWS,
+  close as closeWS,
 } from './websocket';
+
+export const API_STATE = {
+  UP: 'UP',
+  DOWN: 'DOWN',
+};
+
+export const WS_STATE = {
+  CLOSED: 'CLOSED',
+  CREATED: 'CREATED',
+  CONNECTED: 'CONNECTED',
+};
 
 function asyncRequest(prefix, opts) {
   let { method, route, body, expected } = opts;
@@ -33,36 +44,52 @@ function asyncRequest(prefix, opts) {
   };
 }
 
+export const CHECK_API_STATUS = 'CHECK_API_STATUS';
+export function checkApiStatus() {
+  return (dispatch, getState) => {
+    const onSuccess = () => {
+      const { status } = getState();
+
+      if (status.api === API_STATE.DOWN) {
+        dispatch(apiUp());
+        dispatch(initializationStart());
+      }
+    };
+
+    const onFailure = () => dispatch(apiDown());
+
+    dispatch({ type: CHECK_API_STATUS });
+
+    return request('GET', '/api/')
+      .then(onSuccess, onFailure);
+  };
+}
+
 export const API_DOWN = 'API_DOWN';
 export function apiDown() {
   return (dispatch, getState) => {
-    const { api, wsState } = getState();
+    const { status } = getState();
 
-    if (wsState === WS_CONNECTED)
-      wsClose();
+    if (status.websocket === WS_STATE.CONNECTED)
+      closeWS();
 
-    setTimeout(() => dispatch(initializationStart()), 5000);
+    if (status.api === API_STATE.UP)
+      dispatch({ type: API_DOWN });
 
-    if (api.down)
-      return;
-
-    dispatch({
-      type: API_DOWN,
-    });
+    setTimeout(() => dispatch(checkApiStatus()), 5000);
   };
 }
 
 export const API_UP = 'API_UP';
 export function apiUp() {
   return (dispatch, getState) => {
-    const { api } = getState();
+    const { status, player } = getState();
 
-    if (!api.down)
-      return;
+    if (status.api === API_STATE.DOWN)
+      dispatch({ type: API_UP });
 
-    dispatch({
-      type: API_UP,
-    });
+    if (status.websocket === WS_STATE.CLOSED && player && player.nick)
+      connectWS(dispatch);
   };
 }
 
@@ -110,9 +137,6 @@ export function loginPlayer(nick) {
         const { player } = getState();
 
         if (player && player.nick)
-          connectWS(dispatch, player.nick);
-
-        if (player && player.nick)
           return dispatch(fetchGame());
       });
   };
@@ -133,13 +157,7 @@ export function fetchPlayer() {
       method: 'GET',
       route: PLAYER_ROUTE,
       expected: [200, 404],
-    }))
-      .then(({ dispatch, getState }) => {
-        const { player } = getState();
-
-        if (player && player.nick)
-          connectWS(dispatch, player.nick);
-      });
+    }));
   };
 }
 
@@ -213,39 +231,50 @@ export function selectAnswer(answerId) {
   });
 }
 
-export const WS_CREATED = 'WS_CREATED';
-export function wsCreated() {
+export const WEBSOCKET_CREATED = 'WEBSOCKET_CREATED';
+export function websocketCreated() {
   return {
-    type: WS_CREATED,
+    type: WEBSOCKET_CREATED,
   };
 }
 
-export const WS_CONNECTED = 'WS_CONNECTED';
-export function wsConnected(event) {
+export const WEBSOCKET_CONNECTED = 'WEBSOCKET_CONNECTED';
+export function websocketConnected(event) {
   return (dispatch, getState) => {
     const { player }= getState();
 
-    wsSend({
+    sendToWS({
       action: 'connected',
       nick: player.nick,
     });
 
     dispatch({
-      type: WS_CONNECTED,
+      type: WEBSOCKET_CONNECTED,
       event,
     });
   };
 }
 
-export const WS_MESSAGE = 'WS_MESSAGE';
-export function wsMessage(event, message) {
+export const WEBSOCKET_MESSAGE_PREFIX = 'WS_';
+export function websocketMessage(event, message) {
   if (!message.type)
     throw new Error('No action in message: ' + message);
 
   return dispatch => {
     dispatch({
-      type: 'WS_' + message.type,
+      type: WEBSOCKET_MESSAGE_PREFIX + message.type,
       message,
     });
+  };
+}
+
+export const WEBSOCKET_CLOSED = 'WEBSOCKET_CLOSED';
+export function websocketClosed() {
+  return dispatch => {
+    dispatch({
+      type: WEBSOCKET_CLOSED,
+    });
+
+    dispatch(checkApiStatus());
   };
 }

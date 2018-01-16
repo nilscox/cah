@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import {WS_STATE} from './websocket';
+import {API_STATE, WS_STATE} from "./actions";
 
 const player = (state = null, action) => {
   switch (action.type) {
@@ -177,22 +177,24 @@ const selection = (state = [], action) => {
   return state;
 };
 
-const wsState = (state = WS_STATE.CLOSED, action) => {
-  if (action.type === 'WS_CREATED')
-    return WS_STATE.CREATED;
-
-  if (action.type === 'WS_CONNECTED')
-    return 'connected';
-
-  return state;
-};
-
-const api = (state = { down: false }, action) => {
+const status = (state = {
+  api: API_STATE.UP,
+  websocket: WS_STATE.CLOSED,
+}, action) => {
   if (action.type === 'API_DOWN')
-    return { ...state, down: true };
+    return { ...state, api: API_STATE.DOWN };
 
   if (action.type === 'API_UP')
-    return { ...state, down: false };
+    return { ...state, api: API_STATE.UP };
+
+  if (action.type === 'WEBSOCKET_CREATED')
+    return { ...state, websocket: WS_STATE.CREATED };
+
+  if (action.type === 'WEBSOCKET_CLOSED')
+    return { ...state, websocket: WS_STATE.CLOSED };
+
+  if (action.type === 'WEBSOCKET_CONNECTED')
+    return { ...state, websocket: WS_STATE.CONNECTED };
 
   return state;
 };
@@ -243,8 +245,7 @@ export default combineReducers({
   player,
   game,
   selection,
-  wsState,
-  api,
+  status,
   error,
   loading,
 });
