@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import {WS_STATE} from "./websocket";
+import {WS_STATE} from './websocket';
 
 const player_ws = (state, message) => {
   if (message.type === 'cards_dealt')
