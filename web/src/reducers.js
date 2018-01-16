@@ -153,13 +153,6 @@ const error = (state = null, action) => {
   return state;
 };
 
-const loading = (state = true, action) => {
-  if (action.type === 'INITIALIZED')
-    return false;
-
-  return state;
-};
-
 const selection = (state = [], action) => {
   if (action.type === 'GAME_TOGGLE_CHOICE') {
     const idx = state.indexOf(action.choice);
@@ -178,9 +171,16 @@ const selection = (state = [], action) => {
 };
 
 const status = (state = {
+  appInitializing: false,
   api: API_STATE.UP,
   websocket: WS_STATE.CLOSED,
 }, action) => {
+  if (action.type === 'INITIALIZATION_STARTED')
+    return { ...state, appInitializing: true };
+
+  if (action.type === 'INITIALIZATION_FINISHED')
+    return { ...state, appInitializing: false };
+
   if (action.type === 'API_DOWN')
     return { ...state, api: API_STATE.DOWN };
 
@@ -247,5 +247,4 @@ export default combineReducers({
   selection,
   status,
   error,
-  loading,
 });

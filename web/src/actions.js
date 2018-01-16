@@ -93,8 +93,11 @@ export function apiUp() {
   };
 }
 
+export const INITIALIZATION_STARTED = 'INITIALIZATION_STARTED';
 export function initializationStart() {
   return (dispatch, getState) => {
+    dispatch({ type: INITIALIZATION_STARTED });
+
     dispatch(fetchPlayer())
       .then(() => {
         const { player } = getState();
@@ -106,10 +109,10 @@ export function initializationStart() {
   };
 }
 
-export const INITIALIZED = 'INITIALIZED';
+export const INITIALIZATION_FINISHED = 'INITIALIZATION_FINISHED';
 export function initializationFinished() {
   return {
-    type: INITIALIZED,
+    type: INITIALIZATION_FINISHED,
   };
 }
 

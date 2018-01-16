@@ -13,8 +13,8 @@ const mapDispatchToProps = dispatch => ({
   clearError: () => dispatch(clearError()),
 });
 
-const App = ({ loading, player, game, error, status, clearError }) => {
-  if (loading)
+const App = ({ player, game, error, status, clearError }) => {
+  if (status.appInitializing)
     return <div className="loader"><CircularProgress size={80} thickness={2} /></div>;
 
   if (status.api === API_STATE.DOWN)
