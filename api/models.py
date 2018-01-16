@@ -169,8 +169,8 @@ class Game(models.Model):
         if self.players.count() < 3:
             raise NotEnoughPlayers
 
-        self.state = 'started'
         self.next_turn(random.choice(self.players.all()))
+        self.state = 'started'
         self.save()
 
         events.on_game_started(self)
@@ -199,7 +199,8 @@ class Game(models.Model):
         self.current_question.available = False
         self.current_question.save()
 
-        events.on_next_turn(self, self.current_question)
+        if self.state == 'started':
+            events.on_next_turn(self, self.current_question)
 
     def deal_cards(self, player):
         choices = list(self.choices.filter(available=True))
