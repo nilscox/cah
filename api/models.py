@@ -5,7 +5,6 @@ from channels import Channel, Group
 from django.db import models
 
 from api import events, data
-from api.events import *
 from api.exceptions import *
 
 
