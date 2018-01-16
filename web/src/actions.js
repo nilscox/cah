@@ -23,7 +23,10 @@ function asyncRequest(prefix, opts) {
         },
         error => {
           dispatch({ type: prefix + '_FAILURE', error });
-          dispatch(apiDown());
+
+          // TODO: clean up
+          if (error.message === 'Failed to fetch')
+            dispatch(apiDown());
 
           return { status: null, error };
         }
