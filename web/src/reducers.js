@@ -33,6 +33,9 @@ const player = (state = null, action) => {
 
       return { ...state, cards: [ ...(state.cards || []), ...message.cards ] };
 
+    case 'WS_NEXT_TURN':
+      return { ...state, submitted: null };
+
     default:
       return state;
   }
@@ -165,7 +168,8 @@ const selection = (state = [], action) => {
         ...state.slice(idx + 1)
       ];
     }
-  }
+  } else if (action.type === 'WS_NEXT_TURN')
+    return [];
 
   return state;
 };
