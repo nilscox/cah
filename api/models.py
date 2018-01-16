@@ -79,6 +79,10 @@ class Player(models.Model):
         except AnsweredQuestion.DoesNotExist:
             return None
 
+    def send(self, message):
+        print("send: " + str(self) + ": " + str(message))
+        Channel(self.socket_id).send({"text": json.dumps(message)})
+
     def on_connected(self, socket_id):
         self.socket_id = socket_id
         self.save()
@@ -228,6 +232,10 @@ class Game(models.Model):
 
         self.next_turn(selected.answered_by)
         self.save()
+
+    def broadcast(self, message):
+        print("broadcast: game-" + str(self.id) + ": " + str(message))
+        Group("game-" + str(self.id)).send({"text": json.dumps(message)})
 
 
 class Question(models.Model):
