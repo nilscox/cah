@@ -15,7 +15,7 @@ html, body, #root, .app, .route, .page {
 }
 
 .api-down {
-  margin-top: 10%;
+  padding-top: 10%;
   text-align: center;
 }
 
