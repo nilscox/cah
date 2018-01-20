@@ -43,7 +43,7 @@ export default function(state = null, action) {
     case 'WS_DISCONNECTED':
       return {
         ...state,
-        players: replace(state.players, p => ({ ...p, connected: false }), findPlayerByNick(message.player.nick)),
+        players: replace(state.players, p => ({ ...p, connected: false }), p => p.nick === message.nick),
       };
 
     case 'WS_GAME_STARTED':

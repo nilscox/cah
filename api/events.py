@@ -30,7 +30,7 @@ def player_disconnected(player):
 
         player.game.broadcast({
             "type": "DISCONNECTED",
-            "player": serialize("PlayerSerializer", player),
+            "nick": player.nick,
         })
 
 
