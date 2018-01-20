@@ -20,7 +20,7 @@ const QuestionCard = ({ question, choices, onClick }) => {
 
   if (question.type === "question") {
     const choice = choices[0] && choices[0].text;
-    text.push(<br key={null} />);
+    text.push(<div className={"question-answer-separator"} key={null} />);
     text.push(<span key={text.length} className={choice ? 'filled' : 'blank'}>{choice}</span>);
   }
 

@@ -118,6 +118,10 @@ html, body, #root, .app, .route, .page {
   text-decoration: underline;
 }
 
+.card.question .question-answer-separator {
+  height: 15px;
+}
+
 .logout-button {
   position: absolute;
   margin: 10px;
