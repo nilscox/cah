@@ -8,7 +8,7 @@ import thunkMiddleware from 'redux-thunk';
 import {createLogger} from 'redux-logger';
 
 import rootReducer from './reducers';
-import {initializationStart} from './actions';
+import {initializationStart} from './actions/initialization';
 import App from './App';
 
 import './index.css';

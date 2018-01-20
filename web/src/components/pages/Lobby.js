@@ -5,7 +5,7 @@ import TextField from 'material-ui/TextField';
 import Tooltip from 'material-ui/Tooltip';
 import Button from 'material-ui/Button';
 import AddIcon from 'material-ui-icons/Add';
-import {createGame, joinGame} from '../../actions';
+import {createGame, joinGame} from '../../actions/game';
 
 const mapStateToProps = state => ({
 

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { TextField, Tooltip, Button } from 'material-ui';
 import LogoutIcon from 'material-ui-icons/SettingsPower';
-import {loginPlayer, logoutPlayer} from '../../actions';
+import { loginPlayer, logoutPlayer } from '../../actions/player';
 
 const mapStateToProps = state => ({
   player: state.player,

@@ -3,7 +3,7 @@ import {
   websocketCreated,
   websocketMessage,
   websocketClosed
-} from './actions';
+} from './actions/websocket';
 
 let socket = null;
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import AnsweredQuestionCard from '../../../common/AnsweredQuestionCard';
-import {selectAnswer} from '../../../../actions';
+import {selectAnswer} from '../../../../actions/game';
 
 const mapStateToProps = state => {
   const { game, player } = state;
