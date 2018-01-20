@@ -1,4 +1,4 @@
-import doRequest from '../request';
+import doRequest from './request';
 import { apiUp, apiDown } from './apiState';
 
 export function requestThunk(prefix, opts, dispatch) {
