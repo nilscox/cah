@@ -1,6 +1,6 @@
-import {PLAYER_ROUTE} from '../constants';
+import { PLAYER_ROUTE } from '../constants';
 import request from './requestAction';
-import {fetchGame} from './game';
+import { fetchGame } from './game';
 
 export const PLAYER_FETCH = 'PLAYER_FETCH';
 export function fetchPlayer() {

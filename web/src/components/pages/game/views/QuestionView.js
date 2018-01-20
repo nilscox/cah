@@ -1,7 +1,7 @@
 import React from 'react';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import QuestionCard from '../../../common/QuestionCard';
-import {submitAnswer} from '../../../../actions/game';
+import { submitAnswer } from '../../../../actions/game';
 
 const all = arr => arr.indexOf(false) < 0;
 

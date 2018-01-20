@@ -1,5 +1,5 @@
 import {send as sendToWS} from '../websocket';
-import {checkApiStatus} from './apiState';
+import { checkApiStatus } from './apiState';
 
 export const WEBSOCKET_CREATED = 'WEBSOCKET_CREATED';
 export function websocketCreated() {

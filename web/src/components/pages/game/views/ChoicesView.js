@@ -1,7 +1,7 @@
 import React from 'react';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import ChoiceCard from '../../../common/ChoiceCard';
-import {toggleChoice} from '../../../../actions/game';
+import { toggleChoice } from '../../../../actions/game';
 
 const all = arr => arr.indexOf(false) < 0;
 

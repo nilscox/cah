@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import {API_STATE, WS_STATE} from './constants';
+import { API_STATE, WS_STATE } from './constants';
 
 const player = (state = null, action) => {
   switch (action.type) {

@@ -1,4 +1,4 @@
-import {PLAYER_ROUTE} from '../constants';
+import { PLAYER_ROUTE } from '../constants';
 import request, { requestThunk } from './requestAction';
 import { fetchGame } from './game';
 

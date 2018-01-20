@@ -2,13 +2,13 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import registerServiceWorker from './registerServiceWorker';
 
-import {applyMiddleware, createStore} from 'redux';
-import {Provider} from 'react-redux';
+import { applyMiddleware, createStore } from 'redux';
+import { Provider } from 'react-redux';
 import thunkMiddleware from 'redux-thunk';
-import {createLogger} from 'redux-logger';
+import { createLogger } from 'redux-logger';
 
 import rootReducer from './reducers';
-import {initializationStart} from './actions/initialization';
+import { initializationStart } from './actions/initialization';
 import App from './App';
 
 import './index.css';

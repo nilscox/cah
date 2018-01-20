@@ -1,7 +1,7 @@
 import React from 'react';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import Button from 'material-ui/Button';
-import {startGame} from '../../../actions/game';
+import { startGame } from '../../../actions/game';
 
 const mapStateToProps = state => ({
   players: state.game.players,

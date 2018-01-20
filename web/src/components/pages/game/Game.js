@@ -1,5 +1,5 @@
 import React from 'react';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import QuestionView from './views/QuestionView';
 import ChoicesView from './views/ChoicesView';
 import './Game.css';
