@@ -89,10 +89,10 @@ class Player(models.Model):
         self.socket_id = socket_id
         self.save()
 
-        events.on_player_connected(self)
+        events.player_connected(self)
 
     def on_disconnected(self):
-        events.on_player_disconnected(self)
+        events.player_disconnected(self)
 
         self.socket_id = None
         self.save()
@@ -165,15 +165,15 @@ class Game(models.Model):
         create_blanks()
         create_choices()
 
-        events.on_game_created(self.owner)
+        events.game_created(self.owner)
 
     def add_player(self, player):
         self.players.add(player)
-        events.on_game_joined(player)
+        events.game_joined(player)
 
     def remove_player(self, player):
         self.players.remove(player)
-        events.on_game_left(player)
+        events.game_left(player)
 
     def start(self):
         if self.players.count() < MIN_PLAYERS_TO_START:
@@ -183,7 +183,7 @@ class Game(models.Model):
         self.state = 'started'
         self.save()
 
-        events.on_game_started(self)
+        events.game_started(self)
 
     def next_turn(self, player):
         self.question_master = player
@@ -201,7 +201,7 @@ class Game(models.Model):
         self.current_question.save()
 
         if self.state == 'started':
-            events.on_next_turn(self)
+            events.next_turn(self)
 
     def deal_cards(self, player):
         choices = list(self.choices.filter(available=True))
@@ -219,7 +219,7 @@ class Game(models.Model):
             player.cards.add(choice)
             choices.remove(choice)
 
-        events.on_cards_dealt(player, dealt)
+        events.cards_dealt(player, dealt)
 
     def get_propositions(self):
         if self.state != 'started':
@@ -243,12 +243,12 @@ class Game(models.Model):
             choice.played = True
             choice.save()
 
-        events.on_answer_submitted(self, answered_by)
+        events.answer_submitted(self, answered_by)
 
         if self.get_propositions().count() == self.players.count() - 1:
             answers = list(self.get_propositions())
             random.shuffle(answers)
-            events.on_all_answers_submitted(self, answers)
+            events.all_answers_submitted(self, answers)
 
         return answered_question
 
@@ -256,7 +256,7 @@ class Game(models.Model):
         selected.selected_by = selected_by
         selected.save()
 
-        events.on_answer_selected(self, selected, self.get_propositions())
+        events.answer_selected(self, selected, self.get_propositions())
 
         self.next_turn(selected.answered_by)
         self.save()
