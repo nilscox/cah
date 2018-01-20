@@ -146,8 +146,10 @@ const game = (state = null, action) => {
 
 const error = (state = null, action) => {
   if (action.type.endsWith('_FAILURE')) {
-    if (action.error && action.error.body)
+    if (action.error && action.error.body && action.error.body.detail)
       return { ...action.error.body };
+    else
+      return { detail: 'Unknown error' };
   }
 
   if (action.type === 'CLEAR_ERROR')
