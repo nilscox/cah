@@ -127,6 +127,7 @@ class Game(models.Model):
         - next_turn(player) -> None
         - deal_cards() -> None
         - get_propositions() -> AnsweredQuestion[] | None
+        - answer(choices, answered_by) -> None
         - select_answer(selected, selected_by) -> None
     """
 
@@ -226,6 +227,29 @@ class Game(models.Model):
 
         return self.answers.filter(question=self.current_question)
 
+    def answer(self, choices, answered_by):
+        question = self.current_question
+        answered_question = AnsweredQuestion(game=self, question=question, answered_by=answered_by)
+        answered_question.save()
+
+        blanks = list(question.blanks.all())
+
+        for i in range(len(choices)):
+            choice = choices[i]
+
+            answered_question.answers.create(position=blanks[i], choice=choice)
+
+            choice.owner = None
+            choice.played = True
+            choice.save()
+
+        events.on_answer_submitted(self, answered_by)
+
+        if self.get_propositions().count() == self.players.count() - 1:
+            events.on_all_answers_submitted(self, self.get_propositions())
+
+        return answered_question
+
     def select_answer(self, selected, selected_by):
         selected.selected_by = selected_by
         selected.save()
@@ -256,7 +280,6 @@ class Question(models.Model):
         - get_nb_choices() -> integer
         - get_filled_text(string) -> string
         - get_split_text() -> (string | None)[]
-        - answer(choices, answered_by) -> None
     """
 
     text = models.CharField(max_length=255)
@@ -294,30 +317,6 @@ class Question(models.Model):
         result.append(text[last:])
 
         return result
-
-    def answer(self, choices, answered_by):
-        game = self.game
-
-        answered_question = AnsweredQuestion(game=game, question=self, answered_by=answered_by)
-        answered_question.save()
-
-        blanks = list(self.blanks.all())
-
-        for i in range(len(choices)):
-            choice = choices[i]
-
-            answered_question.answers.create(position=blanks[i], choice=choice)
-
-            choice.owner = None
-            choice.played = True
-            choice.save()
-
-        events.on_answer_submitted(game, answered_by)
-
-        if game.get_propositions().count() == game.players.count() - 1:
-            events.on_all_answers_submitted(game, game.get_propositions())
-
-        return answered_question
 
 
 class Choice(models.Model):

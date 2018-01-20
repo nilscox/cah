@@ -166,7 +166,7 @@ def answer(request):
     if len(ids) != len(choices):
         raise InvalidAnswers
 
-    answered_question = question.answer(choices, player)
+    answered_question = game.answer(choices, player)
 
     return Response(FullAnsweredQuestionSerializer(answered_question).data)
 
