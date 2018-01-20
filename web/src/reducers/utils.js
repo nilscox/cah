@@ -1,9 +1,13 @@
+const isFunc = o => typeof o === 'function';
+
 export const append = (list, elem) => {
   return [ ...list, elem ];
 };
 
-export const remove = (list, func) => {
-  const idx = list.findIndex(func);
+export const remove = (list, elem) => {
+  const idx = isFunc(elem)
+    ? list.findIndex(elem)
+    : list.indexOf(elem);
 
   if (idx < 0)
     return list;
@@ -22,7 +26,7 @@ export const replace = (list, elem, func) => {
 
   return [
     ...list.slice(0, idx),
-    typeof elem === 'function' ? elem(list[idx]) : elem,
+    isFunc(elem) ? elem(list[idx]) : elem,
     ...list.slice(idx + 1),
   ];
 };
