@@ -14,7 +14,7 @@ function request(method, route, body, expected=200) {
 
   let res = null;
 
-  return fetch('http://localhost:8000' + route, opts)
+  return fetch(process.env.REACT_APP_API_URL + route, opts)
     .then(r => {
       res = r;
 

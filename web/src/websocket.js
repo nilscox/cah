@@ -8,7 +8,7 @@ import {
 let socket = null;
 
 export function connect(dispatch) {
-  socket = new WebSocket('ws://localhost:8000/game/');
+  socket = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
 
   dispatch(websocketCreated());
 

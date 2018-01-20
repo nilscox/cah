@@ -30,6 +30,10 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
 ]
 
+if 'API_ALLOWED_HOSTS' in os.environ:
+    for host in os.environ['API_ALLOWED_HOSTS'].split(';'):
+        ALLOWED_HOSTS.append(host)
+
 
 # Application definition
 
@@ -143,3 +147,7 @@ CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = [
     'localhost:3000',
 ]
+
+if 'API_CORS_ORIGIN_WHITELIST' in os.environ:
+    for origin in os.environ['API_CORS_ORIGIN_WHITELIST'].split(';'):
+        CORS_ORIGIN_WHITELIST.append(origin)
