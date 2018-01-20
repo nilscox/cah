@@ -2,7 +2,7 @@
 
 Black cards, white cards, much fun.
 
-## API Documentation
+## REST API Documentation
 
 ### Player
 
@@ -226,3 +226,85 @@ returns: FullAnsweredQuestion
 Select a set of choices in the submitted propositions. `id` is the id of the selected AnsweredQuestion.
 This route represents the question master selecting is favorite set of black
 cards within all black cards submitted by the other players.
+
+## Websocket API Documentation
+
+Websocket endpoint listens on the same port as the API.
+All websocket events contain a `type` key, along with some information about the event that happened.
+
+### Player connection
+
+```
+event: {
+  type: "CONNECTED",
+  player: Player,
+}
+```
+
+```
+event: {
+  type: "DISCONNECTED",
+  nick: string,
+}
+```
+
+### Game joining
+
+```
+event: {
+    type: "JOINED",
+    player: Player,
+}
+```
+
+```
+event: {
+    type: "LEFT",
+    player: Player,
+}
+```
+
+### Game actions
+
+```
+event: {
+    type: "GAME_STARTED",
+    game: Game,
+}
+```
+
+```
+event: {
+    type: "CARDS_DEALT",
+    cards: Choice[],
+}
+```
+
+```
+event: {
+    type: "ANSWER_SUBMITTED",
+    nick: string,
+}
+```
+
+```
+event: {
+    type: "ALL_ANSWERS_SUBMITTED",
+    answers: AnsweredQuestion[],
+}
+```
+
+```
+event: {
+    type: "ANSWER_SELECTED",
+    answer: FullAnsweredQuestion,
+    answers: FullAnsweredQuestion[],
+}
+```
+
+```
+event: {
+    type: "NEXT_TURN",
+    game: Game,
+}
+```
