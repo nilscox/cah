@@ -8,6 +8,9 @@ from api import events, data
 from api.exceptions import *
 
 
+MIN_PLAYERS_TO_START = 2
+
+
 class Player(models.Model):
     """
     Player fields:
@@ -172,7 +175,7 @@ class Game(models.Model):
         events.on_game_left(player)
 
     def start(self):
-        if self.players.count() < 3:
+        if self.players.count() < MIN_PLAYERS_TO_START:
             raise NotEnoughPlayers
 
         self.next_turn(random.choice(self.players.all()))
