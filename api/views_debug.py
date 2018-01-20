@@ -4,6 +4,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
+from api import events
 from api.models import Player, Game
 
 
@@ -20,7 +21,7 @@ def ws_send(request, nick):
         return Response('Player is not connected', status=400)
 
     print('[DEBUG]', 'ws send -> ' + player.nick + ': ' + str(data))
-    player.send(data)
+    events.send(player, data)
 
     return Response()
 
@@ -35,6 +36,6 @@ def ws_broadcast(request, pk):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     print('[DEBUG]', 'ws broadcast -> ' + str(game) + ': ' + str(data))
-    game.broadcast(data)
+    events.broadcast(game, data)
 
     return Response()

@@ -1,7 +1,5 @@
-import json
 import random
 
-from channels import Channel, Group
 from django.db import models
 
 from api import events, data
@@ -80,10 +78,6 @@ class Player(models.Model):
             return self.game.answers.get(question=self.game.current_question, answered_by=self)
         except AnsweredQuestion.DoesNotExist:
             return None
-
-    def send(self, message):
-        print("send: " + str(self) + ": " + str(message))
-        Channel(self.socket_id).send({"text": json.dumps(message)})
 
     def on_connected(self, socket_id):
         self.socket_id = socket_id
@@ -260,10 +254,6 @@ class Game(models.Model):
 
         self.next_turn(selected.answered_by)
         self.save()
-
-    def broadcast(self, message):
-        print("broadcast: game-" + str(self.id) + ": " + str(message))
-        Group("game-" + str(self.id)).send({"text": json.dumps(message)})
 
 
 class Question(models.Model):
