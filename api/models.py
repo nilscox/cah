@@ -246,7 +246,9 @@ class Game(models.Model):
         events.on_answer_submitted(self, answered_by)
 
         if self.get_propositions().count() == self.players.count() - 1:
-            events.on_all_answers_submitted(self, random.shuffle(self.get_propositions()))
+            answers = list(self.get_propositions())
+            random.shuffle(answers)
+            events.on_all_answers_submitted(self, answers)
 
         return answered_question
 
