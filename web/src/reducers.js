@@ -3,20 +3,14 @@ import { API_STATE, WS_STATE } from './constants';
 
 const player = (state = null, action) => {
   switch (action.type) {
-    case 'PLAYER_LOGIN_REQUEST':
-    case 'PLAYER_FETCH_REQUEST':
-      return { ...state, fetching: true };
-
     case 'PLAYER_FETCH_SUCCESS':
-    case 'PLAYER_LOGIN_SUCCESS':
       if (action.status === 404)
         return null;
 
-      return { ...action.body, fetching: false };
+      return action.body;
 
-    case 'PLAYER_LOGIN_FAILURE':
-    case 'PLAYER_FETCH_FAILURE':
-      return { ...state, fetching: false };
+    case 'PLAYER_LOGIN_SUCCESS':
+      return action.body;
 
     case 'PLAYER_LOGOUT_SUCCESS':
       return null;
@@ -45,25 +39,16 @@ const game = (state = null, action) => {
   const message = action.message;
   let idx;
 
-  switch (action.type) {
-    case 'GAME_FETCH_REQUEST':
-      return {...state, fetching: true};
+  if (action.type === 'GAME_FETCH_SUCCESS' && action.status === 404)
+    return null;
 
-    case 'GAME_FETCH_SUCCESS':
-    case 'GAME_CREATE_SUCCESS':
-    case 'GAME_JOIN_SUCCESS':
-    case 'GAME_START_SUCCESS':
-      if (action.status === 404)
-        return null;
-
-      return {...action.body, selectedChoices: [], has_submitted: [], fetching: false};
-
-    case 'GAME_FETCH_FAILURE':
-      return {...state, fetching: false};
-
-    default:
-      break;
-  }
+  if ([
+    'GAME_FETCH_SUCCESS',
+    'GAME_CREATE_SUCCESS',
+    'GAME_JOIN_SUCCESS',
+    'GAME_START_SUCCESS',
+  ].indexOf(action.type) >= 0)
+    return { ...action.body, has_submitted: [] };
 
   if (!state || !state.id || !message)
     return state;
@@ -126,7 +111,7 @@ const game = (state = null, action) => {
       };
 
     case 'WS_GAME_STARTED':
-      return {...message.game, selectedChoices: [], has_submitted: []};
+      return {...message.game, has_submitted: []};
 
     case 'WS_ANSWER_SUBMITTED':
       return {...state, has_submitted: [...state.has_submitted, message.nick]};
@@ -140,20 +125,6 @@ const game = (state = null, action) => {
     default:
       break;
   }
-
-  return state;
-};
-
-const error = (state = null, action) => {
-  if (action.type.endsWith('_FAILURE')) {
-    if (action.error && action.error.body && action.error.body.detail)
-      return { ...action.error.body };
-    else
-      return { detail: 'Unknown error' };
-  }
-
-  if (action.type === 'CLEAR_ERROR')
-    return null;
 
   return state;
 };
@@ -174,6 +145,33 @@ const selection = (state = [], action) => {
     return [];
 
   return state;
+};
+
+const fetching = (state = {
+  game: false,
+  player: false,
+}, action) => {
+  switch (action.type) {
+    case 'PLAYER_LOGIN_REQUEST':
+    case 'PLAYER_FETCH_REQUEST':
+      return { ...state, player: true };
+
+    case 'PLAYER_LOGIN_SUCCESS':
+    case 'PLAYER_FETCH_SUCCESS':
+    case 'PLAYER_LOGIN_FAILURE':
+    case 'PLAYER_FETCH_FAILURE':
+      return { ...state, player: false };
+
+    case 'GAME_FETCH_REQUEST':
+      return { ...state, game: true };
+
+    case 'GAME_FETCH_SUCCESS':
+    case 'GAME_FETCH_FAILURE':
+      return { ...state, game: false };
+
+    default:
+      return state;
+  }
 };
 
 const status = (state = {
@@ -205,45 +203,50 @@ const status = (state = {
   return state;
 };
 
+const error = (state = null, action) => {
+  if (action.type.endsWith('_FAILURE')) {
+    if (action.error && action.error.body && action.error.body.detail)
+      return { ...action.error.body };
+    else
+      return { detail: 'Unknown error' };
+  }
+
+  if (action.type === 'CLEAR_ERROR')
+    return null;
+
+  return state;
+};
+
 /**
- * {
+ * state: {
  *   player: {
- *     id: integer,
  *     nick: string,
+ *     score: integer,
+ *     cards: Choice[],
+ *     submitted: FullAnsweredQuestion,
  *   },
  *   game: {
  *     id: integer,
  *     state: string,
  *     owner: string,
- *     players: string[],
+ *     players: Player[],
  *     question_master: string,
- *     question: {
- *       id: integer,
- *       type: string,
- *       text: string,
- *       split: string[],
- *       nb_choices: integer,
- *     },
- *     propositions: {
- *         id: integer,
- *         question: {
- *         id: integer,
- *         type: string,
- *         text: string,
- *         split: string[],
- *         nb_choices: integer,
- *       }[],
- *       text: string,
- *       split: string[],
- *       answers: {
- *         id: integer,
- *         text: string,
- *       }[],
- *     }[],
+ *     question: Question,
+ *     propositions: AnsweredQuestion[],
  *   },
- *   selection: int[],
- *   error: ,
- *   loading: bool,
+ *   selection: Choice[],
+ *   fetching: {
+ *     player: bool,
+ *     game: bool,
+ *   },
+ *   status: {
+ *     appInitializing: bool,
+ *     api: string,
+ *     websocket: string,
+ *   },
+ *   error: {
+ *     detail: string,
+ *   },
  * }
  */
 
@@ -251,6 +254,7 @@ export default combineReducers({
   player,
   game,
   selection,
+  fetching,
   status,
   error,
 });
