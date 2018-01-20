@@ -4,6 +4,7 @@ import registerServiceWorker from './registerServiceWorker';
 
 import { applyMiddleware, createStore } from 'redux';
 import { Provider } from 'react-redux';
+import promiseMiddleware from 'redux-promise';
 import thunkMiddleware from 'redux-thunk';
 import { createLogger } from 'redux-logger';
 
@@ -18,8 +19,9 @@ const loggerMiddleware = createLogger();
 const store = createStore(
   rootReducer,
   applyMiddleware(
+    promiseMiddleware,
     thunkMiddleware,
-    loggerMiddleware
+    loggerMiddleware,
   )
 );
 

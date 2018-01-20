@@ -1,4 +1,4 @@
-import request from './request';
+import request from '../request';
 import { initializationStart } from './initialization';
 import { close as closeWS, connect as connectWS } from '../websocket';
 import { API_STATE, WS_STATE } from '../constants';

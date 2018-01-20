@@ -1,5 +1,5 @@
 import { PLAYER_ROUTE } from '../constants';
-import request, { requestThunk } from './requestAction';
+import request  from './requestAction';
 import { fetchGame } from './game';
 
 export const PLAYER_LOGIN = 'PLAYER_LOGIN';
@@ -11,7 +11,7 @@ export function loginPlayer(nick) {
     expected: [200, 201],
   };
 
-  return dispatch => dispatch(requestThunk.bind(null, PLAYER_LOGIN, opts))
+  return dispatch => dispatch(request(PLAYER_LOGIN, opts))
     .then(result => {
       if (result.status)
         dispatch(fetchGame());
