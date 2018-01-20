@@ -14,7 +14,31 @@ import App from './App';
 
 import './index.css';
 
-const loggerMiddleware = createLogger();
+const loggerMiddleware = createLogger({
+  collapsed: true,
+  duration: true,
+  diff: true,
+  colors: {
+    title: action => {
+      if (action.type.startsWith('WS_'))
+        return 'royalblue';
+
+      if (action.type.startsWith('WEBSOCKET_'))
+        return 'steelblue';
+
+      if (action.type.endsWith('_REQUEST'))
+        return 'tan';
+
+      if (action.type.endsWith('_SUCCESS'))
+        return 'forestgreen';
+
+      if (action.type.endsWith('_FAILURE'))
+        return 'orangered';
+
+      return 'dimgrey';
+    }
+  }
+});
 
 const store = createStore(
   rootReducer,
