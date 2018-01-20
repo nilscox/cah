@@ -1,6 +1,35 @@
 import { combineReducers } from 'redux';
 import { API_STATE, WS_STATE } from './constants';
 
+const append = (list, elem) => {
+  return [ ...list, elem ];
+};
+
+const remove = (list, func) => {
+  const idx = list.findIndex(func);
+
+  if (idx < 0)
+    return list;
+
+  return [
+    ...list.slice(0, idx),
+    ...list.slice(idx + 1),
+  ];
+};
+
+const replace = (list, elem, func) => {
+  const idx = list.findIndex(func);
+
+  if (idx < 0)
+    return list;
+
+  return [
+    ...list.slice(0, idx),
+    typeof elem === 'function' ? elem(list[idx]) : elem,
+    ...list.slice(idx + 1),
+  ];
+};
+
 const player = (state = null, action) => {
   switch (action.type) {
     case 'PLAYER_FETCH_SUCCESS':
@@ -37,7 +66,7 @@ const player = (state = null, action) => {
 
 const game = (state = null, action) => {
   const message = action.message;
-  let idx;
+  const findPlayerByNick = nick => p => p.nick === nick;
 
   if (action.type === 'GAME_FETCH_SUCCESS' && action.status === 404)
     return null;
@@ -55,59 +84,30 @@ const game = (state = null, action) => {
 
   switch (action.type) {
     case 'WS_JOINED':
-      if (state.players.map(p => p.nick).indexOf(message.player.nick) >= 0)
+      if (state.players.findIndex(findPlayerByNick(message.player.nick)) >= 0)
         return state;
 
       return {
         ...state,
-        players: [
-          ...state.players,
-          message.player
-        ],
+        players: append(state.players, message.player),
       };
 
     case 'WS_LEFT':
-      idx = state.players.map(p => p.nick).indexOf(message.player.nick);
-
-      if (idx < 0)
-        return state;
-
       return {
         ...state,
-        players: [
-          ...state.players.slice(0, idx),
-          ...state.players.slice(idx + 1)
-        ],
+        players: remove(state.players, findPlayerByNick(message.player.nick)),
       };
 
     case 'WS_CONNECTED':
-      idx = state.players.map(p => p.nick).indexOf(message.player.nick);
-
-      if (idx < 0)
-        return state;
-
       return {
         ...state,
-        players: [
-          ...state.players.slice(0, idx),
-          message.player,
-          ...state.players.slice(idx + 1)
-        ],
+        players: replace(state.players, message.player, findPlayerByNick(message.player.nick)),
       };
 
     case 'WS_DISCONNECTED':
-      idx = state.players.map(p => p.nick).indexOf(message.player.nick);
-
-      if (idx < 0)
-        return state;
-
       return {
         ...state,
-        players: [
-          ...state.players.slice(0, idx),
-          {...state.players[idx], connected: false},
-          ...state.players.slice(idx + 1)
-        ],
+        players: replace(state.players, p => ({ ...p, connected: false }), findPlayerByNick(message.player.nick)),
       };
 
     case 'WS_GAME_STARTED':
@@ -131,17 +131,14 @@ const game = (state = null, action) => {
 
 const selection = (state = [], action) => {
   if (action.type === 'GAME_TOGGLE_CHOICE') {
-    const idx = state.indexOf(action.choice);
-
-    if (idx < 0)
-      return [ ...state, action.choice ];
+    if (state.indexOf(action.choice) < 0)
+      return append(state, action.choice);
     else {
-      return [
-        ...state.slice(0, idx),
-        ...state.slice(idx + 1)
-      ];
+      return remove(state, action.choice);
     }
-  } else if (action.type === 'WS_NEXT_TURN')
+  }
+
+  if (action.type === 'WS_NEXT_TURN')
     return [];
 
   return state;
