@@ -10,6 +10,15 @@ export function fetchGame() {
   });
 }
 
+export const GAME_FETCH_HISTORY = 'GAME_FETCH_HISTORY';
+export function fetchGameHistory() {
+  return request(GAME_FETCH_HISTORY, {
+    method: 'GET',
+    route: GAME_ROUTE + '/history',
+    expected: 200,
+  });
+}
+
 export const GAME_CREATE = 'GAME_CREATE';
 export function createGame() {
   return request(GAME_CREATE, {

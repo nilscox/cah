@@ -13,7 +13,10 @@ export default function(state = null, action) {
     'GAME_JOIN_SUCCESS',
     'GAME_START_SUCCESS',
   ].indexOf(action.type) >= 0)
-    return { ...action.body, has_submitted: [] };
+    return { ...action.body, has_submitted: [], history: [] };
+
+  if (action.type === 'GAME_FETCH_HISTORY_SUCCESS')
+    return { ...state, history: action.body };
 
   if (!state || !state.id || !message)
     return state;
@@ -47,7 +50,7 @@ export default function(state = null, action) {
       };
 
     case 'WS_GAME_STARTED':
-      return {...message.game, has_submitted: []};
+      return {...message.game, has_submitted: [], history: []};
 
     case 'WS_ANSWER_SUBMITTED':
       return {...state, has_submitted: [...state.has_submitted, message.nick]};

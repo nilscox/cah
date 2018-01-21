@@ -1,6 +1,6 @@
 import { PLAYER_ROUTE } from '../constants';
 import request from './requestAction';
-import { fetchGame } from './game';
+import { fetchGame, fetchGameHistory } from './game';
 
 export const PLAYER_FETCH = 'PLAYER_FETCH';
 export function fetchPlayer() {
@@ -23,6 +23,7 @@ export function initializationStart() {
         if (result.status === 200)
           return delay(500).then(() => dispatch(fetchGame()));
       })
+      .then(() => dispatch(fetchGameHistory()))
       .then(() => dispatch(initializationFinished()));
   };
 }

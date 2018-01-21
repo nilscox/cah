@@ -21,6 +21,7 @@ const selection = (state = [], action) => {
 const fetching = (state = {
   game: false,
   player: false,
+  gameHistory: false,
 }, action) => {
   switch (action.type) {
     case 'PLAYER_LOGIN_REQUEST':
@@ -38,7 +39,14 @@ const fetching = (state = {
 
     case 'GAME_FETCH_SUCCESS':
     case 'GAME_FETCH_FAILURE':
-      return { ...state, game: false };
+      return { ...state, gameHistory: false };
+
+    case 'GAME_FETCH_HISTORY_REQUEST':
+      return { ...state, gameHistory: true };
+
+    case 'GAME_FETCH_HISTORY_SUCCESS':
+    case 'GAME_FETCH_HISTORY_FAILURE':
+      return { ...state, gameHistory: false };
 
     default:
       return state;
