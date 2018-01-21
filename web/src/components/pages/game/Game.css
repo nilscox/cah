@@ -44,7 +44,7 @@
 }
 
 .question-view {
-  width: 60%;
+  width: 65%;
   height: 65%;
   text-align: center;
   position: relative;
@@ -71,8 +71,21 @@
 }
 
 .answer-selection-view {
-  padding-top: 10%;
+  width: 65%;
+  height: 65%;
   text-align: center;
+  position: relative;
+}
+
+.answer-selection-view .answers-list {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.answer-selection-view .answers-list .card.question {
+  margin: 5px;
 }
 
 .answer-selection-view .answers-list.can-select .card.question {
@@ -82,7 +95,8 @@
 .choices-view {
   width: 100%;
   height: 35%;
-  position: relative;
+  position: absolute;
+  bottom: 0;
   background: linear-gradient(to bottom, #AAA 0, #DDD 5px);
   overflow-x: scroll;
 }
@@ -108,10 +122,77 @@
   cursor: pointer;
 }
 
-.info-view {
-  width: 40%;
+.game-info-view {
+  width: 35%;
   height: 65%;
   position: absolute;
   top: 0;
   right: 0;
+  background: linear-gradient(to right, #AAA 0, #DDD 5px);
+}
+
+.game-info-view .game-title {
+  text-align: center;
+  font-size: 1.5em;
+  margin-top: 15px;
+  margin-bottom: 30px;
+}
+
+.game-info-view .players-list {
+  padding: 15px;
+}
+
+.game-info-view .players-list-label {
+  font-size: 1.2em;
+  border-bottom: 1px solid #CCC;
+}
+
+.game-info-view .players-list ul {
+  padding: 0;
+  list-style-type: none;
+}
+
+.game-info-view .player-item {
+  padding: 0 15px;
+}
+
+.game-info-view .player-item.offline {
+  color: #666;
+}
+
+.game-info-view .player-item.question-master {
+  font-weight: bold;
+}
+
+.game-info-view .player-item.submitted .player-item-submitted {
+  display: inline-block;
+}
+
+.game-info-view .player-item .player-item-score {
+  width: 25px;
+  display: inline-block;
+}
+
+.game-info-view .player-item .player-item-nick {
+  display: inline-block;
+}
+
+.game-info-view .player-item .player-item-submitted {
+  display: none;
+  margin-left: 5px;
+  color: #339933;
+}
+
+.game-info-view .game-history {
+  padding: 15px;
+}
+
+.game-info-view .game-history-label {
+  font-size: 1.2em;
+  border-bottom: 1px solid #CCC;
+}
+
+.game-info-view .game-history ul {
+  padding: 0;
+  list-style-type: none;
 }

@@ -13,13 +13,15 @@ export function fetchPlayer() {
 
 export const INITIALIZATION_STARTED = 'INITIALIZATION_STARTED';
 export function initializationStart() {
+  const delay = d => new Promise(r => setTimeout(r, d));
+
   return dispatch => {
     dispatch({ type: INITIALIZATION_STARTED });
 
     dispatch(fetchPlayer())
       .then(result => {
         if (result.status === 200)
-          return dispatch(fetchGame());
+          return delay(500).then(() => dispatch(fetchGame()));
       })
       .then(() => dispatch(initializationFinished()));
   };

@@ -56,7 +56,7 @@ export default function(state = null, action) {
       return {...state, propositions: message.answers};
 
     case 'WS_NEXT_TURN':
-      return { ...state, ...message.game };
+      return { ...state, ...message.game, has_submitted: [] };
 
     default:
       break;
