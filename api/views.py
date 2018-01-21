@@ -77,6 +77,26 @@ class GameViews(views.APIView):
         return Response(game_serializer.data, status=status.HTTP_201_CREATED)
 
 
+@api_view(['GET'])
+@authentication_classes([PlayerAuthentication])
+@permission_classes([IsPlayer])
+def game_history(request):
+    player = request.user
+
+    if not player.in_game():
+        raise PlayerNotInGame
+
+    game = player.game
+
+    if game.state == 'idle':
+        raise GameNotStarted
+
+    history = game.get_history()
+    history = list(map(lambda x: FullAnsweredQuestionSerializer(x, many=True).data, history))
+
+    return Response(history)
+
+
 @api_view(['POST'])
 @authentication_classes([PlayerAuthentication])
 @permission_classes([IsPlayer])

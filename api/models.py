@@ -161,6 +161,22 @@ class Game(models.Model):
 
         events.game_created(self.owner)
 
+    def get_history(self):
+        questions = {}
+
+        for question in list(AnsweredQuestion.objects.filter(game=self)):
+            qid = question.question.id
+
+            if qid not in questions.keys():
+                questions[qid] = []
+
+            questions[qid].append(question)
+
+        if self.get_propositions().count() != self.players.count() - 1:
+            questions.popitem()
+
+        return list(questions.values())
+
     def add_player(self, player):
         self.players.add(player)
         events.game_joined(player)
