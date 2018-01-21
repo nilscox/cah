@@ -6,6 +6,7 @@ import GameInfoView from './views/GameInfoView';
 import GameIdle from './GameIdle';
 import AnswerSelectionView from './views/AnswerSelectionView';
 import './Game.css';
+import './Game.dark.css';
 
 const STATE = {
   PLAYERS_ANSWER: 'PLAYERS_ANSWER',
@@ -35,7 +36,7 @@ const Game = ({ gameIsIdle, playState }) => {
     mainView = <QuestionView />;
 
   return (
-    <div id="page-game" className="page">
+    <div className="game">
       { mainView }
       <GameInfoView />
       <ChoicesView />

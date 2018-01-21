@@ -1,0 +1,49 @@
+.app.dark,
+.dark .api-down,
+.dark .loader,
+.dark .page,
+.dark .page#page-login {
+  width: 100%;
+  height: 100%;
+  background: #333;
+  color: #CCC;
+}
+
+.dark input {
+  color: #EEE;
+}
+
+.dark label {
+  color: #999;
+}
+
+.dark button {
+  background: #666;
+}
+
+.dark .page#page-lobby .game-form .or {
+  color: #666;
+}
+
+.dark .card {
+  border: 1px solid #666;
+  box-shadow: 1px 2px 5px 2px #333;
+}
+
+.dark .card.choice {
+  background: #999;
+  color: #111;
+}
+
+.dark .card.choice.selected {
+  background: #cee1ef;
+}
+
+.dark .card.question {
+  background: #111;
+  color: #FFF;
+}
+
+.dark .card.question .blank {
+  border-bottom: 1px solid #FFF;
+}

@@ -9,18 +9,21 @@ html, body, #root, .app, .route, .page {
   height: 100%;
 }
 
-.loader {
+.page {
+  background: #EEE;
+}
+
+.page#page-loader {
   padding-top: 20%;
   text-align: center;
 }
 
-.api-down {
-  padding-top: 10%;
+.page#page-api-down {
   text-align: center;
 }
 
-.page {
-  background: #EEE;
+.page#page-api-down h4 {
+  margin: 0;
 }
 
 .page#page-login {

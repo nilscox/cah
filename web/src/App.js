@@ -10,46 +10,47 @@ import Lobby from './components/pages/Lobby';
 import Game from './components/pages/game/Game';
 import ErrorSnackBar from './components/common/ErrorSnackbar';
 
-const mapStateToProps = state => state;
+const mapStateToProps = state => {
+  const { status, player, game } = state;
+
+  if (status.api === API_STATE.DOWN)
+    return { apiDown: true };
+
+  if (status.appInitializing)
+    return { loading: true };
+
+  return {
+    isLoggedIn: !!(player && player.nick),
+    isInGame: !!(game && game.id),
+  }
+};
 
 const mapDispatchToProps = dispatch => ({
   clearError: () => dispatch(clearError()),
 });
 
-const App = ({ player, game, error, status, clearError }) => {
-  if (status.api === API_STATE.DOWN)
-    return <h4 className="api-down">API is down... Please wait, happy monkeys are fixing the problem.</h4>;
-
-  if (status.appInitializing)
-    return <div className="loader"><CircularProgress size={80} thickness={2} /></div>;
-
-  const isLoggedIn = !!(player && player.nick);
-  const isInGame = !!(game && game.id);
-
-  const errorSnackBar = (
-    <ErrorSnackBar error={error} onClose={clearError} />
-  );
-
-  const logoutButton = (
-    <LogoutButton />
-  );
-
-  let content = null;
-
-  if (!isLoggedIn)
-    content = <Login />;
-  else if (!isInGame)
-    content = <Lobby />;
-  else
-    content = <Game />;
-
-  return (
+const App = ({ apiDown, loading, error, isLoggedIn, isInGame, clearError }) => {
+  const page = (name, content) => (
     <div className="app">
-      { isLoggedIn && logoutButton }
-      { errorSnackBar }
-      { content }
+      <div className="page" id={"page-" + name}>
+        {content}
+        <ErrorSnackBar error={error} onClose={clearError} />
+      </div>
     </div>
   );
+
+  if (apiDown)
+    return page("api-down", <h4>API is down... Please wait, happy monkeys are fixing the problem.</h4>);
+
+  if (loading)
+    return page("loader", <CircularProgress size={80} thickness={2} />);
+
+  if (!isLoggedIn)
+    return page("login", <Login />);
+  else if (!isInGame)
+    return page("lobby", <Lobby />);
+
+  return page("game", <Game />);
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

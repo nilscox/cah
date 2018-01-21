@@ -13,6 +13,7 @@ import { initializationStart } from './actions/initialization';
 import App from './App';
 
 import './index.css';
+import './index.dark.css';
 
 const loggerMiddleware = createLogger({
   collapsed: true,
