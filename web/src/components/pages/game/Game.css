@@ -44,13 +44,17 @@
 }
 
 .question-view {
-  width: 100%;
-  height: 100%;
+  width: 60%;
+  height: 65%;
   text-align: center;
+  position: relative;
 }
 
 .question-view .question-card {
-  padding-top: 10%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .question-view .question-card.can-submit .card.question {
@@ -77,19 +81,23 @@
 
 .choices-view {
   width: 100%;
-  position: absolute;
-  bottom: 0;
+  height: 35%;
+  position: relative;
+  background: linear-gradient(to bottom, #AAA 0, #DDD 5px);
+  overflow-x: scroll;
 }
 
 .choices-list {
-  background: linear-gradient(to bottom, #AAA 0, #DDD 5px);
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 0 15px;
   white-space: nowrap;
-  overflow-x: scroll;
-  padding: 15px;
 }
 
 .choices-list .choice {
-  white-space: initial;
+  margin: 0 5px;
+  white-space: normal;
 }
 
 .choices-list .choice.selected {
@@ -98,4 +106,12 @@
 
 .choices-list .choice.can-select {
   cursor: pointer;
+}
+
+.info-view {
+  width: 40%;
+  height: 65%;
+  position: absolute;
+  top: 0;
+  right: 0;
 }

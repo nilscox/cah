@@ -2,9 +2,10 @@ import React from 'react';
 import { connect } from 'react-redux';
 import QuestionView from './views/QuestionView';
 import ChoicesView from './views/ChoicesView';
-import './Game.css';
+import GameInfoView from './views/GameInfoView';
 import GameIdle from './GameIdle';
 import AnswerSelectionView from './views/AnswerSelectionView';
+import './Game.css';
 
 const STATE = {
   PLAYERS_ANSWER: 'PLAYERS_ANSWER',
@@ -36,6 +37,7 @@ const Game = ({ gameIsIdle, playState }) => {
   return (
     <div id="page-game" className="page">
       { mainView }
+      <GameInfoView />
       <ChoicesView />
    </div>
   );
