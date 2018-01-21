@@ -18,6 +18,15 @@ const selection = (state = [], action) => {
   return state;
 };
 
+const settings = (state = {
+  darkMode: false,
+}, action) => {
+  if (action.type === 'SETTINGS_TOGGLE_DARK_MODE')
+    return { ...state, darkMode: !state.darkMode };
+
+  return state;
+};
+
 const fetching = (state = {
   game: false,
   player: false,
@@ -114,6 +123,9 @@ const error = (state = null, action) => {
  *     propositions: AnsweredQuestion[],
  *   },
  *   selection: Choice[],
+ *   settings: {
+ *     darkMode: boolean,
+ *   },
  *   fetching: {
  *     player: bool,
  *     game: bool,
@@ -133,6 +145,7 @@ export default combineReducers({
   player,
   game,
   selection,
+  settings,
   fetching,
   status,
   error,

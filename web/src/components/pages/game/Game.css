@@ -143,11 +143,13 @@
   margin-bottom: 30px;
 }
 
-.game-info-view .players-list {
-  padding: 15px;
+.game-info-view .players-list,
+.game-info-view .game-history,
+.game-info-view .settings {
+  padding: 0 15px;
 }
 
-.game-info-view .players-list-label {
+.game-info-view h2 {
   font-size: 1.2em;
   border-bottom: 1px solid #CCC;
 }
@@ -186,15 +188,6 @@
   display: none;
   margin-left: 5px;
   color: #339933;
-}
-
-.game-info-view .game-history {
-  padding: 15px;
-}
-
-.game-info-view .game-history-label {
-  font-size: 1.2em;
-  border-bottom: 1px solid #CCC;
 }
 
 .game-info-view .game-history ul {

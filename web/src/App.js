@@ -11,17 +11,18 @@ import Game from './components/pages/game/Game';
 import ErrorSnackBar from './components/common/ErrorSnackbar';
 
 const mapStateToProps = state => {
-  const { status, player, game } = state;
+  const { status, player, game, settings } = state;
 
   if (status.api === API_STATE.DOWN)
-    return { apiDown: true };
+    return { apiDown: true, settings };
 
   if (status.appInitializing)
-    return { loading: true };
+    return { loading: true, settings };
 
   return {
     isLoggedIn: !!(player && player.nick),
     isInGame: !!(game && game.id),
+    settings,
   }
 };
 
@@ -29,9 +30,9 @@ const mapDispatchToProps = dispatch => ({
   clearError: () => dispatch(clearError()),
 });
 
-const App = ({ apiDown, loading, error, isLoggedIn, isInGame, clearError }) => {
+const App = ({ apiDown, loading, isLoggedIn, isInGame, settings, error, clearError }) => {
   const page = (name, content) => (
-    <div className="app">
+    <div className={'app' + (settings.darkMode ? ' dark' : '')}>
       <div className="page" id={"page-" + name}>
         {content}
         <ErrorSnackBar error={error} onClose={clearError} />

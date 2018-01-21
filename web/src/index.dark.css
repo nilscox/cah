@@ -13,7 +13,8 @@
   color: #EEE;
 }
 
-.dark label {
+.dark label,
+.dark label span {
   color: #999;
 }
 

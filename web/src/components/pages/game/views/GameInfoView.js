@@ -1,5 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { FormControlLabel, Checkbox } from 'material-ui';
+import { toggleDarkMode } from '../../../../actions/settings';
 
 {/*<div className={"player-item-nick"}><span className={"player-item-arrow"}>{isOpen ? '▾' : '▸'}</span> {player.nick}</div>*/}
 
@@ -29,10 +31,11 @@ const mapStateToProps = state => ({
   questionMaster: state.game.question_master,
   players: state.game.players,
   submitted: state.game.has_submitted,
+  settings: state.settings,
 });
 
 const mapDispatchToProps = dispatch => ({
-
+  toggleDarkMode: () => dispatch(toggleDarkMode()),
 });
 
 class InfoView extends React.Component {
@@ -45,7 +48,7 @@ class InfoView extends React.Component {
   }
 
   render() {
-    const { gameId, questionMaster, players, submitted } = this.props;
+    const { gameId, questionMaster, players, submitted, settings, toggleDarkMode } = this.props;
     const isQuestionMaster = player => questionMaster === player.nick;
     const isOnline = player => player.connected;
     const hasSubmitted = player => submitted.indexOf(player.nick) >= 0;
@@ -54,7 +57,7 @@ class InfoView extends React.Component {
       <div className="game-info-view">
         <div className="game-title">Game-{gameId}</div>
         <div className="players-list">
-          <div className="players-list-label">Players</div>
+          <h2>Players</h2>
           <ul>
             {players.map(player => (
               <li key={"player-" + player.nick}>
@@ -70,10 +73,22 @@ class InfoView extends React.Component {
           </ul>
         </div>
         <div className="game-history">
-          <div className="game-history-label">History</div>
+          <h2>History</h2>
           <ul>
 
           </ul>
+        </div>
+        <div className="settings">
+          <h2>Settings</h2>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={settings.darkMode}
+                onChange={toggleDarkMode}
+              />
+            }
+            label="Dark mode"
+          />
         </div>
       </div>
     );
