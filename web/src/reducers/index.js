@@ -8,9 +8,8 @@ const selection = (state = [], action) => {
   if (action.type === 'GAME_TOGGLE_CHOICE') {
     if (state.indexOf(action.choice) < 0)
       return append(state, action.choice);
-    else {
+    else
       return remove(state, action.choice);
-    }
   }
 
   if (action.type === 'WS_NEXT_TURN')
