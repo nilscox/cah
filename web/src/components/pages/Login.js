@@ -1,9 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { TextField, Tooltip, Button } from 'material-ui';
-import LogoutIcon from 'material-ui-icons/SettingsPower';
-import { loginPlayer, logoutPlayer } from '../../actions/player';
+import { TextField } from 'material-ui';
+import { loginPlayer } from '../../actions/player';
 
 const mapStateToProps = state => ({
   player: state.player,
@@ -43,18 +42,3 @@ Login.propTypes = {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);
-
-
-export const LogoutButton = connect(
-  state => ({ playerNick: state.player.nick }),
-  dispatch => ({ onLogout: () => dispatch(logoutPlayer()) }),
-)(({ playerNick, onLogout }) => (
-  <div className="logout-button">
-    <div className="player-nick">{ playerNick }</div>
-    <Tooltip title="Log out" placement="bottom">
-      <Button fab aria-label="Log out" onClick={onLogout}>
-        <LogoutIcon />
-      </Button>
-    </Tooltip>
-  </div>
-));

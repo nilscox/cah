@@ -5,7 +5,7 @@ import { CircularProgress } from 'material-ui';
 import { API_STATE } from './constants';
 import { clearError } from './actions/error';
 
-import Login, { LogoutButton } from './components/pages/Login';
+import Login from './components/pages/Login';
 import Lobby from './components/pages/Lobby';
 import Game from './components/pages/game/Game';
 import ErrorSnackBar from './components/common/ErrorSnackbar';
