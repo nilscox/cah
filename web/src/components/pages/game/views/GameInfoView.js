@@ -1,7 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { FormControlLabel, Checkbox } from 'material-ui';
+import { FormControlLabel, Checkbox, Button } from 'material-ui';
 import { toggleDarkMode } from '../../../../actions/settings';
+import { logoutPlayer } from '../../../../actions/player';
 
 {/*<div className={"player-item-nick"}><span className={"player-item-arrow"}>{isOpen ? '▾' : '▸'}</span> {player.nick}</div>*/}
 
@@ -36,6 +37,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   toggleDarkMode: () => dispatch(toggleDarkMode()),
+  logout: () => dispatch(logoutPlayer()),
 });
 
 class InfoView extends React.Component {
@@ -48,7 +50,7 @@ class InfoView extends React.Component {
   }
 
   render() {
-    const { gameId, questionMaster, players, submitted, settings, toggleDarkMode } = this.props;
+    const { gameId, questionMaster, players, submitted, settings, toggleDarkMode, logout } = this.props;
     const isQuestionMaster = player => questionMaster === player.nick;
     const isOnline = player => player.connected;
     const hasSubmitted = player => submitted.indexOf(player.nick) >= 0;
@@ -80,15 +82,22 @@ class InfoView extends React.Component {
         </div>
         <div className="settings">
           <h2>Settings</h2>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={settings.darkMode}
-                onChange={toggleDarkMode}
+          <ul>
+            <li>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={settings.darkMode}
+                    onChange={toggleDarkMode}
+                  />
+                }
+                label="Dark mode"
               />
-            }
-            label="Dark mode"
-          />
+            </li>
+            <li>
+              <Button onClick={logout}>Log out</Button>
+            </li>
+          </ul>
         </div>
       </div>
     );
