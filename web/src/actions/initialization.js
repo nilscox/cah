@@ -1,6 +1,7 @@
 import { PLAYER_ROUTE } from '../constants';
 import request from './requestAction';
 import { fetchGame, fetchGameHistory } from './game';
+import { loadSettings } from './settings';
 
 export const PLAYER_FETCH = 'PLAYER_FETCH';
 export function fetchPlayer() {
@@ -17,6 +18,8 @@ export function initializationStart() {
 
   return dispatch => {
     dispatch({ type: INITIALIZATION_STARTED });
+
+    dispatch(loadSettings());
 
     dispatch(fetchPlayer())
       .then(result => {

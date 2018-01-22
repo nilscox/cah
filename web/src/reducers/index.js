@@ -21,8 +21,13 @@ const selection = (state = [], action) => {
 const settings = (state = {
   darkMode: false,
 }, action) => {
-  if (action.type === 'SETTINGS_TOGGLE_DARK_MODE')
-    return { ...state, darkMode: !state.darkMode };
+  if (action.type === 'SETTINGS_SET_VALUE') {
+    const setting = {};
+
+    setting[action.setting] = action.value;
+
+    return { ...state, ...setting };
+  }
 
   return state;
 };
