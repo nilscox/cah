@@ -23,7 +23,10 @@ export function initializationStart() {
         if (result.status === 200)
           return delay(500).then(() => dispatch(fetchGame()));
       })
-      .then(() => dispatch(fetchGameHistory()))
+      .then(result => {
+        if (result && result.status === 200)
+          return dispatch(fetchGameHistory());
+      })
       .then(() => dispatch(initializationFinished()));
   };
 }
