@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from api.authentication import PlayerAuthentication
 from api.exceptions import *
 from api.models import Game, Player, AnsweredQuestion
-from api.permissions import IsPlayer
+from api.permissions import IsPlayer, IsConnected
 from api.serializers import GameSerializer, PlayerSerializer, FullPlayerSerializer, FullAnsweredQuestionSerializer
 
 
@@ -99,7 +99,7 @@ def game_history(request):
 
 @api_view(['POST'])
 @authentication_classes([PlayerAuthentication])
-@permission_classes([IsPlayer])
+@permission_classes([IsPlayer, IsConnected])
 def join_game(request, pk):
     player = request.user
 
@@ -118,7 +118,7 @@ def join_game(request, pk):
 
 @api_view(['POST'])
 @authentication_classes([PlayerAuthentication])
-@permission_classes([IsPlayer])
+@permission_classes([IsPlayer, IsConnected])
 def leave_game(request):
     player = request.user
 
@@ -133,7 +133,7 @@ def leave_game(request):
 
 @api_view(['POST'])
 @authentication_classes([PlayerAuthentication])
-@permission_classes([IsPlayer])
+@permission_classes([IsPlayer, IsConnected])
 def start_game(request):
     player = request.user
     game = player.game
@@ -151,7 +151,7 @@ def start_game(request):
 
 @api_view(['POST'])
 @authentication_classes([PlayerAuthentication])
-@permission_classes([IsPlayer])
+@permission_classes([IsPlayer, IsConnected])
 def answer(request):
     player = request.user
 
@@ -193,7 +193,7 @@ def answer(request):
 
 @api_view(['POST'])
 @authentication_classes([PlayerAuthentication])
-@permission_classes([IsPlayer])
+@permission_classes([IsPlayer, IsConnected])
 def select(request, pk):
     player = request.user
 
