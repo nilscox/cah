@@ -172,7 +172,7 @@ class Game(models.Model):
 
             questions[qid].append(question)
 
-        if self.get_propositions().count() != self.players.count() - 1:
+        if self.get_propositions().count() != self.players.count() - 1 and len(questions) > 0:
             questions.popitem()
 
         return list(questions.values())
