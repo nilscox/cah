@@ -28,11 +28,11 @@
 
 .dark .card {
   border: 1px solid #666;
-  box-shadow: 1px 2px 5px 2px #333;
+  box-shadow: 1px 2px 5px 2px #222;
 }
 
 .dark .card.choice {
-  background: #999;
+  background: #CCC;
   color: #111;
 }
 
