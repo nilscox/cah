@@ -111,6 +111,9 @@ def join_game(request, pk):
     except Game.DoesNotExist:
         raise GameNotFound
 
+    if game.state != 'idle':
+        raise GameAlreadyStarted
+
     game.add_player(player)
 
     return Response(GameSerializer(game).data)
