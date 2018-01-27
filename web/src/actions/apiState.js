@@ -1,6 +1,6 @@
 import request from '../request';
 import { initializationStart } from './initialization';
-import { close as closeWS, connect as connectWS } from '../websocket';
+import { close as closeWS } from '../websocket';
 import { API_STATE, WS_STATE } from '../constants';
 
 export const CHECK_API_STATUS = 'CHECK_API_STATUS';
@@ -42,12 +42,9 @@ export function apiDown() {
 export const API_UP = 'API_UP';
 export function apiUp() {
   return (dispatch, getState) => {
-    const { status, player } = getState();
+    const { status } = getState();
 
     if (status.api === API_STATE.DOWN)
       dispatch({ type: API_UP });
-
-    if (status.websocket === WS_STATE.CLOSED && player && player.nick)
-      connectWS(dispatch);
   };
 }

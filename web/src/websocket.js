@@ -8,21 +8,37 @@ import {
 let socket = null;
 
 export function connect(dispatch) {
-  socket = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
+  return new Promise((resolve, reject) => {
+    let resolved = false;
 
-  dispatch(websocketCreated());
+    socket = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
 
-  socket.onopen = function(e) {
-    dispatch(websocketConnected(e));
-  };
+    dispatch(websocketCreated());
 
-  socket.onmessage = function(event) {
-    dispatch(websocketMessage(event, JSON.parse(event.data)));
-  };
+    socket.onopen = function(e) {
+      dispatch(websocketConnected(e));
 
-  socket.onclose = function() {
-    dispatch(websocketClosed());
-  };
+      if (!resolved) {
+        resolved = true;
+        resolve();
+      }
+    };
+
+    socket.onmessage = function(event) {
+      dispatch(websocketMessage(event, JSON.parse(event.data)));
+    };
+
+    socket.onclose = function() {
+      dispatch(websocketClosed());
+    };
+
+    socket.onerror = function() {
+      if (!resolved) {
+        resolved = true;
+        reject();
+      }
+    };
+  });
 }
 
 export function close() {
