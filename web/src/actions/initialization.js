@@ -27,7 +27,7 @@ export function initializationStart() {
           return delay(500).then(() => dispatch(fetchGame()));
       })
       .then(result => {
-        if (result && result.status === 200)
+        if (result && result.status === 200 && result.body.state !== 'idle')
           return dispatch(fetchGameHistory());
       })
       .then(() => dispatch(initializationFinished()));
