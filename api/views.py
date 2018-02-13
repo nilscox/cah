@@ -7,7 +7,7 @@ from api.authentication import PlayerAuthentication
 from api.exceptions import *
 from api.models import Game, Player, AnsweredQuestion
 from api.permissions import IsPlayer, IsConnected
-from api.serializers import GameSerializer, PlayerSerializer, FullPlayerSerializer, FullAnsweredQuestionSerializer
+from api.serializers import GameSerializer, GameTurnSerializer, PlayerSerializer, FullPlayerSerializer, AnsweredQuestionSerializer
 
 
 @api_view()
@@ -91,10 +91,7 @@ def game_history(request):
     if game.state == 'idle':
         raise GameNotStarted
 
-    history = game.get_history()
-    history = list(map(lambda x: FullAnsweredQuestionSerializer(x, many=True).data, history))
-
-    return Response(history)
+    return Response(GameTurnSerializer(game.get_history(), many=True).data)
 
 
 @api_view(['POST'])
@@ -191,7 +188,7 @@ def answer(request):
 
     answered_question = game.answer(choices, player)
 
-    return Response(FullAnsweredQuestionSerializer(answered_question).data)
+    return Response(AnsweredQuestionSerializer(answered_question).data)
 
 
 @api_view(['POST'])
@@ -223,4 +220,4 @@ def select(request, pk):
 
     game.select_answer(selected, player)
 
-    return Response(FullAnsweredQuestionSerializer(selected).data)
+    return Response(AnsweredQuestionSerializer(selected).data)

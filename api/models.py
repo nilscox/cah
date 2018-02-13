@@ -162,20 +162,7 @@ class Game(models.Model):
         events.game_created(self.owner)
 
     def get_history(self):
-        questions = {}
-
-        for question in list(AnsweredQuestion.objects.filter(game=self)):
-            qid = question.question.id
-
-            if qid not in questions.keys():
-                questions[qid] = []
-
-            questions[qid].append(question)
-
-        if self.get_propositions().count() != self.players.count() - 1 and len(questions) > 0:
-            questions.popitem()
-
-        return list(questions.values())
+        return self.turns.all()
 
     def add_player(self, player):
         self.players.add(player)
@@ -263,14 +250,37 @@ class Game(models.Model):
         return answered_question
 
     def select_answer(self, selected, selected_by):
+        winner = selected.answered_by
+
         selected.selected_by = selected_by
         selected.save()
 
         events.answer_selected(self, selected, self.get_propositions())
 
-        self.next_turn(selected.answered_by)
+        turns_count = self.turns.count()
+        turn = GameTurn(
+            number=turns_count + 1,
+            game=self,
+            question_master=self.question_master,
+            winner=winner,
+            question=self.current_question,
+        )
+        turn.save()
+
+        for answer in self.get_propositions():
+            answer.turn = turn
+            answer.save()
+
+        self.next_turn(winner)
         self.save()
 
+
+class GameTurn(models.Model):
+    number = models.IntegerField()
+    game = models.ForeignKey(Game, related_name='turns', on_delete=models.CASCADE)
+    question_master = models.ForeignKey(Player, related_name='turns_as_question_master', on_delete=models.CASCADE)
+    winner = models.ForeignKey(Player, related_name='turns_won', on_delete=models.CASCADE)
+    question = models.OneToOneField('Question', related_name='turn', on_delete=models.CASCADE)
 
 class Question(models.Model):
     """
@@ -380,6 +390,7 @@ class AnsweredQuestion(models.Model):
     question = models.ForeignKey(Question, related_name='answered', on_delete=models.CASCADE)
     answered_by = models.ForeignKey(Player, related_name='answered_question', on_delete=models.CASCADE)
     selected_by = models.ForeignKey(Player, related_name='selected_cards', blank=True, null=True, on_delete=models.CASCADE)
+    turn = models.ForeignKey(GameTurn, related_name='answers', blank=True, null=True, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.get_filled_text()

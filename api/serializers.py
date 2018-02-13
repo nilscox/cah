@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from api.models import Game, Player, Question, Choice, AnsweredQuestion, Answer
+from api.models import Game, GameTurn, Player, Question, Choice, AnsweredQuestion, Answer
 
 
 class QuestionSerializer(serializers.ModelSerializer):
@@ -165,3 +165,15 @@ class LightAnsweredQuestionSerializer(AnsweredQuestionSerializer):
     class Meta:
         model = AnsweredQuestion
         fields = ('id', 'text', 'split', 'answered_by')
+
+
+class GameTurnSerializer(serializers.ModelSerializer):
+    number = serializers.IntegerField()
+    question_master = serializers.ReadOnlyField(source='question_master.nick')
+    winner = serializers.ReadOnlyField(source='winner.nick')
+    question = QuestionSerializer(read_only=True)
+    answers = LightAnsweredQuestionSerializer(read_only=True, many=True)
+
+    class Meta:
+        model = GameTurn
+        fields = ('number', 'question_master', 'winner', 'question', 'answers')
