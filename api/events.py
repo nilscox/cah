@@ -92,15 +92,15 @@ def answer_submitted(game, player):
 def all_answers_submitted(game, all_answers):
     broadcast(game, {
         "type": "ALL_ANSWERS_SUBMITTED",
-        "answers": serialize("AnsweredQuestionSerializer", all_answers, many=True),
+        "answers": serialize("PartialAnsweredQuestionSerializer", all_answers, many=True),
     })
 
 
 def answer_selected(game, answer, all_answers):
     broadcast(game, {
         "type": "ANSWER_SELECTED",
-        "answer": serialize("FullAnsweredQuestionSerializer", answer),
-        "answers": serialize("FullAnsweredQuestionSerializer", all_answers, many=True),
+        "answer": serialize("AnsweredQuestionSerializer", answer),
+        "answers": serialize("AnsweredQuestionSerializer", all_answers, many=True),
     })
 
 

@@ -69,7 +69,7 @@ class FullPlayerSerializer(PlayerSerializer):
         nick: string,
         score: integer,
         cards: Choice[],
-        submitted: FullAnsweredQuestion,
+        submitted: AnsweredQuestion,
     }
     """
 
@@ -87,7 +87,7 @@ class FullPlayerSerializer(PlayerSerializer):
         if submitted is None:
             return None
 
-        return FullAnsweredQuestionSerializer(submitted).data
+        return AnsweredQuestionSerializer(submitted).data
 
 
 class GameSerializer(serializers.ModelSerializer):
@@ -99,7 +99,7 @@ class GameSerializer(serializers.ModelSerializer):
         players: Player[],
         question_master: string,
         question: Question,
-        propositions: AnsweredQuestion[],
+        propositions: PartialAnsweredQuestion[],
     }
     """
 
@@ -123,37 +123,12 @@ class GameSerializer(serializers.ModelSerializer):
         if len(answers) != game.players.count() - 1:
             return []
 
-        return AnsweredQuestionSerializer(answers, many=True).data
+        return PartialAnsweredQuestionSerializer(answers, many=True).data
 
 
 class AnsweredQuestionSerializer(serializers.ModelSerializer):
     """
     AnsweredQuestion: {
-        id: integer,
-        question: Question,
-        text: string,
-        split: string[],
-        answers: Choice[],
-    }
-    """
-
-    question = QuestionSerializer(read_only=True)
-    text = serializers.ReadOnlyField(source='__str__')
-    split = serializers.ReadOnlyField(source='get_split_text')
-    answers = serializers.SerializerMethodField()
-
-    class Meta:
-        model = AnsweredQuestion
-        fields = ('id', 'question', 'text', 'split', 'answers')
-
-    def get_answers(self, aq):
-        choices = list(map(lambda a: a.choice, aq.answers.all()))
-        return ChoiceSerializer(choices, many=True).data
-
-
-class FullAnsweredQuestionSerializer(AnsweredQuestionSerializer):
-    """
-    FullAnsweredQuestion: {
         id: integer,
         question: Question,
         text: string,
@@ -164,9 +139,29 @@ class FullAnsweredQuestionSerializer(AnsweredQuestionSerializer):
     }
     """
 
+    question = QuestionSerializer(read_only=True)
+    text = serializers.ReadOnlyField(source='__str__')
+    split = serializers.ReadOnlyField(source='get_split_text')
+    answers = serializers.SerializerMethodField()
     answered_by = serializers.ReadOnlyField(source='answered_by.nick')
     selected_by = serializers.ReadOnlyField(source='selected_by.nick')
 
     class Meta:
         model = AnsweredQuestion
         fields = ('id', 'question', 'text', 'split', 'answers', 'answered_by', 'selected_by')
+
+    def get_answers(self, aq):
+        choices = list(map(lambda a: a.choice, aq.answers.all()))
+        return ChoiceSerializer(choices, many=True).data
+
+
+class PartialAnsweredQuestionSerializer(AnsweredQuestionSerializer):
+    class Meta:
+        model = AnsweredQuestion
+        fields = ('id', 'question', 'text', 'split', 'answers')
+
+
+class LightAnsweredQuestionSerializer(AnsweredQuestionSerializer):
+    class Meta:
+        model = AnsweredQuestion
+        fields = ('id', 'text', 'split', 'answered_by')
