@@ -17,7 +17,7 @@ FullPlayer: {
     score: integer,
     connected: boolean,
     cards: Choice[],
-    submitted: FullAnsweredQuestion | null,
+    submitted: AnsweredQuestion | null,
 }
 ```
 
@@ -76,7 +76,7 @@ Game: {
     players: Player[],
     question_master: string,
     question: Question | null,
-    propositions: AnsweredQuestion[],
+    propositions: PartialAnsweredQuestion[],
 }
 ```
 
@@ -89,6 +89,22 @@ Game: {
 - propositions: The set of answers given by the players
 
 > The propositions array is empty when not all player have submitted an answer.
+
+```
+GameTurn: {
+    number: integer,
+    question_master: string,
+    winner: string,
+    question: Question,
+    answers: LightAnsweredQuestion[],
+}
+```
+
+- number: The turn's number (starting from one)
+- question_master: The question master's nick
+- winner: The winner's nick
+- question: This turn's question
+- answers: All the answers submitted for this turn
 
 #### Routes
 
@@ -127,6 +143,15 @@ returns: Game
 ```
 
 Start a game.
+
+```
+GET /api/game/history
+returns: GameTurn[]
+```
+
+Fetch the game history.
+
+> If the game is started, the current turn is not included.
 
 ### Question
 
@@ -180,18 +205,27 @@ AnsweredQuestion: {
     text: string,
     split: string[],
     answers: Choice[],
+    answered_by: string,
+    selected_by: string | null,
 }
 ```
 
 ```
-FullAnsweredQuestion: {
+PartialAnsweredQuestion: {
     id: integer,
     question: Question,
     text: string,
     split: string[],
     answers: Choice[],
+}
+```
+
+```
+LightAnsweredQuestion: {
+    id: integer,
+    text: string,
+    split: string[],
     answered_by: string,
-    selected_by: string | null,
 }
 ```
 
@@ -207,7 +241,7 @@ FullAnsweredQuestion: {
 
 ```
 POST /api/answer
-returns: FullAnsweredQuestion
+returns: AnsweredQuestion
 body: {
     ids: integer[],
 }
@@ -220,7 +254,7 @@ This route represents a `Player` giving a set of his black cards to the question
 
 ```
 POST /api/answer/select/:id
-returns: FullAnsweredQuestion
+returns: AnsweredQuestion
 ```
 
 Select a set of choices in the submitted propositions. `id` is the id of the selected AnsweredQuestion.
@@ -290,15 +324,15 @@ event: {
 ```
 event: {
     type: "ALL_ANSWERS_SUBMITTED",
-    answers: AnsweredQuestion[],
+    answers: PartialAnsweredQuestion[],
 }
 ```
 
 ```
 event: {
     type: "ANSWER_SELECTED",
-    answer: FullAnsweredQuestion,
-    answers: FullAnsweredQuestion[],
+    answer: AnsweredQuestion,
+    answers: AnsweredQuestion[],
 }
 ```
 

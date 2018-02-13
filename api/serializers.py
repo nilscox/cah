@@ -156,18 +156,47 @@ class AnsweredQuestionSerializer(serializers.ModelSerializer):
 
 
 class PartialAnsweredQuestionSerializer(AnsweredQuestionSerializer):
+    """
+    PartialAnsweredQuestion: {
+        id: integer,
+        question: Question,
+        text: string,
+        split: string[]
+        answers: Choice[],
+    }
+    """
+
     class Meta:
         model = AnsweredQuestion
         fields = ('id', 'question', 'text', 'split', 'answers')
 
 
 class LightAnsweredQuestionSerializer(AnsweredQuestionSerializer):
+    """
+    LightAnsweredQuestion: {
+        id: integer,
+        text: string,
+        split: string[]
+        answered_by: string,
+    }
+    """
+
     class Meta:
         model = AnsweredQuestion
         fields = ('id', 'text', 'split', 'answered_by')
 
 
 class GameTurnSerializer(serializers.ModelSerializer):
+    """
+    GameTurn: {
+        number: integer,
+        question_master: string,
+        winner: string,
+        question: Question,
+        answers: LightAnsweredQuestion[],
+    }
+    """
+
     number = serializers.IntegerField()
     question_master = serializers.ReadOnlyField(source='question_master.nick')
     winner = serializers.ReadOnlyField(source='winner.nick')

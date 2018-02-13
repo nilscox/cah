@@ -23,6 +23,8 @@ class Player(models.Model):
         - cards: Choice[]
         - questions_answered: AnsweredQuestion[]
         - selected_cards: AnsweredQuestion[]
+        - turns_as_question_master: GameTurn[]
+        - turns_won: GameTurn[]
 
     Player methods:
         - in_game(Game=None) -> boolean
@@ -30,7 +32,6 @@ class Player(models.Model):
         - has_played() -> boolean | None
         - has_cards(integer[]) -> boolean
         - get_score(Game=None) -> integer | None
-        - win_card(AnsweredQuestion) -> None
         - get_submitted() -> AnsweredQuestion
         - on_connected(socket_id) -> None
         - on_disconnected() -> None
@@ -112,9 +113,11 @@ class Game(models.Model):
         - current_question: Question
         - choices: Choice[]
         - answers: AnsweredQuestion[]
+        - turns: GameTurn[]
 
     Game methods:
         - init() -> None
+        - get_history() -> GameTurn[]
         - add_player(player) -> None
         - remove_player(player) -> None
         - start() -> None
@@ -276,6 +279,17 @@ class Game(models.Model):
 
 
 class GameTurn(models.Model):
+    """
+    GameTurn fields:
+        - number: integer
+
+    GameTurn relations:
+        - game: Game
+        - question_master: Player
+        - winner: Player
+        - question: Question
+    """
+
     number = models.IntegerField()
     game = models.ForeignKey(Game, related_name='turns', on_delete=models.CASCADE)
     question_master = models.ForeignKey(Player, related_name='turns_as_question_master', on_delete=models.CASCADE)
@@ -290,6 +304,7 @@ class Question(models.Model):
 
     Question relations:
         - game: Game
+        - turn: GameTurn
         - current: Game
         - blanks: Blank[]
         - answered: AnsweredQuestion
