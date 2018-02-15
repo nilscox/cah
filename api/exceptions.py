@@ -102,3 +102,9 @@ class NotEnoughPlayers(APIException):
     status_code = status.HTTP_400_BAD_REQUEST
     default_code = 'NOT_ENOUGH_PLAYERS'
     default_detail = 'Not enough players to start the game'
+
+
+class TurnNotOver(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_code = 'TURN_NOT_OVER'
+    default_detail = 'Turn is not over'

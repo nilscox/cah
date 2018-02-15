@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from api.models import Game, GameTurn, Player, Question, Choice, AnsweredQuestion, Answer
+from api.models import Game, GameTurn, Player, Question, Choice, AnsweredQuestion
 
 
 class QuestionSerializer(serializers.ModelSerializer):
@@ -95,6 +95,7 @@ class GameSerializer(serializers.ModelSerializer):
     Game: {
         id: integer,
         state: string,
+        play_state: string,
         owner: string,
         players: Player[],
         question_master: string,
@@ -105,6 +106,7 @@ class GameSerializer(serializers.ModelSerializer):
 
     players = PlayerSerializer(many=True, read_only=True)
     state = serializers.ReadOnlyField()
+    play_state = serializers.SerializerMethodField()
     owner = serializers.ReadOnlyField(source='owner.nick')
     question_master = serializers.ReadOnlyField(source='question_master.nick')
     question = QuestionSerializer(source='current_question', read_only=True)
@@ -112,7 +114,7 @@ class GameSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Game
-        fields = ('id', 'state', 'owner', 'players', 'question_master', 'question', 'propositions')
+        fields = ('id', 'state', 'play_state', 'owner', 'players', 'question_master', 'question', 'propositions')
 
     def get_propositions(self, game):
         answers = game.get_propositions()
@@ -124,6 +126,21 @@ class GameSerializer(serializers.ModelSerializer):
             return []
 
         return PartialAnsweredQuestionSerializer(answers, many=True).data
+
+    def get_play_state(self, game):
+        answers = game.get_propositions()
+
+        if answers is None:
+            return None
+
+        if len(answers) == game.players.count() - 1:
+            last_turn = game.turns.last()
+            if last_turn and game.current_question == last_turn.question:
+                return "end_of_turn"
+
+            return "question_master_selection"
+
+        return "players_answer"
 
 
 class AnsweredQuestionSerializer(serializers.ModelSerializer):
@@ -177,13 +194,14 @@ class LightAnsweredQuestionSerializer(AnsweredQuestionSerializer):
         id: integer,
         text: string,
         split: string[]
+        answers: Choice[],
         answered_by: string,
     }
     """
 
     class Meta:
         model = AnsweredQuestion
-        fields = ('id', 'text', 'split', 'answered_by')
+        fields = ('id', 'text', 'split', 'answers', 'answered_by')
 
 
 class GameTurnSerializer(serializers.ModelSerializer):

@@ -5,7 +5,6 @@ from django.db import models
 from api import events, data
 from api.exceptions import *
 
-
 MIN_PLAYERS_TO_START = 2
 
 
@@ -80,6 +79,24 @@ class Player(models.Model):
         except AnsweredQuestion.DoesNotExist:
             return None
 
+    def pick_card(self, choices):
+        choices = list(choices.filter(available=True))
+        dealt = []
+
+        for i in range(11 - self.cards.count()):
+            if len(choices) == 0:
+                raise NoMoreChoices
+
+            choice = random.choice(choices)
+            choice.available = False
+            choice.save()
+            dealt.append(choice)
+
+            self.cards.add(choice)
+            choices.remove(choice)
+
+        events.cards_dealt(self, dealt)
+
     def on_connected(self, socket_id):
         self.socket_id = socket_id
         self.save()
@@ -121,7 +138,7 @@ class Game(models.Model):
         - add_player(player) -> None
         - remove_player(player) -> None
         - start() -> None
-        - next_turn(player) -> None
+        - next_turn(question_master) -> None
         - deal_cards() -> None
         - get_propositions() -> AnsweredQuestion[] | None
         - answer(choices, answered_by) -> None
@@ -179,18 +196,25 @@ class Game(models.Model):
         if self.players.count() < MIN_PLAYERS_TO_START:
             raise NotEnoughPlayers
 
-        self.next_turn(random.choice(self.players.all()))
         self.state = 'started'
+        self.question_master = random.choice(self.players.all())
+
+        self.deal_cards()
+        self.pick_question()
         self.save()
 
         events.game_started(self)
 
-    def next_turn(self, player):
-        self.question_master = player
+    def next_turn(self, question_master):
+        self.question_master = question_master
 
-        for player in self.players.all():
-            self.deal_cards(player)
+        self.deal_cards()
+        self.pick_question()
+        self.save()
 
+        events.next_turn(self)
+
+    def pick_question(self):
         available_questions = self.questions.filter(available=True)
 
         if available_questions.count() == 0:
@@ -200,26 +224,9 @@ class Game(models.Model):
         self.current_question.available = False
         self.current_question.save()
 
-        if self.state == 'started':
-            events.next_turn(self)
-
-    def deal_cards(self, player):
-        choices = list(self.choices.filter(available=True))
-        dealt = []
-
-        for i in range(11 - player.cards.count()):
-            if len(choices) == 0:
-                raise NoMoreChoices
-
-            choice = random.choice(choices)
-            choice.available = False
-            choice.save()
-            dealt.append(choice)
-
-            player.cards.add(choice)
-            choices.remove(choice)
-
-        events.cards_dealt(player, dealt)
+    def deal_cards(self):
+        for player in self.players.all():
+            player.pick_card(self.choices)
 
     def get_propositions(self):
         if self.state != 'started':
@@ -258,8 +265,6 @@ class Game(models.Model):
         selected.selected_by = selected_by
         selected.save()
 
-        events.answer_selected(self, selected, self.get_propositions())
-
         turns_count = self.turns.count()
         turn = GameTurn(
             number=turns_count + 1,
@@ -274,8 +279,7 @@ class Game(models.Model):
             answer.turn = turn
             answer.save()
 
-        self.next_turn(winner)
-        self.save()
+        events.answer_selected(self, turn)
 
 
 class GameTurn(models.Model):
@@ -295,6 +299,7 @@ class GameTurn(models.Model):
     question_master = models.ForeignKey(Player, related_name='turns_as_question_master', on_delete=models.CASCADE)
     winner = models.ForeignKey(Player, related_name='turns_won', on_delete=models.CASCADE)
     question = models.OneToOneField('Question', related_name='turn', on_delete=models.CASCADE)
+
 
 class Question(models.Model):
     """

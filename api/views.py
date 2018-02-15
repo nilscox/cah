@@ -5,7 +5,7 @@ from rest_framework.response import Response
 
 from api.authentication import PlayerAuthentication
 from api.exceptions import *
-from api.models import Game, Player, AnsweredQuestion
+from api.models import Game, Player, AnsweredQuestion, Answer
 from api.permissions import IsPlayer, IsConnected
 from api.serializers import GameSerializer, GameTurnSerializer, PlayerSerializer, FullPlayerSerializer, AnsweredQuestionSerializer
 
@@ -221,3 +221,34 @@ def select(request, pk):
     game.select_answer(selected, player)
 
     return Response(AnsweredQuestionSerializer(selected).data)
+
+
+@api_view(['POST'])
+@authentication_classes([PlayerAuthentication])
+@permission_classes([IsPlayer, IsConnected])
+def next_turn(request):
+    player = request.user
+
+    if not player.in_game():
+        raise PlayerNotInGame
+
+    game = player.game
+
+    if game.state != 'started':
+        raise GameNotStarted
+
+    if player != game.question_master:
+        raise PlayerNotQuestionMaster
+
+    answers = game.get_propositions()
+    last_turn = game.turns.last()
+
+    if len(answers) != game.players.count() - 1:
+        raise TurnNotOver
+
+    if last_turn and last_turn.question != game.current_question:
+        raise TurnNotOver
+
+    game.next_turn(last_turn.winner)
+
+    return Response(GameSerializer(game).data)

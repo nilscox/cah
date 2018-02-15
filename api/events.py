@@ -96,11 +96,10 @@ def all_answers_submitted(game, all_answers):
     })
 
 
-def answer_selected(game, answer, all_answers):
+def answer_selected(game, turn):
     broadcast(game, {
         "type": "ANSWER_SELECTED",
-        "answer": serialize("AnsweredQuestionSerializer", answer),
-        "answers": serialize("AnsweredQuestionSerializer", all_answers, many=True),
+        "turn": serialize("GameTurnSerializer", turn),
     })
 
 

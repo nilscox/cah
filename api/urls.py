@@ -11,6 +11,7 @@ urlpatterns = [
     path('game/join/<int:pk>', views.join_game),
     path('game/leave', views.leave_game),
     path('game/start', views.start_game),
+    path('game/next', views.next_turn),
     path('answer', views.answer),
     path('answer/select/<int:pk>', views.select),
 ]
