@@ -2,10 +2,8 @@ import random
 
 from django.db import models
 
-from api import events, data
+from api import events
 from api.exceptions import *
-
-MIN_PLAYERS_TO_START = 2
 
 
 class Player(models.Model):
@@ -153,34 +151,6 @@ class Game(models.Model):
     def __str__(self):
         return ''.join(['Game #', str(self.id), ' (', self.state, ')'])
 
-    def init(self):
-        data_questions, data_places = data.get_questions()
-        data_choices = data.get_choices()
-
-        def create_questions():
-            questions = list(map(lambda text: Question(game=self, text=text), data_questions))
-            Question.objects.bulk_create(questions)
-
-        def create_blanks():
-            questions = list(self.questions.all())
-            blanks = []
-
-            for i in range(len(questions)):
-                for place in data_places[i]:
-                    blanks.append(Blank(question=questions[i], place=place))
-
-            Blank.objects.bulk_create(blanks)
-
-        def create_choices():
-            choices = map(lambda text: Choice(game=self, text=text), data_choices)
-            Choice.objects.bulk_create(choices)
-
-        create_questions()
-        create_blanks()
-        create_choices()
-
-        events.game_created(self.owner)
-
     def get_history(self):
         return self.turns.all()
 
@@ -191,28 +161,6 @@ class Game(models.Model):
     def remove_player(self, player):
         self.players.remove(player)
         events.game_left(player)
-
-    def start(self):
-        if self.players.count() < MIN_PLAYERS_TO_START:
-            raise NotEnoughPlayers
-
-        self.state = 'started'
-        self.question_master = random.choice(self.players.all())
-
-        self.deal_cards()
-        self.pick_question()
-        self.save()
-
-        events.game_started(self)
-
-    def next_turn(self, question_master):
-        self.question_master = question_master
-
-        self.deal_cards()
-        self.pick_question()
-        self.save()
-
-        events.next_turn(self)
 
     def pick_question(self):
         available_questions = self.questions.filter(available=True)
@@ -233,53 +181,6 @@ class Game(models.Model):
             return None
 
         return self.answers.filter(question=self.current_question)
-
-    def answer(self, choices, answered_by):
-        question = self.current_question
-        answered_question = AnsweredQuestion(game=self, question=question, answered_by=answered_by)
-        answered_question.save()
-
-        blanks = list(question.blanks.all())
-
-        for i in range(len(choices)):
-            choice = choices[i]
-
-            answered_question.answers.create(position=blanks[i], choice=choice)
-
-            choice.owner = None
-            choice.played = True
-            choice.save()
-
-        events.answer_submitted(self, answered_by)
-
-        if self.get_propositions().count() == self.players.count() - 1:
-            answers = list(self.get_propositions())
-            random.shuffle(answers)
-            events.all_answers_submitted(self, answers)
-
-        return answered_question
-
-    def select_answer(self, selected, selected_by):
-        winner = selected.answered_by
-
-        selected.selected_by = selected_by
-        selected.save()
-
-        turns_count = self.turns.count()
-        turn = GameTurn(
-            number=turns_count + 1,
-            game=self,
-            question_master=self.question_master,
-            winner=winner,
-            question=self.current_question,
-        )
-        turn.save()
-
-        for answer in self.get_propositions():
-            answer.turn = turn
-            answer.save()
-
-        events.answer_selected(self, turn)
 
 
 class GameTurn(models.Model):

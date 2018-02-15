@@ -3,9 +3,10 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
-from api.authentication import PlayerAuthentication
+from api import game as game_controller
 from api.exceptions import *
-from api.models import Game, Player, AnsweredQuestion, Answer
+from api.models import Game, Player, AnsweredQuestion
+from api.authentication import PlayerAuthentication
 from api.permissions import IsPlayer, IsConnected
 from api.serializers import GameSerializer, GameTurnSerializer, PlayerSerializer, FullPlayerSerializer, AnsweredQuestionSerializer
 
@@ -72,7 +73,7 @@ class GameViews(views.APIView):
         game_serializer = GameSerializer(data=request.data)
         game_serializer.is_valid(raise_exception=True)
         game = game_serializer.save(owner=player, players=[player])
-        game.init()
+        game_controller.init(game)
 
         return Response(game_serializer.data, status=status.HTTP_201_CREATED)
 
@@ -144,7 +145,7 @@ def start_game(request):
     if game.state != 'idle':
         raise GameAlreadyStarted
 
-    game.start()
+    game_controller.start(game)
 
     return Response(GameSerializer(game).data)
 
@@ -186,7 +187,7 @@ def answer(request):
     if len(ids) != len(choices):
         raise InvalidAnswers
 
-    answered_question = game.answer(choices, player)
+    answered_question = game_controller.answer(game, choices, player)
 
     return Response(AnsweredQuestionSerializer(answered_question).data)
 
@@ -218,7 +219,7 @@ def select(request, pk):
     except (ValueError, AnsweredQuestion.DoesNotExist):
         raise InvalidSelection
 
-    game.select_answer(selected, player)
+    game_controller.select_answer(game, selected, player)
 
     return Response(AnsweredQuestionSerializer(selected).data)
 
@@ -249,6 +250,6 @@ def next_turn(request):
     if last_turn and last_turn.question != game.current_question:
         raise TurnNotOver
 
-    game.next_turn(last_turn.winner)
+    game_controller.next_turn(game, last_turn.winner)
 
     return Response(GameSerializer(game).data)
