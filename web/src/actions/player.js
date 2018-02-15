@@ -13,15 +13,23 @@ export function loginPlayer(nick) {
 
   return dispatch => dispatch(request(PLAYER_LOGIN, opts))
     .then(result => {
-      if (result.status)
+      if (result.status) {
+        localStorage.setItem('nick', result.body.nick);
         dispatch(fetchGame());
+      }
     });
 }
 
 export const PLAYER_LOGOUT = 'PLAYER_LOGOUT';
 export function logoutPlayer() {
-  return request(PLAYER_LOGOUT, {
+  const opts = {
     method: 'DELETE',
     route: PLAYER_ROUTE,
-  });
+  };
+
+  return dispatch => dispatch(request(PLAYER_LOGOUT, opts))
+    .then(result => {
+      if (result.status)
+        localStorage.removeItem('nick');
+    });
 }

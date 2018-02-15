@@ -23,8 +23,10 @@ export function initializationStart() {
 
     dispatch(fetchPlayer())
       .then(result => {
-        if (result.status === 200)
+        if (result.status === 200) {
+          localStorage.setItem('nick', result.body.nick);
           return delay(500).then(() => dispatch(fetchGame()));
+        }
       })
       .then(result => {
         if (result && result.status === 200 && result.body.state !== 'idle')
