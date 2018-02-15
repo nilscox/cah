@@ -3,8 +3,7 @@ import { connect } from 'react-redux';
 import { FormControlLabel, Checkbox, Button } from 'material-ui';
 import { toggleDarkMode } from '../../../../actions/settings';
 import { logoutPlayer } from '../../../../actions/player';
-
-{/*<div className={"player-item-nick"}><span className={"player-item-arrow"}>{isOpen ? '▾' : '▸'}</span> {player.nick}</div>*/}
+import GameHistory from "./GameHistory";
 
 const PlayerItem = ({ nick, score, questionMaster, online, submitted }) => {
   const clazz = ['player-item'];
@@ -32,6 +31,7 @@ const mapStateToProps = state => ({
   questionMaster: state.game.question_master,
   players: state.game.players,
   submitted: state.game.has_submitted,
+  history: state.game.history,
   settings: state.settings,
 });
 
@@ -50,7 +50,7 @@ class InfoView extends React.Component {
   }
 
   render() {
-    const { gameId, questionMaster, players, submitted, settings, toggleDarkMode, logout } = this.props;
+    const { gameId, questionMaster, players, submitted, history, settings, toggleDarkMode, logout } = this.props;
     const isQuestionMaster = player => questionMaster === player.nick;
     const isOnline = player => player.connected;
     const hasSubmitted = player => submitted.indexOf(player.nick) >= 0;
@@ -76,9 +76,7 @@ class InfoView extends React.Component {
         </div>
         <div className="game-history">
           <h2>History</h2>
-          <ul>
-
-          </ul>
+          <GameHistory history={history} />
         </div>
         <div className="settings">
           <h2>Settings</h2>

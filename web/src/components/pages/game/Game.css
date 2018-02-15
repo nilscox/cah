@@ -166,6 +166,7 @@
   top: 0;
   right: 0;
   background: linear-gradient(to right, #AAA 0, #DDD 5px);
+  overflow: auto;
 }
 
 .game-info-view .game-title {
@@ -222,9 +223,24 @@
   color: #339933;
 }
 
-.game-info-view .game-history ul {
-  padding: 0;
-  list-style-type: none;
+.game-history .game-history-turns .game-history-turn .game-history-turn-open-arrow {
+  margin: 0 5px;
+}
+
+.game-history .game-history-turns .game-history-turn .game-history-turn-question {
+  display: inline-block;
+}
+
+.game-history .game-history-turns .game-history-turn .game-history-turn-answers {
+  display: none;
+}
+
+.game-history .game-history-turns .game-history-turn .game-history-turn-answers .game-history-turn-answer.winner .player-nick {
+  font-weight: bold;
+}
+
+.game-history .game-history-turns .game-history-turn.game-history-turn-open .game-history-turn-answers {
+  display: block;
 }
 
 .game-info-view .settings ul {
