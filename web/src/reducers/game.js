@@ -56,7 +56,10 @@ export default function(state = null, action) {
       return {...state, has_submitted: [...state.has_submitted, message.nick]};
 
     case 'WS_ALL_ANSWERS_SUBMITTED':
-      return {...state, propositions: message.answers};
+      return {...state, play_state: 'question_master_selection', propositions: message.answers};
+
+    case 'WS_ANSWER_SELECTED':
+      return { ...state, play_state: 'end_of_turn', history: [...state.history, message.turn] };
 
     case 'WS_NEXT_TURN':
       return { ...state, ...message.game, has_submitted: [] };

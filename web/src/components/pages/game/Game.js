@@ -5,39 +5,32 @@ import ChoicesView from './views/ChoicesView';
 import GameInfoView from './views/GameInfoView';
 import GameIdle from './GameIdle';
 import AnswerSelectionView from './views/AnswerSelectionView';
+import TurnEndView from './views/TurnEndView';
 import './Game.css';
 import './Game.dark.css';
-
-const STATE = {
-  PLAYERS_ANSWER: 'PLAYERS_ANSWER',
-  QUESTION_MASTER_SELECTION: 'QUESTION_MASTER_SELECTION',
-};
 
 const mapStateToProps = state => {
   const { game } = state;
 
   return {
     gameIsIdle: game.state === 'idle',
-    playState: game.propositions && game.propositions.length === 0
-      ? STATE.PLAYERS_ANSWER
-      : STATE.QUESTION_MASTER_SELECTION,
+    playState: game.play_state,
   };
 };
 
 const Game = ({ gameIsIdle, playState }) => {
+  const mapPlayStateToView = {
+    'players_answer': <QuestionView />,
+    'question_master_selection': <AnswerSelectionView />,
+    'end_of_turn': <TurnEndView />,
+  };
+
   if (gameIsIdle)
     return <GameIdle />;
 
-  let mainView = null;
-
-  if (playState === STATE.QUESTION_MASTER_SELECTION)
-    mainView = <AnswerSelectionView />;
-  else
-    mainView = <QuestionView />;
-
   return (
     <div className="game">
-      { mainView }
+      { mapPlayStateToView[playState] }
       <GameInfoView />
       <ChoicesView />
    </div>

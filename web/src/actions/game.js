@@ -79,3 +79,11 @@ export function selectAnswer(answerId) {
     route: ANSWER_ROUTE + '/select/' + answerId,
   });
 }
+
+export const NEXT_TURN = 'NEXT_TURN';
+export function nextTurn() {
+  return request(NEXT_TURN, {
+    method: 'POST',
+    route: GAME_ROUTE + '/next',
+  });
+}
