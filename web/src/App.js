@@ -10,6 +10,8 @@ import Lobby from './components/pages/Lobby';
 import Game from './components/pages/game/Game';
 import ErrorSnackBar from './components/common/ErrorSnackbar';
 
+import './App.scss';
+
 const mapStateToProps = state => {
   const { status, player, game, settings } = state;
 
