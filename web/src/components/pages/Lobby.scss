@@ -1,0 +1,32 @@
+&#page-lobby {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .container {
+    position: relative;
+    top: -20%;
+    width: 30%;
+    min-width: 230px;
+    max-width: 420px;
+
+    display: flex;
+    flex-direction: row;
+
+    .join-game {
+      flex: 4;
+    }
+
+    .or {
+      flex: 1;
+      text-align: center;
+    }
+
+    .create-game {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+}

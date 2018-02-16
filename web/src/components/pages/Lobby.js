@@ -7,47 +7,44 @@ import Button from 'material-ui/Button';
 import AddIcon from 'material-ui-icons/Add';
 import { createGame, joinGame } from '../../actions/game';
 
-const mapStateToProps = state => ({
-
-});
-
 const mapDispatchToProps = dispatch => ({
   createGame: () => dispatch(createGame()),
   joinGame: id => dispatch(joinGame(id)),
 });
 
 const Lobby = ({ createGame, joinGame }) => {
+  const onJoin = evt => {
+    if (evt.key === 'Enter')
+      joinGame(inputGameId);
+  };
+
   let inputGameId = null;
-
-  const onCreate = () => {
-    createGame();
-  };
-
-  const onJoin = (e) => {
-    e.preventDefault();
-    joinGame(inputGameId);
-  };
 
   return (
     <div id="page-lobby" className="page">
-      <div className="game-form">
-        <form onSubmit={onJoin}>
+      <div className="container">
+        <div className="join-game">
           <TextField
+            className="join-input-game-id"
             label="Join game"
             placeholder="id"
             fullWidth
-            onChange={e => inputGameId = e.target.value}/>
-        </form>
+            onChange={e => inputGameId = e.target.value}
+            onKeyPress={onJoin}
+          />
+        </div>
         <h4 className="or">||</h4>
-        <Tooltip title="Create a new game" placement="bottom">
-          <Button
-            fab mini
-            aria-label="Log out"
-            className="new-game-button"
-            onClick={onCreate}>
-            <AddIcon/>
-          </Button>
-        </Tooltip>
+        <div className="create-game">
+          <Tooltip title="Create a new game" placement="bottom">
+            <Button
+              fab mini
+              aria-label="Create game"
+              className="create-game-button"
+              onClick={createGame}>
+              <AddIcon/>
+            </Button>
+          </Tooltip>
+        </div>
       </div>
     </div>
   );
@@ -58,4 +55,4 @@ Lobby.propTypes = {
   joinGame: PropTypes.func.isRequired,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Lobby);
+export default connect(null, mapDispatchToProps)(Lobby);
