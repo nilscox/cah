@@ -21,17 +21,19 @@ const Login = ({ onLogin }) => {
   };
 
   return (
-    <div className="content">
-      <h2>CAH</h2>
-      <div className="login-form">
-        <form onSubmit={onFormSubmit}>
-          <TextField
-            label="Choose your Nick"
-            placeholder="Nick"
-            fullWidth
-            onChange={e => nick = e.target.value}
-          />
-        </form>
+    <div className="page" id="page-login">
+      <div className="container">
+        <h2 className="title">CAH</h2>
+        <div className="login-form">
+          <form onSubmit={onFormSubmit}>
+            <TextField
+              label="Choose your Nick"
+              placeholder="Nick"
+              fullWidth
+              onChange={e => nick = e.target.value}
+            />
+          </form>
+        </div>
       </div>
     </div>
   );
