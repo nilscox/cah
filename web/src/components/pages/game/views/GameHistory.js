@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-const GameHistoryTurn = ({ player_nick, turn, open, toggleOpen }) => (
+const GameHistoryTurn = ({ turn, open, toggleOpen }) => (
   <div className={'game-history-turn' + (open ? ' game-history-turn-open' : '')}>
     <div className={'game-history-turn-question'} onClick={toggleOpen}>
       <span className={'game-history-turn-open-arrow'}>{open ? '▾' : '▸'}</span>
@@ -42,9 +42,8 @@ export default class GameHistory extends Component {
   }
 
   render() {
-    const { history, player } = this.props;
+    const { history } = this.props;
     const { openGameTurns } = this.state;
-    const player_nick = localStorage.getItem('nick');
 
     const isTurnOpen = turn => openGameTurns.indexOf(turn.number) >= 0;
 
@@ -53,7 +52,6 @@ export default class GameHistory extends Component {
         {history.map(turn => (
           <GameHistoryTurn
             key={'turn-' + turn.number}
-            player_nick={player_nick}
             turn={turn}
             open={isTurnOpen(turn)}
             toggleOpen={() => this.toggleTurn(turn.number)}
