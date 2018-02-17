@@ -12,9 +12,6 @@ import rootReducer from './reducers';
 import { initializationStart } from './actions/initialization';
 import App from './App';
 
-import './index.css';
-import './index.dark.css';
-
 const loggerMiddleware = createLogger({
   collapsed: true,
   duration: true,
@@ -51,6 +48,11 @@ const store = createStore(
 );
 
 store.dispatch(initializationStart());
+
+// custom polyfill
+Array.prototype.toClassName = function() {
+  return this.filter(i => i).join(' ');
+};
 
 ReactDOM.render((
   <Provider store={store}>
