@@ -1,0 +1,41 @@
+&#page-game-idle {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+
+  .start-button {
+    font-weight: bold;
+    font-size: 1.2em;
+  }
+
+  .players-list {
+    width: 100%;
+    margin-top: 30px;
+    background: #FFF;
+    text-align: initial;
+    font-weight: bold;
+  }
+
+  ul.players-list {
+    width: 100%;
+    margin-top: 30px;
+    background: #FFF;
+    list-style-type: none;
+    padding-left: 0;
+  }
+
+  ul.players-list li {
+    padding: 15px;
+    border-bottom: 2px solid #EEE;
+  }
+
+  ul.players-list li:last-child {
+    border-bottom: none;
+  }
+
+  ul.players-list li.player-offline {
+    color: #933;
+  }
+}
