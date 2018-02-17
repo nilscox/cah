@@ -40,7 +40,7 @@ const App = ({ apiDown, loading, isLoggedIn, isInGame, gameState, settings, erro
   if (apiDown)
     content = <h4 className="api-down">API is down... Please wait, happy monkeys are fixing the problem.</h4>;
   else if (loading)
-    content = <CircularProgress className="loader" size={80} thickness={2} />;
+    content = <div className="loader"><CircularProgress size={80} thickness={2} /></div>;
   else if (!isLoggedIn)
     content = <Login />;
   else if (!isInGame)
