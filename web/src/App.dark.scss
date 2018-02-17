@@ -1,0 +1,75 @@
+&.dark {
+
+  input {
+    color: #EEE;
+  }
+
+  label,
+  label span {
+    color: #999;
+  }
+
+  button {
+    background: #666;
+  }
+
+  .page {
+    background: #333;
+    color: #CCC;
+
+    &#page-login {
+      background: #333;
+      color: #CCC;
+    }
+
+    &#page-game-idle {
+
+      .players-list {
+        background: #333;
+
+        .player {
+          background: #444;
+          border-bottom: 2px solid #666;
+
+          &.player-offline {
+            color: #999;
+          }
+        }
+      }
+    }
+
+    &#page-game {
+
+      .game-view#player-cards {
+        background: linear-gradient(to bottom, #222 0, #444 5px);
+      }
+
+      .game-view#game-info {
+        background: linear-gradient(to right, #222 0, #444 5px);
+      }
+    }
+
+    .card {
+      border: 1px solid #666;
+      box-shadow: 1px 2px 5px 2px #222;
+
+      &.choice {
+        background: #CCC;
+        color: #111;
+
+        &.selected {
+          background: #cee1ef;
+        }
+      }
+
+      &.question {
+        background: #111;
+        color: #FFF;
+
+        .blank {
+          border-bottom: 1px solid #FFF;
+        }
+      }
+    }
+  }
+}
