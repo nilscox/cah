@@ -50,6 +50,7 @@ const store = createStore(
 store.dispatch(initializationStart());
 
 // custom polyfill
+// eslint-disable-next-line
 Array.prototype.toClassName = function() {
   return this.filter(i => i).join(' ');
 };

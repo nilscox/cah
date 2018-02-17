@@ -1,15 +1,15 @@
 import React from 'react';
 
-const ChoiceCard = ({ choice, selected, canSelect, onSelect }) => (
+const ChoiceCard = ({ choice, className, onClick }) => (
   <div
     className={[
-      'card choice',
-      (canSelect ? ' can-select' : ''),
-      (selected ? ' selected' : '')
-    ].join('')}
-    onClick={() => canSelect ? onSelect() : null}>
+      'card',
+      'choice',
+      className,
+    ].toClassName()}
+    onClick={onClick}>
     <div className="text">{choice.text}</div>
   </div>
 );
 
-export default ChoiceCard
+export default ChoiceCard;

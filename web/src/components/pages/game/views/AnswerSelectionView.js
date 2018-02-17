@@ -1,7 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import AnsweredQuestionCard from '../../../common/AnsweredQuestionCard';
+
 import { selectAnswer } from '../../../../actions/game';
+
+import AnsweredQuestionCard from '../../../common/AnsweredQuestionCard';
 
 const mapStateToProps = state => {
   const { game, player } = state;
@@ -18,8 +20,10 @@ const mapDispatchToProps = dispatch => ({
 });
 
 const AnswerSelectionView = ({ question, answers, canSelectAnswer, onSelectAnswer }) => (
-  <div className="answer-selection-view">
-    <div className={'answers-list' + (canSelectAnswer ? ' can-select' : '')}>
+  <div className="game-view" id="answer-selection">
+
+    <div className={['answers-list', canSelectAnswer && 'can-select'].toClassName()}>
+
       {answers.map(answer => (
         <AnsweredQuestionCard
           key={answer.id}
@@ -27,7 +31,9 @@ const AnswerSelectionView = ({ question, answers, canSelectAnswer, onSelectAnswe
           answer={answer}
           onClick={() => canSelectAnswer ? onSelectAnswer(answer.id) : null} />
       ))}
+
     </div>
+
   </div>
 );
 

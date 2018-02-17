@@ -11,7 +11,7 @@ export function websocketCreated() {
 export const WEBSOCKET_CONNECTED = 'WEBSOCKET_CONNECTED';
 export function websocketConnected(event) {
   return (dispatch, getState) => {
-    const { player }= getState();
+    const { player } = getState();
 
     sendToWS({
       action: 'connected',

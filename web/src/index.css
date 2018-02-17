@@ -1,18 +1,3 @@
-body {
-  margin: 0;
-  padding: 0;
-  font-family: sans-serif;
-}
-
-html, body, #root, .app, .route, .page {
-  width: 100%;
-  height: 100%;
-}
-
-.page {
-  background: #EEE;
-}
-
 .page#page-loader {
   padding-top: 20%;
   text-align: center;
@@ -26,102 +11,9 @@ html, body, #root, .app, .route, .page {
   margin: 0;
 }
 
-.page#page-login {
-  background: #FFF;
-}
-
-.page#page-login .content {
-  position: absolute;
-  top: 25%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-.page#page-login h2 {
-  text-align: center;
-}
-
-.page#page-login .login-form {
-  max-width: 300px;
-  border: 1px solid #999;
-  padding: 15px 40px;
-}
-
-.page#page-lobby .game-form,
-.page#page-lobby .game-form-loader {
-  display: inline-block;
-  position: absolute;
-  top: 25%;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.page#page-lobby .game-form form,
-.page#page-lobby .game-form .or,
-.page#page-lobby .game-form .new-game-button {
-  display: inline-block;
-  margin: 0 15px;
-}
-
-.page#page-lobby .game-form .new-game-button {
-  position: relative;
-  top: -5px;
-}
-
 .game-board {
   width: 100%;
   height: 100%;
-}
-
-.card {
-  width: 190px;
-  height: 300px;
-  display: inline-block;
-  position: relative;
-  border: 1px solid #999;
-  border-radius: 8px;
-  box-shadow: 1px 2px 5px 2px #999;
-}
-
-.card .text {
-  width: 100%;
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  text-align: center;
-}
-
-.card.choice {
-  background: #FFF;
-  color: #000;
-  font-weight: bold;
-  font-size: 1.2em;
-}
-
-.card.choice.selected {
-  background: #cee1ef;
-}
-
-.card.question {
-  background: #333;
-  color: #FFF;
-}
-
-.card.question .blank {
-  width: 30px;
-  display: inline-block;
-  margin: 0 5px;
-  border-bottom: 1px solid #FFF;
-}
-
-.card.question .filled {
-  font-weight: bold;
-  margin: 0 5px;
-  text-decoration: underline;
-}
-
-.card.question .question-answer-separator {
-  height: 15px;
 }
 
 .logout-button {

@@ -1,0 +1,41 @@
+html, body, #root, .app, .page {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.api-down {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  top: -20%;
+}
+
+.page {
+  background: #EEE;
+
+  .arrow {
+    margin-right: 5px;
+
+    &.arrow--open::before {
+      content: '▾';
+    }
+
+    &.arrow--close::before {
+      content: '▸';
+    }
+  }
+  
+  @import "components/common/Card";
+  @import "components/common/PlayerAvatar";
+
+  @import "components/pages/Login";
+  @import "components/pages/Lobby";
+  @import "components/pages/game/GameIdle";
+  @import "components/pages/game/Game";
+}

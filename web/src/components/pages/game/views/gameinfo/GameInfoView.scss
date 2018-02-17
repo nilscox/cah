@@ -1,0 +1,36 @@
+&#game-info {
+  flex: 2;
+
+  background: linear-gradient(to right, #AAA 0, #DDD 5px);
+  overflow: auto;
+  padding: 15px;
+
+  .game-title {
+    text-align: center;
+    font-size: 1.5em;
+    margin-top: 15px;
+    margin-bottom: 30px;
+  }
+  
+  .players-list,
+  .game-history,
+  .settings {
+    padding: 0 15px;
+  }
+  
+  h2 {
+    font-size: 1.2em;
+    border-bottom: 1px solid #CCC;
+  }
+
+  .players-list {
+    display: flex;
+    flex-direction: row;
+
+    .player {
+      margin: 0 15px;
+    }
+  }
+
+  @import "GameHistory";
+}

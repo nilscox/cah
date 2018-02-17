@@ -1,0 +1,23 @@
+&#question-view {
+  flex: 4;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .question-card {
+
+    &.can-submit .card.question {
+      cursor: pointer;
+    }
+
+    &.submitted .card.question {
+      color: #CCC;
+      background: #444;
+    }
+
+    .question-master {
+      font-weight: bold;
+      text-align: center;
+    }
+  }
+}

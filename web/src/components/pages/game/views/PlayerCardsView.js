@@ -1,7 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import ChoiceCard from '../../../common/ChoiceCard';
+
 import { toggleChoice } from '../../../../actions/game';
+import ChoiceCard from '../../../common/ChoiceCard';
 
 const all = arr => arr.indexOf(false) < 0;
 
@@ -24,20 +25,26 @@ const mapDispatchToProps = dispatch => ({
   selectChoice: choiceId => dispatch(toggleChoice(choiceId)),
 });
 
-const ChoicesView = ({ choices, isSelected, canSelectChoice, selectChoice }) => (
-  <div className="choices-view">
-    <div className="choices-list">
+const PlayerCardsView = ({ choices, isSelected, canSelectChoice, selectChoice }) => (
+  <div className="game-view" id="player-cards">
+
+    <div className="cards-list">
+
       {choices && choices.map(choice => (
         <ChoiceCard
           key={choice.id}
           choice={choice}
-          selected={isSelected(choice)}
-          canSelect={canSelectChoice || isSelected(choice)}
-          onSelect={() => selectChoice(choice)}
+          className={[
+            isSelected(choice) && 'selected',
+            canSelectChoice && 'can-select',
+          ].toClassName()}
+          onClick={() => (canSelectChoice || isSelected(choice)) && selectChoice(choice)}
         />
       ))}
+
     </div>
+
   </div>
 );
 
-export default connect(mapStateToProps, mapDispatchToProps)(ChoicesView);
+export default connect(mapStateToProps, mapDispatchToProps)(PlayerCardsView);

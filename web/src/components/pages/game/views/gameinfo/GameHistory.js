@@ -1,21 +1,28 @@
 import React, { Component } from 'react';
 
-const GameHistoryTurn = ({ turn, open, toggleOpen }) => (
-  <div className={'game-history-turn' + (open ? ' game-history-turn-open' : '')}>
-    <div className={'game-history-turn-question'} onClick={toggleOpen}>
-      <span className={'game-history-turn-open-arrow'}>{open ? '▾' : '▸'}</span>
+const HistoryTurn = ({ turn, open, toggleOpen }) => (
+  <div className={['turn', open && 'turn-open'].toClassName()}>
+
+    <div className="turn-question" onClick={toggleOpen}>
+      <span className={['arrow', 'arrow--' + (open ? 'open' : 'close')].toClassName()} />
       {turn.question.text}
     </div>
-    <ul className="game-history-turn-answers">
+
+    <ul className="turn-answers">
+
       {turn.answers.map(answer => (
         <li key={'turn-' + turn.number + '-answer-' + answer.answered_by} className={[
-          'game-history-turn-answer',
+          'turn-answer',
           turn.winner === answer.answered_by ? ' winner' : '',
         ].join('')}>
-          <span className={'player-nick'}>{answer.answered_by}</span>: {answer.text}
+
+          <span className="player-nick">{answer.answered_by}</span>: {answer.text}
+
         </li>
       ))}
+
     </ul>
+
   </div>
 );
 
@@ -48,15 +55,17 @@ export default class GameHistory extends Component {
     const isTurnOpen = turn => openGameTurns.indexOf(turn.number) >= 0;
 
     return (
-      <div className="game-history-turns">
-        {history.map(turn => (
-          <GameHistoryTurn
+      <div id="game-history">
+
+        {history.slice().reverse().map(turn => (
+          <HistoryTurn
             key={'turn-' + turn.number}
             turn={turn}
             open={isTurnOpen(turn)}
             toggleOpen={() => this.toggleTurn(turn.number)}
           />
         ))}
+
       </div>
     );
   }

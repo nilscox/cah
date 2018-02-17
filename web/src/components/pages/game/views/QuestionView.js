@@ -1,7 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import QuestionCard from '../../../common/QuestionCard';
+
 import { submitAnswer } from '../../../../actions/game';
+
+import QuestionCard from '../../../common/QuestionCard';
 
 const all = arr => arr.indexOf(false) < 0;
 
@@ -34,11 +36,24 @@ const mapDispatchToProps = dispatch => ({
 });
 
 const QuestionView = ({ questionMaster, question, choices, selectedIds, submitted, canSubmitAnswer, onSubmitAnswer }) => (
-  <div className="question-view">
-    <div className={'question-card' + (canSubmitAnswer ? ' can-submit' : '') + (submitted ? ' submitted' : '')}>
-      <QuestionCard question={question} choices={choices} onClick={() => canSubmitAnswer ? onSubmitAnswer(selectedIds) : null} />
+  <div className="game-view" id="question-view">
+
+    <div className={[
+      'question-card',
+      canSubmitAnswer && 'can-submit',
+      submitted && 'submitted'
+    ].toClassName()}>
+
+      <QuestionCard
+        question={question}
+        choices={choices}
+        className={[!submitted && 'underline'].toClassName()}
+        onClick={() => canSubmitAnswer ? onSubmitAnswer(selectedIds) : null} />
+
       <div className="question-master">{questionMaster}</div>
+
     </div>
+
   </div>
 );
 

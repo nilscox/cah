@@ -1,0 +1,16 @@
+&#answer-selection {
+  flex: 4;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .answers-list {
+    display: flex;
+    flex-direction: row;
+
+    &.can-select .card.question {
+      cursor: pointer;
+      margin: 0 5px;
+    }
+  }
+}

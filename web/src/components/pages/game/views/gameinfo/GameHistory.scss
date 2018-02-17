@@ -1,0 +1,45 @@
+#game-history {
+
+  .turn {
+
+    border-bottom: 1px solid #999;
+
+    &:first-child {
+      border-top: 1px solid #999;
+    }
+
+    .turn-question {
+      cursor: pointer;
+    }
+
+    .turn-answers {
+      display: none;
+      list-style-type: none;
+
+      .turn-answer.winner .player-nick {
+        font-weight: bold;
+      }
+    }
+
+    &.turn-open {
+      .turn-question {
+        border-bottom: 1px solid #CCC;
+        font-weight: bold;
+      }
+
+      .turn-answers {
+        margin: 0;
+        padding: 15px 0 15px 15px;
+        display: block;
+
+        .turn-answer {
+          border-bottom: 1px solid #CCC;
+        }
+
+        .turn-answer:last-child {
+          border-bottom: none;
+        }
+      }
+    }
+  }
+}
