@@ -15,25 +15,28 @@ const mapDispatchToProps = dispatch => ({
 const Login = ({ onLogin }) => {
   let nick = null;
 
-  const onFormSubmit = e => {
-    e.preventDefault();
-    onLogin(nick);
+  const onKeyPress = evt => {
+    if (evt.key === 'Enter')
+      onLogin(nick);
   };
 
   return (
     <div className="page" id="page-login">
+
       <div className="container">
+
         <h2 className="title">CAH</h2>
+
         <div className="login-form">
-          <form onSubmit={onFormSubmit}>
-            <TextField
-              label="Choose your Nick"
-              placeholder="Nick"
-              fullWidth
-              onChange={e => nick = e.target.value}
-            />
-          </form>
+          <TextField
+            label="Choose your Nick"
+            placeholder="Nick"
+            fullWidth
+            onChange={e => nick = e.target.value}
+            onKeyPress={onKeyPress}
+          />
         </div>
+
       </div>
     </div>
   );
