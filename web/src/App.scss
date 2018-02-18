@@ -5,8 +5,9 @@ html, body, #root, .app, .page {
   padding: 0;
 }
 
+@import "App.dark";
+
 .app {
-  @import "App.dark";
 
   .api-down {
     width: 100%;
@@ -27,23 +28,23 @@ html, body, #root, .app, .page {
     align-items: center;
   }
 
-  .page {
-    background: #EEE;
+  .arrow {
+    margin-right: 5px;
 
-    .arrow {
-      margin-right: 5px;
-
-      &.arrow--open::before {
-        content: '▾';
-      }
-
-      &.arrow--close::before {
-        content: '▸';
-      }
+    &.arrow--open::before {
+      content: '▾';
     }
 
-    @import "components/common/Card";
-    @import "components/common/PlayerAvatar";
+    &.arrow--close::before {
+      content: '▸';
+    }
+  }
+
+  @import "components/common/Card";
+  @import "components/common/PlayerAvatar";
+
+  .page {
+    background-color: #EEE;
 
     @import "components/pages/Login";
     @import "components/pages/Lobby";

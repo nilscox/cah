@@ -8,9 +8,12 @@
     display: flex;
     flex-direction: row;
 
+    .card.question {
+      margin: 0 5px;
+    }
+
     &.can-select .card.question {
       cursor: pointer;
-      margin: 0 5px;
     }
   }
 }

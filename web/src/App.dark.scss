@@ -1,4 +1,4 @@
-&.dark {
+.app.dark {
 
   input {
     color: #EEE;
@@ -13,8 +13,27 @@
     background: #666;
   }
 
-  .loader {
-    background: #333;
+  .card {
+    border-color: #444;
+    box-shadow: 1px 2px 5px 2px #222;
+
+    &.choice {
+      background: #CCC;
+      color: #111;
+
+      &.selected {
+        background: #cee1ef;
+      }
+    }
+
+    &.question {
+      background: #111;
+      color: #FFF;
+
+      .blank {
+        border-bottom-color: #FFF;
+      }
+    }
   }
 
   .page {
@@ -33,7 +52,7 @@
 
         .player {
           background: #444;
-          border-bottom: 2px solid #666;
+          border-bottom-color: #666;
 
           &.player-offline {
             color: #999;
@@ -50,28 +69,21 @@
 
       .game-view#game-info {
         background: linear-gradient(to right, #222 0, #444 5px);
-      }
-    }
 
-    .card {
-      border: 1px solid #666;
-      box-shadow: 1px 2px 5px 2px #222;
+        #game-history .turn {
+          border-bottom-color: #666;
 
-      &.choice {
-        background: #CCC;
-        color: #111;
+          &.turn-open {
+            background: #555;
 
-        &.selected {
-          background: #cee1ef;
-        }
-      }
+            .turn-question {
+              border-bottom-color: #999;
+            }
 
-      &.question {
-        background: #111;
-        color: #FFF;
-
-        .blank {
-          border-bottom: 1px solid #FFF;
+            .turn-answers .turn-answer {
+              border-bottom-color: #666;
+            }
+          }
         }
       }
     }
