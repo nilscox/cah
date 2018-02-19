@@ -3,24 +3,23 @@ import json
 from api.models import Player
 
 
-def find_player(**kwargs):
-    try:
-        return Player.objects.get(**kwargs)
-    except Player.DoesNotExist:
-        raise RuntimeError("Cannot find player matching " + str(kwargs))
-
-
 def on_connected(socket_id, data):
     if "nick" not in data:
         raise RuntimeError("Missing nick")
 
-    player = find_player(nick=data["nick"])
-    player.on_connected(socket_id)
+    try:
+        player = Player.objects.get(nick=data["nick"])
+        player.on_connected(socket_id)
+    except Player.DoesNotExist:
+        print("warn: Cannot find player with nick=" + data["nick"])
 
 
 def on_disconnected(socket_id):
-    player = find_player(socket_id=socket_id)
-    player.on_disconnected()
+    try:
+        player = Player.objects.get(socket_id=socket_id)
+        player.on_disconnected(socket_id)
+    except Player.DoesNotExist:
+        print("warn: Cannot find player with socket_id=" + socket_id)
 
 
 def ws_add(message):
