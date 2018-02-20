@@ -149,7 +149,7 @@ class AnsweredQuestionSerializer(serializers.ModelSerializer):
         id: integer,
         question: Question,
         text: string,
-        split: string[]
+        split: string[],
         answers: Choice[],
         answered_by: string,
         selected_by: string | null,
@@ -178,7 +178,7 @@ class PartialAnsweredQuestionSerializer(AnsweredQuestionSerializer):
         id: integer,
         question: Question,
         text: string,
-        split: string[]
+        split: string[],
         answers: Choice[],
     }
     """
@@ -193,7 +193,7 @@ class LightAnsweredQuestionSerializer(AnsweredQuestionSerializer):
     LightAnsweredQuestion: {
         id: integer,
         text: string,
-        split: string[]
+        split: string[],
         answers: Choice[],
         answered_by: string,
     }
