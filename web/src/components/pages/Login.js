@@ -1,10 +1,11 @@
 // @flow
 
 import React from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { TextField } from 'material-ui';
+
 import type { State } from '../../types/state';
+
 import { loginPlayer } from '../../actions/player';
 
 const mapStateToProps = ({ player }: State) => ({
@@ -43,10 +44,6 @@ const Login = ({ onLogin }) => {
       </div>
     </div>
   );
-};
-
-Login.propTypes = {
-  onLogin: PropTypes.func.isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);
