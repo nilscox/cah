@@ -37,7 +37,8 @@ const Lobby = ({ createGame, joinGame }) => {
         <div className="create-game">
           <Tooltip title="Create a new game" placement="bottom">
             <Button
-              fab mini
+              variant="fab"
+              mini={true}
               aria-label="Create game"
               className="create-game-button"
               onClick={createGame}>
