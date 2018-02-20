@@ -5,9 +5,21 @@ html, body, #root, .app, .page {
   padding: 0;
 }
 
-@import "App.dark";
+@import "./App.dark";
 
 .app {
+
+  @import "./common/Card";
+  @import "./common/PlayerAvatar";
+
+  .page {
+    background-color: #EEE;
+
+    @import "./pages/Login";
+    @import "./pages/Lobby";
+    @import "./pages/game/GameIdle";
+    @import "./pages/game/Game";
+  }
 
   .api-down {
     width: 100%;
@@ -38,17 +50,5 @@ html, body, #root, .app, .page {
     &.arrow--close::before {
       content: '▸';
     }
-  }
-
-  @import "components/common/Card";
-  @import "components/common/PlayerAvatar";
-
-  .page {
-    background-color: #EEE;
-
-    @import "components/pages/Login";
-    @import "components/pages/Lobby";
-    @import "components/pages/game/GameIdle";
-    @import "components/pages/game/Game";
   }
 }

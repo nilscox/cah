@@ -11,7 +11,7 @@ import Game from './components/pages/game/Game';
 import GameIdle from './components/pages/game/GameIdle';
 import ErrorSnackBar from './components/common/ErrorSnackbar';
 
-import './App.scss';
+import './styles/App.scss';
 
 const mapStateToProps = state => {
   const { status, player, game, settings } = state;

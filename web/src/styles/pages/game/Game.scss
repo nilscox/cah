@@ -12,10 +12,10 @@
   }
 
   .game-view {
-    @import "views/QuestionView";
-    @import "views/gameinfo/GameInfoView";
-    @import "views/AnswerSelectionView";
-    @import "views/TurnEndView";
-    @import "views/PlayerCardsView";
+    @import "./views/QuestionView";
+    @import "./views/GameInfoView";
+    @import "./views/AnswerSelectionView";
+    @import "./views/TurnEndView";
+    @import "./views/PlayerCardsView";
   }
 }

@@ -11,13 +11,13 @@
     margin-top: 15px;
     margin-bottom: 30px;
   }
-  
+
   .players-list,
   .game-history,
   .settings {
     padding: 0 15px;
   }
-  
+
   h2 {
     font-size: 1.2em;
     border-bottom: 1px solid #CCC;
@@ -32,5 +32,5 @@
     }
   }
 
-  @import "GameHistory";
+  @import "./GameHistory";
 }
