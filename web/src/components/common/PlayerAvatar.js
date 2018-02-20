@@ -1,15 +1,30 @@
+// @flow
+
 import React from 'react';
 import Tooltip from 'material-ui/Tooltip';
 
-const PlayerAvatar = ({ player, tooltip, className }) => (
+import type { PlayerType } from '../../types';
+import { toClassName } from '../../utils';
+
+type PlayerAvatarProps = {
+  className?: string,
+  player: PlayerType,
+  tooltip: string,
+};
+
+const PlayerAvatar = ({
+  player,
+  tooltip,
+  className,
+}: PlayerAvatarProps) => (
   <Tooltip title={tooltip} placement="bottom">
 
-    <div className={[
+    <div className={toClassName([
       'player-avatar',
       'player-' + player.nick,
       !player.connected && 'player-offline',
       className,
-    ].toClassName()}>
+    ])}>
 
       <img className="avatar-image" alt="player-avatar" src={player.avatar} />
 

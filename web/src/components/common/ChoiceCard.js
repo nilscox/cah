@@ -1,12 +1,23 @@
+// @flow
+
 import React from 'react';
 
-const ChoiceCard = ({ choice, className, onClick }) => (
+import type { ChoiceType } from '../../types';
+import { toClassName } from '../../utils';
+
+type ChoiceCardProps = {
+  choice: ChoiceType,
+  className: string,
+  onClick: (SyntheticEvent<>) => void,
+};
+
+const ChoiceCard = ({
+  choice,
+  className,
+  onClick,
+}: ChoiceCardProps) => (
   <div
-    className={[
-      'card',
-      'choice',
-      className,
-    ].toClassName()}
+    className={toClassName([ 'card', 'choice', className ])}
     onClick={onClick}>
     <div className="text">{choice.text}</div>
   </div>

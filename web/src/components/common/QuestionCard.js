@@ -1,6 +1,23 @@
-import React from 'react';
+// @flow
 
-const QuestionCard = ({ question, choices, className, onClick }) => {
+import * as React from 'react';
+
+import type { QuestionType, ChoiceType } from '../../types';
+import { toClassName } from '../../utils';
+
+type QuestionCardProps = {
+  className?: string,
+  question: QuestionType,
+  choices: Array<ChoiceType>,
+  onClick: (SyntheticEvent<>) => void,
+};
+
+const QuestionCard = ({
+  question,
+  choices,
+  className,
+  onClick,
+}: QuestionCardProps) => {
   let choiceIdx = 0;
 
   const text = question.split.map((text, idx) => {
@@ -18,7 +35,7 @@ const QuestionCard = ({ question, choices, className, onClick }) => {
     return <span key={idx} className={className}>{text}</span>;
   });
 
-  if (question.type === "question") {
+  if (question.type === 'question') {
     const choice = choices[0] && choices[0].text;
 
     text.push(<div className="question-answer-separator" key={null} />);
@@ -26,10 +43,12 @@ const QuestionCard = ({ question, choices, className, onClick }) => {
   }
 
   return (
-    <div className={['card', 'question', className].toClassName()} onClick={onClick}>
+    <div
+      className={toClassName([ 'card', 'question', className ])}
+      onClick={onClick}>
       <div className="text">{text}</div>
     </div>
   );
 };
 
-export default QuestionCard
+export default QuestionCard;

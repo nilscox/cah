@@ -1,7 +1,16 @@
+// @flow
+
 import React from 'react';
 import SnackBar from 'material-ui/Snackbar';
 
-const ErrorSnackBar = ({ error, onClose }) => (
+import type { Error } from '../../types';
+
+type ErrorSnackBarProps = {
+  error: Error,
+  onClose: (event: SyntheticEvent<>, reason: string) => void,
+};
+
+const ErrorSnackBar = ({ error, onClose }: ErrorSnackBarProps) => (
   <SnackBar
     open={!!error}
     message={error && error.detail}
