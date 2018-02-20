@@ -27,11 +27,12 @@ const mapStateToProps = state => {
     isInGame: !!(game && game.id),
     gameState: game && game.state,
     settings,
+    error: state.error,
   }
 };
 
 const mapDispatchToProps = dispatch => ({
-  clearError: () => dispatch(clearError()),
+  clearError: (event, reason) => dispatch(clearError(reason)),
 });
 
 const App = ({ apiDown, loading, isLoggedIn, isInGame, gameState, settings, error, clearError }) => {
