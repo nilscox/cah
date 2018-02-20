@@ -17,7 +17,7 @@ def on_connected(socket_id, data):
 def on_disconnected(socket_id):
     try:
         player = Player.objects.get(socket_id=socket_id)
-        player.on_disconnected(socket_id)
+        player.on_disconnected()
     except Player.DoesNotExist:
         print("warn: Cannot find player with socket_id=" + socket_id)
 
