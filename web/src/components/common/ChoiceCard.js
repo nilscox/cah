@@ -2,14 +2,14 @@
 
 import React from 'react';
 
-import type { ChoiceType } from '../../types';
+import type { ChoiceType } from '../../types/models';
 import { toClassName } from '../../utils';
 
-type ChoiceCardProps = {
+type ChoiceCardProps = {|
   choice: ChoiceType,
   className: string,
   onClick: (SyntheticEvent<>) => void,
-};
+|};
 
 const ChoiceCard = ({
   choice,

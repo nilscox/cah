@@ -3,12 +3,12 @@
 import React from 'react';
 import SnackBar from 'material-ui/Snackbar';
 
-import type { Error } from '../../types';
+import type { Error } from '../../types/models';
 
-type ErrorSnackBarProps = {
+type ErrorSnackBarProps = {|
   error: Error,
   onClose: (event: SyntheticEvent<>, reason: string) => void,
-};
+|};
 
 const ErrorSnackBar = ({ error, onClose }: ErrorSnackBarProps) => (
   <SnackBar

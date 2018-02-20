@@ -2,15 +2,15 @@
 
 import * as React from 'react';
 
-import type { QuestionType, ChoiceType } from '../../types';
+import type { QuestionType, ChoiceType } from '../../types/models';
 import { toClassName } from '../../utils';
 
-type QuestionCardProps = {
+type QuestionCardProps = {|
   className?: string,
   question: QuestionType,
   choices: Array<ChoiceType>,
   onClick: (SyntheticEvent<>) => void,
-};
+|};
 
 const QuestionCard = ({
   question,

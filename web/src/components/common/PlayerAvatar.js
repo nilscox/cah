@@ -3,14 +3,14 @@
 import React from 'react';
 import Tooltip from 'material-ui/Tooltip';
 
-import type { PlayerType } from '../../types';
+import type { PlayerType } from '../../types/models';
 import { toClassName } from '../../utils';
 
-type PlayerAvatarProps = {
+type PlayerAvatarProps = {|
   className?: string,
   player: PlayerType,
   tooltip: string,
-};
+|};
 
 const PlayerAvatar = ({
   player,
