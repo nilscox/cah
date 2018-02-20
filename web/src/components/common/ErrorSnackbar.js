@@ -3,10 +3,10 @@
 import React from 'react';
 import SnackBar from 'material-ui/Snackbar';
 
-import type { Error } from '../../types/models';
+import type { ErrorType } from '../../types/models';
 
 type ErrorSnackBarProps = {|
-  error: Error,
+  error: ErrorType,
   onClose: (event: SyntheticEvent<>, reason: string) => void,
 |};
 

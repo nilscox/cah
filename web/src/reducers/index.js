@@ -110,42 +110,6 @@ const error = (state = null, action) => {
   return state;
 };
 
-/**
- * state: {
- *   player: {
- *     nick: string,
- *     score: integer,
- *     cards: Choice[],
- *     submitted: FullAnsweredQuestion,
- *   },
- *   game: {
- *     id: integer,
- *     state: string,
- *     owner: string,
- *     players: Player[],
- *     question_master: string,
- *     question: Question,
- *     propositions: AnsweredQuestion[],
- *   },
- *   selection: Choice[],
- *   settings: {
- *     darkMode: boolean,
- *   },
- *   fetching: {
- *     player: bool,
- *     game: bool,
- *   },
- *   status: {
- *     appInitializing: bool,
- *     api: string,
- *     websocket: string,
- *   },
- *   error: {
- *     detail: string,
- *   },
- * }
- */
-
 export default combineReducers({
   player,
   game,

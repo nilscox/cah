@@ -1,11 +1,14 @@
+// @flow
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { TextField } from 'material-ui';
+import type { State } from '../../types/state';
 import { loginPlayer } from '../../actions/player';
 
-const mapStateToProps = state => ({
-  player: state.player,
+const mapStateToProps = ({ player }: State) => ({
+  player,
 });
 
 const mapDispatchToProps = dispatch => ({
