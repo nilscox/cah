@@ -1,6 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 import TextField from 'material-ui/TextField';
 import Tooltip from 'material-ui/Tooltip';
 import Button from 'material-ui/Button';
@@ -12,7 +11,12 @@ const mapDispatchToProps = dispatch => ({
   joinGame: id => dispatch(joinGame(id)),
 });
 
-const Lobby = ({ createGame, joinGame }) => {
+type LobbyProps = {
+  createGame: () => void,
+  joinGame: number => void,
+};
+
+const Lobby = ({ createGame, joinGame }: LobbyProps) => {
   const onJoin = evt => {
     if (evt.key === 'Enter')
       joinGame(inputGameId);
@@ -49,11 +53,6 @@ const Lobby = ({ createGame, joinGame }) => {
       </div>
     </div>
   );
-};
-
-Lobby.propTypes = {
-  createGame: PropTypes.func.isRequired,
-  joinGame: PropTypes.func.isRequired,
 };
 
 export default connect(null, mapDispatchToProps)(Lobby);
