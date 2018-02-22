@@ -16,11 +16,15 @@ const mapDispatchToProps = dispatch => ({
   onLogin: nick => dispatch(loginPlayer(nick)),
 });
 
-const Login = ({ onLogin }) => {
+type LoginProps = {
+  onLogin: string => void,
+}
+
+const Login = ({ onLogin }: LoginProps) => {
   let nick = null;
 
   const onKeyPress = evt => {
-    if (evt.key === 'Enter')
+    if (evt.key === 'Enter' && nick)
       onLogin(nick);
   };
 
