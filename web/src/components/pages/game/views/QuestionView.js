@@ -10,9 +10,29 @@ import { submitAnswer } from '../../../../actions/game';
 
 import QuestionCard from '../../../common/QuestionCard';
 
-const all = arr => arr.indexOf(false) < 0;
+const all: Array<boolean> => boolean = arr => arr.indexOf(false) < 0;
 
-const mapStateToProps = ({ game, player, selection }: State) => {
+type QuestionViewStateProps = {|
+  questionMaster: string,
+  question: QuestionType,
+  choices: Array<ChoiceType>,
+  submitted: boolean,
+  canSubmitAnswer: boolean,
+|};
+
+type QuestionViewDispatchProps = {|
+  onSubmitAnswer: () => void,
+|};
+
+type QuestionViewProps =
+  & QuestionViewStateProps
+  & QuestionViewDispatchProps;
+
+const mapStateToProps: State => QuestionViewStateProps = ({
+  game,
+  player,
+  selection,
+}) => {
   const { question } = game;
 
   let choices = selection;
@@ -34,18 +54,9 @@ const mapStateToProps = ({ game, player, selection }: State) => {
   };
 };
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps: any => QuestionViewDispatchProps = dispatch => ({
   onSubmitAnswer: () => dispatch(submitAnswer()),
 });
-
-type QuestionViewProps = {
-  questionMaster: string,
-  question: QuestionType,
-  choices: Array<ChoiceType>,
-  submitted: boolean,
-  canSubmitAnswer: boolean,
-  onSubmitAnswer: () => void,
-};
 
 const QuestionView = ({
   questionMaster,

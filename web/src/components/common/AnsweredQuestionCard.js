@@ -3,12 +3,12 @@
 import React from 'react';
 import QuestionCard from './QuestionCard';
 
-import type { QuestionType, AnswerType } from '../../types/models';
+import type { QuestionType, AnsweredQuestionType } from '../../types/models';
 
 type AnsweredQuestionCardProps = {|
   className?: string,
   question: QuestionType,
-  answer: AnswerType,
+  answer: AnsweredQuestionType,
   onClick: (SyntheticEvent<>) => void,
 |};
 
