@@ -1,6 +1,11 @@
+// @flow
+
 import React from 'react';
 import { connect } from 'react-redux';
 import Button from 'material-ui/Button';
+
+import type { PlayerType } from '../../../types/models';
+import { toClassName } from '../../../utils';
 import { startGame } from '../../../actions/game';
 
 const mapStateToProps = state => ({
@@ -16,7 +21,13 @@ const StartButton = ({ onStart }) => (
   <Button raised color="primary" className="start-button" onClick={onStart}>Start!</Button>
 );
 
-const GameIdle = ({ players, canStart, onStart }) => (
+type GameIdleProps = {
+  players: Array<PlayerType>,
+  canStart: boolean,
+  onStart: () => void,
+};
+
+const GameIdle = ({ players, canStart, onStart }: GameIdleProps) => (
   <div className="page" id="page-game-idle">
     <div className="container">
 
@@ -30,7 +41,7 @@ const GameIdle = ({ players, canStart, onStart }) => (
         {players.map(player => (
           <li
             key={player.nick}
-            className={['player', !player.connected && 'player-offline'].toClassName()}>
+            className={toClassName(['player', !player.connected && 'player-offline'])}>
             {player.nick}
           </li>
         ))}
