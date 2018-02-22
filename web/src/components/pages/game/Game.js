@@ -1,3 +1,5 @@
+// @flow
+
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -15,7 +17,11 @@ const mapStateToProps = state => {
   };
 };
 
-const Game = ({ playState }) => {
+type GameProps = {
+  playState: string,
+};
+
+const Game = ({ playState }: GameProps) => {
   const mapPlayStateToView = {
     'players_answer': <QuestionView />,
     'question_master_selection': <AnswerSelectionView />,
