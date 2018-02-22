@@ -1,14 +1,18 @@
+// @flow
+
 import React from 'react';
 import { connect } from 'react-redux';
 
+import type { State } from '../../../../types/state';
+import type { QuestionType, ChoiceType } from '../../../../types/models';
+import { toClassName } from '../../../../utils';
 import { submitAnswer } from '../../../../actions/game';
 
 import QuestionCard from '../../../common/QuestionCard';
 
 const all = arr => arr.indexOf(false) < 0;
 
-const mapStateToProps = state => {
-  const { game, player, selection } = state;
+const mapStateToProps = ({ game, player, selection }: State) => {
   const { question } = game;
 
   let choices = selection;
@@ -20,7 +24,6 @@ const mapStateToProps = state => {
     questionMaster: game.question_master,
     question,
     choices,
-    selectedIds: selection.map(choice => choice.id),
     submitted: !!player.submitted,
     canSubmitAnswer: all([
       game.state === 'started',
@@ -32,23 +35,39 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => ({
-  onSubmitAnswer: choiceIds => dispatch(submitAnswer(choiceIds)),
+  onSubmitAnswer: () => dispatch(submitAnswer()),
 });
 
-const QuestionView = ({ questionMaster, question, choices, selectedIds, submitted, canSubmitAnswer, onSubmitAnswer }) => (
+type QuestionViewProps = {
+  questionMaster: string,
+  question: QuestionType,
+  choices: Array<ChoiceType>,
+  submitted: boolean,
+  canSubmitAnswer: boolean,
+  onSubmitAnswer: () => void,
+};
+
+const QuestionView = ({
+  questionMaster,
+  question,
+  choices,
+  submitted,
+  canSubmitAnswer,
+  onSubmitAnswer,
+}: QuestionViewProps) => (
   <div className="game-view" id="question-view">
 
-    <div className={[
+    <div className={toClassName([
       'question-card',
       canSubmitAnswer && 'can-submit',
       submitted && 'submitted'
-    ].toClassName()}>
+    ])}>
 
       <QuestionCard
         question={question}
         choices={choices}
-        className={[!submitted && 'underline'].toClassName()}
-        onClick={() => canSubmitAnswer ? onSubmitAnswer(selectedIds) : null} />
+        className={toClassName([!submitted && 'underline'])}
+        onClick={() => canSubmitAnswer ? onSubmitAnswer() : undefined} />
 
       <div className="question-master">{questionMaster}</div>
 
