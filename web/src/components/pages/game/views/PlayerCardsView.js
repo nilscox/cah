@@ -11,6 +11,20 @@ import ChoiceCard from '../../../common/ChoiceCard';
 
 const all = arr => arr.indexOf(false) < 0;
 
+type PlayerCardsViewStateProps = {
+  choices: Array<ChoiceType>,
+  isSelected: ChoiceType => boolean,
+  canSelectChoice: boolean,
+};
+
+type PlayerCardsViewDispatchProps = {
+  toggleChoice: ChoiceType => void,
+};
+
+type PlayerCardsViewProps =
+  & PlayerCardsViewStateProps
+  & PlayerCardsViewDispatchProps;
+
 const mapStateToProps = ({ game, player, selection }: State) => ({
   choices: player.cards,
   isSelected: choice => selection.indexOf(choice) >= 0,
@@ -25,13 +39,6 @@ const mapStateToProps = ({ game, player, selection }: State) => ({
 const mapDispatchToProps = dispatch => ({
   toggleChoice: choice => dispatch(toggleChoice(choice.id)),
 });
-
-type PlayerCardsViewProps = {
-  choices: Array<ChoiceType>,
-  isSelected: ChoiceType => boolean,
-  canSelectChoice: boolean,
-  toggleChoice: ChoiceType => void,
-};
 
 const PlayerCardsView = ({
   choices,
