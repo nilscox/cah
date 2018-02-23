@@ -1,6 +1,15 @@
-function request(method, route, body, expected=200) {
-  if (Number.isInteger(expected))
-    expected = [expected];
+// @flow
+
+// $FlowFixMe
+const API_URL: string = process.env.REACT_APP_API_URL;
+
+function request(
+  method: string,
+  route: string,
+  body?: any,
+  expected?: number | Array<number> = 200,
+): Promise<{ status: number, body: any }> {
+  const expectedStatus = Array.isArray(expected) ? expected : [expected];
 
   const opts = {
     method,
@@ -12,9 +21,9 @@ function request(method, route, body, expected=200) {
     opts.headers = { 'Content-Type': 'application/json' };
   }
 
-  let res = null;
+  let res?: any = null;
 
-  return fetch(process.env.REACT_APP_API_URL + route, opts)
+  return fetch(API_URL + route, opts)
     .then(r => {
       res = r;
 
@@ -26,7 +35,7 @@ function request(method, route, body, expected=200) {
       return res.text();
     })
     .then(body => {
-      if (expected.indexOf(res.status) < 0) {
+      if (expectedStatus.indexOf(res.status) < 0) {
         const detail = body.hasOwnProperty('detail') ? '(' + body.detail + ')' : '';
         const err = new Error([method, route, '->', res.status, detail].join(' '));
 

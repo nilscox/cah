@@ -1,7 +1,17 @@
+// @flow
+
+import type { RequestAction } from '../types/actions';
 import request from '../request';
 import { apiUp, apiDown } from './apiState';
 
-export default function requestAction(prefix, opts) {
+export type RequestActionOpts = {
+  method: string,
+  route: string,
+  body?: any,
+  expected?: number | Array<number>,
+}
+
+export default function requestAction(prefix: string, opts: RequestActionOpts): RequestAction {
   const { method, route, body, expected } = opts;
 
   return dispatch => {

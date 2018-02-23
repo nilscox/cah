@@ -1,9 +1,12 @@
+// @flow
+
+import type { Dispatch, RequestAction } from '../types/actions';
 import { PLAYER_ROUTE } from '../constants';
 import request from './requestAction';
 import { fetchGame } from './game';
 import {connect as connectWS} from '../websocket';
 
-const onPlayerFetch = (dispatch, result) => {
+const onPlayerFetch = (dispatch: Dispatch, result: any): Promise<any> => {
   let promise = Promise.resolve();
 
   if (result && result.status !== 404) {
@@ -15,7 +18,7 @@ const onPlayerFetch = (dispatch, result) => {
 };
 
 export const PLAYER_FETCH = 'PLAYER_FETCH';
-export function fetchPlayer() {
+export function fetchPlayer(): RequestAction {
   const opts = {
     method: 'GET',
     route: PLAYER_ROUTE,
@@ -27,7 +30,7 @@ export function fetchPlayer() {
 }
 
 export const PLAYER_LOGIN = 'PLAYER_LOGIN';
-export function loginPlayer(nick) {
+export function loginPlayer(nick: string): RequestAction {
   const opts = {
     method: 'POST',
     route: PLAYER_ROUTE,
@@ -40,7 +43,7 @@ export function loginPlayer(nick) {
 }
 
 export const PLAYER_LOGOUT = 'PLAYER_LOGOUT';
-export function logoutPlayer() {
+export function logoutPlayer(): RequestAction {
   const opts = {
     method: 'DELETE',
     route: PLAYER_ROUTE,

@@ -1,3 +1,6 @@
+// @flow
+
+import type { Dispatch } from './types/actions';
 import {
   websocketConnected,
   websocketCreated,
@@ -5,17 +8,20 @@ import {
   websocketClosed
 } from './actions/websocket';
 
+// $FlowFixMe
+const WEBSOCKET_URL: string = process.env.REACT_APP_WEBSOCKET_URL;
+
 let socket = null;
 
-export function connect(dispatch) {
+export function connect(dispatch: Dispatch): Promise<void> {
   return new Promise((resolve, reject) => {
     let resolved = false;
 
-    socket = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
+    socket = new WebSocket(WEBSOCKET_URL);
 
     dispatch(websocketCreated());
 
-    socket.onopen = function(e) {
+    socket.onopen = function(e: any) {
       dispatch(websocketConnected(e));
 
       if (!resolved) {
@@ -24,8 +30,8 @@ export function connect(dispatch) {
       }
     };
 
-    socket.onmessage = function(event) {
-      dispatch(websocketMessage(event, JSON.parse(event.data)));
+    socket.onmessage = function(e: any) {
+      dispatch(websocketMessage(e, JSON.parse(e.data)));
     };
 
     socket.onclose = function() {
@@ -41,14 +47,14 @@ export function connect(dispatch) {
   });
 }
 
-export function close() {
+export function close(): void {
   if (!socket)
     throw new Error('socket is not connected');
 
   socket.close();
 }
 
-export function send(message) {
+export function send(message: any): void {
   if (!socket)
     throw new Error('socket is not connected');
 

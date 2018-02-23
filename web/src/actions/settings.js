@@ -1,4 +1,8 @@
-export const toggleDarkMode = () => {
+// @flow
+
+import type { ThunkAction } from '../types/actions';
+
+export const toggleDarkMode = (): ThunkAction => {
   return (dispatch, getState) => {
     const { settings } = getState();
 
@@ -7,7 +11,7 @@ export const toggleDarkMode = () => {
 };
 
 export const SETTINGS_SET_VALUE = 'SETTINGS_SET_VALUE';
-export const setSettingValue = (setting, value) => {
+export const setSettingValue = (setting: string, value: any): ThunkAction => {
   return (dispatch, getState) => {
     const { settings } = getState();
 
@@ -23,7 +27,7 @@ export const setSettingValue = (setting, value) => {
 };
 
 export const LOAD_SETTINGS = 'LOAD_SETTINGS';
-export const loadSettings = () => {
+export const loadSettings = (): ThunkAction => {
   return dispatch => {
     dispatch({ type: LOAD_SETTINGS });
 

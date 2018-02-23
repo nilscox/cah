@@ -1,10 +1,13 @@
+// @flow
+
+import type { ThunkAction } from '../types/actions';
 import request from '../request';
 import { initializationStart } from './initialization';
 import { close as closeWS } from '../websocket';
 import { API_STATE, WS_STATE } from '../constants';
 
 export const CHECK_API_STATUS = 'CHECK_API_STATUS';
-export function checkApiStatus() {
+export function checkApiStatus(): ThunkAction {
   return (dispatch, getState) => {
     const onSuccess = () => {
       const { status } = getState();
@@ -25,7 +28,7 @@ export function checkApiStatus() {
 }
 
 export const API_DOWN = 'API_DOWN';
-export function apiDown() {
+export function apiDown(): ThunkAction {
   return (dispatch, getState) => {
     const { status } = getState();
 
@@ -40,7 +43,7 @@ export function apiDown() {
 }
 
 export const API_UP = 'API_UP';
-export function apiUp() {
+export function apiUp(): ThunkAction {
   return (dispatch, getState) => {
     const { status } = getState();
 
