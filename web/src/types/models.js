@@ -13,10 +13,6 @@ export type ChoiceType = {|
   text: string,
 |};
 
-export type AnswerType = {|
-  answers: Array<ChoiceType>,
-|};
-
 export type AnsweredQuestionType = {|
   id: number,
   question: QuestionType,

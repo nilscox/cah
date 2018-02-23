@@ -1,28 +1,63 @@
-import React from 'react';
+// @flow
+
+import * as React from 'react';
 import { connect } from 'react-redux';
 
+import type { PlayerType, GameTurnType } from '../../../../../types/models';
+import type { Action } from '../../../../../types/actions';
+import type { State, SettingsType } from '../../../../../types/state';
 import { toggleDarkMode } from '../../../../../actions/settings';
 import { logoutPlayer } from '../../../../../actions/player';
-
 import PlayersList from './PlayersList';
 import GameHistory from './GameHistory';
 import Settings from './Settings';
 
-const mapStateToProps = state => ({
-  gameId: state.game.id,
-  questionMaster: state.game.question_master,
-  players: state.game.players,
-  submitted: state.game.has_submitted,
-  history: state.game.history,
-  appSettings: state.settings,
+type GameInfoStateProps = {|
+  gameId: number,
+  questionMaster: string,
+  players: Array<PlayerType>,
+  submitted: boolean,
+  history: Array<GameTurnType>,
+  appSettings: SettingsType,
+|};
+
+type GameInfoDispatchProps = {|
+  toggleDarkMode: () => Action,
+  logout: () => Action,
+|};
+
+type GameInfoViewProps =
+  & GameInfoStateProps
+  & GameInfoDispatchProps;
+
+const mapStateToProps: State => GameInfoStateProps = ({
+  game,
+  gameHistory,
+  settings,
+}) => ({
+  gameId: game.id,
+  questionMaster: game.question_master,
+  players: game.players,
+  submitted: game.has_submitted,
+  history: gameHistory,
+  appSettings: settings,
 });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps: Function => GameInfoDispatchProps = dispatch => ({
   toggleDarkMode: () => dispatch(toggleDarkMode()),
   logout: () => dispatch(logoutPlayer()),
 });
 
-const GameInfoView = ({ gameId, questionMaster, players, submitted, history, appSettings, toggleDarkMode, logout }) => {
+const GameInfoView = ({
+  gameId,
+  questionMaster,
+  players,
+  submitted,
+  history,
+  appSettings,
+  toggleDarkMode,
+  logout,
+}: GameInfoViewProps) => {
   const isOnline = player => player.connected;
   const isQuestionMaster = player => questionMaster === player.nick;
   const hasSubmitted = player => submitted.indexOf(player.nick) >= 0;
@@ -48,7 +83,7 @@ const GameInfoView = ({ gameId, questionMaster, players, submitted, history, app
         settings={appSettings}
         actions={{
           toggleDarkMode,
-          logout
+          logout,
         }}
       />
 

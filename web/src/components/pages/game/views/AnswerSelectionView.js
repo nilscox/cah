@@ -1,37 +1,37 @@
 // @flow
 
-import React from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
 
+import type { State } from '../../../../types/state';
 import type { QuestionType, AnsweredQuestionType } from '../../../../types/models';
 import { toClassName } from '../../../../utils';
 import { selectAnswer } from '../../../../actions/game';
 
 import AnsweredQuestionCard from '../../../common/AnsweredQuestionCard';
 
-type AnswerSelectionViewStateProps = {
+type AnswerSelectionViewStateProps = {|
   question: QuestionType,
   answers: Array<AnsweredQuestionType>,
   canSelectAnswer: boolean,
-};
+|};
 
-type AnswerSelectionViewDispatchProps = {
+type AnswerSelectionViewDispatchProps = {|
   onSelectAnswer: AnsweredQuestionType => void,
-};
+|};
 
 type AnswerSelectionViewProps =
   & AnswerSelectionViewStateProps
   & AnswerSelectionViewDispatchProps;
 
-const mapStateToProps = state => {
-  const { game, player } = state;
-
-  return {
-    question: game.question,
-    answers: game.propositions,
-    canSelectAnswer: game.question_master === player.nick,
-  };
-};
+const mapStateToProps: State => AnswerSelectionViewStateProps = ({
+  game,
+  player,
+}) => ({
+  question: game.question,
+  answers: game.propositions,
+  canSelectAnswer: game.question_master === player.nick,
+});
 
 const mapDispatchToProps = dispatch => ({
   onSelectAnswer: answerId => dispatch(selectAnswer(answerId)),

@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react';
+import * as React from 'react';
 import Tooltip from 'material-ui/Tooltip';
 
 import type { PlayerType } from '../../types/models';

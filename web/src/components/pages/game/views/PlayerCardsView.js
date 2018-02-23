@@ -1,31 +1,36 @@
 // @flow
 
-import React from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
 
+import type { Action } from '../../../../types/actions';
+import type { State } from '../../../../types/state';
 import type { ChoiceType } from '../../../../types/models';
-import type {State} from '../../../../types/state';
 import { toClassName } from '../../../../utils';
 import { toggleChoice } from '../../../../actions/game';
 import ChoiceCard from '../../../common/ChoiceCard';
 
 const all = arr => arr.indexOf(false) < 0;
 
-type PlayerCardsViewStateProps = {
+type PlayerCardsViewStateProps = {|
   choices: Array<ChoiceType>,
   isSelected: ChoiceType => boolean,
   canSelectChoice: boolean,
-};
+|};
 
-type PlayerCardsViewDispatchProps = {
-  toggleChoice: ChoiceType => void,
-};
+type PlayerCardsViewDispatchProps = {|
+  toggleChoice: ChoiceType => Action,
+|};
 
 type PlayerCardsViewProps =
   & PlayerCardsViewStateProps
   & PlayerCardsViewDispatchProps;
 
-const mapStateToProps = ({ game, player, selection }: State) => ({
+const mapStateToProps: State => PlayerCardsViewStateProps = ({
+  game,
+  player,
+  selection,
+}) => ({
   choices: player.cards,
   isSelected: choice => selection.indexOf(choice) >= 0,
   canSelectChoice: all([
@@ -36,7 +41,7 @@ const mapStateToProps = ({ game, player, selection }: State) => ({
   ]),
 });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps: Function => PlayerCardsViewDispatchProps = dispatch => ({
   toggleChoice: choice => dispatch(toggleChoice(choice.id)),
 });
 

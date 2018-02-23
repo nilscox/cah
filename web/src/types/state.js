@@ -5,20 +5,21 @@ import * as React from 'react';
 import type {
   FullPlayerType,
   GameType,
+  GameTurnType,
   ChoiceType,
   ErrorType,
 } from './models';
 
-type SettingsType = {|
+export type SettingsType = {|
   darkMode: boolean,
 |};
 
-type FetchingType = {|
+export type FetchingType = {|
   player: boolean,
   game: boolean,
 |};
 
-type StatusType = {|
+export type StatusType = {|
   appInitializing: boolean,
   api: string,
   websocket: string,
@@ -27,6 +28,7 @@ type StatusType = {|
 export type State = {|
   player: FullPlayerType,
   game: GameType,
+  gameHistory: Array<GameTurnType>,
   selection: Array<ChoiceType>,
   settings: SettingsType,
   fetching: FetchingType,

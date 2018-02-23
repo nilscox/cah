@@ -1,21 +1,42 @@
-import React from 'react';
+// @flow
+
+import * as React from 'react';
 import { connect } from 'react-redux';
 import { Button } from 'material-ui';
 
+import type { State } from '../../../../types/state';
+import type { Action } from '../../../../types/actions';
+import type { GameTurnType, GameType } from '../../../../types/models';
 import { nextTurn } from '../../../../actions/game';
-
 import AnsweredQuestionCard from '../../../common/AnsweredQuestionCard';
 
-const mapStateToProps = ({ player, game }) => ({
-  turn: game.history[game.history.length - 1],
+type TurnEndViewStateProps = {|
+  turn: GameTurnType,
+  canGoNext: boolean,
+|};
+
+type TurnEndViewDispatchProps = {|
+  nextTurn: () => Action,
+|};
+
+type TurnEndViewProps =
+  & TurnEndViewStateProps
+  & TurnEndViewDispatchProps;
+
+const mapStateToProps: State => TurnEndViewStateProps = ({
+  player,
+  game,
+  gameHistory
+}) => ({
+  turn: gameHistory[gameHistory.length - 1],
   canGoNext: game.question_master === player.nick,
 });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps: Function => TurnEndViewDispatchProps = dispatch => ({
   nextTurn: () => dispatch(nextTurn()),
 });
 
-const TurnEndView = ({ turn, canGoNext, nextTurn }) => (
+const TurnEndView = ({ turn, canGoNext, nextTurn }: TurnEndViewProps) => (
   <div className="game-view" id="turn-end">
 
     <div className="winner">{turn.winner} wins!</div>
@@ -27,7 +48,8 @@ const TurnEndView = ({ turn, canGoNext, nextTurn }) => (
 
           <AnsweredQuestionCard
             question={turn.question}
-            answer={answer} />
+            answer={answer}
+          />
 
           <div className="answered-by">{answer.answered_by}</div>
 

@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react';
+import * as React from 'react';
 
 import type { ChoiceType } from '../../types/models';
 import { toClassName } from '../../utils';

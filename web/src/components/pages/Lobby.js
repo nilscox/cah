@@ -1,24 +1,30 @@
-import React from 'react';
+// @flow
+
+import * as React from 'react';
 import { connect } from 'react-redux';
 import TextField from 'material-ui/TextField';
 import Tooltip from 'material-ui/Tooltip';
 import Button from 'material-ui/Button';
 import AddIcon from 'material-ui-icons/Add';
+
+import type { Action } from '../../types/actions/index';
 import { createGame, joinGame } from '../../actions/game';
 
-const mapDispatchToProps = dispatch => ({
+type LobbyDispatchProps = {|
+  createGame: () => Action,
+  joinGame: number => Action,
+|};
+
+type LobbyProps = LobbyDispatchProps;
+
+const mapDispatchToProps: Function => LobbyDispatchProps = dispatch => ({
   createGame: () => dispatch(createGame()),
   joinGame: id => dispatch(joinGame(id)),
 });
 
-type LobbyProps = {
-  createGame: () => void,
-  joinGame: number => void,
-};
-
 const Lobby = ({ createGame, joinGame }: LobbyProps) => {
   const onJoin = evt => {
-    if (evt.key === 'Enter')
+    if (evt.key === 'Enter' && inputGameId)
       joinGame(inputGameId);
   };
 

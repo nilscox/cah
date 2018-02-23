@@ -1,10 +1,21 @@
+// @flow
+
 import React, { Component } from 'react';
 
-const HistoryTurn = ({ turn, open, toggleOpen }) => (
-  <div className={['turn', open && 'turn-open'].toClassName()}>
+import type { GameTurnType } from '../../../../../types/models';
+import { toClassName } from '../../../../../utils';
+
+type HistoryTurnProps = {|
+  turn: GameTurnType,
+  open: boolean,
+  toggleOpen: () => void,
+|}
+
+const HistoryTurn = ({ turn, open, toggleOpen }: HistoryTurnProps) => (
+  <div className={toClassName(['turn', open && 'turn-open'])}>
 
     <div className="turn-question" onClick={toggleOpen}>
-      <span className={['arrow', 'arrow--' + (open ? 'open' : 'close')].toClassName()} />
+      <span className={toClassName(['arrow', 'arrow--' + (open ? 'open' : 'close')])} />
       {turn.question.text}
     </div>
 
@@ -26,9 +37,17 @@ const HistoryTurn = ({ turn, open, toggleOpen }) => (
   </div>
 );
 
-export default class GameHistory extends Component {
+type GameHistoryProps = {|
+  history: Array<GameTurnType>,
+|};
 
-  constructor(props) {
+type GameHistoryState = {|
+  openGameTurns: Array<number>,
+|};
+
+export default class GameHistory extends React.Component<GameHistoryProps, GameHistoryState> {
+
+  constructor(props: GameHistoryProps) {
     super(props);
 
     this.state = {
@@ -36,7 +55,7 @@ export default class GameHistory extends Component {
     };
   }
 
-  toggleTurn(n) {
+  toggleTurn(n: number) {
     const { openGameTurns } = this.state;
     const idx = openGameTurns.indexOf(n);
 

@@ -1,7 +1,19 @@
-import React from 'react';
+// @flow
+
+import * as React from 'react';
 import { FormControlLabel, Checkbox, Button } from 'material-ui';
 
-const Settings = ({ settings, actions }) => (
+import type { SettingsType } from '../../../../../types/state';
+
+type SettingsProps = {|
+  settings: SettingsType,
+  actions: {
+    toggleDarkMode: Function,
+    logout: Function,
+  },
+|};
+
+const Settings = ({ settings, actions }: SettingsProps) => (
   <div className="settings">
     <div className="dark-mode">
       <FormControlLabel

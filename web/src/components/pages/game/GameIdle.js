@@ -1,31 +1,40 @@
 // @flow
 
-import React from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
 import Button from 'material-ui/Button';
 
+import type { Action } from '../../../types/actions';
+import type { State } from '../../../types/state';
 import type { PlayerType } from '../../../types/models';
 import { toClassName } from '../../../utils';
 import { startGame } from '../../../actions/game';
 
-const mapStateToProps = state => ({
+type GameIdleStateProps = {|
+  players: Array<PlayerType>,
+  canStart: boolean,
+|};
+
+type GameIdleDispatchProps = {|
+  onStart: () => Action,
+|};
+
+type GameIdleProps =
+  & GameIdleStateProps
+  & GameIdleDispatchProps;
+
+const mapStateToProps: State => GameIdleStateProps = state => ({
   players: state.game.players,
   canStart: state.game.owner === state.player.nick,
 });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps: Function => GameIdleDispatchProps = dispatch => ({
   onStart: () => dispatch(startGame()),
 });
 
 const StartButton = ({ onStart }) => (
   <Button raised color="primary" className="start-button" onClick={onStart}>Start!</Button>
 );
-
-type GameIdleProps = {
-  players: Array<PlayerType>,
-  canStart: boolean,
-  onStart: () => void,
-};
 
 const GameIdle = ({ players, canStart, onStart }: GameIdleProps) => (
   <div className="page" id="page-game-idle">

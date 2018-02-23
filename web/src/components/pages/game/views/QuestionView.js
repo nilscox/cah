@@ -1,8 +1,9 @@
 // @flow
 
-import React from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
 
+import type { Action } from '../../../../types/actions';
 import type { State } from '../../../../types/state';
 import type { QuestionType, ChoiceType } from '../../../../types/models';
 import { toClassName } from '../../../../utils';
@@ -21,7 +22,7 @@ type QuestionViewStateProps = {|
 |};
 
 type QuestionViewDispatchProps = {|
-  onSubmitAnswer: () => void,
+  onSubmitAnswer: () => Action,
 |};
 
 type QuestionViewProps =
@@ -65,26 +66,33 @@ const QuestionView = ({
   submitted,
   canSubmitAnswer,
   onSubmitAnswer,
-}: QuestionViewProps) => (
-  <div className="game-view" id="question-view">
+}: QuestionViewProps) => {
+  const onCardClicked = () => {
+    if (canSubmitAnswer)
+      onSubmitAnswer();
+    };
 
-    <div className={toClassName([
-      'question-card',
-      canSubmitAnswer && 'can-submit',
-      submitted && 'submitted'
-    ])}>
+  return (
+    <div className="game-view" id="question-view">
 
-      <QuestionCard
-        question={question}
-        choices={choices}
-        className={toClassName([!submitted && 'underline'])}
-        onClick={() => canSubmitAnswer ? onSubmitAnswer() : undefined} />
+      <div className={toClassName([
+        'question-card',
+        canSubmitAnswer && 'can-submit',
+        submitted && 'submitted'
+      ])}>
 
-      <div className="question-master">{questionMaster}</div>
+        <QuestionCard
+          question={question}
+          choices={choices}
+          className={toClassName([!submitted && 'underline'])}
+          onClick={onCardClicked} />
+
+        <div className="question-master">{questionMaster}</div>
+
+      </div>
 
     </div>
-
-  </div>
-);
+  );
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(QuestionView);

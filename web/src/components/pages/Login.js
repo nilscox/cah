@@ -1,24 +1,22 @@
 // @flow
 
-import React from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
 import { TextField } from 'material-ui';
 
+import type { Action } from '../../types/actions';
 import type { State } from '../../types/state';
-
 import { loginPlayer } from '../../actions/player';
 
-const mapStateToProps = ({ player }: State) => ({
-  player,
-});
+type LoginDispatchProps = {|
+  onLogin: string => Action,
+|}
 
-const mapDispatchToProps = dispatch => ({
+type LoginProps = LoginDispatchProps;
+
+const mapDispatchToProps: Function => LoginDispatchProps = dispatch => ({
   onLogin: nick => dispatch(loginPlayer(nick)),
 });
-
-type LoginProps = {
-  onLogin: string => void,
-}
 
 const Login = ({ onLogin }: LoginProps) => {
   let nick = null;
@@ -50,4 +48,4 @@ const Login = ({ onLogin }: LoginProps) => {
   );
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
+export default connect(null, mapDispatchToProps)(Login);

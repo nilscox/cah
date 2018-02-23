@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react';
+import * as React from 'react';
 import QuestionCard from './QuestionCard';
 
 import type { QuestionType, AnsweredQuestionType } from '../../types/models';

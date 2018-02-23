@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react';
+import * as React from 'react';
 import SnackBar from 'material-ui/Snackbar';
 
 import type { ErrorType } from '../../types/models';
