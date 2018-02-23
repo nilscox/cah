@@ -3,6 +3,27 @@
 // $FlowFixMe
 const API_URL: string = process.env.REACT_APP_API_URL;
 
+class ApiError extends Error {
+  method: string;
+  route: string;
+  requestBody: string;
+  response: any;
+  responseBody: any;
+
+  constructor(method: string, route: string, requestBody: any, response: any, responseBody: any) {
+    super([
+      method, route, '->', response.status,
+      responseBody.hasOwnProperty('detail') ? '(' + responseBody.detail + ')' : '',
+    ].join(' '));
+
+    this.method = method;
+    this.route = route;
+    this.responseBody = responseBody;
+    this.response = response;
+    this.requestBody = requestBody;
+  }
+}
+
 function request(
   method: string,
   route: string,
@@ -12,8 +33,8 @@ function request(
   const expectedStatus = Array.isArray(expected) ? expected : [expected];
 
   const opts = {
-    method,
-    credentials: 'include',
+    ...{ method },
+    ...{ credentials: 'include' },
   };
 
   if (body) {
@@ -24,7 +45,7 @@ function request(
   let res?: any = null;
 
   return fetch(API_URL + route, opts)
-    .then(r => {
+    .then((r: any) => {
       res = r;
 
       const contentType = res.headers.get('content-type');
@@ -34,16 +55,9 @@ function request(
 
       return res.text();
     })
-    .then(body => {
-      if (expectedStatus.indexOf(res.status) < 0) {
-        const detail = body.hasOwnProperty('detail') ? '(' + body.detail + ')' : '';
-        const err = new Error([method, route, '->', res.status, detail].join(' '));
-
-        err.res = res;
-        err.body = body;
-
-        throw err;
-      }
+    .then((responseBody: any) => {
+      if (expectedStatus.indexOf(res.status) < 0)
+        throw new ApiError(method, route, body, res, responseBody);
 
       return {
         status: res.status,
