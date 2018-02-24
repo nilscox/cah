@@ -1,3 +1,5 @@
+// @flow
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import registerServiceWorker from './registerServiceWorker';
@@ -49,16 +51,15 @@ const store = createStore(
 
 store.dispatch(initializationStart());
 
-// custom polyfill
-// eslint-disable-next-line
-Array.prototype.toClassName = function() {
-  return this.filter(i => i).join(' ');
-};
+const root = document.getElementById('root');
+
+if (!root)
+  throw new Error('Cannot find #root');
 
 ReactDOM.render((
   <Provider store={store}>
     <App />
   </Provider>
-), document.getElementById('root'));
+), root);
 
 registerServiceWorker();

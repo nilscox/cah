@@ -1,3 +1,5 @@
+// @flow
+
 export const PLAYER_ROUTE = '/api/player';
 export const GAME_ROUTE = '/api/game';
 export const ANSWER_ROUTE = '/api/answer';

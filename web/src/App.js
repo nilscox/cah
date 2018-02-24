@@ -1,3 +1,5 @@
+// @flow
+
 import React from 'react';
 import { connect } from 'react-redux';
 import { CircularProgress } from 'material-ui';
@@ -11,6 +13,7 @@ import Game from './components/pages/game/Game';
 import GameIdle from './components/pages/game/GameIdle';
 import ErrorSnackBar from './components/common/ErrorSnackbar';
 
+// $FlowFixMe
 import './styles/App.scss';
 
 const mapStateToProps = state => {
