@@ -26,15 +26,12 @@ const PlayersList = ({
 
         className={toClassName([
           'player',
+          !isOnline(player) && 'is-offline',
           hasSubmitted(player) && 'has-submitted',
           isQuestionMaster(player) && 'is-question-master',
         ])}
 
-        player={{
-          nick: player.nick,
-          avatar: '/img/default_avatar.png',
-          connected: isOnline(player),
-        }}
+        player={player}
 
         tooltip={'score: ' + player.score}
       />

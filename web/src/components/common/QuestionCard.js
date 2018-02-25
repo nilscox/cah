@@ -9,7 +9,7 @@ type QuestionCardProps = {|
   className?: string,
   question: QuestionType,
   choices: Array<ChoiceType>,
-  onClick: (SyntheticEvent<>) => void,
+  onClick?: (SyntheticEvent<>) => void,
 |};
 
 const QuestionCard = ({

@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import type { Action } from '../../../../types/actions';
+import type { Dispatch, Action } from '../../../../types/actions';
 import type { State } from '../../../../types/state';
 import type { QuestionType, ChoiceType } from '../../../../types/models';
 import { toClassName } from '../../../../utils';
@@ -16,13 +16,13 @@ const all: Array<boolean> => boolean = arr => arr.indexOf(false) < 0;
 type QuestionViewStateProps = {|
   questionMaster: string,
   question: QuestionType,
-  choices: Array<ChoiceType>,
+  selectedChoices: Array<ChoiceType>,
   submitted: boolean,
   canSubmitAnswer: boolean,
 |};
 
 type QuestionViewDispatchProps = {|
-  onSubmitAnswer: () => Action,
+  onSubmitAnswer: Array<ChoiceType> => Action,
 |};
 
 type QuestionViewProps =
@@ -36,15 +36,15 @@ const mapStateToProps: State => QuestionViewStateProps = ({
 }) => {
   const { question } = game;
 
-  let choices = selection;
+  let selectedChoices = selection;
 
   if (player.submitted)
-    choices = player.submitted.answers;
+    selectedChoices = player.submitted.answers;
 
   return {
     questionMaster: game.question_master,
     question,
-    choices,
+    selectedChoices,
     submitted: !!player.submitted,
     canSubmitAnswer: all([
       game.state === 'started',
@@ -55,22 +55,22 @@ const mapStateToProps: State => QuestionViewStateProps = ({
   };
 };
 
-const mapDispatchToProps: any => QuestionViewDispatchProps = dispatch => ({
-  onSubmitAnswer: () => dispatch(submitAnswer()),
+const mapDispatchToProps: Dispatch => QuestionViewDispatchProps = dispatch => ({
+  onSubmitAnswer: choices => dispatch(submitAnswer(choices.map(choice => choice.id))),
 });
 
 const QuestionView = ({
   questionMaster,
   question,
-  choices,
+  selectedChoices,
   submitted,
   canSubmitAnswer,
   onSubmitAnswer,
 }: QuestionViewProps) => {
   const onCardClicked = () => {
     if (canSubmitAnswer)
-      onSubmitAnswer();
-    };
+      onSubmitAnswer(selectedChoices);
+  };
 
   return (
     <div className="game-view" id="question-view">
@@ -83,7 +83,8 @@ const QuestionView = ({
 
         <QuestionCard
           question={question}
-          choices={choices}
+          choices={selectedChoices}
+          // TODO: delete?
           className={toClassName([!submitted && 'underline'])}
           onClick={onCardClicked} />
 

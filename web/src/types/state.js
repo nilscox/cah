@@ -11,27 +11,27 @@ import type {
 } from './models';
 
 export type SettingsType = {|
-  darkMode: boolean,
+  +darkMode: boolean,
 |};
 
 export type FetchingType = {|
-  player: boolean,
-  game: boolean,
+  +player: boolean,
+  +game: boolean,
 |};
 
 export type StatusType = {|
-  appInitializing: boolean,
-  api: string,
-  websocket: string,
+  +appInitializing: boolean,
+  +api: string,
+  +websocket: string,
 |};
 
 export type State = {|
-  player: FullPlayerType,
-  game: GameType,
-  gameHistory: Array<GameTurnType>,
-  selection: Array<ChoiceType>,
-  settings: SettingsType,
-  fetching: FetchingType,
-  status: StatusType,
-  error: ErrorType,
+  +player: FullPlayerType,
+  +game: GameType,
+  +gameHistory: Array<GameTurnType>,
+  +selection: Array<ChoiceType>,
+  +settings: SettingsType,
+  +fetching: FetchingType,
+  +status: StatusType,
+  +error: ErrorType,
 |};

@@ -5,7 +5,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  
+
   .container {
     position: relative;
     top: -20%;
@@ -21,5 +21,9 @@
   .login-form {
     border: 1px solid #999;
     padding: 15px 40px;
+
+    .invalid {
+      border-bottom-color: '#C33';
+    }
   }
 }

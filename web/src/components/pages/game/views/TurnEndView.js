@@ -4,8 +4,8 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Button } from 'material-ui';
 
+import type { Dispatch, Action } from '../../../../types/actions';
 import type { State } from '../../../../types/state';
-import type { Action } from '../../../../types/actions';
 import type { GameTurnType, GameType } from '../../../../types/models';
 import { nextTurn } from '../../../../actions/game';
 import AnsweredQuestionCard from '../../../common/AnsweredQuestionCard';
@@ -32,7 +32,7 @@ const mapStateToProps: State => TurnEndViewStateProps = ({
   canGoNext: game.question_master === player.nick,
 });
 
-const mapDispatchToProps: Function => TurnEndViewDispatchProps = dispatch => ({
+const mapDispatchToProps: Dispatch => TurnEndViewDispatchProps = dispatch => ({
   nextTurn: () => dispatch(nextTurn()),
 });
 
@@ -48,7 +48,7 @@ const TurnEndView = ({ turn, canGoNext, nextTurn }: TurnEndViewProps) => (
 
           <AnsweredQuestionCard
             question={turn.question}
-            answer={answer}
+            answer={answer.answers}
           />
 
           <div className="answered-by">{answer.answered_by}</div>

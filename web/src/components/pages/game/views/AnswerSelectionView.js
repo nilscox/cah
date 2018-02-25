@@ -3,8 +3,9 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
+import type { Dispatch, Action } from '../../../../types/actions';
 import type { State } from '../../../../types/state';
-import type { QuestionType, AnsweredQuestionType } from '../../../../types/models';
+import type { QuestionType, PartialAnsweredQuestionType } from '../../../../types/models';
 import { toClassName } from '../../../../utils';
 import { selectAnswer } from '../../../../actions/game';
 
@@ -12,12 +13,12 @@ import AnsweredQuestionCard from '../../../common/AnsweredQuestionCard';
 
 type AnswerSelectionViewStateProps = {|
   question: QuestionType,
-  answers: Array<AnsweredQuestionType>,
+  answers: Array<PartialAnsweredQuestionType>,
   canSelectAnswer: boolean,
 |};
 
 type AnswerSelectionViewDispatchProps = {|
-  onSelectAnswer: AnsweredQuestionType => void,
+  onSelectAnswer: PartialAnsweredQuestionType => Action,
 |};
 
 type AnswerSelectionViewProps =
@@ -33,8 +34,8 @@ const mapStateToProps: State => AnswerSelectionViewStateProps = ({
   canSelectAnswer: game.question_master === player.nick,
 });
 
-const mapDispatchToProps = dispatch => ({
-  onSelectAnswer: answerId => dispatch(selectAnswer(answerId)),
+const mapDispatchToProps: Dispatch => AnswerSelectionViewDispatchProps = dispatch => ({
+  onSelectAnswer: answer => dispatch(selectAnswer(answer.id)),
 });
 
 const AnswerSelectionView = ({
@@ -42,22 +43,30 @@ const AnswerSelectionView = ({
   answers,
   canSelectAnswer,
   onSelectAnswer,
-}: AnswerSelectionViewProps) => (
-  <div className="game-view" id="answer-selection">
+}: AnswerSelectionViewProps) => {
+  const onCardClicked = answer => {
+    if (canSelectAnswer)
+      onSelectAnswer(answer);
+  };
 
-    <div className={toClassName(['answers-list', canSelectAnswer && 'can-select'])}>
+  return (
+    <div className="game-view" id="answer-selection">
 
-      {answers.map(answer => (
-        <AnsweredQuestionCard
-          key={answer.id}
-          question={question}
-          answer={answer}
-          onClick={() => canSelectAnswer ? onSelectAnswer(answer) : undefined} />
-      ))}
+      <div className={toClassName(['answers-list', canSelectAnswer && 'can-select'])}>
+
+        {answers.map(answer => (
+          <AnsweredQuestionCard
+            key={answer.id}
+            question={question}
+            answer={answer.answers}
+            onClick={() => onCardClicked(answer)}
+          />
+        ))}
+
+      </div>
 
     </div>
-
-  </div>
-);
+  );
+}
 
 export default connect(mapStateToProps, mapDispatchToProps)(AnswerSelectionView);

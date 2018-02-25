@@ -3,8 +3,8 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
+import type { Dispatch, Action } from '../../../../../types/actions';
 import type { PlayerType, GameTurnType } from '../../../../../types/models';
-import type { Action } from '../../../../../types/actions';
 import type { State, SettingsType } from '../../../../../types/state';
 import { toggleDarkMode } from '../../../../../actions/settings';
 import { logoutPlayer } from '../../../../../actions/player';
@@ -14,9 +14,10 @@ import Settings from './Settings';
 
 type GameInfoStateProps = {|
   gameId: number,
-  questionMaster: string,
   players: Array<PlayerType>,
-  submitted: boolean,
+  isOnline: PlayerType => boolean,
+  hasSubmitted: PlayerType => boolean,
+  isQuestionMaster: PlayerType => boolean,
   history: Array<GameTurnType>,
   appSettings: SettingsType,
 |};
@@ -36,59 +37,55 @@ const mapStateToProps: State => GameInfoStateProps = ({
   settings,
 }) => ({
   gameId: game.id,
-  questionMaster: game.question_master,
   players: game.players,
-  submitted: game.has_submitted,
+  isOnline: player => player.connected,
+  hasSubmitted: player => game.has_submitted.indexOf(player.nick) >= 0,
+  isQuestionMaster: player => player.nick === game.question_master,
   history: gameHistory,
   appSettings: settings,
 });
 
-const mapDispatchToProps: Function => GameInfoDispatchProps = dispatch => ({
+const mapDispatchToProps: Dispatch => GameInfoDispatchProps = dispatch => ({
   toggleDarkMode: () => dispatch(toggleDarkMode()),
   logout: () => dispatch(logoutPlayer()),
 });
 
 const GameInfoView = ({
   gameId,
-  questionMaster,
   players,
-  submitted,
+  isOnline,
+  hasSubmitted,
+  isQuestionMaster,
   history,
   appSettings,
   toggleDarkMode,
   logout,
-}: GameInfoViewProps) => {
-  const isOnline = player => player.connected;
-  const isQuestionMaster = player => questionMaster === player.nick;
-  const hasSubmitted = player => submitted.indexOf(player.nick) >= 0;
+}: GameInfoViewProps) => (
+  <div className="game-view" id="game-info">
 
-  return (
-    <div className="game-view" id="game-info">
+    <div className="game-title">Game-{gameId}</div>
 
-      <div className="game-title">Game-{gameId}</div>
-
-      <h2>Players</h2>
-      <PlayersList
-        players={players}
-        isOnline={isOnline}
-        isQuestionMaster={isQuestionMaster}
-        hasSubmitted={hasSubmitted}
+    <h2>Players</h2>
+    <PlayersList
+      players={players}
+      isOnline={isOnline}
+      isQuestionMaster={isQuestionMaster}
+      hasSubmitted={hasSubmitted}
     />
 
-      <h2>History</h2>
-      <GameHistory history={history} />
+    <h2>History</h2>
+    <GameHistory history={history} />
 
-      <h2>Settings</h2>
-      <Settings
-        settings={appSettings}
-        actions={{
-          toggleDarkMode,
-          logout,
-        }}
-      />
+    <h2>Settings</h2>
+    <Settings
+      settings={appSettings}
+      actions={{
+        toggleDarkMode,
+        logout,
+      }}
+    />
 
-    </div>
-  );
-};
+  </div>
+);
 
 export default connect(mapStateToProps, mapDispatchToProps)(GameInfoView);

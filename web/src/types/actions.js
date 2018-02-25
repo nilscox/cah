@@ -9,7 +9,6 @@ export type GetState = () => State;
 export type ThunkAction = (dispatch: Dispatch, getState: GetState) => any;
 export type PromiseAction = Promise<Action>;
 export type RequestAction = ThunkAction;
-export type RequestStateAction = { type: string };
 
 export type GenericAction = {
   type: string,
@@ -44,13 +43,7 @@ export type WebsocketClosedAction = {|
 |};
 
 export type Action =
-  | ThunkAction
-  | PromiseAction
-
-  | RequestAction
-  | RequestStateAction
   | GenericAction
-
   | ClearErrorAction
   | GameToggleChoiceAction
   | WebsocketCreatedAction

@@ -22,7 +22,6 @@ const PlayerAvatar = ({
     <div className={toClassName([
       'player-avatar',
       'player-' + player.nick,
-      !player.connected && 'player-offline',
       className,
     ])}>
 

@@ -7,7 +7,7 @@ import Tooltip from 'material-ui/Tooltip';
 import Button from 'material-ui/Button';
 import AddIcon from 'material-ui-icons/Add';
 
-import type { Action } from '../../types/actions/index';
+import type { Dispatch, Action } from '../../types/actions';
 import { createGame, joinGame } from '../../actions/game';
 
 type LobbyDispatchProps = {|
@@ -17,7 +17,7 @@ type LobbyDispatchProps = {|
 
 type LobbyProps = LobbyDispatchProps;
 
-const mapDispatchToProps: Function => LobbyDispatchProps = dispatch => ({
+const mapDispatchToProps: Dispatch => LobbyDispatchProps = dispatch => ({
   createGame: () => dispatch(createGame()),
   joinGame: id => dispatch(joinGame(id)),
 });

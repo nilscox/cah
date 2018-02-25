@@ -4,7 +4,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import Button from 'material-ui/Button';
 
-import type { Action } from '../../../types/actions';
+import type { Dispatch, Action } from '../../../types/actions';
 import type { State } from '../../../types/state';
 import type { PlayerType } from '../../../types/models';
 import { toClassName } from '../../../utils';
@@ -28,7 +28,7 @@ const mapStateToProps: State => GameIdleStateProps = state => ({
   canStart: state.game.owner === state.player.nick,
 });
 
-const mapDispatchToProps: Function => GameIdleDispatchProps = dispatch => ({
+const mapDispatchToProps: Dispatch => GameIdleDispatchProps = dispatch => ({
   onStart: () => dispatch(startGame()),
 });
 

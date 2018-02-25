@@ -3,24 +3,25 @@
 import * as React from 'react';
 import QuestionCard from './QuestionCard';
 
-import type { QuestionType, AnsweredQuestionType } from '../../types/models';
+import type { QuestionType, ChoiceType } from '../../types/models';
 
 type AnsweredQuestionCardProps = {|
   className?: string,
-  answeredQuestion: AnsweredQuestionType,
-  onClick: SyntheticEvent<> => void,
+  question: QuestionType,
+  answer: Array<ChoiceType>,
+  onClick?: SyntheticEvent<> => void,
 |};
 
 const AnsweredQuestionCard = ({
   className,
   question,
-  answeredQuestion,
+  answer,
   onClick,
 }: AnsweredQuestionCardProps) => (
   <QuestionCard
     className={className}
-    question={answeredQuestion.question}
-    choices={answeredQuestion.answers}
+    question={question}
+    choices={answer}
     onClick={onClick}
   />
 );

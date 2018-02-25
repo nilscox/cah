@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import type { Action } from '../../../../types/actions';
+import type { Dispatch, Action } from '../../../../types/actions';
 import type { State } from '../../../../types/state';
 import type { ChoiceType } from '../../../../types/models';
 import { toClassName } from '../../../../utils';
@@ -41,8 +41,8 @@ const mapStateToProps: State => PlayerCardsViewStateProps = ({
   ]),
 });
 
-const mapDispatchToProps: Function => PlayerCardsViewDispatchProps = dispatch => ({
-  toggleChoice: choice => dispatch(toggleChoice(choice.id)),
+const mapDispatchToProps: Dispatch => PlayerCardsViewDispatchProps = dispatch => ({
+  toggleChoice: choice => dispatch(toggleChoice(choice)),
 });
 
 const PlayerCardsView = ({

@@ -15,6 +15,7 @@ type SettingsProps = {|
 
 const Settings = ({ settings, actions }: SettingsProps) => (
   <div className="settings">
+
     <div className="dark-mode">
       <FormControlLabel
         control={
@@ -26,7 +27,9 @@ const Settings = ({ settings, actions }: SettingsProps) => (
         label="Dark mode"
       />
     </div>
+
     <Button onClick={actions.logout}>Log out</Button>
+
   </div>
 );
 

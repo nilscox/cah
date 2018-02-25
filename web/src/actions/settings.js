@@ -34,6 +34,7 @@ export const loadSettings = (): ThunkAction => {
     let settings = localStorage.getItem('settings');
     if (settings) {
       settings = JSON.parse(settings);
+
       Object.keys(settings).forEach(key => {
         dispatch(setSettingValue(key, settings[key]));
       });
