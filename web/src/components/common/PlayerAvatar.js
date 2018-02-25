@@ -13,9 +13,9 @@ type PlayerAvatarProps = {|
 |};
 
 const PlayerAvatar = ({
+  className,
   player,
   tooltip,
-  className,
 }: PlayerAvatarProps) => (
   <Tooltip title={tooltip} placement="bottom">
 
@@ -26,7 +26,7 @@ const PlayerAvatar = ({
       className,
     ])}>
 
-      <img className="avatar-image" alt="player-avatar" src={player.avatar} />
+      <img className="avatar-image" alt={'avatar-' + player.nick} src={player.avatar} />
 
     </div>
 

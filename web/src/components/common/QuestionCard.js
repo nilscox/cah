@@ -44,7 +44,7 @@ const QuestionCard = ({
 
   return (
     <div
-      className={toClassName([ 'card', 'question', className ])}
+      className={toClassName(['card', 'question', className])}
       onClick={onClick}>
       <div className="text">{text}</div>
     </div>

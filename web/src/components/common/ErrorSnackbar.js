@@ -7,7 +7,7 @@ import type { ErrorType } from '../../types/models';
 
 type ErrorSnackBarProps = {|
   error: ErrorType,
-  onClose: (event: SyntheticEvent<>, reason: string) => void,
+  onClose: (SyntheticEvent<>, reason: string) => void,
 |};
 
 const ErrorSnackBar = ({ error, onClose }: ErrorSnackBarProps) => (

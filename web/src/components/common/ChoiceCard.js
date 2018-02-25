@@ -6,9 +6,9 @@ import type { ChoiceType } from '../../types/models';
 import { toClassName } from '../../utils';
 
 type ChoiceCardProps = {|
+  className?: string,
   choice: ChoiceType,
-  className: string,
-  onClick: (SyntheticEvent<>) => void,
+  onClick: SyntheticEvent<> => void,
 |};
 
 const ChoiceCard = ({
