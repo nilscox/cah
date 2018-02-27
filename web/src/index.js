@@ -20,7 +20,7 @@ const loggerMiddleware = createLogger({
   diff: true,
   colors: {
     title: action => {
-      if (action.type.startsWith('WS_'))
+      if (action.type === 'WEBSOCKET_MESSAGE')
         return 'royalblue';
 
       if (action.type.startsWith('WEBSOCKET_'))
