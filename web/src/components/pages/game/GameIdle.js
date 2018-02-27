@@ -33,7 +33,7 @@ const mapDispatchToProps: Dispatch => GameIdleDispatchProps = dispatch => ({
 });
 
 const StartButton = ({ onStart }) => (
-  <Button raised color="primary" className="start-button" onClick={onStart}>Start!</Button>
+  <Button variant="raised" color="primary" className="start-button" onClick={onStart}>Start!</Button>
 );
 
 const GameIdle = ({ players, canStart, onStart }: GameIdleProps) => (
