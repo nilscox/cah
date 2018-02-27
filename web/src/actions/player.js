@@ -1,6 +1,6 @@
 // @flow
 
-import type { Dispatch, RequestAction } from '../types/actions';
+import type { Dispatch, ThunkAction } from '../types/actions';
 import { PLAYER_ROUTE } from '../constants';
 import request from './requestAction';
 import { fetchGame } from './game';
@@ -18,7 +18,7 @@ const onPlayerFetch = (dispatch: Dispatch, result: any): Promise<any> => {
 };
 
 export const PLAYER_FETCH = 'PLAYER_FETCH';
-export function fetchPlayer(): RequestAction {
+export function fetchPlayer(): ThunkAction {
   const opts = {
     method: 'GET',
     route: PLAYER_ROUTE,
@@ -30,7 +30,7 @@ export function fetchPlayer(): RequestAction {
 }
 
 export const PLAYER_LOGIN = 'PLAYER_LOGIN';
-export function loginPlayer(nick: string): RequestAction {
+export function loginPlayer(nick: string): ThunkAction {
   const opts = {
     method: 'POST',
     route: PLAYER_ROUTE,
@@ -43,7 +43,7 @@ export function loginPlayer(nick: string): RequestAction {
 }
 
 export const PLAYER_LOGOUT = 'PLAYER_LOGOUT';
-export function logoutPlayer(): RequestAction {
+export function logoutPlayer(): ThunkAction {
   const opts = {
     method: 'DELETE',
     route: PLAYER_ROUTE,

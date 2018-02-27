@@ -1,6 +1,6 @@
 // @flow
 
-import React, { Component } from 'react';
+import React from 'react';
 
 import type { GameTurnType } from '../../../../../types/models';
 import { toClassName } from '../../../../../utils';

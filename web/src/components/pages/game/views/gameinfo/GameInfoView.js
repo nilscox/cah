@@ -33,7 +33,6 @@ type GameInfoViewProps =
 
 const mapStateToProps: State => GameInfoStateProps = ({
   game,
-  gameHistory,
   settings,
 }) => ({
   gameId: game.id,
@@ -41,7 +40,7 @@ const mapStateToProps: State => GameInfoStateProps = ({
   isOnline: player => player.connected,
   hasSubmitted: player => game.has_submitted.indexOf(player.nick) >= 0,
   isQuestionMaster: player => player.nick === game.question_master,
-  history: gameHistory,
+  history: game.history,
   appSettings: settings,
 });
 

@@ -1,8 +1,8 @@
 // @flow
 
 import type { ThunkAction } from '../types/actions';
-import type { WebsocketCreatedAction, WebsocketConnectedAction, WebsocketMessageAction } from '../types/actions';
-import type { WSEvent } from '../types/events';
+import type { WebsocketCreatedAction, WebsocketMessageAction } from '../types/actions';
+import type { WSMessage } from '../types/websocket';
 import {send as sendToWS} from '../websocket';
 import { checkApiStatus } from './apiState';
 
@@ -30,13 +30,13 @@ export function websocketConnected(event: any): ThunkAction {
   };
 }
 
-export const WEBSOCKET_MESSAGE_PREFIX = 'WS_';
-export function websocketMessage(event: any, message: WSEvent): WebsocketMessageAction {
+export const WEBSOCKET_MESSAGE = 'WEBSOCKET_MESSAGE';
+export function websocketMessage(event: any, message: WSMessage): WebsocketMessageAction {
   if (!message.type)
     throw new Error('No action in message: ' + message);
 
   return {
-    type: WEBSOCKET_MESSAGE_PREFIX + message.type,
+    type: WEBSOCKET_MESSAGE,
     message,
   };
 }
@@ -48,6 +48,6 @@ export function websocketClosed(): ThunkAction {
       type: WEBSOCKET_CLOSED,
     });
 
-    dispatch(checkApiStatus());
+    dispatch(checkApiStatus('WEBSOCKET_DISCONNECTED'));
   };
 }

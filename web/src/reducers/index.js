@@ -1,22 +1,7 @@
 import { combineReducers } from 'redux';
 import { API_STATE, WS_STATE } from '../constants';
-import { append, remove } from './utils';
 import player from './player';
 import game from './game';
-
-const selection = (state = [], action) => {
-  if (action.type === 'GAME_TOGGLE_CHOICE') {
-    if (state.indexOf(action.choice) < 0)
-      return append(state, action.choice);
-    else
-      return remove(state, action.choice);
-  }
-
-  if (action.type === 'WS_NEXT_TURN')
-    return [];
-
-  return state;
-};
 
 const settings = (state = {
   darkMode: false,
@@ -33,8 +18,8 @@ const settings = (state = {
 };
 
 const fetching = (state = {
-  game: false,
   player: false,
+  game: false,
   gameHistory: false,
 }, action) => {
   switch (action.type) {
@@ -63,7 +48,7 @@ const fetching = (state = {
       return { ...state, gameHistory: false };
 
     default:
-      return state;
+      return { ...state, fetching: fetching(state, action) };
   }
 };
 
@@ -72,28 +57,26 @@ const status = (state = {
   api: API_STATE.UP,
   websocket: WS_STATE.CLOSED,
 }, action) => {
-  if (action.type === 'INITIALIZATION_STARTED')
-    return { ...state, appInitializing: true };
+  switch(action.type) {
+    case 'INITIALIZATION_STARTED':
+      return { ...state, appInitializing: true };
+    case 'INITIALIZATION_FINISHED':
+      return { ...state, appInitializing: false };
 
-  if (action.type === 'INITIALIZATION_FINISHED')
-    return { ...state, appInitializing: false };
+    case 'API_DOWN':
+      return { ...state, api: API_STATE.DOWN };
+    case 'API_UP':
+      return { ...state, api: API_STATE.UP };
 
-  if (action.type === 'API_DOWN')
-    return { ...state, api: API_STATE.DOWN };
-
-  if (action.type === 'API_UP')
-    return { ...state, api: API_STATE.UP };
-
-  if (action.type === 'WEBSOCKET_CREATED')
-    return { ...state, websocket: WS_STATE.CREATED };
-
-  if (action.type === 'WEBSOCKET_CLOSED')
-    return { ...state, websocket: WS_STATE.CLOSED };
-
-  if (action.type === 'WEBSOCKET_CONNECTED')
-    return { ...state, websocket: WS_STATE.CONNECTED };
-
-  return state;
+    case 'WEBSOCKET_CREATED':
+      return { ...state, websocket: WS_STATE.CREATED };
+    case 'WEBSOCKET_CLOSED':
+      return { ...state, websocket: WS_STATE.CLOSED };
+    case 'WEBSOCKET_CONNECTED':
+      return { ...state, websocket: WS_STATE.CONNECTED };
+    default:
+      return state;
+  }
 };
 
 const error = (state = null, action) => {
@@ -113,9 +96,7 @@ const error = (state = null, action) => {
 export default combineReducers({
   player,
   game,
-  selection,
   settings,
-  fetching,
   status,
   error,
 });

@@ -32,11 +32,10 @@ type QuestionViewProps =
 const mapStateToProps: State => QuestionViewStateProps = ({
   game,
   player,
-  selection,
 }) => {
   const { question } = game;
 
-  let selectedChoices = selection;
+  let selectedChoices = player.selection;
 
   if (player.submitted)
     selectedChoices = player.submitted.answers;
@@ -50,7 +49,7 @@ const mapStateToProps: State => QuestionViewStateProps = ({
       game.state === 'started',
       game.question_master !== player.nick,
       !player.submitted,
-      selection.length === question.nb_choices,
+      player.selection.length === question.nb_choices,
     ]),
   };
 };

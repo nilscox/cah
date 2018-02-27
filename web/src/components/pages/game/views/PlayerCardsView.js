@@ -29,15 +29,14 @@ type PlayerCardsViewProps =
 const mapStateToProps: State => PlayerCardsViewStateProps = ({
   game,
   player,
-  selection,
 }) => ({
   choices: player.cards,
-  isSelected: choice => selection.indexOf(choice) >= 0,
+  isSelected: choice => player.selection.indexOf(choice) >= 0,
   canSelectChoice: all([
     game.state === 'started',
     game.question_master !== player.nick,
     !player.submitted,
-    selection.length < game.question.nb_choices,
+    player.selection.length < game.question.nb_choices,
   ]),
 });
 

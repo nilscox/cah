@@ -8,66 +8,66 @@ import type {
   AnsweredQuestionType,
 } from './models';
 
-export type WSConnectedEvent = {
+export type WSConnectedMessage = {
   type: 'WS_CONNECTED',
   player: PlayerType,
 };
 
-export type WSDisconnectedEvent = {
+export type WSDisconnectedMessage = {
   type: 'WS_DISCONNECTED',
   nick: string,
 };
 
-export type WSJoinedEvent = {
+export type WSJoinedMessage = {
   type: 'WS_JOINED',
   player: PlayerType,
 };
 
-export type WSLeftEvent = {
+export type WSLeftMessage = {
   type: 'WS_LEFT',
   nick: PlayerType,
 };
 
-export type WSCardsDealtEvent = {
+export type WSCardsDealtMessage = {
   type: 'WS_CARDS_DEALT',
   cards: Array<ChoiceType>,
 };
 
-export type WSGameStartedEvent = {
+export type WSGameStartedMessage = {
   type: 'WS_GAME_STARTED',
   game: GameType,
 };
 
-export type WSAnswereSubmittedEvent = {
+export type WSAnswereSubmittedMessage = {
   type: 'WS_ANSWER_SUBMITTED',
   nick: string,
 };
 
-export type WSAllAnswersSubmittedEvent = {
+export type WSAllAnswersSubmittedMessage = {
   type: 'WS_ALL_ANSWERS_SUBMITTED',
   answers: Array<PartialAnsweredQuestionType>,
 };
 
-export type WSAnswerSelectedEvent = {
+export type WSAnswerSelectedMessage = {
   type: 'WS_ANSWER_SELECTED',
   answer: AnsweredQuestionType,
   answers: Array<AnsweredQuestionType>,
 };
 
-export type WSNextTurnEvent = {
+export type WSNextTurnMessage = {
   type: 'WS_NEXT_TURN',
   game: GameType,
 };
 
-export type WSEvent =
-  | WSConnectedEvent
-  | WSConnectedEvent
-  | WSDisconnectedEvent
-  | WSJoinedEvent
-  | WSLeftEvent
-  | WSCardsDealtEvent
-  | WSGameStartedEvent
-  | WSAnswereSubmittedEvent
-  | WSAllAnswersSubmittedEvent
-  | WSAnswerSelectedEvent
-  | WSNextTurnEvent;
+export type WSMessage =
+  | WSConnectedMessage
+  | WSConnectedMessage
+  | WSDisconnectedMessage
+  | WSJoinedMessage
+  | WSLeftMessage
+  | WSCardsDealtMessage
+  | WSGameStartedMessage
+  | WSAnswereSubmittedMessage
+  | WSAllAnswersSubmittedMessage
+  | WSAnswerSelectedMessage
+  | WSNextTurnMessage;

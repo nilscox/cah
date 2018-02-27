@@ -1,8 +1,12 @@
 // @flow
 
-import type { RequestAction } from '../types/actions';
-import request from '../request';
-import { apiUp, apiDown } from './apiState';
+import type {
+  RequestFailureAction, RequestStartAction, RequestSuccessAction,
+  ThunkAction
+} from '../types/actions';
+import type { RequestResult } from '../request';
+import request, { ApiRequestError } from '../request';
+import { apiUp, checkApiStatus } from './apiState';
 
 export type RequestActionOpts = {
   method: string,
@@ -11,27 +15,52 @@ export type RequestActionOpts = {
   expected?: number | Array<number>,
 }
 
-export default function requestAction(prefix: string, opts: RequestActionOpts): RequestAction {
+function requestStartAction(prefix: string, method: string, route: string, body?: any): RequestStartAction {
+  return {
+    type: prefix + '_REQUEST',
+    method,
+    route,
+    body,
+  };
+}
+
+function requestSuccessAction(prefix: string, status: number, body: any): RequestSuccessAction {
+  return {
+    type: prefix + '_SUCCESS',
+    status,
+    body,
+  };
+}
+
+function requestFailureAction(prefix: string, error: ApiRequestError): RequestFailureAction {
+  return {
+    type: prefix + '_FAILURE',
+    error,
+  };
+}
+
+export default function requestAction(prefix: string, opts: RequestActionOpts): ThunkAction {
   const { method, route, body, expected } = opts;
 
   return dispatch => {
-    dispatch({ type: prefix + '_REQUEST' });
+    dispatch(requestStartAction(prefix, method, route, body));
 
     return request(method, route, body, expected)
       .then(
-        ({ status, body }) => {
-          dispatch({type: prefix + '_SUCCESS', status, body});
+        ({ result, body }: RequestResult) => {
+          dispatch(requestSuccessAction(prefix, result.status, body));
           dispatch(apiUp());
 
-          return { status, body };
+          return { status: result.status, body };
         },
         error => {
-          dispatch({ type: prefix + '_FAILURE', error });
+          dispatch(requestFailureAction(prefix, error));
 
+          // FIXME
           if (error.message === 'Failed to fetch')
-            dispatch(apiDown());
+            dispatch(checkApiStatus('API_REQUEST_FAILED'));
 
-          return { status: null, error };
+          return { error };
         }
       );
   };

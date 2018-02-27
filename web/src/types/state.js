@@ -20,6 +20,7 @@ export type FetchingType = {|
 |};
 
 export type StatusType = {|
+  +fetching: FetchingType,
   +appInitializing: boolean,
   +api: string,
   +websocket: string,
@@ -28,10 +29,7 @@ export type StatusType = {|
 export type State = {|
   +player: FullPlayerType,
   +game: GameType,
-  +gameHistory: Array<GameTurnType>,
-  +selection: Array<ChoiceType>,
   +settings: SettingsType,
-  +fetching: FetchingType,
   +status: StatusType,
   +error: ErrorType,
 |};

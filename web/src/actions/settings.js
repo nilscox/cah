@@ -31,13 +31,10 @@ export const loadSettings = (): ThunkAction => {
   return dispatch => {
     dispatch({ type: LOAD_SETTINGS });
 
-    let settings = localStorage.getItem('settings');
-    if (settings) {
-      settings = JSON.parse(settings);
+    const settings = JSON.parse(localStorage.getItem('settings') || '{}');
 
-      Object.keys(settings).forEach(key => {
-        dispatch(setSettingValue(key, settings[key]));
-      });
-    }
+    Object.keys(settings).forEach(key => {
+      dispatch(setSettingValue(key, settings[key]));
+    });
   };
 };

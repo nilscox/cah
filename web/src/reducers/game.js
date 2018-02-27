@@ -21,51 +21,53 @@ export default function(state = null, action) {
   if (!state || !state.id || !message)
     return state;
 
-  switch (action.type) {
-    case 'WS_JOINED':
-      if (state.players.findIndex(findPlayerByNick(message.player.nick)) >= 0)
-        return state;
+  if (action.type === 'WEBSOCKET_MESSAGE') {
+    switch (action.message.type) {
+      case 'JOINED':
+        if (state.players.findIndex(findPlayerByNick(message.player.nick)) >= 0)
+          return state;
 
-      return {
-        ...state,
-        players: append(state.players, message.player),
-      };
+        return {
+          ...state,
+          players: append(state.players, message.player),
+        };
 
-    case 'WS_LEFT':
-      return {
-        ...state,
-        players: remove(state.players, findPlayerByNick(message.player.nick)),
-      };
+      case 'LEFT':
+        return {
+          ...state,
+          players: remove(state.players, findPlayerByNick(message.player.nick)),
+        };
 
-    case 'WS_CONNECTED':
-      return {
-        ...state,
-        players: replace(state.players, message.player, findPlayerByNick(message.player.nick)),
-      };
+      case 'CONNECTED':
+        return {
+          ...state,
+          players: replace(state.players, message.player, findPlayerByNick(message.player.nick)),
+        };
 
-    case 'WS_DISCONNECTED':
-      return {
-        ...state,
-        players: replace(state.players, p => ({ ...p, connected: false }), p => p.nick === message.nick),
-      };
+      case 'DISCONNECTED':
+        return {
+          ...state,
+          players: replace(state.players, p => ({ ...p, connected: false }), p => p.nick === message.nick),
+        };
 
-    case 'WS_GAME_STARTED':
-      return {...message.game, has_submitted: [], history: []};
+      case 'GAME_STARTED':
+        return {...message.game, has_submitted: [], history: []};
 
-    case 'WS_ANSWER_SUBMITTED':
-      return {...state, has_submitted: [...state.has_submitted, message.nick]};
+      case 'ANSWER_SUBMITTED':
+        return {...state, has_submitted: [...state.has_submitted, message.nick]};
 
-    case 'WS_ALL_ANSWERS_SUBMITTED':
-      return {...state, play_state: 'question_master_selection', propositions: message.answers};
+      case 'ALL_ANSWERS_SUBMITTED':
+        return {...state, play_state: 'question_master_selection', propositions: message.answers};
 
-    case 'WS_ANSWER_SELECTED':
-      return { ...state, play_state: 'end_of_turn', history: [...state.history, message.turn] };
+      case 'ANSWER_SELECTED':
+        return { ...state, play_state: 'end_of_turn', history: [...state.history, message.turn] };
 
-    case 'WS_NEXT_TURN':
-      return { ...state, ...message.game, has_submitted: [] };
+      case 'NEXT_TURN':
+        return { ...state, ...message.game, has_submitted: [] };
 
-    default:
-      break;
+      default:
+        break;
+    }
   }
 
   return state;

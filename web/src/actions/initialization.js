@@ -1,6 +1,6 @@
 // @flow
 
-import type { GenericAction, ThunkAction } from '../types/actions';
+import type { InitializationFinishedAction, ThunkAction } from '../types/actions';
 import { fetchPlayer } from './player';
 import { fetchGame, fetchGameHistory } from './game';
 import { loadSettings } from './settings';
@@ -26,7 +26,7 @@ export function initializationStart(): ThunkAction {
 }
 
 export const INITIALIZATION_FINISHED = 'INITIALIZATION_FINISHED';
-export function initializationFinished(): GenericAction {
+export function initializationFinished(): InitializationFinishedAction {
   return {
     type: INITIALIZATION_FINISHED,
   };

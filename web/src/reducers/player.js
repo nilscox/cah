@@ -1,13 +1,15 @@
+import { append, remove } from "./utils";
+
 export default function(state = null, action) {
   switch (action.type) {
     case 'PLAYER_FETCH_SUCCESS':
       if (action.status === 404)
         return null;
 
-      return action.body;
+      return { ...action.body, selection: [] };
 
     case 'PLAYER_LOGIN_SUCCESS':
-      return action.body;
+      return { ...action.body, selection: [] };
 
     case 'PLAYER_LOGOUT_SUCCESS':
       return null;
@@ -19,13 +21,25 @@ export default function(state = null, action) {
 
       return { ...state, cards, submitted };
 
-    case 'WS_CARDS_DEALT':
+    case 'GAME_TOGGLE_CHOICE':
+      if (state.selection.indexOf(action.choice) < 0)
+        return { ...state, selection: append(state.selection, action.choice) };
+      else
+        return { ...state, selection: remove(state.selection, action.choice) };
+
+    case 'WEBSOCKET_MESSAGE':
       const message = action.message;
 
-      return { ...state, cards: [ ...(state.cards || []), ...message.cards ] };
+      switch (message.type) {
+        case 'CARDS_DEALT':
+          return { ...state, cards: [ ...(state.cards || []), ...message.cards ] };
 
-    case 'WS_NEXT_TURN':
-      return { ...state, submitted: null };
+        case 'NEXT_TURN':
+          return { ...state, submitted: null, selection: [] };
+
+        default:
+          return state;
+      }
 
     default:
       return state;

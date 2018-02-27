@@ -53,12 +53,14 @@ export type FullPlayerType = {|
   +connected: boolean,
   +cards: Array<ChoiceType>,
   +submitted: AnsweredQuestionType,
+  +selection: Array<ChoiceType>,
 |};
 
 export type GameType = {|
   +id: number,
   +state: string,
   +play_state: string,
+  +history: Array<GameTurnType>,
   +owner: string,
   +players: Array<PlayerType>,
   +has_submitted: Array<string>,

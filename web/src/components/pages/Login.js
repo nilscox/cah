@@ -4,9 +4,9 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { TextField } from 'material-ui';
 
-import type { Dispatch, Action } from '../../types/actions';
-import type { State } from '../../types/state';
+import type { Action, Dispatch } from '../../types/actions';
 import { loginPlayer } from '../../actions/player';
+import { toClassName } from "../../utils";
 
 type LoginDispatchProps = {|
   onLogin: string => Action,
@@ -39,7 +39,7 @@ const Login = ({ onLogin }: LoginProps) => {
 
         <div className="login-form">
           <TextField
-            className={invalid && 'invalid'}
+            className={toClassName([invalid && 'invalid'])}
             label="Choose your Nick"
             placeholder="Nick"
             fullWidth

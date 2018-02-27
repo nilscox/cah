@@ -7,7 +7,7 @@ import { close as closeWS } from '../websocket';
 import { API_STATE, WS_STATE } from '../constants';
 
 export const CHECK_API_STATUS = 'CHECK_API_STATUS';
-export function checkApiStatus(): ThunkAction {
+export function checkApiStatus(reason?: string): ThunkAction {
   return (dispatch, getState) => {
     const onSuccess = () => {
       const { status } = getState();
@@ -20,7 +20,7 @@ export function checkApiStatus(): ThunkAction {
 
     const onFailure = () => dispatch(apiDown());
 
-    dispatch({ type: CHECK_API_STATUS });
+    dispatch({ type: CHECK_API_STATUS, reason });
 
     return request('GET', '/api/')
       .then(onSuccess, onFailure);

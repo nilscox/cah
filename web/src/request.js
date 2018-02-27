@@ -3,7 +3,7 @@
 // $FlowFixMe
 const API_URL: string = process.env.REACT_APP_API_URL;
 
-class ApiError extends Error {
+export class ApiRequestError extends Error {
   method: string;
   route: string;
   requestBody: string;
@@ -24,12 +24,17 @@ class ApiError extends Error {
   }
 }
 
+export type RequestResult = {
+  result: any,
+  body: any,
+}
+
 function request(
   method: string,
   route: string,
   body?: any,
   expected?: number | Array<number> = 200,
-): Promise<{ status: number, body: any }> {
+): Promise<RequestResult> {
   const expectedStatus = Array.isArray(expected) ? expected : [expected];
 
   const opts = {
@@ -42,7 +47,7 @@ function request(
     opts.headers = { 'Content-Type': 'application/json' };
   }
 
-  let res?: any = null;
+  let res: any = null;
 
   return fetch(API_URL + route, opts)
     .then((r: any) => {
@@ -57,11 +62,11 @@ function request(
     })
     .then((responseBody: any) => {
       if (expectedStatus.indexOf(res.status) < 0)
-        throw new ApiError(method, route, body, res, responseBody);
+        throw new ApiRequestError(method, route, body, res, responseBody);
 
       return {
-        status: res.status,
-        body,
+        result: res,
+        body: responseBody,
       };
     });
 }

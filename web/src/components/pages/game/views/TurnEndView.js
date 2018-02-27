@@ -4,9 +4,9 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Button } from 'material-ui';
 
-import type { Dispatch, Action } from '../../../../types/actions';
+import type { Action, Dispatch } from '../../../../types/actions';
 import type { State } from '../../../../types/state';
-import type { GameTurnType, GameType } from '../../../../types/models';
+import type { GameTurnType } from '../../../../types/models';
 import { nextTurn } from '../../../../actions/game';
 import AnsweredQuestionCard from '../../../common/AnsweredQuestionCard';
 
@@ -26,9 +26,8 @@ type TurnEndViewProps =
 const mapStateToProps: State => TurnEndViewStateProps = ({
   player,
   game,
-  gameHistory
 }) => ({
-  turn: gameHistory[gameHistory.length - 1],
+  turn: game.history[game.history.length - 1],
   canGoNext: game.question_master === player.nick,
 });
 
