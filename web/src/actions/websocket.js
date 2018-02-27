@@ -18,6 +18,9 @@ export function websocketConnected(event: any): ThunkAction {
   return (dispatch, getState) => {
     const { player } = getState();
 
+    if (!player)
+      return;
+
     sendToWS({
       action: 'connected',
       nick: player.nick,
