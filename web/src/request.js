@@ -33,6 +33,9 @@ function request(
   method: string,
   route: string,
   body?: any,
+  files?: {
+    [string]: any,
+  },
   expected?: number | Array<number> = 200,
 ): Promise<RequestResult> {
   const expectedStatus = Array.isArray(expected) ? expected : [expected];
@@ -42,7 +45,14 @@ function request(
     ...{ credentials: 'include' },
   };
 
-  if (body) {
+  if (files) {
+    const formData = new FormData();
+
+    for (let key in files)
+      formData.append(key, files[key]);
+
+    opts.body = formData;
+  } else if (body) {
     opts.body = JSON.stringify(body);
     opts.headers = { 'Content-Type': 'application/json' };
   }

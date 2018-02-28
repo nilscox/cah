@@ -59,6 +59,16 @@ export type WebsocketClosedAction = {
   type: 'WEBSOCKET_CLOSED',
 };
 
+export type LoadSettings = {
+  type: 'LOAD_SETTINGS',
+};
+
+export type SettingSetValue = {
+  type: 'SETTINGS_SET_VALUE',
+  setting: string,
+  value: any,
+};
+
 export type Action =
   | ClearErrorAction
   | CheckApiStatusAction
@@ -70,7 +80,9 @@ export type Action =
   | WebsocketCreatedAction
   | WebsocketConnectedAction
   | WebsocketMessageAction
-  | WebsocketClosedAction;
+  | WebsocketClosedAction
+  | LoadSettings
+  | SettingSetValue;
 
 export type RequestStartAction = {
   type: string,

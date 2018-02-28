@@ -23,6 +23,15 @@ export default function(state = null, action) {
 
   if (action.type === 'WEBSOCKET_MESSAGE') {
     switch (action.message.type) {
+      case 'PLAYER_AVATAR_CHANGED':
+        if (state.players.findIndex(findPlayerByNick(message.player.nick)) < 0)
+          return state;
+
+        return {
+          ...state,
+          players: replace(state.players, message.player, findPlayerByNick(message.player.nick))
+        };
+
       case 'JOINED':
         if (state.players.findIndex(findPlayerByNick(message.player.nick)) >= 0)
           return state;

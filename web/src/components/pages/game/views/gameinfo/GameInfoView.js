@@ -16,6 +16,7 @@ type GameInfoStateProps = {|
   gameId: number,
   players: Array<PlayerType>,
   isOnline: PlayerType => boolean,
+  isMe: PlayerType => boolean,
   hasSubmitted: PlayerType => boolean,
   isQuestionMaster: PlayerType => boolean,
   history: Array<GameTurnType>,
@@ -32,12 +33,14 @@ type GameInfoViewProps =
   & GameInfoDispatchProps;
 
 const mapStateToProps: State => GameInfoStateProps = ({
+  player,
   game,
   settings,
 }) => ({
   gameId: game.id,
   players: game.players,
   isOnline: player => player.connected,
+  isMe: p => p.nick === player.nick,
   hasSubmitted: player => game.has_submitted.indexOf(player.nick) >= 0,
   isQuestionMaster: player => player.nick === game.question_master,
   history: game.history,
@@ -53,6 +56,7 @@ const GameInfoView = ({
   gameId,
   players,
   isOnline,
+  isMe,
   hasSubmitted,
   isQuestionMaster,
   history,
@@ -67,6 +71,7 @@ const GameInfoView = ({
     <h2>Players</h2>
     <PlayersList
       players={players}
+      isMe={isMe}
       isOnline={isOnline}
       isQuestionMaster={isQuestionMaster}
       hasSubmitted={hasSubmitted}

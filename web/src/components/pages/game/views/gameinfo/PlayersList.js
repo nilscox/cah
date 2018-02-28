@@ -8,6 +8,7 @@ import PlayerAvatar from '../../../../common/PlayerAvatar';
 
 type PlayersListProps = {|
   players: Array<PlayerType>,
+  isMe: PlayerType => boolean,
   isOnline: PlayerType => boolean,
   isQuestionMaster: PlayerType => boolean,
   hasSubmitted: PlayerType => boolean,
@@ -15,6 +16,7 @@ type PlayersListProps = {|
 
 const PlayersList = ({
   players,
+  isMe,
   isOnline,
   isQuestionMaster,
   hasSubmitted,
@@ -32,7 +34,7 @@ const PlayersList = ({
         ])}
 
         player={player}
-
+        canChange={isMe(player)}
         tooltip={'score: ' + player.score}
       />
     ))}

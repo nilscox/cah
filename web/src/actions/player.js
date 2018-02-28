@@ -55,3 +55,16 @@ export function logoutPlayer(): ThunkAction {
         localStorage.removeItem('nick');
     });
 }
+
+export const CHANGE_PLAYER_AVATAR = 'CHANGE_PLAYER_AVATAR';
+export function changePlayerAvatar(file: any): ThunkAction {
+  const opts = {
+    method: 'POST',
+    route: PLAYER_ROUTE + '/avatar',
+    files: {
+      avatar: file,
+    },
+  };
+
+  return request(CHANGE_PLAYER_AVATAR, opts);
+}

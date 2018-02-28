@@ -12,6 +12,7 @@ export type RequestActionOpts = {
   method: string,
   route: string,
   body?: any,
+  files?: {},
   expected?: number | Array<number>,
 }
 
@@ -40,12 +41,12 @@ function requestFailureAction(prefix: string, error: ApiRequestError): RequestFa
 }
 
 export default function requestAction(prefix: string, opts: RequestActionOpts): ThunkAction {
-  const { method, route, body, expected } = opts;
+  const { method, route, body, files, expected } = opts;
 
   return dispatch => {
     dispatch(requestStartAction(prefix, method, route, body));
 
-    return request(method, route, body, expected)
+    return request(method, route, body, files, expected)
       .then(
         ({ result, body }: RequestResult) => {
           dispatch(requestSuccessAction(prefix, result.status, body));
