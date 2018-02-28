@@ -52,6 +52,13 @@ def game_created(owner):
     player_group(owner).add(owner.socket_id)
 
 
+def player_avatar_changed(player):
+    broadcast(player.game, {
+        "type": "PLAYER_AVATAR_CHANGED",
+        "player": serialize("PlayerSerializer", player),
+    })
+
+
 def game_joined(player):
     player_group(player).add(player.socket_id)
     broadcast(player.game, {

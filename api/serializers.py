@@ -47,6 +47,7 @@ class PlayerSerializer(serializers.ModelSerializer):
     """
     Player: {
         nick: string,
+        avatar: string,
         score: integer,
         connected: boolean,
     }
@@ -57,7 +58,7 @@ class PlayerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Player
-        fields = ('nick', 'score', 'connected')
+        fields = ('nick', 'avatar', 'score', 'connected')
 
     def get_connected(self, player):
         return bool(player.socket_id)
@@ -67,6 +68,7 @@ class FullPlayerSerializer(PlayerSerializer):
     """
     FullPlayer: {
         nick: string,
+        avatar: string,
         score: integer,
         cards: Choice[],
         submitted: AnsweredQuestion,
@@ -79,7 +81,7 @@ class FullPlayerSerializer(PlayerSerializer):
 
     class Meta:
         model = Player
-        fields = ('nick', 'score', 'cards', 'game', 'submitted')
+        fields = ('nick', 'avatar', 'score', 'cards', 'game', 'submitted')
 
     def get_submitted(self, player):
         submitted = player.get_submitted()

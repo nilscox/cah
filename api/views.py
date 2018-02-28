@@ -1,3 +1,7 @@
+import os
+
+from datetime import datetime
+from django.forms import forms
 from rest_framework import views
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.exceptions import ValidationError
@@ -9,6 +13,9 @@ from api.models import Game, Player, AnsweredQuestion
 from api.authentication import PlayerAuthentication
 from api.permissions import IsPlayer, IsConnected
 from api.serializers import GameSerializer, GameTurnSerializer, PlayerSerializer, FullPlayerSerializer, AnsweredQuestionSerializer
+
+
+AVATARS_DIR = os.environ['AVATARS_DIR']
 
 
 @api_view()
@@ -49,6 +56,30 @@ class PlayerViews(views.APIView):
         del request.session['player_id']
 
         return Response({})
+
+
+@api_view(['POST'])
+@authentication_classes([PlayerAuthentication])
+@permission_classes([IsPlayer])
+def avatar(request):
+    player = request.user
+
+    class UploadAvatarForm(forms.Form):
+        avatar = forms.FileField()
+
+    form = UploadAvatarForm(request.POST, request.FILES)
+    if not form.is_valid():
+        raise ValidationError('Missing avatar field')
+
+    filename = player.nick + '-' + str(datetime.now().timestamp())
+
+    with open(os.path.join(AVATARS_DIR, filename), 'wb+') as f:
+        for chunk in request.FILES['avatar'].chunks():
+            f.write(chunk)
+
+    player.change_avatar('/img/avatars/' + filename)
+
+    return Response(PlayerViews.serialize_player(player))
 
 
 class GameViews(views.APIView):
