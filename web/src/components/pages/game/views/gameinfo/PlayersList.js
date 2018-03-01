@@ -27,7 +27,7 @@ const PlayersList = ({
         key={"player-" + player.nick}
         className={toClassName([
           'player',
-          !isOnline(player) && 'is-offline',
+          !isOnline(player) && 'offline',
           hasSubmitted(player) && 'has-submitted',
           isQuestionMaster(player) && 'question-master',
         ])}>
