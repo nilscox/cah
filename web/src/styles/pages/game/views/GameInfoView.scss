@@ -39,16 +39,18 @@
         filter: grayscale(100%) opacity(80%);
       }
 
-      &.has-submitted::before {
-        content: '✔';
-        position: absolute;
-        right: -10px;
-        font-size: 2em;
-        color: forestgreen;
-      }
+      &.has-submitted {
 
-      &.has-submitted .player-nick {
-        color: darkgreen;
+        &::before, .player-nick {
+          color: #4caf50;
+        }
+
+        &::before {
+          content: '✔';
+          position: absolute;
+          right: -10px;
+          font-size: 2em;
+        }
       }
 
       .player-nick {
