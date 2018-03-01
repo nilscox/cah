@@ -29,9 +29,26 @@
 
     .player {
       margin: 0 10px;
+      position: relative;
 
-      &.question-master {
+      &.question-master .player-nick {
         font-weight: bold;
+      }
+
+      &.offline {
+        filter: grayscale(100%) opacity(80%);
+      }
+
+      &.has-submitted::before {
+        content: '✔';
+        position: absolute;
+        right: -10px;
+        font-size: 2em;
+        color: forestgreen;
+      }
+
+      &.has-submitted .player-nick {
+        color: darkgreen;
       }
 
       .player-nick {
