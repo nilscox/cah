@@ -1,14 +1,13 @@
-state + names on avatars
+dark mode history background
+score update after turn over
 handle avatar file type / size / ...
 resize image
-players cards / answer questions -> flexbox
-game indications
-score update after turn over
-dark mode history background
-player cards order
-choice selection order
-answered questions order
 ff scrolling issue
-dispalay cards at reception
 logout issue
 reconnect no history
+game indications
+dispalay cards at reception
+choice selection order
+players cards / answer questions -> flexbox
+player cards order
+answered questions order
