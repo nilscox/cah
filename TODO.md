@@ -1,4 +1,3 @@
-dark mode history background
 score update after turn over
 handle avatar file type / size / ...
 resize image

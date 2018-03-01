@@ -70,11 +70,15 @@
       .game-view#game-info {
         background: linear-gradient(to right, #222 0, #444 5px);
 
+        .players-list .player.has-submitted .player-nick {
+          color: #00c853;
+        }
+
         #game-history .turn {
           border-bottom-color: #666;
 
           &.turn-open {
-            background: #555;
+            background: #333;
 
             .turn-question {
               border-bottom-color: #999;
