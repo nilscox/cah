@@ -1,4 +1,3 @@
-score update after turn over
 handle avatar file type / size / ...
 resize image
 ff scrolling issue

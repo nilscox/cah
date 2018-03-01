@@ -66,10 +66,20 @@ export default function(state = null, action) {
         return {...state, has_submitted: [...state.has_submitted, message.nick]};
 
       case 'ALL_ANSWERS_SUBMITTED':
-        return {...state, play_state: 'question_master_selection', propositions: message.answers};
+        return {
+          ...state,
+          has_submitted: state.players.filter(p => p.nick !== state.question_master).map(p => p.nick),
+          play_state: 'question_master_selection',
+          propositions: message.answers
+        };
 
       case 'ANSWER_SELECTED':
-        return { ...state, play_state: 'end_of_turn', history: [...state.history, message.turn] };
+        return {
+          ...state,
+          play_state: 'end_of_turn',
+          history: [...state.history, message.turn],
+          players: replace(state.players, p => ({ ...p, score: p.score + 1 }), p => p.nick === message.turn.winner),
+        };
 
       case 'NEXT_TURN':
         return { ...state, ...message.game, has_submitted: [] };
