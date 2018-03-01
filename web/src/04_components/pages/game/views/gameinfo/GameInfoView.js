@@ -3,11 +3,11 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import type { Dispatch, Action } from '../../../../../types/actions';
-import type { PlayerType, GameTurnType } from '../../../../../types/models';
-import type { State, SettingsType } from '../../../../../types/state';
-import { toggleDarkMode } from '../../../../../actions/settings';
-import { logoutPlayer } from '../../../../../actions/player';
+import type { Dispatch, Action } from 'Types/actions';
+import type { PlayerType, GameTurnType } from 'Types/models';
+import type { State, SettingsType } from 'Types/state';
+import { toggleDarkMode } from 'Actions/settings';
+import { logoutPlayer } from 'Actions/player';
 import PlayersList from './PlayersList';
 import GameHistory from './GameHistory';
 import Settings from './Settings';

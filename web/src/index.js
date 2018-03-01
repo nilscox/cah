@@ -10,8 +10,8 @@ import promiseMiddleware from 'redux-promise';
 import thunkMiddleware from 'redux-thunk';
 import { createLogger } from 'redux-logger';
 
-import rootReducer from './reducers';
-import { initializationStart } from './actions/initialization';
+import rootReducer from 'Reducers';
+import { initializationStart } from 'Actions/initialization';
 import App from './App';
 
 const loggerMiddleware = createLogger({

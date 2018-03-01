@@ -1,8 +1,8 @@
 // @flow
 
-import type { ThunkAction } from '../types/actions';
-import type { WebsocketCreatedAction, WebsocketMessageAction } from '../types/actions';
-import type { WSMessage } from '../types/websocket';
+import type { ThunkAction } from 'Types/actions';
+import type { WebsocketCreatedAction, WebsocketMessageAction } from 'Types/actions';
+import type { WSMessage } from 'Types/websocket';
 import {send as sendToWS} from '../websocket';
 import { checkApiStatus } from './apiState';
 

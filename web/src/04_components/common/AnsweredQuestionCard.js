@@ -3,7 +3,7 @@
 import * as React from 'react';
 import QuestionCard from './QuestionCard';
 
-import type { QuestionType, ChoiceType } from '../../types/models';
+import type { QuestionType, ChoiceType } from 'Types/models';
 
 type AnsweredQuestionCardProps = {|
   className?: string,

@@ -1,6 +1,6 @@
 // @flow
 
-import type { ThunkAction } from '../types/actions';
+import type { ThunkAction } from 'Types/actions';
 
 export const toggleDarkMode = (): ThunkAction => {
   return (dispatch, getState) => {

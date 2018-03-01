@@ -1,6 +1,6 @@
 // @flow
 
-import type { InitializationFinishedAction, ThunkAction } from '../types/actions';
+import type { InitializationFinishedAction, ThunkAction } from 'Types/actions';
 import { fetchPlayer } from './player';
 import { fetchGame, fetchGameHistory } from './game';
 import { loadSettings } from './settings';

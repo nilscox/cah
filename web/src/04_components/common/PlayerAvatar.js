@@ -1,14 +1,14 @@
 // @flow
 
 import * as React from 'react';
+import { connect } from 'react-redux';
 import Tooltip from 'material-ui/Tooltip';
 
-import type { PlayerType } from '../../types/models';
+import type { PlayerType } from 'Types/models';
 import { toClassName } from '../../utils';
-import type { State } from "../../types/state";
-import type { Action, Dispatch } from "../../types/actions";
-import { connect } from "react-redux";
-import { changePlayerAvatar } from "../../actions/player";
+import type { State } from 'Types/state';
+import type { Action, Dispatch } from 'Types/actions';
+import { changePlayerAvatar } from 'Actions/player';
 
 type PlayerAvatarStateProps = {|
   canChange: PlayerType => boolean,

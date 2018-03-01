@@ -3,11 +3,11 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import type { Dispatch, Action } from '../../../../types/actions';
-import type { State } from '../../../../types/state';
-import type { ChoiceType } from '../../../../types/models';
+import type { Dispatch, Action } from 'Types/actions';
+import type { State } from 'Types/state';
+import type { ChoiceType } from 'Types/models';
 import { toClassName } from '../../../../utils';
-import { toggleChoice } from '../../../../actions/game';
+import { toggleChoice } from 'Actions/game';
 import ChoiceCard from '../../../common/ChoiceCard';
 
 const all = arr => arr.indexOf(false) < 0;

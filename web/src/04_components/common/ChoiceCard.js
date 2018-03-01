@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 
-import type { ChoiceType } from '../../types/models';
+import type { ChoiceType } from 'Types/models';
 import { toClassName } from '../../utils';
 
 type ChoiceCardProps = {|

@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 
-import type { QuestionType, ChoiceType } from '../../types/models';
+import type { QuestionType, ChoiceType } from 'Types/models';
 import { toClassName } from '../../utils';
 
 type QuestionCardProps = {|

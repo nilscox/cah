@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import type { GameTurnType } from '../../../../../types/models';
+import type { GameTurnType } from 'Types/models';
 import { toClassName } from '../../../../../utils';
 
 type HistoryTurnProps = {|

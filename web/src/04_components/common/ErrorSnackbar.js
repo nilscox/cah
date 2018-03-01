@@ -3,7 +3,7 @@
 import * as React from 'react';
 import SnackBar from 'material-ui/Snackbar';
 
-import type { ErrorType } from '../../types/models';
+import type { ErrorType } from 'Types/models';
 
 type ErrorSnackBarProps = {|
   error: ErrorType,

@@ -4,10 +4,10 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Button } from 'material-ui';
 
-import type { Action, Dispatch } from '../../../../types/actions';
-import type { State } from '../../../../types/state';
-import type { GameTurnType } from '../../../../types/models';
-import { nextTurn } from '../../../../actions/game';
+import type { Action, Dispatch } from 'Types/actions';
+import type { State } from 'Types/state';
+import type { GameTurnType } from 'Types/models';
+import { nextTurn } from 'Actions/game';
 import AnsweredQuestionCard from '../../../common/AnsweredQuestionCard';
 
 type TurnEndViewStateProps = {|

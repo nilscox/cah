@@ -1,6 +1,6 @@
 // @flow
 
-import type { ThunkAction } from '../types/actions';
+import type { ThunkAction } from 'Types/actions';
 import request from '../request';
 import { initializationStart } from './initialization';
 import { close as closeWS } from '../websocket';

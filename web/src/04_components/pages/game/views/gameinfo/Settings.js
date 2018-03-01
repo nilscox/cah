@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { FormControlLabel, Checkbox, Button } from 'material-ui';
 
-import type { SettingsType } from '../../../../../types/state';
+import type { SettingsType } from 'Types/state';
 
 type SettingsProps = {|
   settings: SettingsType,

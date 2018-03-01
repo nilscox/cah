@@ -1,8 +1,8 @@
 // @flow
 
-import type { ThunkAction } from '../types/actions';
-import type { GameToggleChoiceAction } from '../types/actions';
-import type { ChoiceType } from '../types/models';
+import type { ThunkAction } from 'Types/actions';
+import type { GameToggleChoiceAction } from 'Types/actions';
+import type { ChoiceType } from 'Types/models';
 import { GAME_ROUTE, ANSWER_ROUTE} from '../constants';
 import request from './requestAction';
 

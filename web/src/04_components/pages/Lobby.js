@@ -7,8 +7,8 @@ import Tooltip from 'material-ui/Tooltip';
 import Button from 'material-ui/Button';
 import AddIcon from 'material-ui-icons/Add';
 
-import type { Dispatch, Action } from '../../types/actions';
-import { createGame, joinGame } from '../../actions/game';
+import type { Dispatch, Action } from 'Types/actions';
+import { createGame, joinGame } from 'Actions/game';
 
 type LobbyDispatchProps = {|
   createGame: () => Action,

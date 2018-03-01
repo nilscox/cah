@@ -4,11 +4,11 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import Button from 'material-ui/Button';
 
-import type { Dispatch, Action } from '../../../types/actions';
-import type { State } from '../../../types/state';
-import type { PlayerType } from '../../../types/models';
+import type { Dispatch, Action } from 'Types/actions';
+import type { State } from 'Types/state';
+import type { PlayerType } from 'Types/models';
 import { toClassName } from '../../../utils';
-import { startGame } from '../../../actions/game';
+import { startGame } from 'Actions/game';
 
 type GameIdleStateProps = {|
   players: Array<PlayerType>,

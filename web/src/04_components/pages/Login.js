@@ -4,8 +4,8 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { TextField } from 'material-ui';
 
-import type { Action, Dispatch } from '../../types/actions';
-import { loginPlayer } from '../../actions/player';
+import type { Action, Dispatch } from 'Types/actions';
+import { loginPlayer } from 'Actions/player';
 import { toClassName } from "../../utils";
 
 type LoginDispatchProps = {|

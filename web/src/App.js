@@ -5,16 +5,16 @@ import { connect } from 'react-redux';
 import { CircularProgress } from 'material-ui';
 
 import { API_STATE } from './constants';
-import { clearError } from './actions/error';
+import { clearError } from 'Actions/error';
 
-import Login from './components/pages/Login';
-import Lobby from './components/pages/Lobby';
-import Game from './components/pages/game/Game';
-import GameIdle from './components/pages/game/GameIdle';
-import ErrorSnackBar from './components/common/ErrorSnackbar';
+import Login from 'Components/pages/Login';
+import Lobby from 'Components/pages/Lobby';
+import Game from 'Components/pages/game/Game';
+import GameIdle from 'Components/pages/game/GameIdle';
+import ErrorSnackBar from 'Components/common/ErrorSnackbar';
 
 // $FlowFixMe
-import './styles/App.scss';
+import 'Styles/App.scss';
 
 const mapStateToProps = state => {
   const { status, player, game, settings } = state;

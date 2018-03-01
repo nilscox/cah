@@ -1,6 +1,6 @@
 // @flow
 
-import type { Dispatch, ThunkAction } from '../types/actions';
+import type { Dispatch, ThunkAction } from 'Types/actions';
 import { PLAYER_ROUTE } from '../constants';
 import request from './requestAction';
 import { fetchGame } from './game';

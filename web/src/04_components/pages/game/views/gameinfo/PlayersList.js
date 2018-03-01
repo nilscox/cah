@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 
-import type { PlayerType } from '../../../../../types/models';
+import type { PlayerType } from 'Types/models';
 import { toClassName } from '../../../../../utils';
 import PlayerAvatar from '../../../../common/PlayerAvatar';
 

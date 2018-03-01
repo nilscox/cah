@@ -3,11 +3,11 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import type { Dispatch, Action } from '../../../../types/actions';
-import type { State } from '../../../../types/state';
-import type { QuestionType, ChoiceType } from '../../../../types/models';
+import type { Dispatch, Action } from 'Types/actions';
+import type { State } from 'Types/state';
+import type { QuestionType, ChoiceType } from 'Types/models';
 import { toClassName } from '../../../../utils';
-import { submitAnswer } from '../../../../actions/game';
+import { submitAnswer } from 'Actions/game';
 
 import QuestionCard from '../../../common/QuestionCard';
 

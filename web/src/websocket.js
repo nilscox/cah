@@ -1,12 +1,12 @@
 // @flow
 
-import type { Dispatch } from './types/actions';
+import type { Dispatch } from 'Types/actions';
 import {
   websocketConnected,
   websocketCreated,
   websocketMessage,
   websocketClosed
-} from './actions/websocket';
+} from 'Actions/websocket';
 
 // $FlowFixMe
 const WEBSOCKET_URL: string = process.env.REACT_APP_WEBSOCKET_URL;
