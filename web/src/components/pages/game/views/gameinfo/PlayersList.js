@@ -23,20 +23,24 @@ const PlayersList = ({
 }: PlayersListProps) => (
   <div className="players-list">
     {players.map(player => (
-      <PlayerAvatar
-        key={'player-' + player.nick}
-
+      <div
+        key={"player-" + player.nick}
         className={toClassName([
           'player',
           !isOnline(player) && 'is-offline',
           hasSubmitted(player) && 'has-submitted',
           isQuestionMaster(player) && 'is-question-master',
-        ])}
+        ])}>
 
-        player={player}
-        canChange={isMe(player)}
-        tooltip={'score: ' + player.score}
-      />
+        <PlayerAvatar
+          player={player}
+          canChange={isMe(player)}
+          tooltip={'score: ' + player.score}
+        />
+
+        <div className="player-nick">{player.nick}</div>
+
+      </div>
     ))}
   </div>
 );
