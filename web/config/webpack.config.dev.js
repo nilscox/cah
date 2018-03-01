@@ -90,11 +90,11 @@ module.exports = {
       'react-native': 'react-native-web',
 
       // Custom aliases
-      Types: path.resolve(__dirname, 'src', '01_types'),
-      Actions: path.resolve(__dirname, 'src', '02_actions'),
-      Reducers: path.resolve(__dirname, 'src', '03_reducers'),
-      Components: path.resolve(__dirname, 'src', '04_components'),
-      Styles: path.resolve(__dirname, 'src', '05_styles'),
+      Types: path.resolve(paths.appSrc, '01_types'),
+      Actions: path.resolve(paths.appSrc, '02_actions'),
+      Reducers: path.resolve(paths.appSrc, '03_reducers'),
+      Components: path.resolve(paths.appSrc, '04_components'),
+      Styles: path.resolve(paths.appSrc, '05_styles'),
     },
     plugins: [
       // Prevents users from importing files from outside of src/ (or node_modules/).
