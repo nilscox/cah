@@ -49,7 +49,7 @@ const PlayerAvatar = ({
   let fileInput = null;
 
   const onClicked = () => {
-    if (!fileInput)
+    if (!fileInput || !canChange(player))
       return;
 
     fileInput.click();
@@ -58,7 +58,7 @@ const PlayerAvatar = ({
   const onFileChanged = (e) => {
     const file = e.target.files[0];
 
-    if (changeAvatar && file && canChange(player))
+    if (file && canChange(player))
       changeAvatar(file);
   };
 
