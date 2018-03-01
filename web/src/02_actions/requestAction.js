@@ -3,7 +3,7 @@
 import type {
   RequestFailureAction, RequestStartAction, RequestSuccessAction,
   ThunkAction
-} from '../types/actions';
+} from 'Types/actions';
 import type { RequestResult } from '../request';
 import request, { ApiRequestError } from '../request';
 import { apiUp, checkApiStatus } from './apiState';
