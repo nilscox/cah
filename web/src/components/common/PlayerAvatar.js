@@ -63,7 +63,7 @@ const PlayerAvatar = ({
   };
 
   return (
-    <Tooltip title={tooltip} placement="bottom">
+    <Tooltip title={tooltip} placement="top">
 
       <div
         className={toClassName([

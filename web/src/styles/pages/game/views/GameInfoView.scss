@@ -30,8 +30,11 @@
     .player {
       margin: 0 10px;
 
-      .player-nick {
+      &.question-master {
         font-weight: bold;
+      }
+
+      .player-nick {
         text-align: center;
       }
     }

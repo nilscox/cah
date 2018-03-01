@@ -29,7 +29,7 @@ const PlayersList = ({
           'player',
           !isOnline(player) && 'is-offline',
           hasSubmitted(player) && 'has-submitted',
-          isQuestionMaster(player) && 'is-question-master',
+          isQuestionMaster(player) && 'question-master',
         ])}>
 
         <PlayerAvatar
