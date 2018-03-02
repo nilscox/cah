@@ -3,3 +3,5 @@
 *.sqlite3
 data/
 web/public/img/avatars
+
+webpack.config.js
