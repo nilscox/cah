@@ -5,10 +5,12 @@ import { connect } from 'react-redux';
 import Tooltip from 'material-ui/Tooltip';
 
 import type { PlayerType } from 'Types/models';
-import { toClassName } from '../../utils';
 import type { State } from 'Types/state';
 import type { Action, Dispatch } from 'Types/actions';
+import { setError } from 'Actions/error';
+import { toClassName } from '../../utils';
 import { changePlayerAvatar } from 'Actions/player';
+import ImageUploadField from 'Components/common/ImageUploadField';
 
 type PlayerAvatarStateProps = {|
   canChange: PlayerType => boolean,
@@ -16,6 +18,7 @@ type PlayerAvatarStateProps = {|
 
 type PlayerAvatarDispatchProps = {|
   changeAvatar: any => Action,
+  onError: string => Action,
 |};
 
 type PlayerAvatarMergeProps = {|
@@ -37,6 +40,7 @@ const mapStateToProps: (state: State) => PlayerAvatarStateProps = ({
 
 const mapDispatchToProps: (dispatch: Dispatch) => PlayerAvatarDispatchProps = dispatch => ({
   changeAvatar: file => dispatch(changePlayerAvatar(file)),
+  onError: err => dispatch(setError({ detail: err })),
 });
 
 const PlayerAvatar = ({
@@ -45,22 +49,21 @@ const PlayerAvatar = ({
   tooltip,
   canChange,
   changeAvatar,
+  onError,
 }: PlayerAvatarProps) => {
-  let fileInput = null;
-
-  const onClicked = () => {
-    if (!fileInput || !canChange(player))
-      return;
-
-    fileInput.click();
-  };
-
-  const onFileChanged = (e) => {
-    const file = e.target.files[0];
-
+  const onImageSelected = (file) => {
     if (file && canChange(player))
       changeAvatar(file);
   };
+
+  const renderImage = (onClick) => (
+    <img
+      className="avatar-image"
+      alt={'avatar-' + player.nick}
+      src={player.avatar || '/img/default_avatar.png'}
+      onClick={onClick}
+    />
+  );
 
   return (
     <Tooltip title={tooltip} placement="top">
@@ -72,22 +75,19 @@ const PlayerAvatar = ({
           canChange(player) && 'can-change',
           className,
         ])}
-        onClick={onClicked}
       >
 
-        <input
-          style={{display: 'none'}}
-          type="file"
-          name="avatar"
-          ref={input => fileInput = input}
-          onChange={onFileChanged}
-        />
-
-        <img
-          className="avatar-image"
-          alt={'avatar-' + player.nick}
-          src={player.avatar || '/img/default_avatar.png'}
-        />
+        { canChange(player) ?
+          <ImageUploadField
+            className={"upload-avatar"}
+            formats={['jpg', 'jpeg', 'png']}
+            render={renderImage}
+            onImageSelected={onImageSelected}
+            onError={err => onError(err)}
+          />
+          :
+          renderImage()
+        }
 
       </div>
 

@@ -4,11 +4,17 @@ import type { State } from './state';
 import type { WSMessage } from './websocket';
 import type { ChoiceType } from './models';
 import { ApiRequestError } from '../request';
+import type { ErrorType } from 'Types/models';
 
 export type Dispatch = (action: Action | RequestAction | ThunkAction | PromiseAction) => any;
 export type GetState = () => State;
 export type ThunkAction = (dispatch: Dispatch, getState: GetState) => any;
 export type PromiseAction = Promise<Action>;
+
+export type SetErrorAction = {
+  type: 'SET_ERROR',
+  error: ErrorType,
+};
 
 export type ClearErrorAction = {
   type: 'CLEAR_ERROR',
@@ -70,6 +76,7 @@ export type SettingSetValue = {
 };
 
 export type Action =
+  | SetErrorAction
   | ClearErrorAction
   | CheckApiStatusAction
   | ApiDownAction

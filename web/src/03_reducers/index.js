@@ -87,6 +87,9 @@ const error = (state = null, action) => {
       return { detail: 'Unknown error' };
   }
 
+  if (action.type === 'SET_ERROR')
+    return action.error;
+
   if (action.type === 'CLEAR_ERROR')
     return null;
 
