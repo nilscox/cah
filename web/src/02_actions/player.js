@@ -57,7 +57,7 @@ export function logoutPlayer(): ThunkAction {
 }
 
 export const CHANGE_PLAYER_AVATAR = 'CHANGE_PLAYER_AVATAR';
-export function changePlayerAvatar(file: any): ThunkAction {
+export function changePlayerAvatar(file: File): ThunkAction {
   const opts = {
     method: 'POST',
     route: PLAYER_ROUTE + '/avatar',
