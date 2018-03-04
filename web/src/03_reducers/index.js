@@ -81,8 +81,8 @@ const status = (state = {
 
 const error = (state = null, action) => {
   if (action.type.endsWith('_FAILURE')) {
-    if (action.error && action.error.body && action.error.body.detail)
-      return { ...action.error.body };
+    if (action.error && action.error.responseBody)
+      return { detail: action.error.toString() };
     else
       return { detail: 'Unknown error' };
   }
