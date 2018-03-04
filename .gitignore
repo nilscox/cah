@@ -2,6 +2,6 @@
 *.sh
 *.sqlite3
 data/
-web/public/img/avatars
+web/public/media
 
 webpack.config.js
