@@ -38,17 +38,11 @@ class Player(models.Model):
 
     nick = models.CharField(max_length=255, unique=True)
     socket_id = models.CharField(max_length=64, unique=True, blank=True, null=True)
-    avatar = models.CharField(max_length=255, unique=True, blank=True, null=True)
+    avatar = models.ImageField(upload_to='avatars', blank=True, null=True)
     game = models.ForeignKey('Game', related_name='players', blank=True, null=True, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.nick
-
-    def change_avatar(self, avatar):
-        self.avatar = avatar
-        self.save()
-
-        events.player_avatar_changed(self)
 
     def in_game(self, game=None):
         if game is not None:

@@ -73,7 +73,6 @@ const PlayerAvatar = ({
         { canChange(player) ?
           <ImageUploadField
             className={"upload-avatar"}
-            formats={['jpg', 'jpeg', 'png']}
             image={avatarSrc}
             onImageSelected={onImageSelected}
             onError={err => onError(err)}

@@ -6,12 +6,12 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
-from api import game as game_controller
+from api import game as game_controller, events
 from api.exceptions import *
 from api.models import Game, Player, AnsweredQuestion
 from api.authentication import PlayerAuthentication
 from api.permissions import IsPlayer, IsConnected
-from api.serializers import GameSerializer, GameTurnSerializer, PlayerSerializer, FullPlayerSerializer, AnsweredQuestionSerializer
+from api.serializers import GameSerializer, GameTurnSerializer, PlayerLightSerializer, PlayerSerializer, AnsweredQuestionSerializer
 
 
 AVATARS_DIR = os.environ['AVATARS_DIR']
@@ -27,7 +27,7 @@ class PlayerViews(views.APIView):
 
     @staticmethod
     def serialize_player(player):
-        serializer = FullPlayerSerializer if player.in_game() else PlayerSerializer
+        serializer = PlayerSerializer if player.in_game() else PlayerLightSerializer
         return serializer(player).data
 
     def post(self, request, format=None):
@@ -66,15 +66,14 @@ def avatar(request):
     if 'avatar' not in request.FILES:
         raise ValidationError('Missing avatar field')
 
-    filename = player.nick + '-' + str(datetime.now().timestamp())
+    serializer = PlayerSerializer(player, data=request.data, partial=True)
+    serializer.is_valid(raise_exception=True)
 
-    with open(os.path.join(AVATARS_DIR, filename), 'wb+') as f:
-        for chunk in request.FILES['avatar'].chunks():
-            f.write(chunk)
+    serializer.save()
 
-    player.change_avatar('/img/avatars/' + filename)
+    events.player_avatar_changed(player)
 
-    return Response(PlayerViews.serialize_player(player))
+    return Response(serializer.data)
 
 
 class GameViews(views.APIView):

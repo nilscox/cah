@@ -47,41 +47,26 @@ class PlayerSerializer(serializers.ModelSerializer):
     """
     Player: {
         nick: string,
-        avatar: string,
-        score: integer,
         connected: boolean,
-    }
-    """
-
-    score = serializers.ReadOnlyField(source='get_score')
-    connected = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Player
-        fields = ('nick', 'avatar', 'score', 'connected')
-
-    def get_connected(self, player):
-        return bool(player.socket_id)
-
-
-class FullPlayerSerializer(PlayerSerializer):
-    """
-    FullPlayer: {
-        nick: string,
-        avatar: string,
+        avatar: Image,
         score: integer,
         cards: Choice[],
         submitted: AnsweredQuestion,
     }
     """
 
-    cards = ChoiceSerializer(many=True, read_only=True)
+    connected = serializers.SerializerMethodField()
+    score = serializers.ReadOnlyField(source='get_score')
     game = serializers.PrimaryKeyRelatedField(read_only=True)
+    cards = ChoiceSerializer(many=True, read_only=True)
     submitted = serializers.SerializerMethodField()
 
     class Meta:
         model = Player
-        fields = ('nick', 'avatar', 'score', 'cards', 'game', 'submitted')
+        fields = ('nick', 'connected', 'avatar', 'score', 'cards', 'game', 'submitted')
+
+    def get_connected(self, player):
+        return bool(player.socket_id)
 
     def get_submitted(self, player):
         submitted = player.get_submitted()
@@ -90,6 +75,21 @@ class FullPlayerSerializer(PlayerSerializer):
             return None
 
         return AnsweredQuestionSerializer(submitted).data
+
+
+class PlayerLightSerializer(PlayerSerializer):
+    """
+    PlayerLight: {
+        nick: string,
+        avatar: string,
+        score: integer,
+        connected: boolean,
+    }
+    """
+
+    class Meta:
+        model = Player
+        fields = ('nick', 'connected', 'avatar', 'score')
 
 
 class GameSerializer(serializers.ModelSerializer):
@@ -106,7 +106,7 @@ class GameSerializer(serializers.ModelSerializer):
     }
     """
 
-    players = PlayerSerializer(many=True, read_only=True)
+    players = PlayerLightSerializer(many=True, read_only=True)
     state = serializers.ReadOnlyField()
     play_state = serializers.SerializerMethodField()
     owner = serializers.ReadOnlyField(source='owner.nick')
