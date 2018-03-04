@@ -1,7 +1,6 @@
 import os
 
 from datetime import datetime
-from django.forms import forms
 from rest_framework import views
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.exceptions import ValidationError
@@ -64,11 +63,7 @@ class PlayerViews(views.APIView):
 def avatar(request):
     player = request.user
 
-    class UploadAvatarForm(forms.Form):
-        avatar = forms.FileField()
-
-    form = UploadAvatarForm(request.POST, request.FILES)
-    if not form.is_valid():
+    if 'avatar' not in request.FILES:
         raise ValidationError('Missing avatar field')
 
     filename = player.nick + '-' + str(datetime.now().timestamp())
