@@ -56,14 +56,7 @@ const PlayerAvatar = ({
       changeAvatar(file);
   };
 
-  const renderImage = (onClick) => (
-    <img
-      className="avatar-image"
-      alt={'avatar-' + player.nick}
-      src={player.avatar || '/img/default_avatar.png'}
-      onClick={onClick}
-    />
-  );
+  const avatarSrc = player.avatar || '/img/default_avatar.png';
 
   return (
     <Tooltip title={tooltip} placement="top">
@@ -81,12 +74,12 @@ const PlayerAvatar = ({
           <ImageUploadField
             className={"upload-avatar"}
             formats={['jpg', 'jpeg', 'png']}
-            render={renderImage}
+            image={avatarSrc}
             onImageSelected={onImageSelected}
             onError={err => onError(err)}
           />
           :
-          renderImage()
+          <img src={avatarSrc} alt={player.nick + '-avatar'} />
         }
 
       </div>

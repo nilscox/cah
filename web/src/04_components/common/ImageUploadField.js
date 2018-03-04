@@ -6,7 +6,8 @@ import { toClassName } from '../../utils';
 type FileUploadFieldProps = {|
   className?: string,
   formats?: Array<string>,
-  render: (() => void) => React.Node,
+  image: string,
+  imageAlt?: string,
   onImageSelected: (?File) => any,
   onError: string => any,
 |};
@@ -14,13 +15,14 @@ type FileUploadFieldProps = {|
 const ImageUploadField = ({
   className,
   formats,
-  render,
+  image,
+  imageAlt,
   onImageSelected,
   onError,
 }: FileUploadFieldProps) => {
   let fileInput = null;
 
-  const onClicked = () => {
+  const onImageClicked = () => {
     if (fileInput)
       fileInput.click();
   };
@@ -47,7 +49,7 @@ const ImageUploadField = ({
         onChange={onFileChanged}
       />
 
-      { render(onClicked) }
+      <img src={image} alt={imageAlt || 'upload'} onClick={onImageClicked} />
 
     </div>
   );
