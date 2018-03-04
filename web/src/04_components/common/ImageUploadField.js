@@ -29,6 +29,10 @@ const ImageUploadField = ({
 
   const onFileChanged = (e) => {
     const file = e.target.files[0];
+
+    if (!file)
+      return onImageSelected(null);
+
     const ext = /\.([^.]*)$/.exec(file.name);
 
     if (formats && (!ext || formats.indexOf(ext[1]) < 0))
