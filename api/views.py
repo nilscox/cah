@@ -57,7 +57,7 @@ class PlayerViews(views.APIView):
         return Response({})
 
 
-@api_view(['POST'])
+@api_view(['PUT'])
 @authentication_classes([PlayerAuthentication])
 @permission_classes([IsPlayer])
 def avatar(request):
