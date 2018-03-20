@@ -7,6 +7,9 @@ export default function(state = null, action) {
   if (action.type === 'GAME_FETCH_SUCCESS' && action.status === 404)
     return null;
 
+  if (action.type === 'PLAYER_LOGOUT_SUCCESS')
+    return null;
+
   if ([
     'GAME_FETCH_SUCCESS',
     'GAME_CREATE_SUCCESS',
