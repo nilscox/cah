@@ -15,6 +15,7 @@ type AnswerSelectionViewStateProps = {|
   question: QuestionType,
   answers: Array<PartialAnsweredQuestionType>,
   canSelectAnswer: boolean,
+  showInstructions: boolean,
 |};
 
 type AnswerSelectionViewDispatchProps = {|
@@ -28,10 +29,12 @@ type AnswerSelectionViewProps =
 const mapStateToProps: State => AnswerSelectionViewStateProps = ({
   game,
   player,
+  settings,
 }) => ({
   question: game.question,
   answers: game.propositions,
   canSelectAnswer: game.question_master === player.nick,
+  showInstructions: settings.showInstructions,
 });
 
 const mapDispatchToProps: Dispatch => AnswerSelectionViewDispatchProps = dispatch => ({
@@ -43,10 +46,21 @@ const AnswerSelectionView = ({
   answers,
   canSelectAnswer,
   onSelectAnswer,
+  showInstructions,
 }: AnswerSelectionViewProps) => {
   const onCardClicked = answer => {
     if (canSelectAnswer)
       onSelectAnswer(answer);
+  };
+
+  const getIndication = () => {
+    if (!showInstructions)
+      return;
+
+    if (canSelectAnswer)
+      return 'Select an answer';
+
+    return 'Waiting for the question master...';
   };
 
   return (
@@ -64,6 +78,8 @@ const AnswerSelectionView = ({
         ))}
 
       </div>
+
+      <div className="game-indication">{getIndication()}</div>
 
     </div>
   );

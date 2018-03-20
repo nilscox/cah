@@ -9,6 +9,7 @@ type SettingsProps = {|
   settings: SettingsType,
   actions: {
     toggleDarkMode: Function,
+    toggleInstructions: Function,
     logout: Function,
   },
 |};
@@ -25,6 +26,18 @@ const Settings = ({ settings, actions }: SettingsProps) => (
           />
         }
         label="Dark mode"
+      />
+    </div>
+
+    <div className="show-instructions">
+      <FormControlLabel
+        control={
+          <Checkbox
+            checked={settings.showInstructions}
+            onChange={actions.toggleInstructions}
+          />
+        }
+        label={(settings.showInstructions ? 'Hide' : 'Show') + " instructions"}
       />
     </div>
 

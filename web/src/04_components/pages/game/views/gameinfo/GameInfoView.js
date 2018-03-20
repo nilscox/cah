@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import type { Dispatch, Action } from 'Types/actions';
 import type { PlayerType, GameTurnType } from 'Types/models';
 import type { State, SettingsType } from 'Types/state';
-import { toggleDarkMode } from 'Actions/settings';
+import { toggleSettingValue } from 'Actions/settings';
 import { logoutPlayer } from 'Actions/player';
 import PlayersList from './PlayersList';
 import GameHistory from './GameHistory';
@@ -25,6 +25,7 @@ type GameInfoStateProps = {|
 
 type GameInfoDispatchProps = {|
   toggleDarkMode: () => Action,
+  toggleInstructions: () => Action,
   logout: () => Action,
 |};
 
@@ -48,7 +49,8 @@ const mapStateToProps: State => GameInfoStateProps = ({
 });
 
 const mapDispatchToProps: Dispatch => GameInfoDispatchProps = dispatch => ({
-  toggleDarkMode: () => dispatch(toggleDarkMode()),
+  toggleDarkMode: () => dispatch(toggleSettingValue('darkMode')),
+  toggleInstructions: () => dispatch(toggleSettingValue('showInstructions')),
   logout: () => dispatch(logoutPlayer()),
 });
 
@@ -62,6 +64,7 @@ const GameInfoView = ({
   history,
   appSettings,
   toggleDarkMode,
+  toggleInstructions,
   logout,
 }: GameInfoViewProps) => (
   <div className="game-view" id="game-info">
@@ -85,6 +88,7 @@ const GameInfoView = ({
       settings={appSettings}
       actions={{
         toggleDarkMode,
+        toggleInstructions,
         logout,
       }}
     />

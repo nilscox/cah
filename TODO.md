@@ -1,6 +1,5 @@
 handle avatar file type / size / ...
 resize image
-game indications
 dispalay cards at reception
 choice selection order
 players cards / answer questions -> flexbox

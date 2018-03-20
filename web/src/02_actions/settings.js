@@ -2,11 +2,11 @@
 
 import type { ThunkAction } from 'Types/actions';
 
-export const toggleDarkMode = (): ThunkAction => {
+export const toggleSettingValue = (setting: string): ThunkAction => {
   return (dispatch, getState) => {
     const { settings } = getState();
 
-    dispatch(setSettingValue('darkMode', !settings.darkMode));
+    dispatch(setSettingValue(setting, !settings[setting]));
   };
 };
 

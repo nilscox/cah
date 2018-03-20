@@ -19,6 +19,7 @@ type QuestionViewStateProps = {|
   selectedChoices: Array<ChoiceType>,
   submitted: boolean,
   canSubmitAnswer: boolean,
+  showInstructions: boolean,
 |};
 
 type QuestionViewDispatchProps = {|
@@ -32,6 +33,7 @@ type QuestionViewProps =
 const mapStateToProps: State => QuestionViewStateProps = ({
   game,
   player,
+  settings,
 }) => {
   const { question } = game;
 
@@ -51,6 +53,7 @@ const mapStateToProps: State => QuestionViewStateProps = ({
       !player.submitted,
       player.selection.length === question.nb_choices,
     ]),
+    showInstructions: settings.showInstructions,
   };
 };
 
@@ -65,11 +68,25 @@ const QuestionView = ({
   submitted,
   canSubmitAnswer,
   onSubmitAnswer,
+  showInstructions,
 }: QuestionViewProps) => {
   const onCardClicked = () => {
     if (canSubmitAnswer)
       onSubmitAnswer(selectedChoices);
   };
+
+  const getIndication = () => {
+    if (!showInstructions)
+      return;
+
+    if (canSubmitAnswer)
+      return 'You can submit your answer';
+
+    if (submitted)
+      return 'Wait for all players to answer';
+
+    return 'Select an answer';
+  }
 
   return (
     <div className="game-view" id="question-view">
@@ -90,6 +107,8 @@ const QuestionView = ({
         <div className="question-master">{questionMaster}</div>
 
       </div>
+
+      <div className="game-indication">{getIndication()}</div>
 
     </div>
   );

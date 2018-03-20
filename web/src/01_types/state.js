@@ -12,6 +12,7 @@ import type {
 
 export type SettingsType = {|
   +darkMode: boolean,
+  +showInstructions: boolean,
 |};
 
 export type FetchingType = {|

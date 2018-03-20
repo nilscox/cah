@@ -63,6 +63,12 @@
 
     &#page-game {
 
+      .game-state {
+        .game-indication {
+          color: #999;
+        }
+      }
+
       .game-view#player-cards {
         background: linear-gradient(to bottom, #222 0, #444 5px);
       }

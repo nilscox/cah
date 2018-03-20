@@ -5,9 +5,10 @@ import game from './game';
 
 const settings = (state = {
   darkMode: false,
+  showIndications: false,
 }, action) => {
   if (action.type === 'PLAYER_LOGOUT_SUCCESS')
-    return { darkMode: false };
+    return { darkMode: false, showIndications: false };
 
   if (action.type === 'SETTINGS_SET_VALUE') {
     const setting = {};
