@@ -1,7 +1,5 @@
 handle avatar file type / size / ...
 resize image
-logout issue
-reconnect no history
 game indications
 dispalay cards at reception
 choice selection order

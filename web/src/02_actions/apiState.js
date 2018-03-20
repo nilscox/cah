@@ -2,7 +2,7 @@
 
 import type { ThunkAction } from 'Types/actions';
 import request from '../request';
-import { initializationStart } from './initialization';
+import { initialize } from './initialization';
 import { close as closeWS } from '../websocket';
 import { API_STATE, WS_STATE } from '../constants';
 
@@ -14,7 +14,7 @@ export function checkApiStatus(reason?: string): ThunkAction {
 
       if (status.api === API_STATE.DOWN) {
         dispatch(apiUp());
-        dispatch(initializationStart());
+        dispatch(initialize());
       }
     };
 

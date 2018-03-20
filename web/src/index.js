@@ -11,7 +11,7 @@ import thunkMiddleware from 'redux-thunk';
 import { createLogger } from 'redux-logger';
 
 import rootReducer from 'Reducers';
-import { initializationStart } from 'Actions/initialization';
+import { initialize } from 'Actions/initialization';
 import App from './App';
 
 const loggerMiddleware = createLogger({
@@ -49,7 +49,7 @@ const store = createStore(
   )
 );
 
-store.dispatch(initializationStart());
+store.dispatch(initialize());
 
 const root = document.getElementById('root');
 

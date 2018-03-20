@@ -3,18 +3,12 @@
 import type { Dispatch, ThunkAction } from 'Types/actions';
 import { PLAYER_ROUTE } from '../constants';
 import request from './requestAction';
-import { fetchGame } from './game';
+import { initialize } from './initialization';
 import {connect as connectWS} from '../websocket';
 
-const onPlayerFetch = (dispatch: Dispatch, result: any): Promise<any> => {
-  let promise = Promise.resolve();
-
-  if (result && result.status !== 404) {
-    promise = promise.then(() => connectWS(dispatch));
-    promise = promise.then(() => dispatch(fetchGame()));
-  }
-
-  return promise;
+const onPlayerFetch = (dispatch: Dispatch, result: any): ?Promise<any> => {
+  if (result && result.status !== 404)
+    return connectWS(dispatch);
 };
 
 export const PLAYER_FETCH = 'PLAYER_FETCH';
@@ -38,8 +32,9 @@ export function loginPlayer(nick: string): ThunkAction {
     expected: [200, 201],
   };
 
-  return dispatch => dispatch(request(PLAYER_LOGIN, opts))
-    .then(onPlayerFetch.bind(null, dispatch));
+  return (dispatch, getState) => dispatch(request(PLAYER_LOGIN, opts))
+    .then(onPlayerFetch.bind(null, dispatch))
+    .then(() => dispatch(initialize()));
 }
 
 export const PLAYER_LOGOUT = 'PLAYER_LOGOUT';
