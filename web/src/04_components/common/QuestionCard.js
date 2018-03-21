@@ -26,10 +26,11 @@ const QuestionCard = ({
     if (!text) {
       if (choices[choiceIdx]) {
         className.push('filled');
-        text = choices[choiceIdx++].text;
-      }
-      else
+        text = choices[choiceIdx].text;
+      } else
         className.push('blank');
+
+      choiceIdx++;
     }
 
     return <span key={idx} className={className}>{text}</span>;

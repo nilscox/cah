@@ -35,9 +35,19 @@ const mapStateToProps: State => QuestionViewStateProps = ({
   player,
   settings,
 }) => {
-  const { question } = game;
+  const values = obj => {
+    const arr = [];
+    const values = Object.keys(obj).map(k => parseInt(k, 10));
+    const maxIdx = Math.max(...values);
 
-  let selectedChoices = player.selection;
+    for (let i = 0; i <= maxIdx; ++i)
+      arr[i] = obj[i];
+
+    return arr;
+  };
+
+  const { question } = game;
+  let selectedChoices: Array<ChoiceType> = values(player.selection);
 
   if (player.submitted)
     selectedChoices = player.submitted.answers;
@@ -51,7 +61,7 @@ const mapStateToProps: State => QuestionViewStateProps = ({
       game.state === 'started',
       game.question_master !== player.nick,
       !player.submitted,
-      player.selection.length === question.nb_choices,
+      Object.keys(player.selection).length === question.nb_choices,
     ]),
     showInstructions: settings.showInstructions,
   };

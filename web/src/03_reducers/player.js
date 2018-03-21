@@ -1,5 +1,3 @@
-import { append, remove } from "./utils";
-
 export default function(state = null, action) {
   switch (action.type) {
     case 'PLAYER_FETCH_SUCCESS':
@@ -25,10 +23,27 @@ export default function(state = null, action) {
       return { ...state, cards, submitted };
 
     case 'GAME_TOGGLE_CHOICE':
-      if (state.selection.indexOf(action.choice) < 0)
-        return { ...state, selection: append(state.selection, action.choice) };
-      else
-        return { ...state, selection: remove(state.selection, action.choice) };
+      const selection = Object.values(state.selection);
+      const idx = selection.indexOf(action.choice);
+
+      if (idx < 0) {
+        let firstAvailableIdx = 0;
+
+        while (state.selection[firstAvailableIdx] !== undefined)
+          ++firstAvailableIdx;
+
+        return { ...state, selection: { ...state.selection, [firstAvailableIdx]: action.choice } };
+      }
+      else {
+        const newSelection = selection.reduce((obj, choice, idx) => {
+          if (choice !== action.choice)
+            obj[idx] = choice;
+
+          return obj;
+        }, {});
+
+        return { ...state, selection: newSelection };
+      }
 
     case 'WEBSOCKET_MESSAGE':
       const message = action.message;

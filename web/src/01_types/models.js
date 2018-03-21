@@ -53,7 +53,9 @@ export type FullPlayerType = {|
   +connected: boolean,
   +cards: Array<ChoiceType>,
   +submitted: AnsweredQuestionType,
-  +selection: Array<ChoiceType>,
+  +selection: {
+    [number]: ChoiceType,
+  },
 |};
 
 export type GameType = {|
