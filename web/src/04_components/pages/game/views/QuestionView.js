@@ -95,7 +95,10 @@ const QuestionView = ({
     if (submitted)
       return 'Wait for all players to answer';
 
-    return 'Select an answer';
+    if (question.nb_choices >= 2)
+      return 'Select ' + question.nb_choices + ' choices';
+
+    return 'Select a choice';
   }
 
   return (
