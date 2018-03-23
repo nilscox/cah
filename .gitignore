@@ -1,6 +1,7 @@
 *.pyc
 *.sh
 *.sqlite3
+*.log
 data/
 web/public/media
 
