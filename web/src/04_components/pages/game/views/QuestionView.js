@@ -15,6 +15,7 @@ const all: Array<boolean> => boolean = arr => arr.indexOf(false) < 0;
 
 type QuestionViewStateProps = {|
   questionMaster: string,
+  isQuestionMaster: boolean,
   question: QuestionType,
   selectedChoices: Array<ChoiceType>,
   submitted: boolean,
@@ -54,6 +55,7 @@ const mapStateToProps: State => QuestionViewStateProps = ({
 
   return {
     questionMaster: game.question_master,
+    isQuestionMaster: game.question_master === player.nick,
     question,
     selectedChoices,
     submitted: !!player.submitted,
@@ -73,6 +75,7 @@ const mapDispatchToProps: Dispatch => QuestionViewDispatchProps = dispatch => ({
 
 const QuestionView = ({
   questionMaster,
+  isQuestionMaster,
   question,
   selectedChoices,
   submitted,
@@ -92,7 +95,7 @@ const QuestionView = ({
     if (canSubmitAnswer)
       return 'You can submit your answer';
 
-    if (submitted)
+    if (submitted || isQuestionMaster)
       return 'Wait for all players to answer';
 
     if (question.nb_choices >= 2)
