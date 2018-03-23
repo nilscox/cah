@@ -4,10 +4,10 @@ export default function(state = null, action) {
   const message = action.message;
   const findPlayerByNick = nick => p => p.nick === nick;
 
-  if (action.type === 'GAME_FETCH_SUCCESS' && action.status === 404)
+  if (action.type === 'PLAYER_LOGOUT_SUCCESS' || action.type === 'API_DOWN')
     return null;
 
-  if (action.type === 'PLAYER_LOGOUT_SUCCESS')
+  if (action.type === 'GAME_FETCH_SUCCESS' && action.status === 404)
     return null;
 
   if ([

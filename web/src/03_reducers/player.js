@@ -1,5 +1,6 @@
 export default function(state = null, action) {
   switch (action.type) {
+    case 'API_DOWN':
     case 'PLAYER_FETCH_SUCCESS':
       if (action.status === 404)
         return null;
