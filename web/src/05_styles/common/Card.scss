@@ -14,18 +14,18 @@
   .text {
     padding: 0 10px;
   }
-  
+
   &.choice {
     background: #FFF;
     color: #000;
     font-weight: bold;
     font-size: 1.2em;
   }
-  
+
   &.choice.selected {
     background: #cee1ef;
   }
-  
+
   &.question {
     background: #333;
     color: #FFF;
@@ -48,5 +48,12 @@
     .question-answer-separator {
       height: 15px;
     }
+  }
+}
+
+@media only screen and (max-width: 1400px) {
+  .card {
+    width: 140px;
+    height: 220px;
   }
 }

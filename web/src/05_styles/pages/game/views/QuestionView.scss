@@ -6,6 +6,11 @@
 
   .question-card {
 
+    .card {
+      min-width: 190px;
+      min-height: 300px;
+    }
+
     &.can-submit .card.question {
       cursor: pointer;
     }
