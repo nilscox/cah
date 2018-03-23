@@ -3,6 +3,9 @@ from django.db import models
 
 class AnsweredQuestion(models.Model):
     """
+    AnsweredQuestion fields:
+        - place: integer
+
     AnsweredQuestion relations:
         - game: Game
         - question: Question
@@ -15,6 +18,10 @@ class AnsweredQuestion(models.Model):
         - get_split_text() -> string[]
     """
 
+    class Meta:
+        ordering = ['place']
+
+    place = models.IntegerField(blank=True, null=True)
     game = models.ForeignKey('Game', related_name='answers', on_delete=models.CASCADE)
     question = models.ForeignKey('Question', related_name='answered', on_delete=models.CASCADE)
     answered_by = models.ForeignKey('Player', related_name='answered_question', on_delete=models.CASCADE)

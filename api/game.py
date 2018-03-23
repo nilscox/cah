@@ -79,11 +79,20 @@ def answer(game, choices, answered_by):
     events.answer_submitted(game, answered_by)
 
     if game.get_propositions().count() == game.players.count() - 1:
-        answers = list(game.get_propositions())
-        random.shuffle(answers)
-        events.all_answers_submitted(game, answers)
+        all_answers_submitted(game)
 
     return answered_question
+
+
+def all_answers_submitted(game):
+    answers = list(game.get_propositions())
+    random.shuffle(answers)
+
+    for idx, answer in enumerate(answers):
+        answer.place = idx
+        answer.save()
+
+    events.all_answers_submitted(game, answers)
 
 
 def select_answer(game, selected, selected_by):
