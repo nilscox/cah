@@ -79,13 +79,14 @@ export default function(state = null, action) {
       case 'ANSWER_SELECTED':
         return {
           ...state,
+          has_submitted: [],
           play_state: 'end_of_turn',
           history: [...state.history, message.turn],
           players: replace(state.players, p => ({ ...p, score: p.score + 1 }), p => p.nick === message.turn.winner),
         };
 
       case 'NEXT_TURN':
-        return { ...state, ...message.game, has_submitted: [] };
+        return { ...state, ...message.game };
 
       default:
         break;
