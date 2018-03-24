@@ -89,8 +89,12 @@ WSGI_APPLICATION = 'cah.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ['CAH_DB_NAME'],
+        'USER': os.environ['CAH_DB_USER'],
+        'PASSWORD': os.environ['CAH_DB_PASSWORD'],
+        'HOST': os.environ['CAH_DB_HOST'],
+        'PORT': os.environ['CAH_DB_PORT'],
     }
 }
 
