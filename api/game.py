@@ -1,33 +1,36 @@
 import random
 
-from api import data, events
+from master import models as master
+from api import events
 from api.exceptions import *
-from api.models import Question, Blank, Choice, AnsweredQuestion, GameTurn
+from api.models import Question, Choice, AnsweredQuestion, GameTurn
 
 MIN_PLAYERS_TO_START = 2
 
 
 def init(game):
-    data_questions, data_places = data.get_questions()
-    data_choices = data.get_choices()
+    mquestions = list(master.Question.objects.all())
+    mchoices = list(master.Choice.objects.all())
+
+    questions = []
 
     def create_questions():
-        questions = list(map(lambda text: Question(game=game, text=text), data_questions))
-        Question.objects.bulk_create(questions)
+        global questions
+
+        questions = list(map(lambda mq: Question(game=game, text=mq.text), mquestions))
+        questions = Question.objects.bulk_create(questions)
 
     def create_blanks():
-        questions = list(game.questions.all())
-        blanks = []
-
-        for i in range(len(questions)):
-            for place in data_places[i]:
-                blanks.append(Blank(question=questions[i], place=place))
-
-        Blank.objects.bulk_create(blanks)
+        for idx, question in enumerate(questions):
+            for i in mquestions[idx].blanks.all():
+                question.blanks.create(place=mquestions[idx].blanks[i].place)
 
     def create_choices():
-        choices = map(lambda text: Choice(game=game, text=text), data_choices)
+        choices = map(lambda mc: Choice(game=game, text=mc.text), mchoices)
         Choice.objects.bulk_create(choices)
+
+    random.shuffle(mquestions)
+    random.shuffle(mchoices)
 
     create_questions()
     create_blanks()

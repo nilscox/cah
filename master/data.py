@@ -12,8 +12,7 @@ def load_json(path):
 
 
 def get_questions():
-    questions = load_json(QUESTIONS_PATH)
-    return [q[0] for q in questions], [q[1] for q in questions]
+    return load_json(QUESTIONS_PATH)
 
 
 def get_choices():

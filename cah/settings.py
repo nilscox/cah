@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'channels',
     'rest_framework',
     'api.apps.ApiConfig',
+    'master.apps.MasterConfig',
 ]
 
 MIDDLEWARE = [
@@ -95,8 +96,14 @@ DATABASES = {
         'PASSWORD': os.environ['CAH_DB_PASSWORD'],
         'HOST': os.environ['CAH_DB_HOST'],
         'PORT': os.environ['CAH_DB_PORT'],
+    },
+    'master': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'master.sqlite3'),
     }
 }
+
+DATABASE_ROUTERS = ['cah.dbrouters.MasterDBRouter']
 
 
 # Password validation

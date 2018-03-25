@@ -14,13 +14,15 @@ class ApiErrorMiddleware:
     def __call__(self, request):
         return self.get_response(request)
 
-    def process_exception(self, request, exception):
-        error = {"detail": " ".join(exception.args)}
-
-        response = HttpResponse(json.dumps(error), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        response["Content-Type"] = "application/json"
-
-        return response
+    # def process_exception(self, request, exception):
+    #     print(exception)
+    #
+    #     error = {"detail": " ".join(exception.args)}
+    #
+    #     response = HttpResponse(json.dumps(error), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    #     response["Content-Type"] = "application/json"
+    #
+    #     return response
 
 
 # https://gist.github.com/josharian/1453629
