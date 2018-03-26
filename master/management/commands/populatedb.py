@@ -1,3 +1,4 @@
+import json
 from django.core.management.base import BaseCommand
 from master.data import get_questions, get_choices
 from master.models import Question, Choice
@@ -10,14 +11,7 @@ class Command(BaseCommand):
         data_questions = get_questions()
         data_choices = get_choices()
 
-        for dq in data_questions:
-            question = Question(text=dq['text'])
-            question.save()
-
-            if dq['blanks']:
-                for place in dq['blanks']:
-                    question.blanks.create(place=place)
-
+        Question.objects.bulk_create(map(lambda q: Question(text=q['text'], blanks=json.dumps(q['blanks'])), data_questions))
         Choice.objects.bulk_create(map(lambda text: Choice(text=text), data_choices))
 
         self.stdout.write(self.style.SUCCESS('Database populated'))

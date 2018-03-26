@@ -1,3 +1,4 @@
+import json
 from django.db import models
 
 
@@ -5,25 +6,11 @@ class Question(models.Model):
     """
     Question fields:
         - text: string
-
-    Question relations:
-        - blanks: Blank[]
+        - blanks: integer[]
     """
 
     text = models.CharField(max_length=255)
-
-
-class Blank(models.Model):
-    """
-    Blank fields:
-        - place: integer
-
-    Blank relations:
-        - question: Question
-    """
-
-    place = models.IntegerField(blank=True, null=True)
-    question = models.ForeignKey(Question, related_name='blanks', on_delete=models.CASCADE)
+    blanks = models.CharField(max_length=255)
 
 
 class Choice(models.Model):
@@ -33,3 +20,6 @@ class Choice(models.Model):
     """
 
     text = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.text
