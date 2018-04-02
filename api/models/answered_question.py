@@ -36,9 +36,9 @@ class AnsweredQuestion(models.Model):
 
     def get_split_text(self):
         text = self.question.text
-        answers = list(self.answers.all())
+        answers = self.answers.all()
 
-        if answers[0].position.place is None:
+        if answers[0].position is None:
             return [str(answers[0])]
 
         result = []

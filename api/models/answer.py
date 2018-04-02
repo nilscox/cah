@@ -10,7 +10,7 @@ class Answer(models.Model):
     """
 
     choice = models.OneToOneField('Choice', on_delete=models.CASCADE)
-    position = models.ForeignKey('Blank', on_delete=models.CASCADE)
+    position = models.ForeignKey('Blank', blank=True, null=True, on_delete=models.CASCADE)
     question = models.ForeignKey('AnsweredQuestion', related_name='answers', on_delete=models.CASCADE)
 
     def __str__(self):

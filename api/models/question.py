@@ -28,7 +28,7 @@ class Question(models.Model):
         return self.get_filled_text('...')
 
     def get_nb_choices(self):
-        return self.blanks.count()
+        return max(1, self.blanks.count())
 
     def get_filled_text(self, blank):
         return ' '.join(map(lambda t: t.strip() if t else blank, self.get_split_text()))
@@ -37,7 +37,7 @@ class Question(models.Model):
         text = self.text
         pos = list(map(lambda pos: pos.place, self.blanks.all()))
 
-        if pos[0] is None:
+        if not pos:
             return [text]
 
         result = []

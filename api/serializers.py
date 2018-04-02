@@ -24,8 +24,7 @@ class QuestionSerializer(serializers.ModelSerializer):
         fields = ('id', 'type', 'text', 'split', 'nb_choices')
 
     def get_type(self, question):
-        blanks = filter(lambda s: s is None, question.get_split_text())
-        return "question" if len(list(blanks)) == 0 else "fill"
+        return "question" if question.blanks.count() == 0 else "fill"
 
 
 class ChoiceSerializer(serializers.ModelSerializer):

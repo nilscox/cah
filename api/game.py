@@ -12,29 +12,18 @@ def init(game):
     mquestions = list(master.Question.objects.all())
     mchoices = list(master.Choice.objects.all())
 
-    questions = []
-
-    def create_questions():
-        global questions
-
-        questions = list(map(lambda mq: Question(game=game, text=mq.text), mquestions))
-        questions = Question.objects.bulk_create(questions)
-
-    def create_blanks():
-        for idx, question in enumerate(questions):
-            for i in mquestions[idx].blanks.all():
-                question.blanks.create(place=mquestions[idx].blanks[i].place)
-
-    def create_choices():
-        choices = map(lambda mc: Choice(game=game, text=mc.text), mchoices)
-        Choice.objects.bulk_create(choices)
-
     random.shuffle(mquestions)
     random.shuffle(mchoices)
 
-    create_questions()
-    create_blanks()
-    create_choices()
+    questions = list(map(lambda mq: Question(game=game, text=mq.text), mquestions))
+    Question.objects.bulk_create(questions)
+
+    for idx, question in enumerate(questions):
+        for place in mquestions[idx].get_blanks():
+            question.blanks.create(place=place)
+
+    choices = map(lambda mc: Choice(game=game, text=mc.text), mchoices)
+    Choice.objects.bulk_create(choices)
 
     events.game_created(game.owner)
 
@@ -68,12 +57,14 @@ def answer(game, choices, answered_by):
     answered_question = AnsweredQuestion(game=game, question=question, answered_by=answered_by)
     answered_question.save()
 
-    blanks = list(question.blanks.all())
-
     for i in range(len(choices)):
         choice = choices[i]
+        blank = None
 
-        answered_question.answers.create(position=blanks[i], choice=choice)
+        if question.blanks.count() > 0:
+            blank = question.blanks.all()[i]
+
+        answered_question.answers.create(position=blank, choice=choice)
 
         choice.owner = None
         choice.played = True
