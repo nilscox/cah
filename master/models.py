@@ -12,6 +12,9 @@ class Question(models.Model):
     text = models.CharField(max_length=255)
     blanks = models.CharField(max_length=255)
 
+    def get_blanks(self):
+        return json.loads(self.blanks)
+
 
 class Choice(models.Model):
     """
