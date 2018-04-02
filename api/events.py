@@ -34,7 +34,7 @@ def player_connected(player):
 
         broadcast(player.game, {
             "type": "CONNECTED",
-            "player": serialize("PlayerSerializer", player),
+            "player": serialize("PlayerLightSerializer", player),
         })
 
 
@@ -55,7 +55,7 @@ def game_created(owner):
 def player_avatar_changed(player):
     broadcast(player.game, {
         "type": "PLAYER_AVATAR_CHANGED",
-        "player": serialize("PlayerSerializer", player),
+        "player": serialize("PlayerLightSerializer", player),
     })
 
 
@@ -63,7 +63,7 @@ def game_joined(player):
     player_group(player).add(player.socket_id)
     broadcast(player.game, {
         "type": "JOINED",
-        "player": serialize("PlayerSerializer", player),
+        "player": serialize("PlayerLightSerializer", player),
     })
 
 
@@ -71,7 +71,7 @@ def game_left(player):
     player_group(player).discard(player.socket_id)
     broadcast(player.game, {
         "type": "LEFT",
-        "player": serialize("PlayerSerializer", player),
+        "player": serialize("PlayerLightSerializer", player),
     })
 
 
