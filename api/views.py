@@ -95,9 +95,13 @@ class GameViews(views.APIView):
         if player.in_game():
             raise PlayerAlreadyInGame
 
+        lang = request.data.get('lang')
+        if not lang:
+            raise ValidationError('Missing lang field')
+
         game_serializer = GameSerializer(data=request.data)
         game_serializer.is_valid(raise_exception=True)
-        game = game_serializer.save(owner=player, players=[player])
+        game = game_serializer.save(lang=lang, owner=player, players=[player])
         game_controller.init(game)
 
         return Response(game_serializer.data, status=status.HTTP_201_CREATED)

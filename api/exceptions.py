@@ -108,3 +108,13 @@ class TurnNotOver(APIException):
     status_code = status.HTTP_400_BAD_REQUEST
     default_code = 'TURN_NOT_OVER'
     default_detail = 'Turn is not over'
+
+class NoQuestionFound(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_code = 'NO_QUESTION_FOUND'
+    default_detail = 'No question found for this language'
+
+class NoChoiceFound(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_code = 'NO_CHOICE_FOUND'
+    default_detail = 'No choice found for this language'

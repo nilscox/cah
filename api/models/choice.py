@@ -4,6 +4,7 @@ from django.db import models
 class Choice(models.Model):
     """
     Choice fields:
+        - lang: string
         - text: string
         - available: boolean
         - played: boolean
@@ -13,6 +14,7 @@ class Choice(models.Model):
         - owner: Player
     """
 
+    lang = models.CharField(max_length=8)
     text = models.CharField(max_length=255)
     available = models.BooleanField(default=True)
     played = models.BooleanField(default=False)

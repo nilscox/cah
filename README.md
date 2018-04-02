@@ -71,6 +71,7 @@ A game is the core data structure. It represent a running game of CAH.
 ```
 Game: {
     id: integer,
+    lang: string,
     state: string,
     owner: string,
     players: Player[],
@@ -81,6 +82,7 @@ Game: {
 ```
 
 - id: The game's id
+- lang: The game's language
 - state: One of `["idle", "started", "finished"]`
 - owner: The owner's nickname
 - players: A list of `Player` who joined this game
@@ -111,7 +113,9 @@ GameTurn: {
 ```
 POST /api/game
 returns: Game
-body: {}
+body: {
+    lang: string,
+}
 ```
 
 Create a new game.

@@ -30,6 +30,9 @@ export function createGame(): ThunkAction {
     method: 'POST',
     route: GAME_ROUTE,
     expected: 201,
+    body: {
+      lang: 'fr',
+    },
   });
 }
 

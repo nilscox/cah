@@ -9,8 +9,14 @@ MIN_PLAYERS_TO_START = 2
 
 
 def init(game):
-    mquestions = list(master.Question.objects.all())
-    mchoices = list(master.Choice.objects.all())
+    mquestions = list(master.Question.objects.filter(lang=game.lang))
+    mchoices = list(master.Choice.objects.filter(lang=game.lang))
+
+    if not mquestions:
+        raise NoQuestionFound
+
+    if not mchoices:
+        raise NoChoiceFound
 
     random.shuffle(mquestions)
     random.shuffle(mchoices)

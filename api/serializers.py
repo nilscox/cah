@@ -95,6 +95,7 @@ class GameSerializer(serializers.ModelSerializer):
     """
     Game: {
         id: integer,
+        lang: string,
         state: string,
         play_state: string,
         owner: string,
@@ -115,7 +116,7 @@ class GameSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Game
-        fields = ('id', 'state', 'play_state', 'owner', 'players', 'question_master', 'question', 'propositions')
+        fields = ('id', 'lang', 'state', 'play_state', 'owner', 'players', 'question_master', 'question', 'propositions')
 
     def get_propositions(self, game):
         answers = game.get_propositions()

@@ -4,6 +4,7 @@ from django.db import models
 class Question(models.Model):
     """
     Question fields:
+        - lang: string
         - text: string
         - available: boolean
 
@@ -20,6 +21,7 @@ class Question(models.Model):
         - get_split_text() -> (string | None)[]
     """
 
+    lang = models.CharField(max_length=8)
     text = models.CharField(max_length=255)
     available = models.BooleanField(default=True)
     game = models.ForeignKey('Game', related_name='questions', on_delete=models.CASCADE)

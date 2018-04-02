@@ -15,6 +15,7 @@ GAME_STATES = (
 class Game(models.Model):
     """
     Game fields:
+        - lang: string
         - state: string
 
     Game relations:
@@ -40,6 +41,7 @@ class Game(models.Model):
         - select_answer(selected, selected_by) -> None
     """
 
+    lang = models.CharField(max_length=8)
     state = models.CharField(max_length=8, default='idle', choices=GAME_STATES)
     owner = models.ForeignKey('Player', related_name='owns', on_delete=models.CASCADE)
     question_master = models.ForeignKey('Player', blank=True, null=True, related_name='current_of', on_delete=models.CASCADE)
