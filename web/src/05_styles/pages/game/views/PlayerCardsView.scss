@@ -19,6 +19,16 @@
       &.selected {
         cursor: pointer;
       }
+
+      &.new-card {
+        animation-name: emphase-notify;
+        animation-duration: 2s;
+        animation-fill-mode: forward;
+      }
+
+      @keyframes emphase-notify {
+        from { background-color: #FFC; }
+      }
     }
   }
 }

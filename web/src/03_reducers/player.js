@@ -51,7 +51,7 @@ export default function(state = null, action) {
 
       switch (message.type) {
         case 'CARDS_DEALT':
-          return { ...state, cards: [ ...(state.cards || []), ...message.cards ] };
+          return { ...state, cards: [ ...message.cards, ...(state.cards || []) ] };
 
         case 'NEXT_TURN':
           return { ...state, submitted: null, selection: [] };

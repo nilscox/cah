@@ -26,6 +26,11 @@ type PlayerCardsViewProps =
   & PlayerCardsViewStateProps
   & PlayerCardsViewDispatchProps;
 
+type PlayerCardsViewState = {|
+  lastCards: ChoiceType[],
+  newCards: ChoiceType[],
+|};
+
 const mapStateToProps: State => PlayerCardsViewStateProps = ({
   game,
   player,
@@ -44,38 +49,67 @@ const mapDispatchToProps: Dispatch => PlayerCardsViewDispatchProps = dispatch =>
   toggleChoice: choice => dispatch(toggleChoice(choice)),
 });
 
-const PlayerCardsView = ({
-  choices,
-  isSelected,
-  canSelectChoice,
-  toggleChoice,
-}: PlayerCardsViewProps) => {
-  const onCardClicked = choice => {
-    if (canSelectChoice || isSelected(choice))
-      toggleChoice(choice);
+class PlayerCardsView extends React.Component<PlayerCardsViewProps, PlayerCardsViewState> {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      lastCards: props.choices,
+      newCards: [],
+    };
   }
 
-  return (
-    <div className="game-view" id="player-cards">
+  componentWillReceiveProps(nextProps) {
+    if (this.props.choices.length === nextProps.choices.length)
+      return;
 
-      <div className="cards-list">
+    const { choices } = nextProps;
+    const { lastCards } = this.state;
 
-        {choices && choices.map(choice => (
-          <ChoiceCard
-            key={choice.id}
-            choice={choice}
-            className={toClassName([
-              isSelected(choice) && 'selected',
-              canSelectChoice && 'can-select',
-            ])}
-            onClick={() => onCardClicked(choice)}
-          />
-        ))}
+    const newCards = choices.filter(choice => !lastCards.find(last => last.id === choice.id));
+
+    this.setState({
+      lastCards: choices,
+      newCards,
+    });
+  }
+
+  onCardClicked = choice => {
+    const { isSelected, canSelectChoice, toggleChoice } = this.props;
+
+    if (canSelectChoice || isSelected(choice))
+      toggleChoice(choice);
+  };
+
+  render() {
+    const { choices, isSelected, canSelectChoice } = this.props;
+    const { newCards } = this.state;
+
+    const isCardNew = card => newCards.find(c => card.id === c.id);
+
+    return (
+      <div className="game-view" id="player-cards">
+
+        <div className="cards-list">
+
+          {choices && choices.map(choice => (
+            <ChoiceCard
+              key={choice.id}
+              choice={choice}
+              className={toClassName([
+                isSelected(choice) && 'selected',
+                canSelectChoice && 'can-select',
+                isCardNew(choice) && 'new-card',
+              ])}
+              onClick={() => this.onCardClicked(choice)}
+            />
+          ))}
+
+        </div>
 
       </div>
-
-    </div>
-  );
+    );
+  }
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(PlayerCardsView);
