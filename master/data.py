@@ -2,8 +2,7 @@ import os
 import json
 
 
-QUESTIONS_PATH = os.environ['QUESTIONS_PATH']
-CHOICES_PATH = os.environ['CHOICES_PATH']
+DATA_PATH = os.environ['DATA_PATH']
 
 
 def load_json(path):
@@ -11,9 +10,9 @@ def load_json(path):
         return json.loads(f.read())
 
 
-def get_questions():
-    return load_json(QUESTIONS_PATH)
+def get_questions(lang):
+    return load_json(os.path.join(DATA_PATH, lang, 'questions.json'))
 
 
-def get_choices():
-    return load_json(CHOICES_PATH)
+def get_choices(lang):
+    return load_json(os.path.join(DATA_PATH, lang, 'choices.json'))

@@ -5,10 +5,12 @@ from django.db import models
 class Question(models.Model):
     """
     Question fields:
+        - lang: string
         - text: string
         - blanks: integer[]
     """
 
+    lang = models.CharField(max_length=8)
     text = models.CharField(max_length=255)
     blanks = models.CharField(max_length=255)
 
@@ -19,9 +21,11 @@ class Question(models.Model):
 class Choice(models.Model):
     """
     Choice fields:
+        - lang: string
         - text: string
     """
 
+    lang = models.CharField(max_length=8)
     text = models.CharField(max_length=255)
 
     def __str__(self):
