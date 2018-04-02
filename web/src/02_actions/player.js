@@ -34,7 +34,12 @@ export function loginPlayer(nick: string): ThunkAction {
 
   return (dispatch, getState) => dispatch(request(PLAYER_LOGIN, opts))
     .then(onPlayerFetch.bind(null, dispatch))
-    .then(() => dispatch(initialize()));
+    .then(() => {
+      const { player } = getState();
+
+      if (player)
+        dispatch(initialize());
+    });
 }
 
 export const PLAYER_LOGOUT = 'PLAYER_LOGOUT';

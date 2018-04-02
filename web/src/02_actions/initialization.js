@@ -1,12 +1,16 @@
 // @flow
 
-import type { InitializationFinishedAction, ThunkAction } from 'Types/actions';
+import type {
+  InitializationFinishedAction,
+  InitializationStartedAction,
+  ThunkAction,
+} from 'Types/actions';
 import { fetchPlayer } from './player';
 import { fetchGame, fetchGameHistory } from './game';
 import { loadSettings } from './settings';
 
 export const INITIALIZATION_STARTED = 'INITIALIZATION_STARTED';
-export function initializationStarted() {
+export function initializationStarted(): InitializationStartedAction {
   return {
     type: INITIALIZATION_STARTED,
   };
@@ -25,13 +29,13 @@ export function initialize(): ThunkAction {
     dispatch(initializationStarted());
     dispatch(loadSettings());
     dispatch(fetchPlayer())
-      .then(result => {
+      .then(() => {
         const { player } = getState();
 
         if (player)
           return dispatch(fetchGame());
       })
-      .then(result => {
+      .then(() => {
         const { game } = getState();
 
         if (game && game.state !== 'idle')
