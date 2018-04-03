@@ -25,14 +25,10 @@ SECRET_KEY = 'l7^d_f!h^q)!250@x7$du8ft*=490u#2p_pgu0-=_$ygn3knc='
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    'localhost',
-    '127.0.0.1',
-]
+ALLOWED_HOSTS = []
 
-if 'API_ALLOWED_HOSTS' in os.environ:
-    for host in os.environ['API_ALLOWED_HOSTS'].split(';'):
-        ALLOWED_HOSTS.append(host)
+for host in os.environ['CAH_API_ALLOWED_HOSTS'].split(';'):
+    ALLOWED_HOSTS.append(host)
 
 
 # Application definition
@@ -160,10 +156,7 @@ REST_FRAMEWORK = {
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_ALLOW_ALL = False
-CORS_ORIGIN_WHITELIST = [
-    'localhost:3000',
-]
+CORS_ORIGIN_WHITELIST = []
 
-if 'API_CORS_ORIGIN_WHITELIST' in os.environ:
-    for origin in os.environ['API_CORS_ORIGIN_WHITELIST'].split(';'):
-        CORS_ORIGIN_WHITELIST.append(origin)
+for origin in os.environ['CAH_API_CORS_ORIGIN_WHITELIST'].split(';'):
+    CORS_ORIGIN_WHITELIST.append(origin)

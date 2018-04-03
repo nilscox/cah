@@ -2,7 +2,7 @@ import os
 import json
 
 
-DATA_PATH = os.environ['DATA_PATH']
+DATA_PATH = os.environ['CAH_DATA_PATH']
 
 
 def load_json(path):

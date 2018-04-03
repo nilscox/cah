@@ -14,7 +14,7 @@ from api.permissions import IsPlayer, IsConnected
 from api.serializers import GameSerializer, GameTurnSerializer, PlayerLightSerializer, PlayerSerializer, AnsweredQuestionSerializer
 
 
-AVATARS_DIR = os.environ['AVATARS_DIR']
+AVATARS_DIR = os.environ['CAH_AVATARS_DIR']
 
 
 @api_view()
