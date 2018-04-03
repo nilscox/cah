@@ -2,3 +2,5 @@ django
 django-cors-headers
 djangorestframework
 channels==1.1.6
+psycopg2-binary
+Pillow
