@@ -23,10 +23,10 @@ class QuestionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Question
-        fields = ('id', 'text', 'blanks')
+        fields = ('id', 'lang', 'text', 'blanks')
 
 
 class ChoiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Choice
-        fields = ('id', 'text')
+        fields = ('id', 'lang', 'text')
