@@ -363,11 +363,11 @@ parameter can be provided in order to filter results to a specific language.
 Available routes are:
 
 - `GET /api/master/<model>`: retrieve all the `<model>`s.
-- `GET /api/master/<model>/:id`: retrieve a specific model from its `id`.
+- `GET /api/master/<model>/:id`: retrieve a specific `<model>` from its `id`
 - `POST /api/master/<model>`: create a new `<model>`
 - `PUT /api/master/<model>/:id`: update a `<model>`
 - `PATCH /api/master/<model>/:id`: partial update a `<model>`
-- `DELETE /api/master/<model>/:id`: delete an existing model
+- `DELETE /api/master/<model>/:id`: delete an existing `<model>`
 
 > Note: the `PATCH` request allows to partially update a model. Fields that are
 > not provided in the request body will not be updated.
