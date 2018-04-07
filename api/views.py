@@ -39,8 +39,9 @@ class PlayerViews(views.APIView):
         player, created = Player.objects.get_or_create(nick=nick)
         request.session['player_id'] = player.id
 
-        return Response(PlayerViews.serialize_player(player),
-                        status.HTTP_201_CREATED if created else status.HTTP_200_OK)
+        status = status.HTTP_201_CREATED if created else status.HTTP_200_OK
+
+        return Response(PlayerViews.serialize_player(player), status)
 
     def get(self, request, format=None):
         if not isinstance(request.user, Player):
@@ -54,7 +55,7 @@ class PlayerViews(views.APIView):
 
         del request.session['player_id']
 
-        return Response({})
+        return Response(None, status.HTTP_204_NO_CONTENT)
 
 
 @api_view(['PUT'])
@@ -158,7 +159,7 @@ def leave_game(request):
     game = player.game
     game.remove_player(player)
 
-    return Response(GameSerializer(game).data)
+    return Response(None, status.HTTP_204_NO_CONTENT)
 
 
 @api_view(['POST'])
@@ -175,6 +176,37 @@ def start_game(request):
         raise GameAlreadyStarted
 
     game_controller.start(game)
+
+    return Response(GameSerializer(game).data)
+
+
+@api_view(['POST'])
+@authentication_classes([PlayerAuthentication])
+@permission_classes([IsPlayer, IsConnected])
+def next_turn(request):
+    player = request.user
+
+    if not player.in_game():
+        raise PlayerNotInGame
+
+    game = player.game
+
+    if game.state != 'started':
+        raise GameNotStarted
+
+    if player != game.question_master:
+        raise PlayerNotQuestionMaster
+
+    answers = game.get_propositions()
+    last_turn = game.turns.last()
+
+    if len(answers) != game.players.count() - 1:
+        raise TurnNotOver
+
+    if last_turn and last_turn.question != game.current_question:
+        raise TurnNotOver
+
+    game_controller.next_turn(game, last_turn.winner)
 
     return Response(GameSerializer(game).data)
 
@@ -251,34 +283,3 @@ def select(request, pk):
     game_controller.select_answer(game, selected, player)
 
     return Response(AnsweredQuestionSerializer(selected).data)
-
-
-@api_view(['POST'])
-@authentication_classes([PlayerAuthentication])
-@permission_classes([IsPlayer, IsConnected])
-def next_turn(request):
-    player = request.user
-
-    if not player.in_game():
-        raise PlayerNotInGame
-
-    game = player.game
-
-    if game.state != 'started':
-        raise GameNotStarted
-
-    if player != game.question_master:
-        raise PlayerNotQuestionMaster
-
-    answers = game.get_propositions()
-    last_turn = game.turns.last()
-
-    if len(answers) != game.players.count() - 1:
-        raise TurnNotOver
-
-    if last_turn and last_turn.question != game.current_question:
-        raise TurnNotOver
-
-    game_controller.next_turn(game, last_turn.winner)
-
-    return Response(GameSerializer(game).data)

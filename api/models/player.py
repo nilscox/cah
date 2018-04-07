@@ -12,27 +12,22 @@ class Player(models.Model):
     Player fields:
         - nick: string
         - socket_id: string
-        - avatar: string
+        - avatar: Image
 
     Player relations:
         - game: Game
         - owns: Game
-        - scores: PlayerScore[]
-        - current_of: Game
         - cards: Choice[]
-        - questions_answered: AnsweredQuestion[]
-        - selected_cards: AnsweredQuestion[]
-        - turns_as_question_master: GameTurn[]
-        - turns_won: GameTurn[]
 
     Player methods:
         - in_game(Game=None) -> boolean
         - is_owner(Game) -> boolean
         - has_played() -> boolean | None
         - has_cards(integer[]) -> boolean
-        - get_score(Game=None) -> integer | None
-        - get_submitted() -> AnsweredQuestion
-        - on_connected(socket_id) -> None
+        - get_score() -> integer | None
+        - get_submitted() -> AnsweredQuestion | None
+        - pick_cards(Choice[])
+        - on_connected(string) -> None
         - on_disconnected() -> None
     """
 

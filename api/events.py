@@ -33,7 +33,7 @@ def player_connected(player):
         player_group(player).add(player.socket_id)
 
         broadcast(player.game, {
-            "type": "CONNECTED",
+            "type": "PLAYER_CONNECTED",
             "player": serialize("PlayerLightSerializer", player),
         })
 
@@ -43,7 +43,7 @@ def player_disconnected(player):
         player_group(player).discard(player.socket_id)
 
         broadcast(player.game, {
-            "type": "DISCONNECTED",
+            "type": "PLAYER_DISCONNECTED",
             "nick": player.nick,
         })
 
@@ -62,7 +62,7 @@ def player_avatar_changed(player):
 def game_joined(player):
     player_group(player).add(player.socket_id)
     broadcast(player.game, {
-        "type": "JOINED",
+        "type": "PLAYER_JOINED",
         "player": serialize("PlayerLightSerializer", player),
     })
 
@@ -70,7 +70,7 @@ def game_joined(player):
 def game_left(player):
     player_group(player).discard(player.socket_id)
     broadcast(player.game, {
-        "type": "LEFT",
+        "type": "PLAYER_LEFT",
         "player": serialize("PlayerLightSerializer", player),
     })
 
@@ -78,6 +78,13 @@ def game_left(player):
 def game_started(game):
     broadcast(game, {
         "type": "GAME_STARTED",
+        "game": serialize("GameSerializer", game),
+    })
+
+
+def next_turn(game):
+    broadcast(game, {
+        "type": "GAME_NEXT_TURN",
         "game": serialize("GameSerializer", game),
     })
 
@@ -107,11 +114,4 @@ def answer_selected(game, turn):
     broadcast(game, {
         "type": "ANSWER_SELECTED",
         "turn": serialize("GameTurnSerializer", turn),
-    })
-
-
-def next_turn(game):
-    broadcast(game, {
-        "type": "NEXT_TURN",
-        "game": serialize("GameSerializer", game),
     })

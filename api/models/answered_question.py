@@ -10,8 +10,9 @@ class AnsweredQuestion(models.Model):
         - game: Game
         - question: Question
         - answered_by: Player
-        - selected_by: Player
+        - selected_by: Player | None
         - answers: Answer[]
+        - turn: GameTurn | None
 
     AnsweredQuestion methods:
         - get_filled_text() -> string
@@ -32,7 +33,7 @@ class AnsweredQuestion(models.Model):
         return self.get_filled_text()
 
     def get_filled_text(self):
-        return ' '.join(map(lambda t: t.strip(), self.get_split_text()))
+        return ''.join(self.get_split_text())
 
     def get_split_text(self):
         text = self.question.text

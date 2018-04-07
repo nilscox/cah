@@ -29,22 +29,18 @@ class Game(models.Model):
         - turns: GameTurn[]
 
     Game methods:
-        - init() -> None
         - get_history() -> GameTurn[]
         - add_player(player) -> None
         - remove_player(player) -> None
-        - start() -> None
-        - next_turn(question_master) -> None
+        - pick_question() -> None
         - deal_cards() -> None
         - get_propositions() -> AnsweredQuestion[] | None
-        - answer(choices, answered_by) -> None
-        - select_answer(selected, selected_by) -> None
     """
 
     lang = models.CharField(max_length=8)
     state = models.CharField(max_length=8, default='idle', choices=GAME_STATES)
     owner = models.ForeignKey('Player', related_name='owns', on_delete=models.CASCADE)
-    question_master = models.ForeignKey('Player', blank=True, null=True, related_name='current_of', on_delete=models.CASCADE)
+    question_master = models.ForeignKey('Player', blank=True, null=True, related_name='question_master_of', on_delete=models.CASCADE)
     current_question = models.ForeignKey('Question', blank=True, null=True, related_name='current', on_delete=models.CASCADE)
 
     def __str__(self):

@@ -4,159 +4,6 @@ Black cards, white cards, much fun.
 
 ## REST API Documentation
 
-### Player
-
-`FullPlayer` is a player, seen by himself.
-`Player` is a player, seen by other players.
-
-#### Data
-
-```
-FullPlayer: {
-    nick: string,
-    score: integer,
-    connected: boolean,
-    cards: Choice[],
-    submitted: AnsweredQuestion | null,
-}
-```
-
-```
-Player: {
-    nick: string,
-    score: integer | null,
-    connected: boolean,
-}
-```
-
-- nick: The player's nickname
-- score: His score, if he is in game
-- cards: The set of white cards he owns
-- submitted: The set of white cards he submitted, if any
-
-> Note: a Player is returned instead of a FullPlayer when he is not in game
-
-#### Routes
-
-```
-POST /api/player
-returns: Player
-body: {
-    nick: string,
-}
-```
-
-Login as a new or existing player.
-
-```
-GET /api/player
-returns: Player | FullPlayer
-```
-
-Fetch the currently logged in player.
-
-```
-DELETE /api/player
-returns: {}
-```
-
-Log out (the player is not actually deleted).
-
-### Game
-
-A game is the core data structure. It represent a running game of CAH.
-
-#### Data
-
-```
-Game: {
-    id: integer,
-    lang: string,
-    state: string,
-    owner: string,
-    players: Player[],
-    question_master: string,
-    question: Question | null,
-    propositions: PartialAnsweredQuestion[],
-}
-```
-
-- id: The game's id
-- lang: The game's language
-- state: One of `["idle", "started", "finished"]`
-- owner: The owner's nickname
-- players: A list of `Player` who joined this game
-- question_master: The nickname of the player who either waits for the other players answers, or have to choose between one
-- question: The current black card
-- propositions: The set of answers given by the players
-
-> The propositions array is empty when not all player have submitted an answer.
-
-```
-GameTurn: {
-    number: integer,
-    question_master: string,
-    winner: string,
-    question: Question,
-    answers: LightAnsweredQuestion[],
-}
-```
-
-- number: The turn's number (starting from one)
-- question_master: The question master's nick
-- winner: The winner's nick
-- question: This turn's question
-- answers: All the answers submitted for this turn
-
-#### Routes
-
-```
-POST /api/game
-returns: Game
-body: {
-    lang: string,
-}
-```
-
-Create a new game.
-
-```
-GET /api/game
-return: Game
-```
-
-Fetch the current player's game
-
-```
-POST /api/game/join/:id
-return: Game
-```
-
-Join a game.
-
-```
-POST /api/game/leave
-returns: {}
-```
-
-Leave a game.
-
-```
-POST /api/game/start
-returns: Game
-```
-
-Start a game.
-
-```
-GET /api/game/history
-returns: GameTurn[]
-```
-
-Fetch the game history.
-
-> If the game is started, the current turn is not included.
-
 ### Question
 
 A question represents a black card. It contains a question, or a sentence
@@ -172,19 +19,20 @@ Question: {
 }
 ```
 
-- id: The question's id
+- id: the question's id
+- lang: the question's language
 - type: `"fill"` if the question contain at least one blank else `"question"`
-- text: The actual question, with blanks filled with `...` (if any)
-- split: The question's text, as an array
-- nb_choices: The number of choices that fits the question
+- text: the actual question, with blanks filled with `...` (if any)
+- split: the question's text, as an array
+- nb_choices: the number of choices that fits the question
 
 > The split field is an array of strings representing the actual question's
 > text, and null values representing a blank.
 
 ### Choice
 
-A choice represents a white card. It contains one or more words that could
-answer a `Question`, or fit in a `Question`'s blank.
+A choice represents a white card. It contains a chunk of text that could answer
+a `Question`, or fit in a `Question`'s blank.
 
 ```
 Choice: {
@@ -195,6 +43,193 @@ Choice: {
 
 - id: The choice's id
 - text: The actual choice text
+
+### Player
+
+`FullPlayer` is a player, seen by himself.
+`Player` is a player, seen by other players.
+
+> Note: a Player is returned instead of a FullPlayer when he is not in game
+
+#### Data
+
+```
+FullPlayer: {
+    nick: string,
+    connected: boolean,
+    avatar: string | null,
+    score: integer,
+    cards: Choice[],
+    submitted: AnsweredQuestion | null,
+}
+```
+
+```
+Player: {
+    nick: string,
+    connected: boolean,
+    avatar: string | null,
+    score: integer | null,
+}
+```
+
+- nick: the player's nickname
+- connected: true if the player is currently connected
+- avatar: his avatar's public url
+- score: his score, if he is in game
+- cards: the set of white cards he owns
+- submitted: the answer he submitted, if any
+
+#### Routes
+
+```
+POST /api/player
+status: 200 | 201
+returns: Player
+triggers: PLAYER_CONNECTED
+body: {
+    nick: string,
+}
+```
+
+Login as a new or existing player.
+
+```
+GET /api/player
+status: 200
+returns: Player | FullPlayer
+```
+
+Fetch the currently logged in player.
+
+```
+DELETE /api/player
+status: 204
+triggers: PLAYER_DISCONNECTED
+```
+
+Log out (the player is not actually deleted).
+
+```
+PUT /api/player/avatar
+status: 200
+returns: FullPlayer
+triggers: PLAYER_AVATAR_CHANGED
+```
+
+Change the current player's avatar.
+
+### Game
+
+A game is the core data structure. It represent a running game of CAH.
+
+#### Data
+
+```
+Game: {
+    id: integer,
+    lang: string,
+    state: string,
+    play_state: string,
+    owner: string,
+    players: Player[],
+    question_master: string,
+    question: Question | null,
+    propositions: PartialAnsweredQuestion[],
+}
+```
+
+- id: the game's id
+- lang: the game's language
+- state: one of `["idle", "started", "finished"]`
+- owner: the owner's nickname
+- players: a list of all the `Player`s who joined this game
+- question_master: the question master's nick
+- question: the current black card, if any
+- propositions: the set of answers given by the players
+
+> The propositions array is empty when not all player have submitted an answer.
+
+```
+GameTurn: {
+    number: integer,
+    question_master: string,
+    winner: string,
+    question: Question,
+    answers: LightAnsweredQuestion[],
+}
+```
+
+- number: the turn's number (starting from one)
+- question_master: the question master's nick for this turn
+- winner: the winner's nick
+- question: the question
+- answers: all the answers submitted
+
+#### Routes
+
+```
+POST /api/game
+status: 201
+returns: Game
+body: {
+    lang: string,
+}
+```
+
+- lang: the game's language
+
+Create a new game.
+
+```
+GET /api/game
+status: 200
+returns: Game
+```
+
+Fetch the current player's game
+
+```
+GET /api/game/history
+status: 200
+returns: GameTurn[]
+```
+
+Fetch the game history
+
+```
+POST /api/game/join/:id
+status: 200
+returns: Game
+```
+
+Join a game.
+
+```
+POST /api/game/leave
+status: 204
+```
+
+Leave a game.
+
+```
+POST /api/game/start
+status: 200
+returns: Game
+```
+
+Start a game.
+
+> If the game is started, the current turn is not included, only finished ones
+> are.
+
+```
+POST /api/game/next
+status: 200
+returns: Game
+```
+
+End the current game turn and start the next one.
 
 ### AnsweredQuestion
 
@@ -233,18 +268,20 @@ LightAnsweredQuestion: {
 }
 ```
 
-- id: The answer's id
-- question: The question to which the player answered
-- text: The final text of the question, with blanks filled with choice's
-- split: The final text of the question, as an array
-- choices: The submitted choices
-- answered_by: The player who answered the question
-- selected_by: The player who selected this choices to answer his question (the former question master)
+- id: the answer's id
+- question: the question to which the player answered
+- text: the final text of the question, with blanks filled with choice's
+- split: the final text of the question, as an array
+- answers: the submitted choices
+- answered_by: the player who answered the question
+- selected_by: the player who selected this choices to answer his question
+(the former question master), if any
 
 #### Routes
 
 ```
 POST /api/answer
+status: 200
 returns: AnsweredQuestion
 body: {
     ids: integer[],
@@ -252,18 +289,19 @@ body: {
 ```
 
 Submit an answer to a question. `ids` is an array of the `Choice` ids.
-This route represents a `Player` giving a set of his black cards to the question master.
+This route represents a `Player` giving a set of his white cards to the question master.
 
 > For consistency with the number of choices, `id` can be used instead of `ids`.
 
 ```
 POST /api/answer/select/:id
+status: 200
 returns: AnsweredQuestion
 ```
 
 Select a set of choices in the submitted propositions. `id` is the id of the selected AnsweredQuestion.
-This route represents the question master selecting is favorite set of black
-cards within all black cards submitted by the other players.
+This route represents the question master selecting is favorite set of white
+cards within all white cards submitted by the players.
 
 ## Websocket API Documentation
 
@@ -274,15 +312,24 @@ All websocket events contain a `type` key, along with some information about the
 
 ```
 event: {
-  type: "CONNECTED",
+  type: "PLAYER_CONNECTED",
   player: Player,
 }
 ```
 
 ```
 event: {
-  type: "DISCONNECTED",
+  type: "PLAYER_DISCONNECTED",
   nick: string,
+}
+```
+
+### Player actions
+
+```
+event: {
+  type: "PLAYER_AVATAR_CHANGED",
+  player: Player,
 }
 ```
 
@@ -290,14 +337,14 @@ event: {
 
 ```
 event: {
-    type: "JOINED",
+    type: "PLAYER_JOINED",
     player: Player,
 }
 ```
 
 ```
 event: {
-    type: "LEFT",
+    type: "PLAYER_LEFT",
     player: Player,
 }
 ```
@@ -307,6 +354,13 @@ event: {
 ```
 event: {
     type: "GAME_STARTED",
+    game: Game,
+}
+```
+
+```
+event: {
+    type: "GAME_NEXT_TURN",
     game: Game,
 }
 ```
@@ -337,13 +391,6 @@ event: {
     type: "ANSWER_SELECTED",
     answer: AnsweredQuestion,
     answers: AnsweredQuestion[],
-}
-```
-
-```
-event: {
-    type: "NEXT_TURN",
-    game: Game,
 }
 ```
 
