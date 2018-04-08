@@ -1,15 +1,10 @@
 // @flow
 
-import type { Dispatch, ThunkAction } from 'Types/actions';
+import type { ThunkAction } from 'Types/actions';
 import { PLAYER_ROUTE } from '../constants';
 import request from './requestAction';
 import { initialize } from './initialization';
 import {connect as connectWS} from '../websocket';
-
-const onPlayerFetch = (dispatch: Dispatch, result: any): ?Promise<any> => {
-  if (result && result.status !== 404)
-    return connectWS(dispatch);
-};
 
 export const PLAYER_FETCH = 'PLAYER_FETCH';
 export function fetchPlayer(): ThunkAction {
@@ -20,7 +15,10 @@ export function fetchPlayer(): ThunkAction {
   };
 
   return dispatch => dispatch(request(PLAYER_FETCH, opts))
-    .then(onPlayerFetch.bind(null, dispatch));
+    .then(result => {
+      if (result && result.status !== 404)
+        return connectWS(dispatch);
+    });
 }
 
 export const PLAYER_LOGIN = 'PLAYER_LOGIN';
@@ -33,7 +31,6 @@ export function loginPlayer(nick: string): ThunkAction {
   };
 
   return (dispatch, getState) => dispatch(request(PLAYER_LOGIN, opts))
-    .then(onPlayerFetch.bind(null, dispatch))
     .then(() => {
       const { player } = getState();
 

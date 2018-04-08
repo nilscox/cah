@@ -35,7 +35,7 @@ export default function(state = null, action) {
           players: replace(state.players, message.player, findPlayerByNick(message.player.nick))
         };
 
-      case 'JOINED':
+      case 'PLAYER_JOINED':
         if (state.players.findIndex(findPlayerByNick(message.player.nick)) >= 0)
           return state;
 
@@ -44,19 +44,19 @@ export default function(state = null, action) {
           players: append(state.players, message.player),
         };
 
-      case 'LEFT':
+      case 'PLAYER_LEFT':
         return {
           ...state,
           players: remove(state.players, findPlayerByNick(message.player.nick)),
         };
 
-      case 'CONNECTED':
+      case 'PLAYER_CONNECTED':
         return {
           ...state,
           players: replace(state.players, message.player, findPlayerByNick(message.player.nick)),
         };
 
-      case 'DISCONNECTED':
+      case 'PLAYER_DISCONNECTED':
         return {
           ...state,
           players: replace(state.players, p => ({ ...p, connected: false }), p => p.nick === message.nick),
@@ -85,7 +85,7 @@ export default function(state = null, action) {
           players: replace(state.players, p => ({ ...p, score: p.score + 1 }), p => p.nick === message.turn.winner),
         };
 
-      case 'NEXT_TURN':
+      case 'GAME_NEXT_TURN':
         return { ...state, ...message.game };
 
       default:

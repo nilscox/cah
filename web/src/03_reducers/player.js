@@ -53,7 +53,7 @@ export default function(state = null, action) {
         case 'CARDS_DEALT':
           return { ...state, cards: [ ...message.cards, ...(state.cards || []) ] };
 
-        case 'NEXT_TURN':
+        case 'GAME_NEXT_TURN':
           return { ...state, submitted: null, selection: [] };
 
         default:
