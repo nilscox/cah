@@ -130,18 +130,19 @@ Game: {
     id: integer,
     lang: string,
     state: string,
-    play_state: string,
+    play_state: string | null,
     owner: string,
     players: Player[],
     question_master: string,
     question: Question | null,
-    propositions: PartialAnsweredQuestion[],
+    propositions: PartialAnsweredQuestion[] | null,
 }
 ```
 
 - id: the game's id
 - lang: the game's language
 - state: one of `["idle", "started", "finished"]`
+- play_state: one of `["players_answer", "question_master_selection", "end_of_turn"]`
 - owner: the owner's nickname
 - players: a list of all the `Player`s who joined this game
 - question_master: the question master's nick
@@ -264,6 +265,7 @@ LightAnsweredQuestion: {
     id: integer,
     text: string,
     split: string[],
+    answers: Choice[],
     answered_by: string,
 }
 ```
