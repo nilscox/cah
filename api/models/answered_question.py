@@ -33,11 +33,11 @@ class AnsweredQuestion(models.Model):
         return self.get_filled_text()
 
     def get_filled_text(self):
-        return ''.join(self.get_split_text())
+        return ' '.join(map(lambda t: t.strip(), self.get_split_text()))
 
     def get_split_text(self):
         text = self.question.text
-        answers = self.answers.all()
+        answers = self.answers.order_by('position')
 
         if answers[0].position is None:
             return [str(answers[0])]

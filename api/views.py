@@ -39,9 +39,9 @@ class PlayerViews(views.APIView):
         player, created = Player.objects.get_or_create(nick=nick)
         request.session['player_id'] = player.id
 
-        status = status.HTTP_201_CREATED if created else status.HTTP_200_OK
+        status_code = status.HTTP_201_CREATED if created else status.HTTP_200_OK
 
-        return Response(PlayerViews.serialize_player(player), status)
+        return Response(PlayerViews.serialize_player(player), status_code)
 
     def get(self, request, format=None):
         if not isinstance(request.user, Player):
@@ -243,11 +243,12 @@ def answer(request):
     if len(ids) != question.get_nb_choices():
         raise InvalidAnswersCount
 
-    choices = list(player.cards.filter(pk__in=ids))
+    choices = player.cards.filter(pk__in=ids)
 
-    if len(ids) != len(choices):
+    if len(ids) != choices.count():
         raise InvalidAnswers
 
+    choices = list(map(lambda id: choices.get(pk=id), ids))
     answered_question = game_controller.answer(game, choices, player)
 
     return Response(AnsweredQuestionSerializer(answered_question).data)

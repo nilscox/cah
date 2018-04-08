@@ -3,7 +3,8 @@ from api.models import Game, GameTurn
 from .player_serializer import PlayerLightSerializer
 from .question_serializer import QuestionSerializer
 from .answered_question_serializer import \
-    LightAnsweredQuestionSerializer
+    LightAnsweredQuestionSerializer, \
+    PartialAnsweredQuestionSerializer
 
 class GameSerializer(serializers.ModelSerializer):
     """

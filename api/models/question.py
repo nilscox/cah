@@ -13,6 +13,7 @@ class Question(models.Model):
         - blanks: Blank[]
 
     Question methods:
+        - get_nb_choices() -> integer
         - get_filled_text(string) -> string
         - get_split_text() -> (string | None)[]
     """
@@ -23,6 +24,9 @@ class Question(models.Model):
 
     def __str__(self):
         return self.get_filled_text('...')
+
+    def get_nb_choices(self):
+        return max(1, self.blanks.count())
 
     def get_filled_text(self, blank):
         return ' '.join(map(lambda t: t.strip() if t else blank, self.get_split_text()))

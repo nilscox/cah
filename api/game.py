@@ -63,12 +63,14 @@ def answer(game, choices, answered_by):
     answered_question = AnsweredQuestion(game=game, question=question, answered_by=answered_by)
     answered_question.save()
 
+    blanks = question.blanks.order_by('place')
+
     for i in range(len(choices)):
         choice = choices[i]
         blank = None
 
         if question.blanks.count() > 0:
-            blank = question.blanks.all()[i]
+            blank = blanks[i]
 
         answered_question.answers.create(position=blank, choice=choice)
 

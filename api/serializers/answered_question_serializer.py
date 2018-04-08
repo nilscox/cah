@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from api.models import AnsweredQuestion
 from .question_serializer import QuestionSerializer
+from .choice_serializer import ChoiceSerializer
+
 
 class AnsweredQuestionSerializer(serializers.ModelSerializer):
     """
@@ -53,10 +55,11 @@ class LightAnsweredQuestionSerializer(AnsweredQuestionSerializer):
         id: integer,
         text: string,
         split: string[],
+        answers: Choice[],
         answered_by: string,
     }
     """
 
     class Meta:
         model = AnsweredQuestion
-        fields = ('id', 'text', 'split', 'answered_by')
+        fields = ('id', 'text', 'split', 'answers', 'answered_by')

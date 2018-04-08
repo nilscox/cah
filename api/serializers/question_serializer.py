@@ -16,7 +16,7 @@ class QuestionSerializer(serializers.ModelSerializer):
     text = serializers.ReadOnlyField(source='__str__')
     type = serializers.SerializerMethodField()
     split = serializers.ReadOnlyField(source='get_split_text')
-    nb_choices = serializers.SerializerMethodField()
+    nb_choices = serializers.ReadOnlyField(source='get_nb_choices')
 
     class Meta:
         model = Question
@@ -24,6 +24,3 @@ class QuestionSerializer(serializers.ModelSerializer):
 
     def get_type(self, question):
         return "question" if question.blanks.count() == 0 else "fill"
-
-    def get_nb_choices(self, question):
-        return max(1, question.blanks.count())
