@@ -10,13 +10,14 @@ import { SwitchNavigator } from 'react-navigation';
 import { composeWithDevTools } from 'redux-devtools-extension'
 
 import AuthScreen, { reducer as authReducer } from './auth';
-import LobbyScreen from './lobby';
+import LobbyScreen, { reducer as lobbyReducer } from './lobby';
 import GameScreen from './game';
 
 console.disableYellowBox = true;
 
 const reducer = combineReducers({
   auth: authReducer,
+  lobby: lobbyReducer,
 });
 
 const loggerMiddleware = createLogger({

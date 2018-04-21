@@ -1,7 +1,9 @@
+const API_URL = 'http://192.168.0.14:8000';
+
 export default function request(route, opts) {
   let res = null;
 
-  return fetch('http://192.168.0.14:8000' + route, opts)
+  return fetch(API_URL + route, opts)
     .then(r => res = r)
     .then(() => {
       const contentType = res.headers.get('Content-Type');

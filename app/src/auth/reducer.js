@@ -1,7 +1,6 @@
 import { handle } from 'redux-pack';
 import { PLAYER_LOGIN } from './actions';
 
-
 export default function(state = null, action) {
   const handlers = {
     PLAYER_LOGIN: {

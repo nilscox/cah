@@ -1,10 +1,2 @@
-// @flow
-
-import * as React from 'react';
-import { View } from 'react-native';
-
-export default class extends React.Component {
-  render() {
-    return <View />;
-  }
-}
+export default from './LobbyScreen';
+export reducer from './reducer';
