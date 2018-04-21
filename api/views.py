@@ -11,7 +11,12 @@ from api.exceptions import *
 from api.models import Game, Player, AnsweredQuestion
 from api.authentication import PlayerAuthentication
 from api.permissions import IsPlayer, IsConnected
-from api.serializers import GameSerializer, GameTurnSerializer, PlayerLightSerializer, PlayerSerializer, AnsweredQuestionSerializer
+from api.serializers import GameSerializer, \
+    GameTurnSerializer, \
+    GameListItemSerializer, \
+    PlayerLightSerializer, \
+    PlayerSerializer ,\
+    AnsweredQuestionSerializer
 
 
 AVATARS_DIR = os.environ['CAH_AVATARS_DIR']
@@ -76,7 +81,6 @@ def avatar(request):
 
     return Response(serializer.data)
 
-
 class GameViews(views.APIView):
     authentication_classes = [PlayerAuthentication]
     permission_classes = [IsPlayer]
@@ -106,6 +110,13 @@ class GameViews(views.APIView):
         game_controller.init(game)
 
         return Response(game_serializer.data, status=status.HTTP_201_CREATED)
+
+
+@api_view(['GET'])
+def games_list(request):
+    games = Game.objects.all()
+
+    return Response(GameListItemSerializer(games, many=True).data)
 
 
 @api_view(['GET'])

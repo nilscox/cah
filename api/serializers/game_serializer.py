@@ -80,3 +80,18 @@ class GameTurnSerializer(serializers.ModelSerializer):
     class Meta:
         model = GameTurn
         fields = ('number', 'question_master', 'winner', 'question', 'answers')
+
+class GameListItemSerializer(GameSerializer):
+    """
+    GameListItem: {
+        id: integer,
+        lang: string,
+        owner: string,
+        players: Player[],
+        state: string,
+    }
+    """
+
+    class Meta:
+        model = Game
+        fields = ('id', 'lang', 'owner', 'players', 'state')

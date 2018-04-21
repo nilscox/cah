@@ -167,7 +167,31 @@ GameTurn: {
 - question: the question
 - answers: all the answers submitted
 
+```
+GameListItem: {
+    id: integer,
+    lang: string,
+    owner: string,
+    players: Player[],
+    state: string,
+}
+```
+
+- id: the game's id
+- lang: the game's language
+- owner: the owner's nickname
+- players: a list of all the `Player`s who joined this game
+- state: one of `["idle", "started", "finished"]`
+
 #### Routes
+
+```
+GET /api/game/list
+status: 200
+returns: GameListItem[]
+```
+
+Fetch a list of all games
 
 ```
 POST /api/game

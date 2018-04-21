@@ -8,6 +8,7 @@ urlpatterns = [
     path('player', views.PlayerViews.as_view()),
     path('player/avatar', views.avatar),
     path('game', views.GameViews.as_view()),
+    path('game/list', views.games_list),
     path('game/history', views.game_history),
     path('game/join/<int:pk>', views.join_game),
     path('game/leave', views.leave_game),
