@@ -10,7 +10,7 @@ type GameListItemPropsType = {
 };
 
 const GameListItem = (props: GameListItemPropsType) => (
-  <View key={`game-item-${props.game.id}`}>
+  <View>
     <Text>Game {props.game.id}, owner: {props.game.owner}</Text>
   </View>
 );

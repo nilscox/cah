@@ -6,27 +6,28 @@ import type { Action } from '../types/actions';
 import type { Game } from '../types/game';
 import { GAME_LIST } from './actions';
 
-export type LobbyState = {|
+export type State = {|
   loading: boolean,
   gamesList: ?Array<Game>,
 |};
 
-const initialState: LobbyState = {
+const initialState: State = {
   loading: false,
   gamesList: null,
 };
 
-export default function(state: LobbyState = initialState, action: Action) {
+export default function(state: State = initialState, action: Action) {
+  const { type, payload } = action;
+
   const handlers = {
-    GAME_LIST: {
-      success: prevState => ({ ...prevState, gamesList: action.payload && action.payload.body }),
+    [GAME_LIST]: {
+      start: prevState => ({ ...prevState, error: null }),
+      success: prevState => ({ ...prevState, gamesList: payload, error: null }),
+      failure: prevState => ({ ...prevState, gamesList: null, error: payload }),
     },
   };
 
-  const handler = handlers[action.type];
-
-  if (handler)
-    return handle(state, action, handler);
-
-  return state;
+  return handlers[type]
+    ? handle(state, action, handlers[type])
+    : state;
 }

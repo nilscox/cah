@@ -3,12 +3,20 @@
 import * as React from 'react';
 import { View } from 'react-native';
 
-type GamePropsType = {
+import type { NavigationPropsType } from '../types/navigation';
+
+type GameStatePropsType = {
 
 };
 
-export default class extends React.Component<GamePropsType> {
+type GamePropsType =
+  & NavigationPropsType
+  & GameStatePropsType;
+
+class GameScreen extends React.Component<GamePropsType> {
   render() {
     return <View />;
   }
 }
+
+export default GameScreen;

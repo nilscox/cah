@@ -13,8 +13,10 @@ import AuthScreen, { reducer as authReducer } from './auth';
 import LobbyScreen, { reducer as lobbyReducer } from './lobby';
 import GameScreen from './game';
 
-// $FlowFixMe
+/* eslint-disable no-console */
+/* $FlowFixMe */
 console.disableYellowBox = true;
+/* eslint-enable no-console */
 
 const reducer = combineReducers({
   auth: authReducer,
@@ -35,9 +37,9 @@ const store = createStore(reducer, composeWithDevTools(
 ));
 
 const RootNavigator = SwitchNavigator({
-  Auth : AuthScreen,
-  Lobby: LobbyScreen,
-  Game : GameScreen,
+  Auth : { screen: AuthScreen },
+  Lobby: { screen: LobbyScreen },
+  Game : { screen: GameScreen },
 }, {
   initialRouteName: 'Auth',
 });
@@ -48,7 +50,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default () => (
+const App = () => (
   <Provider store={store}>
     <View style={styles.wrapper}>
       <StatusBar hidden={true} />
@@ -56,3 +58,5 @@ export default () => (
     </View>
   </Provider>
 );
+
+export default App;

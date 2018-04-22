@@ -1,6 +1,7 @@
 // @flow
 
-const API_URL = 'http://192.168.0.14:8000';
+// $FlowFixMe
+const API_URL: string = process.env['REACT_APP_API_URL'];
 
 export type RequestPromise = Promise<{
   response: Response,

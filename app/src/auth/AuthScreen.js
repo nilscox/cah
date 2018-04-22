@@ -4,16 +4,16 @@ import * as React from 'react';
 import { StyleSheet, View, Text, TextInput, Button } from 'react-native';
 import { connect } from 'react-redux';
 
-import type { Action } from '../types/actions';
+import type { Dispatch } from '../types/actions';
 import type { NavigationPropsType } from '../types/navigation';
 import { loginPlayer } from './actions';
 
 type DispatchPropsType = {
-  logIn: Function, // string => Action,
+  logIn: string => any,
 };
 
-const mapDispatchToProps = dispatch => ({
-  logIn: (nick) => dispatch(loginPlayer(nick)),
+const mapDispatchToProps: Dispatch => DispatchPropsType = dispatch => ({
+  logIn: nick => dispatch(loginPlayer(nick)),
 });
 
 const styles = StyleSheet.create({
@@ -41,7 +41,9 @@ const styles = StyleSheet.create({
   },
 });
 
-type AuthPropsType = NavigationPropsType & DispatchPropsType;
+type AuthPropsType =
+  & NavigationPropsType
+  & DispatchPropsType;
 
 type AuthStateType = {
   nick: string,

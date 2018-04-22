@@ -3,9 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
+    "babel-eslint": "^8.2.3",
     "babel-preset-airbnb": "^2.4.0",
     "eslint": "^4.19.1",
     "eslint-config-airbnb": "^16.1.0",
+    "eslint-plugin-flowtype": "^2.46.3",
+    "eslint-plugin-import": "^2.11.0",
+    "eslint-plugin-react": "^7.7.0",
+    "eslint-plugin-react-native": "^3.2.1",
     "flow-bin": "0.60",
     "jest-expo": "26.0.0",
     "react-native-scripts": "1.13.1",
@@ -18,7 +23,9 @@
     "eject": "react-native-scripts eject",
     "android": "react-native-scripts android",
     "ios": "react-native-scripts ios",
-    "test": "jest"
+    "test": "jest",
+    "lint": "eslint src",
+    "flow": "flow"
   },
   "jest": {
     "preset": "jest-expo"
@@ -29,7 +36,7 @@
     "react-native": "0.54.0",
     "react-navigation": "^1.5.11",
     "react-redux": "^5.0.7",
-    "redux": "^4.0.0",
+    "redux": "3",
     "redux-logger": "^3.0.6",
     "redux-pack": "^0.1.5"
   }

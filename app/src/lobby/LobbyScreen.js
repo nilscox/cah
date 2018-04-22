@@ -1,11 +1,10 @@
 // @flow
 
 import * as React from 'react';
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
 import { connect } from 'react-redux';
 
-import type { State } from '../types/state';
-import type { Action } from '../types/actions';
+import type { State } from './reducer';
 import type { Game } from '../types/game';
 import { listGames } from './actions';
 import GameListItem from './GameListItem';
@@ -26,7 +25,7 @@ type LobbyStateType = {
   loading: boolean,
 };
 
-const mapStateToProps: State => StatePropsType = ({ lobby }) => ({
+const mapStateToProps: { lobby: State } => StatePropsType = ({ lobby }) => ({
   games: lobby.gamesList,
 });
 
@@ -49,7 +48,7 @@ class LobbyScreen extends React.Component<LobbyPropsType, LobbyStateType> {
 
     return (
       <View>
-        {games && games.map(game => <GameListItem game={game} />)}
+        {games && games.map(game => <GameListItem key={`game-item-${game.id}`} game={game} />)}
       </View>
     );
   }

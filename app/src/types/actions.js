@@ -6,3 +6,5 @@ export type Action = {
   payload?: any,
   meta?: any,
 };
+
+export type Dispatch = Action => any;
