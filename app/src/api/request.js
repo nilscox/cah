@@ -1,21 +1,27 @@
+// @flow
+
 const API_URL = 'http://192.168.0.14:8000';
 
-export default function request(route, opts) {
-  let res = null;
+export type RequestPromise = Promise<{
+  response: Response,
+  body: any,
+}>;
 
+export default function request(route: string, opts?: {}): RequestPromise {
   return fetch(API_URL + route, opts)
-    .then(r => res = r)
-    .then(() => {
+    .then(res => {
       const contentType = res.headers.get('Content-Type');
+      let promise = Promise.resolve();
 
-      if (!contentType)
-        return;
+      if (contentType) {
+        if (contentType.match(/^application\/json/))
+          promise = res.json();
 
-      if (contentType.match(/^application\/json/))
-        return res.json();
+        if (contentType.match(/^text\//))
+          promise = res.text();
+      }
 
-      if (contentType.match(/^text\//))
-        return res.text();
-    })
-    .then(body => ({ response: res, body }));
+      return promise
+        .then((body: any) => ({ response: res, body }));
+    });
 }

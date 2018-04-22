@@ -13,6 +13,7 @@ import AuthScreen, { reducer as authReducer } from './auth';
 import LobbyScreen, { reducer as lobbyReducer } from './lobby';
 import GameScreen from './game';
 
+// $FlowFixMe
 console.disableYellowBox = true;
 
 const reducer = combineReducers({

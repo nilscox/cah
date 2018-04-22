@@ -4,7 +4,13 @@ import * as React from 'react';
 import { StyleSheet, View, Text, TextInput, Button } from 'react-native';
 import { connect } from 'react-redux';
 
+import type { Action } from '../types/actions';
+import type { NavigationPropsType } from '../types/navigation';
 import { loginPlayer } from './actions';
+
+type DispatchPropsType = {
+  logIn: Function, // string => Action,
+};
 
 const mapDispatchToProps = dispatch => ({
   logIn: (nick) => dispatch(loginPlayer(nick)),
@@ -35,7 +41,13 @@ const styles = StyleSheet.create({
   },
 });
 
-class AuthScreen extends React.Component {
+type AuthPropsType = NavigationPropsType & DispatchPropsType;
+
+type AuthStateType = {
+  nick: string,
+};
+
+class AuthScreen extends React.Component<AuthPropsType, AuthStateType> {
   state = {
     nick: '',
   };

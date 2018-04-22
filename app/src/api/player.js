@@ -1,6 +1,9 @@
-import request from './request';
+// @flow
 
-export const login = (nick) => {
+import request from './request';
+import type { RequestPromise } from './request';
+
+export const login = (nick: string): RequestPromise => {
   const payload = { nick };
 
   return request('/api/player', {

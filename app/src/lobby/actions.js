@@ -1,3 +1,5 @@
+// @flow
+
 import { game } from '../api';
 
 export const GAME_LIST = 'GAME_LIST';
