@@ -3,10 +3,7 @@
 // $FlowFixMe
 const API_URL: string = process.env.REACT_APP_API_URL;
 
-export type RequestPromise = Promise<{
-  response: Response,
-  body: any,
-}>;
+export type RequestPromise = Promise<any>;
 
 export default function request(route: string, opts?: {}): RequestPromise {
   return fetch(API_URL + route, opts)

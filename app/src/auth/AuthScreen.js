@@ -4,15 +4,36 @@ import * as React from 'react';
 import { StyleSheet, View, Text, TextInput, Button } from 'react-native';
 import { connect } from 'react-redux';
 
-import type { Dispatch } from '../types/actions';
 import type { NavigationPropsType } from '../types/navigation';
-import { loginPlayer } from './actions';
+import type { Dispatch } from '../types/actions';
+import type { Player } from '../types/player';
+import type { State } from './reducer';
+import { fetchPlayer, loginPlayer } from './actions';
+
+type StatePropsType = {
+  player: ?Player,
+};
 
 type DispatchPropsType = {
+  fetchPlayer: () => any,
   logIn: string => any,
 };
 
+type AuthPropsType =
+  & StatePropsType
+  & NavigationPropsType
+  & DispatchPropsType;
+
+type AuthStateType = {
+  nick: string,
+};
+
+const mapStateToProps: ({ auth: State }) => StatePropsType = ({ auth }) => ({
+  player: auth.player,
+});
+
 const mapDispatchToProps: Dispatch => DispatchPropsType = dispatch => ({
+  fetchPlayer: () => dispatch(fetchPlayer()),
   logIn: nick => dispatch(loginPlayer(nick)),
 });
 
@@ -41,28 +62,30 @@ const styles = StyleSheet.create({
   },
 });
 
-type AuthPropsType =
-  & NavigationPropsType
-  & DispatchPropsType;
-
-type AuthStateType = {
-  nick: string,
-};
-
 class AuthScreen extends React.Component<AuthPropsType, AuthStateType> {
   state = {
     nick: '',
   };
 
   onLogIn = () => {
-    const { navigation, logIn } = this.props;
+    const { logIn } = this.props;
     const { nick } = this.state;
 
-    logIn(nick.trim())
-      .then(() => navigation.navigate('Lobby'));
+    logIn(nick.trim());
   };
 
+  componentDidMount() {
+    const { fetchPlayer } = this.props;
+
+    fetchPlayer();
+  }
+
   render() {
+    const { player, navigation } = this.props;
+
+    if (player)
+      navigation.navigate('Lobby');
+
     return (
       <View style={styles.page}>
 
@@ -88,4 +111,4 @@ class AuthScreen extends React.Component<AuthPropsType, AuthStateType> {
   }
 }
 
-export default connect(null, mapDispatchToProps)(AuthScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(AuthScreen);

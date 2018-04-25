@@ -7,12 +7,12 @@ import type { Game } from '../types/game';
 import { GAME_LIST } from './actions';
 
 export type State = {|
-  loading: boolean,
+  error: ?Error,
   gamesList: ?Array<Game>,
 |};
 
 const initialState: State = {
-  loading: false,
+  error: null,
   gamesList: null,
 };
 
