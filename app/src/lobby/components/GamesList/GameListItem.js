@@ -3,15 +3,15 @@
 import * as React from 'react';
 import { View, Text } from 'react-native';
 
-import type { Game } from '../types/game';
+import type { Game } from '../../../types/game';
 
 type GameListItemPropsType = {
   game: Game,
 };
 
-const GameListItem = (props: GameListItemPropsType) => (
+const GameListItem = ({ game }: GameListItemPropsType) => (
   <View>
-    <Text>Game {props.game.id}, owner: {props.game.owner}</Text>
+    <Text>Game {game.id}, owner: {game.owner}</Text>
   </View>
 );
 

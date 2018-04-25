@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import type { State } from './reducer';
 import type { Game } from '../types/game';
 import { listGames } from './actions';
-import GameListItem from './GameListItem';
+import GamesList from './components/GamesList';
 
 type StatePropsType = {
   games: ?Array<Game>,
@@ -48,7 +48,7 @@ class LobbyScreen extends React.Component<LobbyPropsType, LobbyStateType> {
 
     return (
       <View>
-        {games && games.map(game => <GameListItem key={`game-item-${game.id}`} game={game} />)}
+        { games && <GamesList games={games} /> }
       </View>
     );
   }
