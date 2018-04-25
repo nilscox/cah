@@ -27,7 +27,5 @@
       "onlyFilesWithFlowAnnotation": true
     }
   },
-  "rules": {
-    "react-native/no-color-literals": 0
-  }
+  "rules": {}
 }
