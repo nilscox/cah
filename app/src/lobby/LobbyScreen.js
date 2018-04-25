@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react';
-import { View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 
 import type { State } from './reducer';
@@ -33,6 +33,14 @@ const mapDispatchToProps: Function => DispatchPropsType = (dispatch) => ({
   listGames: () => dispatch(listGames()),
 });
 
+const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
+
 class LobbyScreen extends React.Component<LobbyPropsType, LobbyStateType> {
   state = {
     loading: true,
@@ -47,7 +55,7 @@ class LobbyScreen extends React.Component<LobbyPropsType, LobbyStateType> {
     const { games } = this.props;
 
     return (
-      <View>
+      <View style={styles.screen}>
         { games && <GamesList games={games} /> }
       </View>
     );
