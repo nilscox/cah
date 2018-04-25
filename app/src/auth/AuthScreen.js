@@ -75,17 +75,17 @@ class AuthScreen extends React.Component<AuthPropsType, AuthStateType> {
   };
 
   componentDidMount() {
-    const { fetchPlayer } = this.props;
-
-    fetchPlayer();
+    this.props.fetchPlayer();
   }
 
-  render() {
+  componentDidUpdate() {
     const { player, navigation } = this.props;
 
     if (player)
       navigation.navigate('Lobby');
+  }
 
+  render() {
     return (
       <View style={styles.page}>
 
