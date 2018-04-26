@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { connect } from 'react-redux';
+/* eslint-disable-next-line import/named */
 import { Svg } from 'expo';
 
 import type { Game } from '~/types/game';
