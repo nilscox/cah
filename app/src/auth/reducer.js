@@ -2,8 +2,8 @@
 
 import { handle } from 'redux-pack';
 
-import type { Action } from '../types/actions';
-import type { Player } from '../types/player';
+import type { Action } from '~/types/actions';
+import type { Player } from '~/types/player';
 import { PLAYER_FETCH, PLAYER_LOGIN } from './actions';
 
 export type State = {

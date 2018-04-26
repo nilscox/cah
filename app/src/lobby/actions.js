@@ -1,6 +1,6 @@
 // @flow
 
-import { game } from '../api';
+import { game } from '~/api';
 
 export const GAME_LIST = 'GAME_LIST';
 export const listGames = () => ({

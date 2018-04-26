@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { TouchableOpacity, Text } from 'react-native';
 
-import type { StyleProp } from '../../types/style';
+import type { StyleProp } from '~/types/style';
 import { styles, variantBig, variantSmall } from './Button.styles';
 
 type ButtonProps = {

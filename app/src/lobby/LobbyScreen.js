@@ -5,8 +5,8 @@ import { StyleSheet, View, Text } from 'react-native';
 import { connect } from 'react-redux';
 import { Svg } from 'expo';
 
+import type { Game } from '~/types/game';
 import type { State } from './reducer';
-import type { Game } from '../types/game';
 import { listGames } from './actions';
 import GamesList from './components/GamesList';
 import CreateGameButton from './components/CreateGameButton';

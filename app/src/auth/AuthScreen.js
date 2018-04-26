@@ -4,9 +4,9 @@ import * as React from 'react';
 import { StyleSheet, View, Text, TextInput, Button } from 'react-native';
 import { connect } from 'react-redux';
 
-import type { NavigationPropsType } from '../types/navigation';
-import type { Dispatch } from '../types/actions';
-import type { Player } from '../types/player';
+import type { NavigationPropsType } from '~/types/navigation';
+import type { Dispatch } from '~/types/actions';
+import type { Player } from '~/types/player';
 import type { State } from './reducer';
 import { fetchPlayer, loginPlayer } from './actions';
 

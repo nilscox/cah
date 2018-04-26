@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 
-import type { Game } from '../../../types/game';
+import type { Game } from '~/types/game';
 
 type GameListItemPropsType = {
   game: Game,

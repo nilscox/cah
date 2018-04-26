@@ -2,8 +2,8 @@
 
 import { handle } from 'redux-pack';
 
-import type { Action } from '../types/actions';
-import type { Game } from '../types/game';
+import type { Action } from '~/types/actions';
+import type { Game } from '~/types/game';
 import { GAME_LIST } from './actions';
 
 export type State = {|
