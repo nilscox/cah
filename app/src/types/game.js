@@ -1,9 +1,20 @@
 // @flow
 
 import type { Player } from './player';
+import type { Question } from './question';
+
+type Proposition = {
+
+};
 
 export type Game = {
   id: number,
+  lang: string,
   owner: string,
-  players: Player[],
+  play_state: string,
+  players: Array<Player>,
+  propositions: Array<Proposition>,
+  question: Question,
+  question_master: string,
+  state: string,
 };

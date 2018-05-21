@@ -6,12 +6,12 @@ import { createStore, combineReducers, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 import { middleware as reduxPackMiddleware } from 'redux-pack';
 import { createLogger } from 'redux-logger';
-import { SwitchNavigator } from 'react-navigation';
+import { createSwitchNavigator } from 'react-navigation';
 import { composeWithDevTools } from 'redux-devtools-extension'
 
 import AuthScreen, { reducer as authReducer } from './auth';
 import LobbyScreen, { reducer as lobbyReducer } from './lobby';
-import GameScreen from './game';
+import GameScreen, { reducer as gameReducer } from './game';
 
 /* eslint-disable no-console */
 /* $FlowFixMe */
@@ -21,6 +21,7 @@ console.disableYellowBox = true;
 const reducer = combineReducers({
   auth: authReducer,
   lobby: lobbyReducer,
+  game: gameReducer,
 });
 
 const loggerMiddleware = createLogger({
@@ -36,7 +37,7 @@ const store = createStore(reducer, composeWithDevTools(
   ),
 ));
 
-const RootNavigator = SwitchNavigator({
+const RootNavigator = createSwitchNavigator({
   Auth : { screen: AuthScreen },
   Lobby: { screen: LobbyScreen },
   Game : { screen: GameScreen },

@@ -8,6 +8,7 @@ import GameListItem from './GameListItem';
 
 type GamesListProps = {
   games: Array<Game>,
+  joinGame: Function,
 };
 
 const styles = StyleSheet.create({
@@ -19,13 +20,13 @@ const styles = StyleSheet.create({
   },
 });
 
-const GamesList = ({ games }: GamesListProps) => (
+const GamesList = ({ games, joinGame }: GamesListProps) => (
   <View>
 
     <Text style={styles.joinGameText}>Join a game</Text>
 
     { games.map((game, n) => (
-      <GameListItem key={`game-${game.id}`} game={game} nth={n} />
+      <GameListItem key={`game-${game.id}`} game={game} nth={n} joinGame={joinGame} />
     )) }
 
   </View>

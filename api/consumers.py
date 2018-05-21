@@ -38,6 +38,7 @@ def ws_message(message):
     if not data["action"] in actions:
         raise RuntimeError("Unknown action " + data["action"])
 
+    print(data)
     action = actions[data["action"]]
 
     try:

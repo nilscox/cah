@@ -7,22 +7,27 @@ import { connect } from 'react-redux';
 import { Svg } from 'expo';
 
 import type { Game } from '~/types/game';
+import type { NavigationPropsType } from '~/types/navigation';
 import type { State } from './reducer';
-import { listGames } from './actions';
+import { listGames, fetchGame, joinGame } from './actions';
 import GamesList from './components/GamesList';
 import CreateGameButton from './components/CreateGameButton';
 
 type StatePropsType = {
   games: ?Array<Game>,
+  currentGame: ?Game,
 };
 
 type DispatchPropsType = {
   listGames: Function,
+  fetchGame: Function,
+  joinGame: Function,
 };
 
 type LobbyPropsType =
   & StatePropsType
-  & DispatchPropsType;
+  & DispatchPropsType
+  & NavigationPropsType;
 
 type LobbyStateType = {
   loading: boolean,
@@ -30,10 +35,13 @@ type LobbyStateType = {
 
 const mapStateToProps: { lobby: State } => StatePropsType = ({ lobby }) => ({
   games: lobby.gamesList,
+  currentGame: lobby.currentGame,
 });
 
 const mapDispatchToProps: Function => DispatchPropsType = (dispatch) => ({
   listGames: () => dispatch(listGames()),
+  fetchGame: () => dispatch(fetchGame()),
+  joinGame: (id: number) => dispatch(joinGame(id)),
 });
 
 const styles = StyleSheet.create({
@@ -68,11 +76,19 @@ class LobbyScreen extends React.Component<LobbyPropsType, LobbyStateType> {
 
   componentDidMount() {
     this.props.listGames()
-      .then(() => this.setState({ loading: false }))
+      .then(() => this.props.fetchGame());
+      // .then(() => this.setState({ loading: false }));
+  }
+
+  componentDidUpdate() {
+    const { currentGame, navigation } = this.props;
+
+    if (currentGame)
+      navigation.navigate('Game', { gameId: currentGame.id });
   }
 
   render() {
-    const { games } = this.props;
+    const { games, joinGame } = this.props;
 
     const separatorLine = (
       <Svg height="4" width="120">
@@ -89,7 +105,7 @@ class LobbyScreen extends React.Component<LobbyPropsType, LobbyStateType> {
       <View style={styles.screen}>
 
         <View style={styles.gamesListView}>
-          { games && <GamesList games={games} /> }
+          { games && <GamesList games={games} joinGame={joinGame} /> }
         </View>
 
         <View style={styles.orView}>
