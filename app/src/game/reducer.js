@@ -4,7 +4,7 @@ import { handle } from 'redux-pack';
 
 import type { Action } from '~/types/actions';
 import type { Game } from '~/types/game';
-import { GAME_FETCH } from './actions';
+import { GAME_FETCH } from '~/actions';
 
 export type State = {
   error: ?Error,

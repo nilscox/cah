@@ -7,8 +7,8 @@ import { connect } from 'react-redux';
 import type { NavigationPropsType } from '~/types/navigation';
 import type { Game as GameType } from '~/types/game';
 import type { Player } from '~/types/player';
+import { fetchGame } from '~/actions';
 import styles from './Game.styles';
-import { fetchGame } from './actions';
 import QuestionCard from './QuestionCard';
 import ChoiceCard from './ChoiceCard';
 
@@ -71,6 +71,7 @@ class Game extends React.Component<GamePropsType> {
 
         <View style={styles.choicesView}>
           <FlatList
+            keyExtractor={(card) => `card-${card.id}`}
             data={player.cards}
             renderItem={({ item }) => <ChoiceCard choice={item} />}
           />

@@ -7,8 +7,8 @@ import { connect } from 'react-redux';
 import type { NavigationPropsType } from '~/types/navigation';
 import type { Dispatch } from '~/types/actions';
 import type { Player } from '~/types/player';
+import { fetchPlayer, loginPlayer, wsOpen, wsMessage, wsError, wsClose } from '~/actions';
 import type { State } from './reducer';
-import { fetchPlayer, loginPlayer, wsOpen, wsMessage, wsError, wsClose } from './actions';
 
 type StatePropsType = {
   player: ?Player,

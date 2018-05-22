@@ -1,6 +1,6 @@
 // @flow
 
-import { player } from '~/api';
+import { player } from './api';
 import type { Action } from '~/types/actions';
 
 export const PLAYER_FETCH = 'PLAYER_FETCH';

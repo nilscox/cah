@@ -8,8 +8,8 @@ import { Svg } from 'expo';
 
 import type { Game } from '~/types/game';
 import type { NavigationPropsType } from '~/types/navigation';
+import { listGames, fetchGame, joinGame } from '~/actions';
 import type { State } from './reducer';
-import { listGames, fetchGame, joinGame } from './actions';
 import GamesList from './components/GamesList';
 import CreateGameButton from './components/CreateGameButton';
 
