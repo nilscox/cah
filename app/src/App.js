@@ -2,27 +2,25 @@
 
 import * as React from 'react';
 import { StyleSheet, View, StatusBar } from 'react-native';
-import { createStore, combineReducers, applyMiddleware } from 'redux';
+import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 import { middleware as reduxPackMiddleware } from 'redux-pack';
 import { createLogger } from 'redux-logger';
 import { createSwitchNavigator } from 'react-navigation';
 import { composeWithDevTools } from 'redux-devtools-extension'
 
-import AuthScreen, { reducer as authReducer } from './auth';
-import LobbyScreen, { reducer as lobbyReducer } from './lobby';
-import GameScreen, { reducer as gameReducer } from './game';
+import initialState from './state';
+
+import AuthScreen from './auth';
+import LobbyScreen from './lobby';
+import GameScreen from './game';
+
+import rootReducer from '~/redux/reducers';
 
 /* eslint-disable no-console */
 /* $FlowFixMe */
 console.disableYellowBox = true;
 /* eslint-enable no-console */
-
-const reducer = combineReducers({
-  auth: authReducer,
-  lobby: lobbyReducer,
-  game: gameReducer,
-});
 
 const loggerMiddleware = createLogger({
   collapsed: true,
@@ -30,7 +28,7 @@ const loggerMiddleware = createLogger({
   diff: true,
 });
 
-const store = createStore(reducer, composeWithDevTools(
+const store = createStore(rootReducer, initialState, composeWithDevTools(
   applyMiddleware(
     reduxPackMiddleware,
     loggerMiddleware,
@@ -67,7 +65,7 @@ const createWebSocket = (store) => {
 store.subscribe(() => {
   const { player, status } = store.getState();
 
-  if (player && status.websocket === 'close')
+  if (player && status.websocket === 'closed')
     createWebSocket(store);
 });
 

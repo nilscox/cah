@@ -26,9 +26,9 @@ type GamePropsType =
   & GameStatePropsType
   & GameDispatchPropsType;
 
-const mapStateToProps = ({ auth, game }) => ({
-  player: auth.player,
-  game: game.game,
+const mapStateToProps = ({ player, game }) => ({
+  player,
+  game,
 });
 
 const mapDispatchToProps = (dispatch) => ({

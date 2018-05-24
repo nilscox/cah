@@ -9,7 +9,6 @@ import { Svg } from 'expo';
 import type { Game } from '~/redux/state/game';
 import type { NavigationPropsType } from '~/types/navigation';
 import { listGames, fetchGame, joinGame } from '~/redux/actions';
-import type { State } from './reducer';
 import GamesList from './components/GamesList';
 import CreateGameButton from './components/CreateGameButton';
 
@@ -33,9 +32,9 @@ type LobbyStateType = {
   loading: boolean,
 };
 
-const mapStateToProps: { lobby: State } => StatePropsType = ({ lobby }) => ({
-  games: lobby.gamesList,
-  currentGame: lobby.currentGame,
+const mapStateToProps = ({ games, game }) => ({
+  games,
+  currentGame: game,
 });
 
 const mapDispatchToProps: Function => DispatchPropsType = (dispatch) => ({
@@ -100,6 +99,8 @@ class LobbyScreen extends React.Component<LobbyPropsType, LobbyStateType> {
         />
       </Svg>
     );
+
+    console.log(games);
 
     return (
       <View style={styles.screen}>

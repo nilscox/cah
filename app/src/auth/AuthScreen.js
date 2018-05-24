@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 
 import type { NavigationPropsType } from '~/types/navigation';
 import type { Player } from '~/redux/state/player';
-import type { State } from './reducer';
 import { fetchPlayer, loginPlayer } from '~/redux/actions';
 
 type StatePropsType = {
@@ -31,8 +30,8 @@ type AuthStateType = {
   nick: string,
 };
 
-const mapStateToProps: ({ auth: State }) => StatePropsType = ({ auth }) => ({
-  player: auth.player,
+const mapStateToProps = ({ player }) => ({
+  player: player,
 });
 
 const mapDispatchToProps: Function => DispatchPropsType = dispatch => ({
