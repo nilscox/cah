@@ -100,8 +100,6 @@ class LobbyScreen extends React.Component<LobbyPropsType, LobbyStateType> {
       </Svg>
     );
 
-    console.log(games);
-
     return (
       <View style={styles.screen}>
 

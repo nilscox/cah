@@ -14,7 +14,6 @@ export const player = {
     return request('/api/player', {
       method: 'POST',
       headers: {
-        'Accept': 'application/json',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(payload),
@@ -34,7 +33,21 @@ export const game = {
   },
 
   create: () => {
+    const payload = {
+      lang: 'fr',
+    };
+
     return request(`/api/game`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+  },
+
+  start: () => {
+    return request(`/api/game/start`, {
       method: 'POST',
     });
   },

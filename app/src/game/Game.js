@@ -7,8 +7,9 @@ import { connect } from 'react-redux';
 import type { NavigationPropsType } from '~/types/navigation';
 import type { Game as GameType } from '~/redux/state/game';
 import type { Player } from '~/redux/state/player';
-import { fetchGame } from '~/redux/actions';
+import { fetchGame, startGame } from '~/redux/actions';
 import styles from './Game.styles';
+import StartGameButton from './StartGameButton';
 import QuestionCard from './QuestionCard';
 import ChoiceCard from './ChoiceCard';
 
@@ -33,6 +34,7 @@ const mapStateToProps = ({ player, game }) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   fetchGame: () => dispatch(fetchGame()),
+  startGame: () => dispatch(startGame()),
 });
 
 class Game extends React.Component<GamePropsType> {
@@ -50,7 +52,13 @@ class Game extends React.Component<GamePropsType> {
   };
 
   componentDidMount() {
-    this.props.fetchGame();
+    const { navigation } = this.props;
+
+    this.props.fetchGame()
+      .then(() => {
+        if (this.props.game)
+          navigation.navigate('Game');
+      });
   }
 
   render() {
@@ -60,7 +68,7 @@ class Game extends React.Component<GamePropsType> {
       return <View><Text>Loading...</Text></View>;
 
     if (game.state === 'idle')
-      return <View><Text>Waiting for the game to start...</Text></View>;
+      return this.renderGameIdle();
 
     return (
       <View style={styles.wrapper}>
@@ -79,6 +87,15 @@ class Game extends React.Component<GamePropsType> {
 
       </View>
     );
+  }
+
+  renderGameIdle() {
+    const { player, game, startGame } = this.props;
+
+    if (player.nick === game.owner)
+      return <StartGameButton startGame={startGame} />;
+    else
+      return <View><Text>Waiting for the game to start...</Text></View>
   }
 }
 

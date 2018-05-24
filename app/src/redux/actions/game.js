@@ -20,6 +20,12 @@ export const createGame = () => ({
   promise: game.create(),
 });
 
+export const START_GAME = 'START_GAME';
+export const startGame = () => ({
+  type: START_GAME,
+  promise: game.start(),
+});
+
 export const GAME_JOIN = 'GAME_JOIN';
 export const joinGame = (id: number) => ({
   type: GAME_JOIN,
