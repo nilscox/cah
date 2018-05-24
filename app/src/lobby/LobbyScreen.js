@@ -6,9 +6,9 @@ import { connect } from 'react-redux';
 /* eslint-disable-next-line import/named */
 import { Svg } from 'expo';
 
-import type { Game } from '~/types/game';
+import type { Game } from '~/redux/state/game';
 import type { NavigationPropsType } from '~/types/navigation';
-import { listGames, fetchGame, joinGame } from '~/actions';
+import { listGames, fetchGame, joinGame } from '~/redux/actions';
 import type { State } from './reducer';
 import GamesList from './components/GamesList';
 import CreateGameButton from './components/CreateGameButton';

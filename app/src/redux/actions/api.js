@@ -1,15 +1,14 @@
 // @flow
 
 import request from './request';
-import type { RequestPromise } from './request';
 
 export const player = {
 
-  fetch: (): RequestPromise => {
+  fetch: () => {
     return request('/api/player');
   },
 
-  login: (nick: string): RequestPromise => {
+  login: (nick: string) => {
     const payload = { nick };
 
     return request('/api/player', {
@@ -26,21 +25,21 @@ export const player = {
 
 export const game = {
 
-  list: (): RequestPromise => {
+  list: () => {
     return request('/api/game/list');
   },
 
-  fetch: (): RequestPromise => {
+  fetch: () => {
     return request('/api/game');
   },
 
-  create: (): RequestPromise => {
+  create: () => {
     return request(`/api/game`, {
       method: 'POST',
     });
   },
 
-  join: (id: number): RequestPromise => {
+  join: (id: number) => {
     return request(`/api/game/join/${id}`, {
       method: 'POST',
     });

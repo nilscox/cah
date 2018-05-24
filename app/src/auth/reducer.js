@@ -2,9 +2,8 @@
 
 import { handle } from 'redux-pack';
 
-import type { Action } from '~/types/actions';
 import type { Player } from '~/types/player';
-import { PLAYER_FETCH, PLAYER_LOGIN } from '~/actions';
+import { PLAYER_FETCH, PLAYER_LOGIN } from '~/redux/actions';
 
 export type State = {
   player: ?Player,
@@ -15,7 +14,7 @@ const initialValue = {
   player: null,
 };
 
-export default (state: State = initialValue, action: Action): State => {
+export default (state: State = initialValue, action: any): State => {
   const { type, payload } = action;
 
   const handlers = {

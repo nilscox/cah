@@ -3,9 +3,7 @@
 // $FlowFixMe
 const API_URL: string = process.env.REACT_APP_API_URL;
 
-export type RequestPromise = Promise<any>;
-
-export default function request(route: string, opts?: {}): RequestPromise {
+export default function request(route: string, opts?: {}) {
   return fetch(API_URL + route, opts)
     .then((res: Response) => {
       const contentType = res.headers.get('Content-Type');

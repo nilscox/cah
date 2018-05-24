@@ -5,10 +5,9 @@ import { StyleSheet, View, Text, TextInput, Button } from 'react-native';
 import { connect } from 'react-redux';
 
 import type { NavigationPropsType } from '~/types/navigation';
-import type { Dispatch } from '~/types/actions';
-import type { Player } from '~/types/player';
-import { fetchPlayer, loginPlayer, wsOpen, wsMessage, wsError, wsClose } from '~/actions';
+import type { Player } from '~/redux/state/player';
 import type { State } from './reducer';
+import { fetchPlayer, loginPlayer } from '~/redux/actions';
 
 type StatePropsType = {
   player: ?Player,
@@ -36,13 +35,9 @@ const mapStateToProps: ({ auth: State }) => StatePropsType = ({ auth }) => ({
   player: auth.player,
 });
 
-const mapDispatchToProps: Dispatch => DispatchPropsType = dispatch => ({
+const mapDispatchToProps: Function => DispatchPropsType = dispatch => ({
   fetchPlayer: () => dispatch(fetchPlayer()),
   logIn: nick => dispatch(loginPlayer(nick)),
-  wsOpen: () => dispatch(wsOpen()),
-  wsMessage: (e) => dispatch(wsMessage(e)),
-  wsError: (e) => dispatch(wsError(e)),
-  wsClose: (e) => dispatch(wsClose(e)),
 });
 
 const styles = StyleSheet.create({
@@ -71,8 +66,6 @@ const styles = StyleSheet.create({
 });
 
 class AuthScreen extends React.Component<AuthPropsType, AuthStateType> {
-  socket: any;
-
   state = {
     nick: '',
   };
@@ -84,51 +77,14 @@ class AuthScreen extends React.Component<AuthPropsType, AuthStateType> {
     logIn(nick.trim());
   };
 
-  constructor(props) {
-    super(props);
-
-    this.socket = null;
-  }
-
   componentDidMount() {
-    this.props.fetchPlayer();
-  }
+    const { navigation } = this.props;
 
-  componentDidUpdate() {
-    const { player } = this.props;
-
-    if (player)
-      this.connectWS();
-  }
-
-  connectWS() {
-    const { wsOpen, wsMessage, wsError, wsClose, navigation } = this.props;
-
-    this.socket = new WebSocket('ws://192.168.0.18:8000');
-
-    this.socket.onopen = () => {
-      wsOpen();
-      this.socket.send('{"action":"connected","nick":"Nils"}');
-
-      setTimeout(() => {
-        navigation.navigate('Lobby');
-      }, 200);
-    };
-
-    this.socket.onmessage = (e: any) => {
-      console.log('ws message', e);
-      wsMessage(e);
-    };
-
-    this.socket.onerror = (e: any) => {
-      console.log('ws error', e);
-      wsError(e);
-    };
-
-    this.socket.onclose = (e: any) => {
-      console.log('ws close', e);
-      wsClose(e);
-    };
+    this.props.fetchPlayer()
+      .then(() => {
+        if (this.props.player)
+          navigation.navigate('Lobby');
+      });
   }
 
   render() {

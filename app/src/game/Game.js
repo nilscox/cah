@@ -5,9 +5,9 @@ import { View, Button, Text, FlatList } from 'react-native';
 import { connect } from 'react-redux';
 
 import type { NavigationPropsType } from '~/types/navigation';
-import type { Game as GameType } from '~/types/game';
-import type { Player } from '~/types/player';
-import { fetchGame } from '~/actions';
+import type { Game as GameType } from '~/redux/state/game';
+import type { Player } from '~/redux/state/player';
+import { fetchGame } from '~/redux/actions';
 import styles from './Game.styles';
 import QuestionCard from './QuestionCard';
 import ChoiceCard from './ChoiceCard';

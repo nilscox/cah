@@ -4,7 +4,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 
 import Button from '~/components/Button';
-import { createGame } from '~/actions';
+import { createGame } from '~/redux/actions';
 
 type CreateGameButtonProps = {
   createGame: Function,

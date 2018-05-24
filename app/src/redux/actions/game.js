@@ -1,7 +1,6 @@
 // @flow
 
 import { game } from './api';
-import type { Action } from '~/types/actions';
 
 export const GAMES_LIST = 'GAMES_LIST';
 export const listGames = () => ({
@@ -10,7 +9,7 @@ export const listGames = () => ({
 });
 
 export const GAME_FETCH = 'GAME_FETCH';
-export const fetchGame = (): Action => ({
+export const fetchGame = () => ({
   type: GAME_FETCH,
   promise: game.fetch(),
 });
@@ -22,7 +21,7 @@ export const createGame = () => ({
 });
 
 export const GAME_JOIN = 'GAME_JOIN';
-export const joinGame = (id: number): Action => ({
+export const joinGame = (id: number) => ({
   type: GAME_JOIN,
   promise: game.join(id),
 });

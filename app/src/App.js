@@ -37,6 +37,40 @@ const store = createStore(reducer, composeWithDevTools(
   ),
 ));
 
+const createWebSocket = (store) => {
+  const socket = new WebSocket('ws://192.168.0.18:8000');
+
+  socket.onopen = () => store.disatch({
+    type: 'WS_OPEN',
+    socket,
+  });
+
+  socket.onmessage = (event: any) => store.disatch({
+    type: 'WS_MESSAGE',
+    socket,
+    event,
+  });
+
+  socket.onerror = (error: any) => ({
+    type: 'WS_ERROR',
+    socket,
+    error,
+  });
+
+  socket.onclose = (event: any) => ({
+    type: 'WS_CLOSE',
+    socket,
+    event,
+  });
+};
+
+store.subscribe(() => {
+  const { player, status } = store.getState();
+
+  if (player && status.websocket === 'close')
+    createWebSocket(store);
+});
+
 const RootNavigator = createSwitchNavigator({
   Auth : { screen: AuthScreen },
   Lobby: { screen: LobbyScreen },
