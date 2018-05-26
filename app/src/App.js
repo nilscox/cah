@@ -4,6 +4,7 @@ import * as React from 'react';
 import { StyleSheet, View, StatusBar } from 'react-native';
 import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
+import thunkMiddleware from 'redux-thunk';
 import { middleware as reduxPackMiddleware } from 'redux-pack';
 import { createLogger } from 'redux-logger';
 import { createSwitchNavigator } from 'react-navigation';
@@ -15,6 +16,7 @@ import AuthScreen from './auth';
 import LobbyScreen from './lobby';
 import GameScreen from './game';
 
+import { initialization } from '~/redux/actions';
 import rootReducer from '~/redux/reducers';
 
 /* eslint-disable no-console */
@@ -30,6 +32,7 @@ const loggerMiddleware = createLogger({
 
 const store = createStore(rootReducer, initialState, composeWithDevTools(
   applyMiddleware(
+    thunkMiddleware,
     reduxPackMiddleware,
     loggerMiddleware,
   ),
@@ -38,36 +41,42 @@ const store = createStore(rootReducer, initialState, composeWithDevTools(
 const createWebSocket = (store) => {
   const socket = new WebSocket('ws://192.168.0.18:8000');
 
-  socket.onopen = () => store.disatch({
+  socket.onopen = () => store.dispatch({
     type: 'WS_OPEN',
     socket,
   });
 
-  socket.onmessage = (event: any) => store.disatch({
+  socket.onmessage = (event: any) => store.dispatch({
     type: 'WS_MESSAGE',
     socket,
     event,
   });
 
-  socket.onerror = (error: any) => ({
+  socket.onerror = (error: any) => store.dispatch({
     type: 'WS_ERROR',
     socket,
     error,
   });
 
-  socket.onclose = (event: any) => ({
+  socket.onclose = (event: any) => store.dispatch({
     type: 'WS_CLOSE',
     socket,
     event,
   });
 };
 
-store.subscribe(() => {
-  const { player, status } = store.getState();
+const init = (store) => {
+  store.subscribe(() => {
+    const { player, status } = store.getState();
 
-  if (player && status.websocket === 'closed')
-    createWebSocket(store);
-});
+    if (player && status.api == 'up' && status.websocket === 'closed')
+      createWebSocket(store);
+  });
+
+  store.dispatch(initialization());
+};
+
+init(store);
 
 const RootNavigator = createSwitchNavigator({
   Auth : { screen: AuthScreen },

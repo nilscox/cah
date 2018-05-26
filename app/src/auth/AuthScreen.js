@@ -13,12 +13,7 @@ type StatePropsType = {
 };
 
 type DispatchPropsType = {
-  fetchPlayer: () => any,
   logIn: string => any,
-  wsOpen: () => any,
-  wsMessage: (any) => any,
-  wsError: (any) => any,
-  wsClose: (any) => any,
 };
 
 type AuthPropsType =
@@ -35,7 +30,6 @@ const mapStateToProps = ({ player }) => ({
 });
 
 const mapDispatchToProps: Function => DispatchPropsType = dispatch => ({
-  fetchPlayer: () => dispatch(fetchPlayer()),
   logIn: nick => dispatch(loginPlayer(nick)),
 });
 
@@ -76,14 +70,11 @@ class AuthScreen extends React.Component<AuthPropsType, AuthStateType> {
     logIn(nick.trim());
   };
 
-  componentDidMount() {
-    const { navigation } = this.props;
+  componentDidUpdate() {
+    const { navigation, player } = this.props;
 
-    this.props.fetchPlayer()
-      .then(() => {
-        if (this.props.player)
-          navigation.navigate('Lobby');
-      });
+    if (player)
+      navigation.navigate('Lobby');
   }
 
   render() {

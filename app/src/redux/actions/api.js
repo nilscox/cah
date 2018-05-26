@@ -4,11 +4,11 @@ import request from './request';
 
 export const player = {
 
-  fetch: () => {
+  fetch() {
     return request('/api/player');
   },
 
-  login: (nick: string) => {
+  login(nick: string) {
     const payload = { nick };
 
     return request('/api/player', {
@@ -24,15 +24,19 @@ export const player = {
 
 export const game = {
 
-  list: () => {
+  list() {
     return request('/api/game/list');
   },
 
-  fetch: () => {
+  fetch() {
     return request('/api/game');
   },
 
-  create: () => {
+  fetchHistory() {
+    return request('/api/game/history');
+  },
+
+  create() {
     const payload = {
       lang: 'fr',
     };
@@ -46,13 +50,13 @@ export const game = {
     });
   },
 
-  start: () => {
+  start() {
     return request(`/api/game/start`, {
       method: 'POST',
     });
   },
 
-  join: (id: number) => {
+  join(id: number) {
     return request(`/api/game/join/${id}`, {
       method: 'POST',
     });

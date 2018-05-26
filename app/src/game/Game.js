@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import type { NavigationPropsType } from '~/types/navigation';
 import type { Game as GameType } from '~/redux/state/game';
 import type { Player } from '~/redux/state/player';
-import { fetchGame, startGame } from '~/redux/actions';
+import { startGame } from '~/redux/actions';
 import styles from './Game.styles';
 import StartGameButton from './StartGameButton';
 import QuestionCard from './QuestionCard';
@@ -19,7 +19,7 @@ type GameStatePropsType = {
 };
 
 type GameDispatchPropsType = {
-  fetchGame: Function,
+  startGame: Function,
 };
 
 type GamePropsType =
@@ -33,7 +33,6 @@ const mapStateToProps = ({ player, game }) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  fetchGame: () => dispatch(fetchGame()),
   startGame: () => dispatch(startGame()),
 });
 
@@ -51,14 +50,13 @@ class Game extends React.Component<GamePropsType> {
     };
   };
 
-  componentDidMount() {
-    const { navigation } = this.props;
+  componentDidUpdate() {
+    const { navigation, player, game } = this.props;
 
-    this.props.fetchGame()
-      .then(() => {
-        if (this.props.game)
-          navigation.navigate('Game');
-      });
+    if (!player)
+      navigation.navigate('Auth');
+    else if (!game)
+      navigation.navigate('Lobby');
   }
 
   render() {

@@ -14,6 +14,12 @@ export const fetchGame = () => ({
   promise: game.fetch(),
 });
 
+export const GAME_FETCH_HISTORY = 'GAME_FETCH_HISTORY';
+export const fetchGameHistory = () => ({
+  type: GAME_FETCH_HISTORY,
+  promise: game.fetchHistory(),
+});
+
 export const CREATE_GAME = 'CREATE_GAME';
 export const createGame = () => ({
   type: CREATE_GAME,

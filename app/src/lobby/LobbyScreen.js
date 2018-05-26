@@ -8,7 +8,7 @@ import { Svg } from 'expo';
 
 import type { Game } from '~/redux/state/game';
 import type { NavigationPropsType } from '~/types/navigation';
-import { listGames, fetchGame, joinGame } from '~/redux/actions';
+import { joinGame } from '~/redux/actions';
 import GamesList from './components/GamesList';
 import CreateGameButton from './components/CreateGameButton';
 
@@ -18,8 +18,6 @@ type StatePropsType = {
 };
 
 type DispatchPropsType = {
-  listGames: Function,
-  fetchGame: Function,
   joinGame: Function,
 };
 
@@ -28,18 +26,12 @@ type LobbyPropsType =
   & DispatchPropsType
   & NavigationPropsType;
 
-type LobbyStateType = {
-  loading: boolean,
-};
-
 const mapStateToProps = ({ games, game }) => ({
   games,
   currentGame: game,
 });
 
 const mapDispatchToProps: Function => DispatchPropsType = (dispatch) => ({
-  listGames: () => dispatch(listGames()),
-  fetchGame: () => dispatch(fetchGame()),
   joinGame: (id: number) => dispatch(joinGame(id)),
 });
 
@@ -68,22 +60,12 @@ const styles = StyleSheet.create({
   },
 });
 
-class LobbyScreen extends React.Component<LobbyPropsType, LobbyStateType> {
-  state = {
-    loading: true,
-  };
-
-  componentDidMount() {
-    this.props.listGames()
-      .then(() => this.props.fetchGame());
-      // .then(() => this.setState({ loading: false }));
-  }
-
+class LobbyScreen extends React.Component<LobbyPropsType> {
   componentDidUpdate() {
-    const { currentGame, navigation } = this.props;
+    const { navigation, currentGame } = this.props;
 
     if (currentGame)
-      navigation.navigate('Game', { gameId: currentGame.id });
+      navigation.navigate('Game');
   }
 
   render() {
