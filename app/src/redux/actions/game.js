@@ -18,10 +18,10 @@ export const fetchGameHistory = () => ({
   route: `/api/game/history`,
 });
 
-export const CREATE_GAME = 'CREATE_GAME';
+export const GAME_CREATE = 'GAME_CREATE';
 export const createGame = () => ({
-  type: CREATE_GAME,
-  route: `/api/game/create`,
+  type: GAME_CREATE,
+  route: `/api/game`,
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({ lang: 'fr' }),
