@@ -3,14 +3,17 @@
 import * as React from 'react';
 import { StyleSheet, View, StatusBar } from 'react-native';
 import { createStore, applyMiddleware } from 'redux';
-import { Provider } from 'react-redux';
+import { Provider, connect } from 'react-redux';
 import thunkMiddleware from 'redux-thunk';
 import promiseMiddleware from 'redux-promise';
 import { middleware as reduxPackMiddleware } from 'redux-pack';
 import { createSwitchNavigator } from 'react-navigation';
 import { composeWithDevTools } from 'redux-devtools-extension'
 
-import initialState from './state';
+import initialState from './redux/state';
+
+import ApiDownPage from './components/ApiDownPage';
+import LoadingPage from './components/LoadingPage';
 
 import AuthScreen from './auth';
 import LobbyScreen from './lobby';
@@ -52,11 +55,21 @@ const styles = StyleSheet.create({
   },
 });
 
+const PageView = connect((s) => s)(({ status }) => {
+  if (status.api === 'down')
+    return <ApiDownPage />;
+
+  if (status.app === 'initializing')
+    return <LoadingPage />;
+
+  return <RootNavigator />;
+});
+
 const App = () => (
   <Provider store={store}>
     <View style={styles.wrapper}>
       <StatusBar hidden={true} />
-      <RootNavigator />
+      <PageView />
     </View>
   </Provider>
 );

@@ -61,7 +61,15 @@ const styles = StyleSheet.create({
 });
 
 class LobbyScreen extends React.Component<LobbyPropsType> {
+  componentDidMount() {
+    this.redirectIfInGame();
+  }
+
   componentDidUpdate() {
+    this.redirectIfInGame();
+  }
+
+  redirectIfInGame() {
     const { navigation, currentGame } = this.props;
 
     if (currentGame)

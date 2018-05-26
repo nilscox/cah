@@ -1,5 +1,6 @@
 export default {
   status: {
+    app: 'ready',
     api: 'up',
     websocket: 'closed',
   },

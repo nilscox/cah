@@ -38,8 +38,8 @@ export default apiMiddleware = store => next => action => {
   const handleError = (e) => {
     if (e instanceof Error && e.message === 'Network request failed')
       dispatch(checkApiStatus());
-    else
-      throw e;
+
+    throw e;
   };
 
   return store.dispatch({

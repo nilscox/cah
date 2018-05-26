@@ -70,7 +70,15 @@ class AuthScreen extends React.Component<AuthPropsType, AuthStateType> {
     logIn(nick.trim());
   };
 
+  componentDidMount() {
+    this.redirectIfLoggedIn();
+  }
+
   componentDidUpdate() {
+    this.redirectIfLoggedIn();
+  }
+
+  redirectIfLoggedIn() {
     const { navigation, player } = this.props;
 
     if (player)

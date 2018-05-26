@@ -2,12 +2,12 @@ import { fetchPlayer } from './player';
 import { listGames, fetchGame, fetchGameHistory } from './game';
 import { createWebSocket } from './websocket';
 
-const INITIALIZATION_STARTED = 'INITIALIZATION_STARTED';
+export const INITIALIZATION_STARTED = 'INITIALIZATION_STARTED';
 const initializationStarted = () => ({
   type: INITIALIZATION_STARTED,
 });
 
-const INITIALIZATION_FINISHED = 'INITIALIZATION_FINISHED';
+export const INITIALIZATION_FINISHED = 'INITIALIZATION_FINISHED';
 const initializationFinished = () => ({
   type: INITIALIZATION_FINISHED,
 });
