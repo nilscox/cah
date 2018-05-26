@@ -1,9 +1,9 @@
 import { createStackNavigator } from 'react-navigation';
 
-import Game from './Game';
+import GameScreen from './GameScreen';
 
 export default createStackNavigator({
-  Game: { screen: Game },
+  Game: { screen: GameScreen },
 }, {
   initialRouteName: 'Game',
 });

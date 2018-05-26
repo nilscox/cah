@@ -9,9 +9,9 @@ import type { Game as GameType } from '~/redux/state/game';
 import type { Player } from '~/redux/state/player';
 import { startGame } from '~/redux/actions';
 import styles from './Game.styles';
-import StartGameButton from './StartGameButton';
-import QuestionCard from './QuestionCard';
-import ChoiceCard from './ChoiceCard';
+import StartGameButton from './components/StartGameButton';
+import QuestionCard from './components/QuestionCard';
+import ChoiceCard from './components/ChoiceCard';
 
 type GameStatePropsType = {
   player: Player,

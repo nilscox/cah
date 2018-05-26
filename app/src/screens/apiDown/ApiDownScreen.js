@@ -20,11 +20,11 @@ const styles = StyleSheet.create({
   }
 });
 
-const ApiDownPage = () => (
+const ApiDownScreen = () => (
   <View style={styles.wrapper}>
     <Text style={styles.titleText}>Oh no! The API looks down from here.</Text>
     <Text style={styles.subText}>Hold on, happy monkeys are fixing the problem...</Text>
   </View>
 );
 
-export default ApiDownPage;
+export default ApiDownScreen;

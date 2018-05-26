@@ -12,12 +12,11 @@ import { composeWithDevTools } from 'redux-devtools-extension'
 
 import initialState from './redux/state';
 
-import ApiDownPage from './components/ApiDownPage';
-import LoadingPage from './components/LoadingPage';
-
-import AuthScreen from './auth';
-import LobbyScreen from './lobby';
-import GameScreen from './game';
+import ApiDownScreen from './screens/apiDown';
+import LoadingScreen from './screens/loading';
+import AuthScreen from './screens/auth';
+import LobbyScreen from './screens/lobby';
+import GameScreen from './screens/game';
 
 import loggerMiddleware from '~/redux/middlewares/loggerMiddleware';
 import apiMiddleware from '~/redux/middlewares/apiMiddleware';
@@ -57,10 +56,10 @@ const styles = StyleSheet.create({
 
 const PageView = connect((s) => s)(({ status }) => {
   if (status.api === 'down')
-    return <ApiDownPage />;
+    return <ApiDownScreen />;
 
   if (status.app === 'initializing')
-    return <LoadingPage />;
+    return <LoadingScreen />;
 
   return <RootNavigator />;
 });
