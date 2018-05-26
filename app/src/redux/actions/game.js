@@ -1,39 +1,42 @@
 // @flow
 
-import { game } from './api';
-
 export const GAMES_LIST = 'GAMES_LIST';
 export const listGames = () => ({
   type: GAMES_LIST,
-  promise: game.list(),
+  route: `/api/game/list`,
 });
 
 export const GAME_FETCH = 'GAME_FETCH';
 export const fetchGame = () => ({
   type: GAME_FETCH,
-  promise: game.fetch(),
+  route: `/api/game`,
 });
 
 export const GAME_FETCH_HISTORY = 'GAME_FETCH_HISTORY';
 export const fetchGameHistory = () => ({
   type: GAME_FETCH_HISTORY,
-  promise: game.fetchHistory(),
+  route: `/api/game/history`,
 });
 
 export const CREATE_GAME = 'CREATE_GAME';
 export const createGame = () => ({
   type: CREATE_GAME,
-  promise: game.create(),
+  route: `/api/game/create`,
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ lang: 'fr' }),
 });
 
-export const START_GAME = 'START_GAME';
+export const GAME_START = 'GAME_START';
 export const startGame = () => ({
-  type: START_GAME,
-  promise: game.start(),
+  type: GAME_START,
+  route: `/api/game/start`,
+  method: 'POST',
 });
 
 export const GAME_JOIN = 'GAME_JOIN';
 export const joinGame = (id: number) => ({
   type: GAME_JOIN,
-  promise: game.join(id),
+  route: `/api/game/join/${id}`,
+  method: 'POST',
 });

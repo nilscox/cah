@@ -17,6 +17,7 @@ import AuthScreen from './auth';
 import LobbyScreen from './lobby';
 import GameScreen from './game';
 
+import apiMiddleware from '~/redux/middlewares/apiMiddleware';
 import { initialization } from '~/redux/actions';
 import rootReducer from '~/redux/reducers';
 
@@ -36,6 +37,7 @@ const store = createStore(rootReducer, initialState, composeWithDevTools(
     thunkMiddleware,
     promiseMiddleware,
     reduxPackMiddleware,
+    apiMiddleware,
     loggerMiddleware,
   ),
 ));

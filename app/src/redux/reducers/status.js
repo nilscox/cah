@@ -1,18 +1,25 @@
-// @flow
-
 import initialState from '../state';
+import {
+  WEBSOCKET_CREATE,
+  WEBSOCKET_OPEN,
+  WEBSOCKET_CLOSE,
+} from '../actions/websocket';
+import { API_UP, API_DOWN } from '../middlewares/apiMiddleware';
 
-export default (state: State = initialState.status, action: any) => {
-  if (action.type === 'WS_OPEN')
+export default (state = initialState.status, action) => {
+  if (action.type === WEBSOCKET_CREATE)
+    return { ...state, websocket: 'created' };
+
+  if (action.type === WEBSOCKET_OPEN)
     return { ...state, websocket: 'open' };
 
-  if (action.type === 'WS_CLOSE')
+  if (action.type === WEBSOCKET_CLOSE)
     return { ...state, websocket: 'closed' };
 
-  if (action.type === 'API_UP')
+  if (action.type === API_UP)
     return { ...state, api: 'up' };
 
-  if (action.type === 'API_DOWN')
+  if (action.type === API_DOWN)
     return { ...state, api: 'down' };
 
   return state;

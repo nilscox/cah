@@ -1,37 +1,38 @@
-const WEBSOCKET_CREATE = 'WEBSOCKET_CREATE';
+export const WEBSOCKET_CREATE = 'WEBSOCKET_CREATE';
 const wsCreate = (socket) => ({
   type: WEBSOCKET_CREATE,
   socket,
 });
 
-const WEBSOCKET_OPEN = 'WEBSOCKET_OPEN';
+export const WEBSOCKET_OPEN = 'WEBSOCKET_OPEN';
 const wsOpen = (socket) => ({
   type: WEBSOCKET_OPEN,
   socket,
 });
 
-const WEBSOCKET_MESSAGE = 'WEBSOCKET_MESSAGE';
+export const WEBSOCKET_MESSAGE = 'WEBSOCKET_MESSAGE';
 const wsMessage = (socket, event) => ({
   type: WEBSOCKET_MESSAGE,
   socket,
   event,
+  message: JSON.parse(event.data),
 });
 
-const WEBSOCKET_CLOSE = 'WEBSOCKET_CLOSE';
+export const WEBSOCKET_CLOSE = 'WEBSOCKET_CLOSE';
 const wsClose = (socket, event) => ({
   type: WEBSOCKET_CLOSE,
   socket,
   event,
 });
 
-const WEBSOCKET_ERROR = 'WEBSOCKET_ERROR';
-const wsError = (socket, error) => ({
+export const WEBSOCKET_ERROR = 'WEBSOCKET_ERROR';
+const wsError = (socket, event) => ({
   type: WEBSOCKET_ERROR,
   socket,
-  error,
+  event,
 });
 
-export const createWebSocket = () => (dispatch, getState) => new Promise((resolve, reject) => {
+export const createWebSocket = () => (dispatch) => new Promise((resolve, reject) => {
   const socket = new WebSocket('ws://192.168.0.18:8000');
 
   dispatch(wsCreate(socket));
@@ -45,11 +46,11 @@ export const createWebSocket = () => (dispatch, getState) => new Promise((resolv
     }
   };
 
-  socket.onerror = (err) => {
-    dispatch(wsError(socket, err));
+  socket.onerror = (evt) => {
+    dispatch(wsError(socket, evt));
 
     if (reject) {
-      reject(err);
+      reject(evt);
       resolve = reject = null;
     }
   };

@@ -49,5 +49,6 @@ export const initialization = () => (dispatch, getState) => {
       if (e !== null)
         throw e;
     })
-    .then(() => dispatch(initializationFinished()));
+    .then(() => dispatch(initializationFinished()))
+    .catch(err => console.error('Initialization error', err));
 };
