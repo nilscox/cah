@@ -7,6 +7,10 @@ type Proposition = {
 
 };
 
+export type GameTurn = {
+
+};
+
 export type Game = {
   id: number,
   lang: string,
@@ -17,4 +21,5 @@ export type Game = {
   question: Question,
   question_master: string,
   state: string,
+  history: Array<GameTurn>,
 };

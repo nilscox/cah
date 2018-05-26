@@ -3,7 +3,7 @@
 import { handle } from 'redux-pack';
 
 import type { Game } from '../state/game';
-import { GAME_FETCH, GAME_JOIN } from '../actions';
+import { GAME_FETCH, GAME_JOIN, GAME_FETCH_HISTORY } from '../actions';
 import initialState from '../state';
 
 export type State = {
@@ -24,6 +24,11 @@ export default (state: State = initialState.game, action: any): State => {
       start: prevState => null,
       success: prevState => payload,
       failure: prevState => null,
+    },
+    [GAME_FETCH_HISTORY]: {
+      start: prevState => ({ ...prevState, history: null }),
+      success: prevState => ({ ...prevState, history: payload }),
+      failure: prevState => ({ ...prevState, history: null }),
     },
   };
 
