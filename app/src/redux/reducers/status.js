@@ -4,7 +4,7 @@ import {
   WEBSOCKET_OPEN,
   WEBSOCKET_CLOSE,
 } from '../actions/websocket';
-import { API_UP, API_DOWN } from '../middlewares/apiMiddleware';
+import { API_UP, API_DOWN } from '../actions/status';
 
 export default (state = initialState.status, action) => {
   if (action.type === WEBSOCKET_CREATE)

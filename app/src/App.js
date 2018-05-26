@@ -7,7 +7,6 @@ import { Provider } from 'react-redux';
 import thunkMiddleware from 'redux-thunk';
 import promiseMiddleware from 'redux-promise';
 import { middleware as reduxPackMiddleware } from 'redux-pack';
-import { createLogger } from 'redux-logger';
 import { createSwitchNavigator } from 'react-navigation';
 import { composeWithDevTools } from 'redux-devtools-extension'
 
@@ -17,6 +16,7 @@ import AuthScreen from './auth';
 import LobbyScreen from './lobby';
 import GameScreen from './game';
 
+import loggerMiddleware from '~/redux/middlewares/loggerMiddleware';
 import apiMiddleware from '~/redux/middlewares/apiMiddleware';
 import { initialization } from '~/redux/actions';
 import rootReducer from '~/redux/reducers';
@@ -25,12 +25,6 @@ import rootReducer from '~/redux/reducers';
 /* $FlowFixMe */
 console.disableYellowBox = true;
 /* eslint-enable no-console */
-
-const loggerMiddleware = createLogger({
-  collapsed: true,
-  timestamp: true,
-  diff: true,
-});
 
 const store = createStore(rootReducer, initialState, composeWithDevTools(
   applyMiddleware(

@@ -14,6 +14,9 @@ export type State = {
 export default (state: State = initialState.game, action: any): State => {
   const { type, payload } = action;
 
+  if (action.type === 'API_DOWN')
+    return initialState.games;
+
   const handlers = {
     [GAMES_LIST]: {
       start: prevState => [],

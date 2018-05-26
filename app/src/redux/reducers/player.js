@@ -15,6 +15,9 @@ export type State = {
 export default (state: State = initialState.player, action: any): State => {
   const { type, payload } = action;
 
+  if (action.type === 'API_DOWN')
+    return initialState.player;
+
   const handlers = {
     [PLAYER_FETCH]: {
       start: prevState => null,

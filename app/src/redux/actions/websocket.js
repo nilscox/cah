@@ -1,3 +1,5 @@
+import { checkApiStatus } from './status';
+
 export const WEBSOCKET_CREATE = 'WEBSOCKET_CREATE';
 const wsCreate = (socket) => ({
   type: WEBSOCKET_CREATE,
@@ -26,11 +28,15 @@ const wsClose = (socket, event) => ({
 });
 
 export const WEBSOCKET_ERROR = 'WEBSOCKET_ERROR';
-const wsError = (socket, event) => ({
-  type: WEBSOCKET_ERROR,
-  socket,
-  event,
-});
+const wsError = (socket, event) => (dispatch) => {
+  dispatch({
+    type: WEBSOCKET_ERROR,
+    socket,
+    event,
+  });
+
+  dispatch(checkApiStatus());
+};
 
 export const createWebSocket = () => (dispatch) => new Promise((resolve, reject) => {
   const socket = new WebSocket('ws://192.168.0.18:8000');
