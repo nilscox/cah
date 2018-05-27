@@ -1,14 +1,9 @@
 import initialState from '../state';
 import {
-  INITIALIZATION_STARTED,
-  INITIALIZATION_FINISHED,
-} from '../actions/initialization';
-import { API_UP, API_DOWN } from '../actions/status';
-import {
-  WEBSOCKET_CREATE,
-  WEBSOCKET_OPEN,
-  WEBSOCKET_CLOSE,
-} from '../actions/websocket';
+  INITIALIZATION_STARTED, INITIALIZATION_FINISHED,
+  API_UP, API_DOWN,
+  WEBSOCKET_CREATE, WEBSOCKET_OPEN, WEBSOCKET_CLOSE,
+} from '../actions';
 
 export default (state = initialState.status, action) => {
   if (action.type === INITIALIZATION_STARTED)

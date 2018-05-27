@@ -1,22 +1,14 @@
-// @flow
-
 import { handle } from 'redux-pack';
 
-import type { Game } from '../state/game';
+import initialState from '../state';
 import {
   GAME_FETCH,
   GAME_CREATE,
   GAME_JOIN,
   GAME_FETCH_HISTORY,
 } from '../actions';
-import initialState from '../state';
 
-export type State = {
-  error: ?Error,
-  game: ?Game,
-};
-
-export default (state: State = initialState.game, action: any): State => {
+export default (state = initialState.game, action) => {
   const { type, payload } = action;
 
   if (action.type === 'API_DOWN')
@@ -24,19 +16,19 @@ export default (state: State = initialState.game, action: any): State => {
 
   const handlers = {
     [GAME_FETCH]: {
-      start: prevState => null,
-      success: prevState => payload,
-      failure: prevState => null,
+      start: () => null,
+      success: () => payload,
+      failure: () => null,
     },
     [GAME_CREATE]: {
-      start: prevState => null,
-      success: prevState => payload,
-      failure: prevState => null,
+      start: () => null,
+      success: () => payload,
+      failure: () => null,
     },
     [GAME_JOIN]: {
-      start: prevState => null,
-      success: prevState => payload,
-      failure: prevState => null,
+      start: () => null,
+      success: () => payload,
+      failure: () => null,
     },
     [GAME_FETCH_HISTORY]: {
       start: prevState => ({ ...prevState, history: null }),

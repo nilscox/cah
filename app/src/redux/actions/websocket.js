@@ -1,5 +1,8 @@
 import { checkApiStatus } from './status';
 
+// $FlowFixMe
+const WEBSOCKET_URL = process.env.REACT_APP_WEBSOCKET_URL;
+
 export const WEBSOCKET_CREATE = 'WEBSOCKET_CREATE';
 const wsCreate = (socket) => ({
   type: WEBSOCKET_CREATE,
@@ -39,7 +42,7 @@ const wsError = (socket, event) => (dispatch) => {
 };
 
 export const createWebSocket = () => (dispatch) => new Promise((resolve, reject) => {
-  const socket = new WebSocket('ws://192.168.0.18:8000');
+  const socket = new WebSocket(WEBSOCKET_URL);
 
   dispatch(wsCreate(socket));
 

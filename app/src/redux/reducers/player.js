@@ -1,18 +1,9 @@
-// @flow
-
 import { handle } from 'redux-pack';
 
-import type { Player } from '../state/player';
-
+import initialState from '../state';
 import { PLAYER_FETCH, PLAYER_LOGIN } from '../actions';
 
-import initialState from '../state';
-
-export type State = {
-  player: ?Player,
-};
-
-export default (state: State = initialState.player, action: any): State => {
+export default (state = initialState.player, action) => {
   const { type, payload } = action;
 
   if (action.type === 'API_DOWN')
@@ -20,14 +11,14 @@ export default (state: State = initialState.player, action: any): State => {
 
   const handlers = {
     [PLAYER_FETCH]: {
-      start: prevState => null,
-      success: prevState => payload,
-      failure: prevState => null,
+      start: () => null,
+      success: () => payload,
+      failure: () => null,
     },
     [PLAYER_LOGIN]: {
-      start: prevState => null,
-      success: prevState => payload,
-      failure: prevState => null,
+      start: () => null,
+      success: () => payload,
+      failure: () => null,
     },
   };
 

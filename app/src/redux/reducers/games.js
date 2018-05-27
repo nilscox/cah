@@ -1,17 +1,9 @@
-// @flow
-
 import { handle } from 'redux-pack';
 
-import type { Game } from '../state/game';
-import { GAMES_LIST } from '../actions';
 import initialState from '../state';
+import { GAMES_LIST } from '../actions';
 
-export type State = {
-  error: ?Error,
-  game: ?Game,
-};
-
-export default (state: State = initialState.game, action: any): State => {
+export default (state = initialState.game, action) => {
   const { type, payload } = action;
 
   if (action.type === 'API_DOWN')
@@ -19,9 +11,9 @@ export default (state: State = initialState.game, action: any): State => {
 
   const handlers = {
     [GAMES_LIST]: {
-      start: prevState => [],
-      success: prevState => payload,
-      failure: prevState => [],
+      start: () => [],
+      success: () => payload,
+      failure: () => [],
     },
   };
 
