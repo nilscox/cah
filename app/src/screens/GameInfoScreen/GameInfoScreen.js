@@ -25,7 +25,39 @@ class GameInfoScreen extends React.Component {
 
     return (
       <View style={styles.wrapper}>
-        <Text>Game #{game.id}</Text>
+
+        { this.renderMainInfo(game) }
+        { this.renderPlayersList(game.players) }
+        { game.history && this.renderHistory(game.history) }
+
+      </View>
+    );
+  }
+
+  renderMainInfo(game) {
+    return (
+      <View style={styles.mainInfo}>
+        <Text style={styles.mainInfoTitle}>Game #{game.id}</Text>
+        <Text style={styles.mainInfoText}>Owner: {game.owner}</Text>
+        <Text style={styles.mainInfoText}>Langue: {game.lang}</Text>
+        <Text style={styles.mainInfoText}>State: {game.state}</Text>
+      </View>
+    );
+  }
+
+  renderPlayersList(players) {
+    return (
+      <View style={styles.playersList}>
+        <Text style={styles.playersListTitle}>Players</Text>
+        { players.map(p => <Text key={`player-${p.nick}`}>{p.nick}</Text>) }
+      </View>
+    );
+  }
+
+  renderGameHistory(history) {
+    return (
+      <View style={styles.gameHistory}>
+        <Text style={styles.gameHistoryTitle}>History</Text>
       </View>
     );
   }
