@@ -1,6 +1,5 @@
 import { fetchPlayer } from './player';
 import { listGames, fetchGame, fetchGameHistory } from './game';
-import { createWebSocket } from './websocket';
 
 export const INITIALIZATION_STARTED = 'INITIALIZATION_STARTED';
 const initializationStarted = () => ({
@@ -21,19 +20,6 @@ export const initialization = () => (dispatch, getState) => {
 
       if (!player)
         throw null;
-
-      return dispatch(createWebSocket());
-    })
-    .then((socket) => {
-      // allow access to the socket in chrome console, for debugging prupuse
-      global.socket = socket;
-
-      const { player } = getState();
-
-      socket.send(JSON.stringify({
-        action: 'connected',
-        nick: player.nick,
-      }));
     })
     .then(() => dispatch(listGames()))
     .then(() => dispatch(fetchGame()))
