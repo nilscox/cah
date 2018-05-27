@@ -11,9 +11,10 @@ type ButtonProps = {
   textStyle?: StyleProp,
   variant?: 'big' | 'small',
   onPress: Function,
+  children: any,
 };
 
-const Button = ({ style, textStyle, onPress, variant }: ButtonProps) => {
+const Button = ({ style, textStyle, onPress, variant, children }: ButtonProps) => {
   const [big, small] = [variant === 'big', variant === 'small'];
 
   const buttonStyles = [
@@ -36,7 +37,7 @@ const Button = ({ style, textStyle, onPress, variant }: ButtonProps) => {
       onPress={onPress}
     >
       <Text style={textStyles}>
-        Create a new game
+        {children}
       </Text>
     </TouchableOpacity>
   );

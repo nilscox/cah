@@ -15,7 +15,9 @@ const mapDispatchToProps = dispatch => ({
 });
 
 const CreateGameButton = ({ createGame }: CreateGameButtonProps) => (
-  <Button variant="big" onPress={createGame} />
+  <Button variant="big" onPress={createGame}>
+    {'Create a new game'.toUpperCase()}
+  </Button>
 );
 
 export default connect(null, mapDispatchToProps)(CreateGameButton);
