@@ -1,12 +1,34 @@
 import * as React from 'react';
-import { View } from 'react-native';
+import { View, Text } from 'react-native';
 
+import MenuButton from '~/components/MenuButton';
 import styles from './GameInfoScreen.styles';
 
-const GameInfoScreen = ({ game }) => (
-  <View style={styles.wrapper}>
+class GameInfoScreen extends React.Component {
+  static navigationOptions = ({ navigation }) => ({
+    title: 'Game Info',
+    headerStyle: {
+      backgroundColor: '#4286f4',
+    },
+    headerTintColor: '#eee',
+    headerRight: (
+      <MenuButton
+        navigation={navigation}
+        displayOptions={{ Profile: 'Profile', Settings: 'Settings' }}
+      />
+    ),
+  });
 
-  </View>
-);
+  render() {
+    const { navigation } = this.props;
+    const game = navigation.getParam('game');
+
+    return (
+      <View style={styles.wrapper}>
+        <Text>Game #{game.id}</Text>
+      </View>
+    );
+  }
+}
 
 export default GameInfoScreen;

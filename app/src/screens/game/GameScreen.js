@@ -48,7 +48,14 @@ class Game extends React.Component<GamePropsType> {
       headerRight: (
         <MenuButton
           navigation={navigation}
-          displayOptions={{ Game: 'GameInfo', Profile: 'Profile', Settings: 'Settings' }}
+          displayOptions={{
+            Game: {
+              route: 'GameInfo',
+              args: { game: navigation.getParam('game') },
+            },
+            Profile: { route: 'Profile' },
+            Settings: { route: 'Settings' },
+          }}
         />
       ),
     };
@@ -56,7 +63,8 @@ class Game extends React.Component<GamePropsType> {
 
   componentDidMount() {
     this.redirectIfNotInGame();
-    this.props.navigation.navigate('GameInfo');
+    this.props.navigation.navigate('GameInfo', { game: this.props.game });
+    this.props.navigation.setParams({ 'game': this.props.game });
   }
 
   componentDidUpdate() {
