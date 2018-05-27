@@ -48,13 +48,22 @@ class Game extends React.Component<GamePropsType> {
       headerRight: (
         <MenuButton
           navigation={navigation}
-          displayOptions={['Game', 'Profile', 'Settings']}
+          displayOptions={{ Game: 'GameInfo', Profile: 'Profile', Settings: 'Settings' }}
         />
       ),
     };
   };
 
+  componentDidMount() {
+    this.redirectIfNotInGame();
+    this.props.navigation.navigate('GameInfo');
+  }
+
   componentDidUpdate() {
+    this.redirectIfNotInGame();
+  }
+
+  redirectIfNotInGame() {
     const { navigation, player, game } = this.props;
 
     if (!player)

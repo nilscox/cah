@@ -5,8 +5,8 @@ import Menu, { MenuTrigger, MenuOption, MenuOptions } from 'react-native-menu';
 import styles from './MenuButton.styles';
 
 const MenuButton = ({ navigation, displayOptions }) => {
-  const options = displayOptions.map(option => (
-    <MenuOption key={`menu-option-${option}`} value={option}>
+  const options = Object.keys(displayOptions).map(option => (
+    <MenuOption key={`menu-option-${option}`} value={displayOptions[option]}>
       <Text>{option}</Text>
     </MenuOption>
   ));
