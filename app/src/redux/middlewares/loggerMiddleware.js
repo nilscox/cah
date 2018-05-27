@@ -47,7 +47,7 @@ export default loggerMiddleware = createLogger({
         return action.meta['redux-pack/LIFECYCLE'];
 
       if (action.type === 'WEBSOCKET_MESSAGE')
-        return JSON.stringify(action.message);
+        return action.message.type;
 
       return '';
     };

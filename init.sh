@@ -77,5 +77,5 @@ startapi() {
 }
 
 ws() {
-  http POST "localhost:8000/api/debug/ws_$1/$2" "message=$3"
+  http POST "${CAH_API_LISTEN_IP:$CAH_API_LISTEN_PORT}/api/debug/ws_$1/$2" "message=$3"
 }
