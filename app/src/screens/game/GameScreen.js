@@ -1,13 +1,14 @@
 // @flow
 
 import * as React from 'react';
-import { View, Button, Text, FlatList } from 'react-native';
+import { View, Text, FlatList } from 'react-native';
 import { connect } from 'react-redux';
 
 import type { NavigationPropsType } from '~/types/navigation';
 import type { Game as GameType } from '~/redux/state/game';
 import type { Player } from '~/redux/state/player';
 import { startGame } from '~/redux/actions';
+import MenuButton from '~/components/MenuButton';
 import styles from './Game.styles';
 import StartGameButton from './components/StartGameButton';
 import QuestionCard from './components/QuestionCard';
@@ -37,7 +38,7 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 class Game extends React.Component<GamePropsType> {
-  static navigationOptions = () => {
+  static navigationOptions = ({ navigation }) => {
     return {
       title: 'CAH',
       headerStyle: {
@@ -45,7 +46,10 @@ class Game extends React.Component<GamePropsType> {
       },
       headerTintColor: '#eee',
       headerRight: (
-        <Button onPress={() => {}} title="..." />
+        <MenuButton
+          navigation={navigation}
+          displayOptions={['Game', 'Profile', 'Settings']}
+        />
       ),
     };
   };

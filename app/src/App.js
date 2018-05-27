@@ -1,13 +1,14 @@
 // @flow
 
 import * as React from 'react';
-import { StyleSheet, View, StatusBar } from 'react-native';
+import { StyleSheet, StatusBar } from 'react-native';
 import { createStore, applyMiddleware } from 'redux';
 import { Provider, connect } from 'react-redux';
 import thunkMiddleware from 'redux-thunk';
 import promiseMiddleware from 'redux-promise';
 import { middleware as reduxPackMiddleware } from 'redux-pack';
 import { createSwitchNavigator } from 'react-navigation';
+import { MenuContext } from 'react-native-menu';
 import { composeWithDevTools } from 'redux-devtools-extension'
 
 import initialState from './redux/state';
@@ -66,10 +67,10 @@ const PageView = connect((s) => s)(({ status }) => {
 
 const App = () => (
   <Provider store={store}>
-    <View style={styles.wrapper}>
+    <MenuContext style={styles.wrapper}>
       <StatusBar hidden={true} />
       <PageView />
-    </View>
+    </MenuContext>
   </Provider>
 );
 
