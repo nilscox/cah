@@ -41,10 +41,6 @@ class Game extends React.Component<GamePropsType> {
   static navigationOptions = ({ navigation }) => {
     return {
       title: 'CAH',
-      headerStyle: {
-        backgroundColor: '#4286f4',
-      },
-      headerTintColor: '#eee',
       headerRight: (
         <MenuButton
           navigation={navigation}
@@ -63,7 +59,6 @@ class Game extends React.Component<GamePropsType> {
 
   componentDidMount() {
     this.redirectIfNotInGame();
-    this.props.navigation.navigate('GameInfo', { game: this.props.game });
     this.props.navigation.setParams({ 'game': this.props.game });
   }
 

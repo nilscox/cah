@@ -7,12 +7,15 @@ import { connect } from 'react-redux';
 import { Svg } from 'expo';
 
 import type { Game } from '~/redux/state/game';
+import type { Player } from '~/redux/state/player';
 import type { NavigationPropsType } from '~/types/navigation';
 import { joinGame } from '~/redux/actions';
+import MenuButton from '~/components/MenuButton';
 import GamesList from './components/GamesList';
 import CreateGameButton from './components/CreateGameButton';
 
 type StatePropsType = {
+  player: ?Player,
   games: ?Array<Game>,
   currentGame: ?Game,
 };
@@ -26,7 +29,8 @@ type LobbyPropsType =
   & DispatchPropsType
   & NavigationPropsType;
 
-const mapStateToProps = ({ games, game }) => ({
+const mapStateToProps = ({ player, games, game }) => ({
+  player,
   games,
   currentGame: game,
 });
@@ -61,8 +65,24 @@ const styles = StyleSheet.create({
 });
 
 class LobbyScreen extends React.Component<LobbyPropsType> {
+  static navigationOptions = ({ navigation }) => {
+    return {
+      title: 'CAH',
+      headerRight: (
+        <MenuButton
+          navigation={navigation}
+          displayOptions={{
+            Profile: { route: 'Profile' },
+            Settings: { route: 'Settings' },
+          }}
+        />
+      ),
+    };
+  };
+
   componentDidMount() {
     this.redirectIfInGame();
+    this.props.navigation.setParams({ 'player': this.props.player });
   }
 
   componentDidUpdate() {
