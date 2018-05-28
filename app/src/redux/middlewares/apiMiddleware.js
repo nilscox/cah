@@ -3,7 +3,7 @@ import { checkApiStatus } from '../actions/status'
 // $FlowFixMe
 const API_URL = process.env.REACT_APP_API_URL;
 
-export default apiMiddleware = store => next => action => {
+const apiMiddleware = store => next => action => {
   if (action === null)
     return null;
 
@@ -50,3 +50,5 @@ export default apiMiddleware = store => next => action => {
     meta,
   });
 };
+
+export default apiMiddleware;

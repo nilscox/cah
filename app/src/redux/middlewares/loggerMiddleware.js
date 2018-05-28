@@ -8,13 +8,15 @@ const getActionType = (action) => {
     return 'SOCKET';
 };
 
-export default loggerMiddleware = createLogger({
+const loggerMiddleware = createLogger({
   collapsed: true,
   timestamp: true,
   diff: true,
   titleFormatter: (action) => {
     const type = getActionType(action) || 'ACTION';
 
+    // TODO
+    /* eslint-disable-next-line no-unused-vars */
     const getColor = () => {
       switch (type) {
         case 'REQUEST':
@@ -55,3 +57,5 @@ export default loggerMiddleware = createLogger({
     return `[${getTag()}][${action.type}] ${getMessage()}`;
   },
 });
+
+export default loggerMiddleware;

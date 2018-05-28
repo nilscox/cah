@@ -58,6 +58,7 @@ class GameInfoScreen extends React.Component {
     return (
       <View style={styles.gameHistory}>
         <Text style={styles.gameHistoryTitle}>History</Text>
+        <Text>{JSON.stringify(history)}</Text>
       </View>
     );
   }

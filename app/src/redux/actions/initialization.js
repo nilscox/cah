@@ -50,5 +50,8 @@ export const initialization = () => (dispatch, getState) => {
         throw e;
     })
     .then(() => dispatch(initializationFinished()))
-    .catch(err => console.error('Initialization error', err));
+    .catch(err => {
+      /* eslint-disable-next-line no-console */
+      console.error('Initialization error', err);
+    });
 };

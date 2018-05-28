@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 
 import type { NavigationPropsType } from '~/types/navigation';
 import type { Player } from '~/redux/state/player';
-import { fetchPlayer, loginPlayer } from '~/redux/actions';
+import { loginPlayer } from '~/redux/actions';
 
 type StatePropsType = {
   player: ?Player,

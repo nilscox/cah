@@ -30,5 +30,8 @@
       "babel-plugin-root-import": {}
     }
   },
-  "rules": {}
+  "rules": {
+    "react/prop-types": ["off"],
+    "react-native/no-color-literals": ["off"]
+  }
 }

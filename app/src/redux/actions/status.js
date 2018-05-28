@@ -1,6 +1,7 @@
-import { API_URL } from '../middlewares/apiMiddleware';
 import { initialization } from './initialization';
 
+// $FlowFixMe
+const API_URL = process.env.REACT_APP_API_URL;
 const CHECK_API_STATUS_INTERVAL = 4000;
 
 export const API_UP = 'API_UP';

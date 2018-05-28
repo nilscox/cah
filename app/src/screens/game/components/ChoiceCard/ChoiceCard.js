@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-import type { Choice } from '~/types/choice';
+import type { Choice } from '~/redux/state/choice';
 
 type ChoiceCardProps = {
   choice: Choice,

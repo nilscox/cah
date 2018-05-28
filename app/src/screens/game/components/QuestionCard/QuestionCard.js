@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-import type { Question } from '~/types/question';
+import type { Question } from '~/redux/state/question';
 
 type QuestionCardProps = {
   question: Question,
