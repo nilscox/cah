@@ -4,7 +4,7 @@ import * as React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { connect } from 'react-redux';
 /* eslint-disable-next-line import/named */
-import { Svg } from 'expo';
+import Svg from 'react-native-svg';
 
 import type { Game } from '~/redux/state/game';
 import type { Player } from '~/redux/state/player';

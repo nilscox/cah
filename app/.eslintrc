@@ -1,37 +1,57 @@
 {
   "parser": "babel-eslint",
+  "plugins": [
+    "babel",
+    "react",
+    "react-native",
+    "flowtype",
+    "jest"
+  ],
   "parserOptions": {
+    "ecmaVersion": 8,
     "sourceType": "module",
     "ecmaFeatures": {
       "jsx": true
     }
   },
   "env": {
-    "react-native/react-native": true
+    "react-native/react-native": true,
+    "jest/globals": true
   },
-  "plugins": [
-    "import",
-    "react",
-    "react-native",
-    "flowtype"
-  ],
   "extends": [
     "eslint:recommended",
-    "plugin:import/errors",
-    "plugin:react/recommended",
+    "plugin:react/all",
     "plugin:react-native/all",
-    "plugin:flowtype/recommended"
+    "plugin:flowtype/recommended",
+    "plugin:jest/recommended"
   ],
   "settings": {
     "flowtype": {
       "onlyFilesWithFlowAnnotation": true
-    },
-    "import/resolver": {
-      "babel-plugin-root-import": {}
     }
   },
   "rules": {
-    "react/prop-types": ["off"],
-    "react-native/no-color-literals": ["off"]
+    "react/forbid-component-props": ["off"],
+    "react/no-set-state": ["off"],
+
+    "react/sort-comp": ["error", {
+      "order": [
+        "type-annotations",
+        "static-methods",
+        "lifecycle",
+        "/^handle.+$/",
+        "render",
+        "/^render.+$/",
+        "everything-else"
+      ]
+    }],
+
+    "react/jsx-indent": ["error", 2],
+    "react/jsx-indent-props": ["error", 2],
+    "react/jsx-no-bind": ["error", { "ignoreRefs": true }],
+    "react/jsx-max-props-per-line": ["error", { "maximum": 3 }],
+    "react/jsx-filename-extension": ["off"],
+    "react/jsx-sort-props": ["off"],
+    "react/jsx-sort-default-props": ["off"]
   }
 }

@@ -29,7 +29,7 @@ import rootReducer from '~/redux/reducers';
 console.disableYellowBox = true;
 /* eslint-enable no-console */
 
-const store = createStore(rootReducer, initialState, composeWithDevTools(
+const store = createStore(rootReducer, initialState, /*composeWithDevTools(*/
   applyMiddleware(
     thunkMiddleware,
     promiseMiddleware,
@@ -37,9 +37,9 @@ const store = createStore(rootReducer, initialState, composeWithDevTools(
     apiMiddleware,
     loggerMiddleware,
   ),
-));
+/*)*/);
 
-store.dispatch(initialization());
+// store.dispatch(initialization());
 
 const RootNavigator = createSwitchNavigator({
   Auth : { screen: AuthScreen },
