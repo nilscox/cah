@@ -7,4 +7,5 @@ export type Player = {
   connected: boolean,
   avatar: string,
   cards?: Array<Choice>,
+  score?: number,
 };

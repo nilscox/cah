@@ -29,7 +29,23 @@ class ProfileScreen extends React.Component<ProfileScreenProps> {
     return (
       <View style={styles.wrapper}>
         <PlayerAvatar style={styles.avatar} player={player} size="big" />
-        <Text>{JSON.stringify(player)}</Text>
+
+        <View style={styles.playerInfos}>
+          {[
+            ['Nick', player.nick],
+            ['Score', player.score]
+          ].map(([label, value]) => this.renderInfo(label, value))}
+        </View>
+
+      </View>
+    );
+  }
+
+  renderInfo(label, value) {
+    return (
+      <View key={`player-info-${label}`} style={styles.info}>
+        <Text style={styles.label}>{label}:</Text>
+        <Text style={styles.value}>{value}</Text>
       </View>
     );
   }
