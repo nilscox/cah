@@ -33,7 +33,7 @@ const mapStateToProps = ({ player, game }) => ({
   game,
 });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = (dispatch: Function) => ({
   startGame: () => dispatch(startGame()),
 });
 

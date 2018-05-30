@@ -8,9 +8,10 @@ import MenuButton from '~/components/MenuButton';
 import styles from './GameInfoScreen.styles';
 
 type GameInfoScreenProps = NavigationProps;
+type NavigationOptions = { navigation: Navigation };
 
 class GameInfoScreen extends React.Component<GameInfoScreenProps> {
-  static navigationOptions = ({ navigation }: Navigation) => ({
+  static navigationOptions = ({ navigation }: NavigationOptions) => ({
     title: 'Game Info',
     headerStyle: {
       backgroundColor: '#4286f4',

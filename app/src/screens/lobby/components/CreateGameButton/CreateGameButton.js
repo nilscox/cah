@@ -10,7 +10,7 @@ type CreateGameButtonProps = {
   createGame: Function,
 };
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch: Function) => ({
   createGame: () => dispatch(createGame()),
 });
 

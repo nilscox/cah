@@ -7,9 +7,9 @@ import type { StyleProp } from '~/types/style';
 import { styles, variantBig, variantSmall } from './Button.styles';
 
 type ButtonProps = {
-  style?: StyleProp,
-  textStyle?: StyleProp,
-  variant?: 'big' | 'small',
+  style: ?StyleProp,
+  textStyle: ?StyleProp,
+  variant: ?('big' | 'small'),
   onPress: Function,
   children: any,
 };
@@ -41,12 +41,6 @@ const Button = ({ style, textStyle, onPress, variant, children }: ButtonProps) =
       </Text>
     </TouchableOpacity>
   );
-};
-
-Button.defaultProps = {
-  style: null,
-  textStyle: null,
-  variant: null,
 };
 
 export default Button;
