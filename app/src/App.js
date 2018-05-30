@@ -39,7 +39,7 @@ const store = createStore(rootReducer, initialState, /*composeWithDevTools(*/
   ),
 /*)*/);
 
-// store.dispatch(initialization());
+store.dispatch(initialization());
 
 const RootNavigator = createSwitchNavigator({
   Auth : { screen: AuthScreen },
