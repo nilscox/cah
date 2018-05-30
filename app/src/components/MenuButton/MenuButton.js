@@ -1,10 +1,17 @@
+// @flow
+
 import * as React from 'react';
 import { View, Text } from 'react-native';
 import Menu, { MenuTrigger, MenuOption, MenuOptions } from 'react-native-menu';
 
+import type { NavigationProps } from '~/types/navigation';
 import styles from './MenuButton.styles';
 
-const MenuButton = ({ navigation, displayOptions }) => {
+type MenuButtonProps =
+  & { displayOptions: { [string]: { route: string, args?: {} } } }
+  & NavigationProps;
+
+const MenuButton = ({ navigation, displayOptions }: MenuButtonProps) => {
   const route = (o) => displayOptions[o].route;
   const args = (o) => displayOptions[o].args;
 

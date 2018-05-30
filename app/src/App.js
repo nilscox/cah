@@ -68,7 +68,7 @@ const PageView = connect((s) => s)(({ status }) => {
 const App = () => (
   <Provider store={store}>
     <MenuContext style={styles.wrapper}>
-      <StatusBar hidden={true} />
+      <StatusBar hidden />
       <PageView />
     </MenuContext>
   </Provider>

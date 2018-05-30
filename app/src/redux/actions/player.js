@@ -1,5 +1,3 @@
-// @flow
-
 import { createWebSocket } from './websocket';
 
 export const PLAYER_FETCH = 'PLAYER_FETCH';
@@ -9,7 +7,7 @@ export const fetchPlayer = () => ({
 });
 
 export const PLAYER_LOGIN = 'PLAYER_LOGIN';
-export const loginPlayer = (nick: string) => (dispatch, getState) => dispatch({
+export const loginPlayer = (nick) => (dispatch, getState) => dispatch({
   type: PLAYER_LOGIN,
   route: '/api/player',
   method: 'POST',

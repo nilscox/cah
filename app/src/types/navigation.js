@@ -2,6 +2,8 @@
 
 import type { NavigationScreenProp } from 'react-navigation';
 
-export type NavigationPropsType = {
-  navigation: NavigationScreenProp<*>,
+export type Navigation = NavigationScreenProp<*>;
+
+export type NavigationProps = {
+  navigation: Navigation,
 };

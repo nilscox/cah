@@ -1,17 +1,16 @@
 {
-  "presets": ["babel-preset-expo"],
+  "presets": ["react-native"],
   "env": {
     "development": {
-      "plugins": ["transform-react-jsx-source"]
-    }
+      "plugins": ["transform-react-jsx-source"],
+    },
   },
   "plugins": [
-    "transform-inline-environment-variables",
-    [
-      "babel-plugin-root-import", [{
-        "rootPathPrefix": "~",
-        "rootPathSuffix": "src"
-      }]
-    ]
-  ]
+    ["transform-export-extensions"],
+    ["transform-inline-environment-variables"],
+    ["babel-plugin-root-import", [{
+      "rootPathPrefix": "~",
+      "rootPathSuffix": "src"
+    }]],
+  ],
 }

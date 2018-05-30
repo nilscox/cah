@@ -4,11 +4,11 @@ import * as React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { connect } from 'react-redux';
 /* eslint-disable-next-line import/named */
-import { Svg } from 'expo';
+import Svg, { Line } from 'react-native-svg';
 
 import type { Game } from '~/redux/state/game';
 import type { Player } from '~/redux/state/player';
-import type { NavigationPropsType } from '~/types/navigation';
+import type { NavigationProps } from '~/types/navigation';
 import { joinGame } from '~/redux/actions';
 import MenuButton from '~/components/MenuButton';
 import GamesList from './components/GamesList';
@@ -27,7 +27,7 @@ type DispatchPropsType = {
 type LobbyPropsType =
   & StatePropsType
   & DispatchPropsType
-  & NavigationPropsType;
+  & NavigationProps;
 
 const mapStateToProps = ({ player, games, game }) => ({
   player,
@@ -81,8 +81,11 @@ class LobbyScreen extends React.Component<LobbyPropsType> {
   };
 
   componentDidMount() {
+    const { navigation, player } = this.props;
+
     this.redirectIfInGame();
-    this.props.navigation.setParams({ 'player': this.props.player });
+    navigation.setParams({ 'player': player });
+    navigation.navigate('Profile', { player: player });
   }
 
   componentDidUpdate() {
@@ -101,7 +104,7 @@ class LobbyScreen extends React.Component<LobbyPropsType> {
 
     const separatorLine = (
       <Svg height="4" width="120">
-        <Svg.Line
+        <Line
           x1="0" y1="0"
           x2="120" y2="0"
           stroke="#666"

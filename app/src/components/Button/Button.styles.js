@@ -5,6 +5,8 @@ export const styles = StyleSheet.create({
     backgroundColor: '#C9C9C9',
     borderTopLeftRadius: 5,
     borderBottomRightRadius: 5,
+    borderWidth: 1,
+    borderColor: '#A9A9A9',
     height: 25,
     justifyContent: 'center',
     alignItems: 'center',
@@ -13,7 +15,7 @@ export const styles = StyleSheet.create({
   },
   buttonText: {
     fontWeight: 'bold',
-    color: '#333333',
+    color: '#494949',
   },
 });
 

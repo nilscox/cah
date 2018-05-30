@@ -4,7 +4,7 @@ import * as React from 'react';
 import { StyleSheet, View, Text, TextInput, Button } from 'react-native';
 import { connect } from 'react-redux';
 
-import type { NavigationPropsType } from '~/types/navigation';
+import type { NavigationProps } from '~/types/navigation';
 import type { Player } from '~/redux/state/player';
 import { loginPlayer } from '~/redux/actions';
 
@@ -18,7 +18,7 @@ type DispatchPropsType = {
 
 type AuthPropsType =
   & StatePropsType
-  & NavigationPropsType
+  & NavigationProps
   & DispatchPropsType;
 
 type AuthStateType = {
@@ -49,10 +49,6 @@ const styles = StyleSheet.create({
     flex: 2,
     marginHorizontal: 40,
   },
-  nickInput: {
-    borderColor: 'gray',
-    borderBottomWidth: 1,
-  },
   logInButton: {
     marginTop: 20,
   },
@@ -61,13 +57,6 @@ const styles = StyleSheet.create({
 class AuthScreen extends React.Component<AuthPropsType, AuthStateType> {
   state = {
     nick: '',
-  };
-
-  onLogIn = () => {
-    const { logIn } = this.props;
-    const { nick } = this.state;
-
-    logIn(nick.trim());
   };
 
   componentDidMount() {
@@ -85,7 +74,16 @@ class AuthScreen extends React.Component<AuthPropsType, AuthStateType> {
       navigation.navigate('Lobby');
   }
 
+  handleLogIn = () => {
+    const { logIn } = this.props;
+    const { nick } = this.state;
+
+    logIn(nick.trim());
+  };
+
   render() {
+    const { nick } = this.state;
+
     return (
       <View style={styles.page}>
 
@@ -95,14 +93,12 @@ class AuthScreen extends React.Component<AuthPropsType, AuthStateType> {
 
         <View style={styles.form}>
           <TextInput
-            style={styles.nickInput}
-            underlineColorAndroid="transparent"
             placeholder="Your nick..."
-            value={this.state.nick}
-            onChangeText={text => this.setState({ nick: text })}
+            value={nick}
+            onChangeText={(text) => this.setState({ nick: text })}
           />
           <View style={styles.logInButton}>
-            <Button title="Log in" onPress={this.onLogIn} />
+            <Button title="Log in" onPress={this.handleLogIn} />
           </View>
         </View>
 

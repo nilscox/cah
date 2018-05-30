@@ -4,7 +4,7 @@ import * as React from 'react';
 import { View, Text, FlatList } from 'react-native';
 import { connect } from 'react-redux';
 
-import type { NavigationPropsType } from '~/types/navigation';
+import type { NavigationProps } from '~/types/navigation';
 import type { Game as GameType } from '~/redux/state/game';
 import type { Player } from '~/redux/state/player';
 import { startGame } from '~/redux/actions';
@@ -24,7 +24,7 @@ type GameDispatchPropsType = {
 };
 
 type GamePropsType =
-  & NavigationPropsType
+  & NavigationProps
   & GameStatePropsType
   & GameDispatchPropsType;
 
@@ -33,7 +33,7 @@ const mapStateToProps = ({ player, game }) => ({
   game,
 });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = (dispatch: Function) => ({
   startGame: () => dispatch(startGame()),
 });
 
@@ -58,8 +58,10 @@ class Game extends React.Component<GamePropsType> {
   };
 
   componentDidMount() {
+    const { navigation, game } = this.props;
+
     this.redirectIfNotInGame();
-    this.props.navigation.setParams({ 'game': this.props.game });
+    navigation.setParams({ game });
   }
 
   componentDidUpdate() {
@@ -93,8 +95,8 @@ class Game extends React.Component<GamePropsType> {
 
         <View style={styles.choicesView}>
           <FlatList
-            keyExtractor={(card) => `card-${card.id}`}
             data={player.cards}
+            keyExtractor={(card) => `card-${card.id}`}
             renderItem={({ item }) => <ChoiceCard choice={item} />}
           />
         </View>
@@ -106,7 +108,7 @@ class Game extends React.Component<GamePropsType> {
   renderGameIdle() {
     const { player, game, startGame } = this.props;
 
-    if (player.nick === game.owner)
+    if (game && player.nick === game.owner)
       return <StartGameButton startGame={startGame} />;
     else
       return <View><Text>Waiting for the game to start...</Text></View>
