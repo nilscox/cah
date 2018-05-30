@@ -83,6 +83,7 @@ class LobbyScreen extends React.Component<LobbyPropsType> {
   componentDidMount() {
     this.redirectIfInGame();
     this.props.navigation.setParams({ 'player': this.props.player });
+    this.props.navigation.navigate('Profile', { player: this.props.player });
   }
 
   componentDidUpdate() {
