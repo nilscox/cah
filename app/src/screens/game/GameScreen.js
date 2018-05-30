@@ -4,7 +4,7 @@ import * as React from 'react';
 import { View, Text, FlatList } from 'react-native';
 import { connect } from 'react-redux';
 
-import type { NavigationPropsType } from '~/types/navigation';
+import type { NavigationProps } from '~/types/navigation';
 import type { Game as GameType } from '~/redux/state/game';
 import type { Player } from '~/redux/state/player';
 import { startGame } from '~/redux/actions';
@@ -24,7 +24,7 @@ type GameDispatchPropsType = {
 };
 
 type GamePropsType =
-  & NavigationPropsType
+  & NavigationProps
   & GameStatePropsType
   & GameDispatchPropsType;
 
@@ -108,7 +108,7 @@ class Game extends React.Component<GamePropsType> {
   renderGameIdle() {
     const { player, game, startGame } = this.props;
 
-    if (player.nick === game.owner)
+    if (game && player.nick === game.owner)
       return <StartGameButton startGame={startGame} />;
     else
       return <View><Text>Waiting for the game to start...</Text></View>

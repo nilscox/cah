@@ -4,7 +4,7 @@ import * as React from 'react';
 import { StyleSheet, View, Text, TextInput, Button } from 'react-native';
 import { connect } from 'react-redux';
 
-import type { NavigationPropsType } from '~/types/navigation';
+import type { NavigationProps } from '~/types/navigation';
 import type { Player } from '~/redux/state/player';
 import { loginPlayer } from '~/redux/actions';
 
@@ -18,7 +18,7 @@ type DispatchPropsType = {
 
 type AuthPropsType =
   & StatePropsType
-  & NavigationPropsType
+  & NavigationProps
   & DispatchPropsType;
 
 type AuthStateType = {
