@@ -41,6 +41,12 @@ const Button = ({ style, textStyle, onPress, variant, children }: ButtonProps) =
       </Text>
     </TouchableOpacity>
   );
-}
+};
+
+Button.defaultProps = {
+  style: null,
+  textStyle: null,
+  variant: null,
+};
 
 export default Button;

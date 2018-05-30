@@ -3,7 +3,11 @@
 import * as React from 'react';
 import { Button } from 'react-native';
 
-const StartGameButton = ({ startGame }) => (
+type StartGameButtonProps = {
+  startGame: Function,
+};
+
+const StartGameButton = ({ startGame }: StartGameButtonProps) => (
   <Button title="Start!" onPress={startGame} />
 );
 

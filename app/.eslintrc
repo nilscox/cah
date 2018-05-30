@@ -39,19 +39,24 @@
         "type-annotations",
         "static-methods",
         "lifecycle",
+        "everything-else",
         "/^handle.+$/",
         "render",
-        "/^render.+$/",
-        "everything-else"
+        "/^render.+$/"
       ]
     }],
 
     "react/jsx-indent": ["error", 2],
     "react/jsx-indent-props": ["error", 2],
-    "react/jsx-no-bind": ["error", { "ignoreRefs": true }],
-    "react/jsx-max-props-per-line": ["error", { "maximum": 3 }],
+    "react/jsx-max-depth": ["error", { "max": 3 }],
+    "react/jsx-max-props-per-line": ["error", { "maximum": 4 }],
+    "react/jsx-one-expression-per-line": ["off"],
+    "react/jsx-no-bind": ["off"],
+    "react/jsx-no-literals": ["off"],
     "react/jsx-filename-extension": ["off"],
     "react/jsx-sort-props": ["off"],
-    "react/jsx-sort-default-props": ["off"]
+    "react/jsx-sort-default-props": ["off"],
+
+    "react-native/no-color-literals": ["off"]
   }
 }

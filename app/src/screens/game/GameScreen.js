@@ -58,8 +58,10 @@ class Game extends React.Component<GamePropsType> {
   };
 
   componentDidMount() {
+    const { navigation, game } = this.props;
+
     this.redirectIfNotInGame();
-    this.props.navigation.setParams({ 'game': this.props.game });
+    navigation.setParams({ game });
   }
 
   componentDidUpdate() {
@@ -93,8 +95,8 @@ class Game extends React.Component<GamePropsType> {
 
         <View style={styles.choicesView}>
           <FlatList
-            keyExtractor={(card) => `card-${card.id}`}
             data={player.cards}
+            keyExtractor={(card) => `card-${card.id}`}
             renderItem={({ item }) => <ChoiceCard choice={item} />}
           />
         </View>

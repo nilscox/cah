@@ -1,7 +1,13 @@
+// @flow
+
 import * as React from 'react';
 import { View, Text } from 'react-native';
 
-const PlayerInfoScreen = ({ navigation }) => {
+import type { NavigationProps } from '~/types/navigation';
+
+type PlayerInfoScreenProps = NavigationProps;
+
+const PlayerInfoScreen = ({ navigation }: PlayerInfoScreenProps) => {
   const player = navigation.getParam('player');
 
   return (

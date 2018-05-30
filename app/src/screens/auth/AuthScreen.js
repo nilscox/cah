@@ -59,13 +59,6 @@ class AuthScreen extends React.Component<AuthPropsType, AuthStateType> {
     nick: '',
   };
 
-  onLogIn = () => {
-    const { logIn } = this.props;
-    const { nick } = this.state;
-
-    logIn(nick.trim());
-  };
-
   componentDidMount() {
     this.redirectIfLoggedIn();
   }
@@ -81,7 +74,16 @@ class AuthScreen extends React.Component<AuthPropsType, AuthStateType> {
       navigation.navigate('Lobby');
   }
 
+  handleLogIn = () => {
+    const { logIn } = this.props;
+    const { nick } = this.state;
+
+    logIn(nick.trim());
+  };
+
   render() {
+    const { nick } = this.state;
+
     return (
       <View style={styles.page}>
 
@@ -92,11 +94,11 @@ class AuthScreen extends React.Component<AuthPropsType, AuthStateType> {
         <View style={styles.form}>
           <TextInput
             placeholder="Your nick..."
-            value={this.state.nick}
-            onChangeText={text => this.setState({ nick: text })}
+            value={nick}
+            onChangeText={(text) => this.setState({ nick: text })}
           />
           <View style={styles.logInButton}>
-            <Button title="Log in" onPress={this.onLogIn} />
+            <Button title="Log in" onPress={this.handleLogIn} />
           </View>
         </View>
 

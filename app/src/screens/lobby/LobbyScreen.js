@@ -8,7 +8,7 @@ import Svg, { Line } from 'react-native-svg';
 
 import type { Game } from '~/redux/state/game';
 import type { Player } from '~/redux/state/player';
-import type { NavigationPropsType } from '~/types/navigation';
+import type { NavigationProps } from '~/types/navigation';
 import { joinGame } from '~/redux/actions';
 import MenuButton from '~/components/MenuButton';
 import GamesList from './components/GamesList';
@@ -27,7 +27,7 @@ type DispatchPropsType = {
 type LobbyPropsType =
   & StatePropsType
   & DispatchPropsType
-  & NavigationPropsType;
+  & NavigationProps;
 
 const mapStateToProps = ({ player, games, game }) => ({
   player,
@@ -81,9 +81,11 @@ class LobbyScreen extends React.Component<LobbyPropsType> {
   };
 
   componentDidMount() {
+    const { navigation, player } = this.props;
+
     this.redirectIfInGame();
-    this.props.navigation.setParams({ 'player': this.props.player });
-    this.props.navigation.navigate('Profile', { player: this.props.player });
+    navigation.setParams({ 'player': player });
+    navigation.navigate('Profile', { player: player });
   }
 
   componentDidUpdate() {

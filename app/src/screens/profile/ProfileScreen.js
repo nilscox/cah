@@ -4,10 +4,10 @@ import * as React from 'react';
 import { View, Text } from 'react-native';
 import { connect } from 'react-redux';
 
-import type { NavigationPropsType } from '~/types/navigation';
+import type { NavigationProps } from '~/types/navigation';
 import PlayerAvatar from '~/components/PlayerAvatar';
 
-type ProfileScreenProps = NavigationPropsType;
+type ProfileScreenProps = NavigationProps;
 
 const mapStateToProps = ({ player }) => ({
   player,

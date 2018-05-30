@@ -1,11 +1,16 @@
+// @flow
+
 import * as React from 'react';
 import { View, Text } from 'react-native';
 
+import type { Navigation, NavigationProps } from '~/types/navigation';
 import MenuButton from '~/components/MenuButton';
 import styles from './GameInfoScreen.styles';
 
-class GameInfoScreen extends React.Component {
-  static navigationOptions = ({ navigation }) => ({
+type GameInfoScreenProps = NavigationProps;
+
+class GameInfoScreen extends React.Component<GameInfoScreenProps> {
+  static navigationOptions = ({ navigation }: Navigation) => ({
     title: 'Game Info',
     headerStyle: {
       backgroundColor: '#4286f4',
@@ -28,7 +33,7 @@ class GameInfoScreen extends React.Component {
 
         { this.renderMainInfo(game) }
         { this.renderPlayersList(game.players) }
-        { game.history && this.renderHistory(game.history) }
+        { game.history && this.renderGameHistory(game.history) }
 
       </View>
     );
