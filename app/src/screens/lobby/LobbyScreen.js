@@ -4,7 +4,7 @@ import * as React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { connect } from 'react-redux';
 /* eslint-disable-next-line import/named */
-import Svg from 'react-native-svg';
+import Svg, { Line } from 'react-native-svg';
 
 import type { Game } from '~/redux/state/game';
 import type { Player } from '~/redux/state/player';
@@ -101,7 +101,7 @@ class LobbyScreen extends React.Component<LobbyPropsType> {
 
     const separatorLine = (
       <Svg height="4" width="120">
-        <Svg.Line
+        <Line
           x1="0" y1="0"
           x2="120" y2="0"
           stroke="#666"

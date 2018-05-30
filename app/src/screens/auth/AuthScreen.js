@@ -49,10 +49,6 @@ const styles = StyleSheet.create({
     flex: 2,
     marginHorizontal: 40,
   },
-  nickInput: {
-    borderColor: 'gray',
-    borderBottomWidth: 1,
-  },
   logInButton: {
     marginTop: 20,
   },
@@ -95,8 +91,6 @@ class AuthScreen extends React.Component<AuthPropsType, AuthStateType> {
 
         <View style={styles.form}>
           <TextInput
-            style={styles.nickInput}
-            underlineColorAndroid="transparent"
             placeholder="Your nick..."
             value={this.state.nick}
             onChangeText={text => this.setState({ nick: text })}
