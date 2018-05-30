@@ -6,5 +6,5 @@ export type Player = {
   nick: string,
   connected: boolean,
   avatar: string,
-  cards: Array<Choice>,
+  cards?: Array<Choice>,
 };
