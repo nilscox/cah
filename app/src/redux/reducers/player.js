@@ -1,12 +1,16 @@
 import { handle } from 'redux-pack';
 
 import initialState from '../state';
-import { PLAYER_FETCH, PLAYER_LOGIN } from '../actions';
+import {
+  API_DOWN,
+  PLAYER_LOGOUT,
+  PLAYER_FETCH, PLAYER_LOGIN,
+} from '../actions';
 
 export default (state = initialState.player, action) => {
   const { type, payload } = action;
 
-  if (action.type === 'API_DOWN')
+  if (action.type === API_DOWN || action.type === PLAYER_LOGOUT)
     return initialState.player;
 
   const handlers = {

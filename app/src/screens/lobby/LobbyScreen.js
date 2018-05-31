@@ -75,6 +75,7 @@ class LobbyScreen extends React.Component<LobbyPropsType> {
             Profile: { route: 'Profile' },
             Settings: { route: 'Settings' },
           }}
+          canLogOut
         />
       ),
     };

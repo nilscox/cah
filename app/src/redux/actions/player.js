@@ -27,3 +27,10 @@ export const loginPlayer = (nick) => (dispatch, getState) => dispatch({
     },
   },
 });
+
+export const PLAYER_LOGOUT = 'PLAYER_LOGOUT';
+export const logoutPlayer = () => ({
+  type: PLAYER_LOGOUT,
+  route: '/api/player',
+  method: 'DELETE',
+});
