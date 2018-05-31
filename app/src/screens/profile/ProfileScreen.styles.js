@@ -6,6 +6,7 @@ export default StyleSheet.create({
   wrapper: {
     flex: 1,
     marginHorizontal: 20,
+    justifyContent: 'flex-start',
   },
   avatar: {
     marginVertical: 20,
@@ -23,6 +24,16 @@ export default StyleSheet.create({
   label: {
     fontWeight: 'bold',
     marginRight: 10,
+    textAlignVertical: 'center',
   },
-  value: {},
+  valueReadOnly: {
+    flex: 1,
+  },
+  valueReadWrite: {
+    flex: 1,
+  },
+
+  saveButton: {
+    marginVertical: 20,
+  },
 });
