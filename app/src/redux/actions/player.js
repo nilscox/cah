@@ -34,3 +34,12 @@ export const logoutPlayer = () => ({
   route: '/api/player',
   method: 'DELETE',
 });
+
+export const PLAYER_UPDATE = 'PLAYER_UPDATE';
+export const updatePlayer = (player) => ({
+  type: PLAYER_UPDATE,
+  route: '/api/player',
+  method: 'PUT',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(player),
+});
