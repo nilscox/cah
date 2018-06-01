@@ -103,6 +103,16 @@ returns: Player | FullPlayer
 Fetch the currently logged in player.
 
 ```
+PUT /api/player
+status: 200
+body: {
+    nick: string,
+}
+```
+
+Update the currently logged in player.
+
+```
 DELETE /api/player
 status: 204
 triggers: PLAYER_DISCONNECTED

@@ -31,9 +31,13 @@ class PlayerViews(views.APIView):
     authentication_classes = [PlayerAuthentication]
 
     @staticmethod
-    def serialize_player(player):
+    def player_serializer(player, *args, **kwargs):
         serializer = PlayerSerializer if player.in_game() else PlayerLightSerializer
-        return serializer(player).data
+        return serializer(player, *args, **kwargs)
+
+    @staticmethod
+    def serializer_player(player):
+        return PlayerViews.player_serializer(player).data
 
     def post(self, request, format=None):
         nick = request.data.get('nick')
@@ -53,6 +57,17 @@ class PlayerViews(views.APIView):
             raise PlayerNotFound
 
         return Response(PlayerViews.serialize_player(request.user))
+
+    def put(self, request, format=None):
+        if not isinstance(request.user, Player):
+            raise PlayerNotFound
+
+        serializer = PlayerViews.player_serializer(request.user, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+
+        serializer.save()
+
+        return Response(serializer.data)
 
     def delete(self, request, format=None):
         if not isinstance(request.user, Player):
