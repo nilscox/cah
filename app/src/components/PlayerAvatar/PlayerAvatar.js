@@ -16,25 +16,27 @@ type PlayerAvatarProps = {
 const defaultAvatar = require('./default-avatar.png');
 
 const PlayerAvatar = ({ player, style, size }: PlayerAvatarProps) => {
+  const imageSize = {
+    small: 36,
+    normal: 42,
+    big: 66,
+  }[size];
+
+  const imageBorderRadius = {
+    small: 18,
+    normal: 21,
+    big: 33,
+  }[size];
+
   const wrapperStyles = {
-    width: 42,
+    width: imageSize,
   };
 
   const imageStyles = {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
+    width: imageSize,
+    height: imageSize,
+    borderRadius: imageBorderRadius,
   };
-
-  if (size === 'small') {
-    wrapperStyles.width = imageStyles.width = imageStyles.height = 36;
-    imageStyles.borderRadius = 18;
-  }
-
-  if (size === 'big') {
-    wrapperStyles.width = imageStyles.width = imageStyles.height = 66;
-    imageStyles.borderRadius = 33;
-  }
 
   return (
     <View style={[wrapperStyles, style]}>
