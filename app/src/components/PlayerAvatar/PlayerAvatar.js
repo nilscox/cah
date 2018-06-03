@@ -1,15 +1,16 @@
 // @flow
 
 import * as React from 'react';
-import { StyleSheet, View, Image, Text } from 'react-native';
+import { View, Image, Text } from 'react-native';
 
 import type { Player } from '~/redux/state/player';
+import type { Styles } from '~/types/styles';
 import styles from './PlayerAvatar.styles.js'
 
 type PlayerAvatarProps = {
   player: Player,
-  style?: StyleSheet.Styles,
-  size?: 'big' | 'small',
+  style?: Styles,
+  size?: 'big' | 'normal' | 'small',
 };
 
 const defaultAvatar = require('./default-avatar.png');
@@ -41,6 +42,11 @@ const PlayerAvatar = ({ player, style, size }: PlayerAvatarProps) => {
       <Text style={styles.nick}>{player.nick}</Text>
     </View>
   );
-}
+};
+
+PlayerAvatar.defaultProps = {
+  style: null,
+  size: 'normal',
+};
 
 export default PlayerAvatar;
