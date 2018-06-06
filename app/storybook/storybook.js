@@ -6,6 +6,7 @@ import { getStorybookUI, configure } from '@storybook/react-native';
 configure(() => {
   require('../src/components/Button/Button.stories.js');
   require('../src/components/PlayerAvatar/PlayerAvatar.stories.js');
+  require('../src/screens/game/components/QuestionCard/QuestionCard.stories.js');
 }, module);
 
 // This assumes that storybook is running on the same host as your RN packager,
