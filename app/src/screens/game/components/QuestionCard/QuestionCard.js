@@ -19,24 +19,24 @@ const QuestionCard = ({ question }: QuestionCardProps) => {
   const questionBlanks = [];
 
   if (question.type === 'question') {
-    questionText.push(<Text style={styles.question}>{question.text}</Text>);
+    questionText.push(<Text key="split" style={styles.question_text}>{question.text}</Text>);
 
     for (let i = 0; i < question.nb_choices; i++)
       questionBlanks.push(<Blank key={`blank-${i}`} />);
   } else {
-    /* eslint-disable react/no-array-index-key */
-    question.split.forEach((split, i) => {
+    for (let i = 0; i < question.split.length; i++) {
+      const split = question.split[i];
+
       if (split)
-        questionText.push(<Text key={`split-${i}`} style={styles.question}>{split}</Text>);
+        questionText.push(<Text key={`split-${i}`} style={styles.question_text}>{split}</Text>);
       else
         questionText.push(<Blank key={`blank-${i}`} />);
-    });
-    /* eslint-enable react/no-array-index-key */
+    }
   }
 
   return (
     <View style={styles.wrapper}>
-      <View style={styles.question_text}>
+      <View style={styles.question}>
         { questionText }
       </View>
       { questionBlanks.length > 0 &&
