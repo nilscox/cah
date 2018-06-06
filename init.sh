@@ -2,6 +2,12 @@
 
 source ./.env
 
+if [ ! -d "$VENV_DIR" ]; then
+  python -m venv "$VENV_DIR"
+  source "$VENV_DIR/bin/activate"
+  pip install -r "requirements.txt"
+fi
+
 source "$VENV_DIR/bin/activate"
 source "$NVM_DIR/nvm.sh"
 
