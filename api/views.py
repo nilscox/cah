@@ -36,7 +36,7 @@ class PlayerViews(views.APIView):
         return serializer(player, *args, **kwargs)
 
     @staticmethod
-    def serializer_player(player):
+    def serialize_player(player):
         return PlayerViews.player_serializer(player).data
 
     def post(self, request, format=None):
