@@ -13,7 +13,12 @@ export default StyleSheet.create({
     fontSize: 16,
     color: '#eee',
     textAlign: 'center',
-    lineHeight: 25,
+    lineHeight: 30,
+  },
+  question_text: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
   },
   question_blanks: {
     flexDirection: 'row',
@@ -23,6 +28,7 @@ export default StyleSheet.create({
   blank: {
     width: 40,
     marginHorizontal: 5,
+    marginBottom: 6,
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
   },
