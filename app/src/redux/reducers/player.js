@@ -16,12 +16,12 @@ export default (state = initialState.player, action) => {
   const handlers = {
     [PLAYER_FETCH]: {
       start: () => null,
-      success: () => payload,
+      success: () => ({ ...payload, selectedChoices: [] }),
       failure: () => null,
     },
     [PLAYER_LOGIN]: {
       start: () => null,
-      success: () => payload,
+      success: () => ({ ...payload, selectedChoices: [] }),
       failure: () => null,
     },
   };

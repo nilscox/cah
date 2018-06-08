@@ -4,10 +4,13 @@ export default StyleSheet.create({
   wrapper: {
     flex: 1,
   },
-  questionView: {
+  question: {
     flex: 1,
   },
-  choicesView: {
+  choices: {
     flex: 2,
+  },
+  choiceSelected: {
+    backgroundColor: '#CCC',
   },
 });

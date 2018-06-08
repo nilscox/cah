@@ -1,43 +1,40 @@
 // @flow
 
 import * as React from 'react';
-import { View, Text, FlatList } from 'react-native';
 import { connect } from 'react-redux';
 
-import type { NavigationProps } from '~/types/navigation';
-import type { Game as GameType } from '~/redux/state/game';
-import type { Player } from '~/redux/state/player';
-import { startGame } from '~/redux/actions';
 import MenuButton from '~/components/MenuButton';
-import styles from './Game.styles';
-import StartGameButton from './components/StartGameButton';
-import QuestionCard from './components/QuestionCard';
-import ChoiceCard from './components/ChoiceCard';
 
-type GameStatePropsType = {
-  player: Player,
-  game: ?GameType,
+import GameIdleView from './views/GameIdle';
+import PlayersAnswerView from './views/PlayersAnswer';
+
+type GameState =
+  | 'GAME_IDLE'
+  | 'PLAYERS_ANSWER'
+  | 'QM_SELECTION'
+  | 'END_OF_TURN';
+
+type GameProps = {
+  gameState: GameState,
 };
 
-type GameDispatchPropsType = {
-  startGame: Function,
-};
+const mapStateToProps = ({ game }) => ({
+  gameState: (() => {
+    if (game.state === 'idle')
+      return 'GAME_IDLE';
 
-type GamePropsType =
-  & NavigationProps
-  & GameStatePropsType
-  & GameDispatchPropsType;
+    if (game.play_state === 'players_answer')
+      return 'PLAYERS_ANSWER';
 
-const mapStateToProps = ({ player, game }) => ({
-  player,
-  game,
+    if (game.play_state === 'question_master_selection')
+      return 'QM_SELECTION';
+
+    if (game.playe_state === 'end_of_turn')
+      return 'END_OF_TURN';
+  })(),
 });
 
-const mapDispatchToProps = (dispatch: Function) => ({
-  startGame: () => dispatch(startGame()),
-});
-
-class Game extends React.Component<GamePropsType> {
+class Game extends React.Component<GameProps> {
   static navigationOptions = ({ navigation }) => {
     return {
       title: 'CAH',
@@ -57,62 +54,15 @@ class Game extends React.Component<GamePropsType> {
     };
   };
 
-  componentDidMount() {
-    const { navigation, game } = this.props;
-
-    this.redirectIfNotInGame();
-    navigation.setParams({ game });
-  }
-
-  componentDidUpdate() {
-    this.redirectIfNotInGame();
-  }
-
-  redirectIfNotInGame() {
-    const { navigation, player, game } = this.props;
-
-    if (!player)
-      navigation.navigate('Auth');
-    else if (!game)
-      navigation.navigate('Lobby');
-  }
-
   render() {
-    const { game, player } = this.props;
+    const { gameState } = this.props;
 
-    if (!game)
-      return <View><Text>Loading...</Text></View>;
-
-    if (game.state === 'idle')
-      return this.renderGameIdle();
-
-    return (
-      <View style={styles.wrapper}>
-
-        <View style={styles.questionView}>
-          <QuestionCard question={game.question} />
-        </View>
-
-        <View style={styles.choicesView}>
-          <FlatList
-            data={player.cards}
-            keyExtractor={(card) => `card-${card.id}`}
-            renderItem={({ item }) => <ChoiceCard choice={item} />}
-          />
-        </View>
-
-      </View>
-    );
-  }
-
-  renderGameIdle() {
-    const { player, game, startGame } = this.props;
-
-    if (game && player.nick === game.owner)
-      return <StartGameButton startGame={startGame} />;
-    else
-      return <View><Text>Waiting for the game to start...</Text></View>
+    switch (gameState) {
+      case 'GAME_IDLE': return <GameIdleView />;
+      case 'PLAYERS_ANSWER': return <PlayersAnswerView />;
+      default: throw new Error('Not implemented');
+    }
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Game);
+export default connect(mapStateToProps)(Game);

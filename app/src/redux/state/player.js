@@ -8,4 +8,6 @@ export type Player = {
   avatar: string,
   cards?: Array<Choice>,
   score?: number,
+
+  selectedChoices: Array<Choice>,
 };

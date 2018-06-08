@@ -1,3 +1,4 @@
+import fetchGame from './game';
 import { createWebSocket } from './websocket';
 
 export const PLAYER_FETCH = 'PLAYER_FETCH';
@@ -23,6 +24,10 @@ export const loginPlayer = (nick) => (dispatch, getState) => dispatch({
             action: 'connected',
             nick: player.nick,
           }));
+        })
+        .then(() => {
+          if (player.game)
+            dispatch(fetchGame());
         });
     },
   },

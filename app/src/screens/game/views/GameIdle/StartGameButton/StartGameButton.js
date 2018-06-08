@@ -1,14 +1,18 @@
 // @flow
 
 import * as React from 'react';
-import { Button } from 'react-native';
+import { Text } from 'react-native';
+
+import Button from '~/components/Button';
 
 type StartGameButtonProps = {
   startGame: Function,
 };
 
 const StartGameButton = ({ startGame }: StartGameButtonProps) => (
-  <Button title="Start!" onPress={startGame} />
+  <Button variant="big" onPress={startGame}>
+    <Text>Start!</Text>
+  </Button>
 );
 
 export default StartGameButton;
