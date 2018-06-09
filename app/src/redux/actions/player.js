@@ -20,7 +20,7 @@ const onPlayerFetched = (dispatch, getState) => {
     })
     .then(() => {
       if (player.game)
-        dispatch(fetchGame());
+        return dispatch(fetchGame());
     });
 };
 

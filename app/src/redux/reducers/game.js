@@ -14,7 +14,40 @@ import {
 const handleWebsocket = (state = initialState.game, action) => {
   const { type } = action.message;
 
+  if (!state)
+    return state;
+
   const handlers = {
+    PLAYER_CONNECTED: () => {
+      const players = state.players.slice();
+      const { player } = action.message;
+      const idx = players.findIndex(p => p.nick === player.nick);
+
+      if (idx < 0)
+        return state;
+
+      players.splice(idx, 1, player);
+
+      return {
+        ...state,
+        players,
+      };
+    },
+    PLAYER_DISCONNECTED: () => {
+      const players = state.players.slice();
+      const { player } = action.message;
+      const idx = players.findIndex(p => p.nick === player.nick);
+
+      if (idx < 0)
+        return state;
+
+      players.splice(idx, 1);
+
+      return {
+        ...state,
+        players,
+      };
+    },
     PLAYER_JOINED: () => {
       const players = state.players.slice();
       const { player } = action.message;
