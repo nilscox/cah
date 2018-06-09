@@ -8,6 +8,11 @@ if [ ! -d "$VENV_DIR" ]; then
   pip install -r "requirements.txt"
 fi
 
+if [ -d "app/node_modules/deline/.babelrc" ]; then
+  rm "app/node_modules/deline/.babelrc"
+fi
+
+
 source "$VENV_DIR/bin/activate"
 source "$NVM_DIR/nvm.sh"
 
