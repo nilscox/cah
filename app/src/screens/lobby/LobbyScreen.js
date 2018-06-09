@@ -9,7 +9,7 @@ import Svg, { Line } from 'react-native-svg';
 import type { Game } from '~/redux/state/game';
 import type { Player } from '~/redux/state/player';
 import type { NavigationProps } from '~/types/navigation';
-import { joinGame } from '~/redux/actions';
+import { listGames, joinGame } from '~/redux/actions';
 import MenuButton from '~/components/MenuButton';
 import GamesList from './components/GamesList';
 import CreateGameButton from './components/CreateGameButton';
@@ -22,6 +22,7 @@ type StatePropsType = {
 };
 
 type DispatchPropsType = {
+  reloadGamesList: Function,
   joinGame: Function,
 };
 
@@ -37,6 +38,7 @@ const mapStateToProps = ({ player, games, game }) => ({
 });
 
 const mapDispatchToProps: Function => DispatchPropsType = (dispatch) => ({
+  reloadGamesList: () => dispatch(listGames()),
   joinGame: (id: number) => dispatch(joinGame(id)),
 });
 
@@ -76,7 +78,7 @@ class LobbyScreen extends React.Component<LobbyPropsType> {
   }
 
   render() {
-    const { games, joinGame } = this.props;
+    const { games, joinGame, reloadGamesList } = this.props;
 
     const separatorLine = (
       <Svg height="4" width="120">
@@ -93,7 +95,13 @@ class LobbyScreen extends React.Component<LobbyPropsType> {
       <View style={styles.screen}>
 
         <View style={styles.gamesListView}>
-          { games && <GamesList games={games} joinGame={joinGame} /> }
+          { games && (
+            <GamesList
+              games={games}
+              joinGame={joinGame}
+              reloadGamesList={reloadGamesList}
+            />
+          ) }
         </View>
 
         <View style={styles.orView}>

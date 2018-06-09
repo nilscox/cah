@@ -1,35 +1,33 @@
 // @flow
 
 import * as React from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import type { Game } from '~/redux/state/game';
+
 import GameListItem from './GamesListItem';
+import styles from './GamesList.styles';
 
 type GamesListProps = {
   games: Array<Game>,
+  reloadGamesList: Function,
   joinGame: Function,
 };
 
-const styles = StyleSheet.create({
-  wrapper: {
-    paddingHorizontal: 35,
-  },
-  joinGameText: {
-    fontWeight: 'bold',
-    fontSize: 24,
-    paddingBottom: 20,
-    textAlign: 'center',
-  },
-  noGameText: {
-    textAlign: 'center',
-  },
-});
-
-const GamesList = ({ games, joinGame }: GamesListProps) => (
+const GamesList = ({ games, reloadGamesList, joinGame }: GamesListProps) => (
   <View style={styles.wrapper}>
 
-    <Text style={styles.joinGameText}>Join a game</Text>
+    <View style={styles.joinGame}>
+      <Text style={styles.joinGameText}>Join a game</Text>
+      <TouchableOpacity onPress={reloadGamesList}>
+        <Icon
+          name="reload"
+          style={styles.reloadIcon}
+          size={20}
+        />
+      </TouchableOpacity>
+    </View>
 
     { games.length
       ? games.map((game, n) => (
