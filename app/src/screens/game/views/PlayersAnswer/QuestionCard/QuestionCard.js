@@ -27,9 +27,14 @@ const totalTextLength = (question: Question, answer: Array<?Choice>) => {
 
 const Split = ({ text, choice }: { text?: string, choice?: Choice }) => {
   if (choice) {
+    let choiceText = choice.text;
+
+    if (!choice.keepCapitalization)
+      choiceText = choiceText.charAt(0).toLowerCase() + choiceText.slice(1);
+
     return (
       <Text style={[styles.split_text, styles.split_fill]}>
-        { choice.text.charAt(0).toLowerCase() + choice.text.slice(1) }
+        { choiceText }
       </Text>
     );
   }
