@@ -21,5 +21,5 @@ export const initialization = () => (dispatch) => Promise.resolve()
   .then(() => dispatch(initializationStarted()))
   .then(() => dispatch(fetchPlayer()))
   .then(() => dispatch(listGames()))
-  .catch(() => dispatch(initializationError()))
+  .catch((e) => dispatch(initializationError(e)))
   .then(() => dispatch(initializationFinished()));
