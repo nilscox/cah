@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import { View, Text } from 'react-native';
 import { connect } from 'react-redux';
 /* eslint-disable-next-line import/named */
 import Svg, { Line } from 'react-native-svg';
@@ -13,6 +13,7 @@ import { joinGame } from '~/redux/actions';
 import MenuButton from '~/components/MenuButton';
 import GamesList from './components/GamesList';
 import CreateGameButton from './components/CreateGameButton';
+import styles from './LobbyScreen.styles';
 
 type StatePropsType = {
   player: ?Player,
@@ -37,31 +38,6 @@ const mapStateToProps = ({ player, games, game }) => ({
 
 const mapDispatchToProps: Function => DispatchPropsType = (dispatch) => ({
   joinGame: (id: number) => dispatch(joinGame(id)),
-});
-
-const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  gamesListView: {
-    flex: 2,
-    justifyContent: 'center',
-  },
-  orView: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  createButtonView: {
-    flex: 1,
-    paddingTop: 40,
-    justifyContent: 'flex-start',
-  },
-  orText: {
-    fontSize: 32,
-    paddingHorizontal: 15,
-  },
 });
 
 class LobbyScreen extends React.Component<LobbyPropsType> {
@@ -108,7 +84,7 @@ class LobbyScreen extends React.Component<LobbyPropsType> {
           x1="0" y1="0"
           x2="120" y2="0"
           stroke="#666"
-          strokeWidth="4"
+          strokeWidth="2"
         />
       </Svg>
     );
