@@ -13,30 +13,20 @@ export default StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'center',
   },
-  question_text: {
+  question_answer: {
+
+  },
+  split_text: {
     fontSize: 16,
     color: '#ddd',
     textAlign: 'center',
     lineHeight: 30,
   },
-  question_text_compact: {
-    fontSize: 12,
-    lineHeight: 20,
-  },
-  question_blanks: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginTop: 30,
-  },
-  fill: {
+  split_fill: {
     fontWeight: 'bold',
-    fontSize: 16,
     color: '#fff',
-    textAlign: 'center',
-    lineHeight: 30,
-    marginHorizontal: 5,
   },
-  blank: {
+  split_blank: {
     width: 40,
     marginHorizontal: 5,
     marginBottom: 6,

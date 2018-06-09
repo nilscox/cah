@@ -12,18 +12,86 @@ type QuestionCardProps = {
   answer: Array<?Choice>,
 };
 
-const Blank = () => (
-  <View style={styles.blank} />
-);
+const totalTextLength = (question: Question, answer: Array<?Choice>) => {
+  let total = 0;
+  const add = (s: ?string) => {
+    if (s)
+      total += s.length;
+  };
 
-const Fill = ({ choice }: { choice: Choice }) => (
-  <Text style={styles.fill}>{ choice.text }</Text>
-);
+  question.split.forEach(add);
+  answer.map(c => c && c.text).forEach(add);
+
+  return total;
+};
+
+const Split = ({ text, choice }: { text?: string, choice?: Choice }) => {
+  if (choice) {
+    return (
+      <Text style={[styles.split_text, styles.split_fill]}>
+        { choice.text.charAt(0).toLowerCase() + choice.text.slice(1) }
+      </Text>
+    );
+  }
+  else if (text)
+    return <Text style={styles.split_text}>{ text }</Text>
+  else
+    return <View style={styles.split_blank} />
+};
+
+const QuestionTypeQuestion = ({ question, nextFill }: { question: Question, nextFill: Function }) => {
+  const answer = [];
+
+  for (let i = 0; i < question.nb_choices; i++) {
+    const fill = nextFill();
+
+    if (fill)
+      answer.push(<Split key={`split-${i}`} choice={fill} />);
+    else
+      answer.push(<Split key={`split-${i}`} />);
+  }
+
+  return (
+    <View style={styles.wrapper}>
+      <View style={styles.question}>
+        <Split text={question.text} />
+      </View>
+      <View style={styles.question_answer}>
+        { answer }
+      </View>
+    </View>
+  );
+};
+
+const QuestionTypeFill = ({ question, nextFill }: { question: Question, nextFill: Function }) => {
+  const text = [];
+
+  for (let i = 0; i < question.split.length; i++) {
+    const split = question.split[i];
+
+    if (split)
+      text.push(<Split key={`split-${i}`} text={split} />);
+    else {
+      const fill = nextFill();
+
+      if (fill)
+        text.push(<Split key={`split-${i}`} choice={fill} />);
+      else
+        text.push(<Split key={`split-${i}`} />);
+    }
+  }
+
+  return (
+    <View style={styles.wrapper}>
+      <View style={styles.question}>
+        { text }
+      </View>
+    </View>
+  );
+};
 
 const QuestionCard = ({ question, answer }: QuestionCardProps) => {
-  const questionText = [];
-  const questionBlanks = [];
-
+  const textLength = totalTextLength(question, answer);
   const fillIt = (function*() {
     if (!answer)
       return;
@@ -31,48 +99,15 @@ const QuestionCard = ({ question, answer }: QuestionCardProps) => {
     for (let i = 0; i < answer.length; ++i)
       yield answer[i];
   })();
+
   const nextFill = () => fillIt.next().value;
 
-  if (question.type === 'question') {
-    questionText.push(<Text key="split" style={styles.question_text}>{question.text}</Text>);
-
-    for (let i = 0; i < question.nb_choices; i++) {
-      const fill = nextFill();
-
-      if (fill)
-        questionBlanks.push(<Fill key={`fill-${i}`} choice={fill} />);
-      else
-        questionBlanks.push(<Blank key={`blank-${i}`} />);
-    }
-  } else {
-    for (let i = 0; i < question.split.length; i++) {
-      const split = question.split[i];
-
-      if (split)
-        questionText.push(<Text key={`split-${i}`} style={styles.question_text}>{split}</Text>);
-      else {
-        const fill = nextFill();
-
-        if (fill)
-          questionText.push(<Fill key={`fill-${i}`} choice={fill} />);
-        else
-          questionText.push(<Blank key={`blank-${i}`} />);
-      }
-    }
-  }
-
-  return (
-    <View style={styles.wrapper}>
-      <View style={styles.question}>
-        { questionText }
-      </View>
-      { questionBlanks.length > 0 &&
-        <View style={styles.question_blanks}>
-          { questionBlanks }
-        </View>
-      }
-    </View>
-  );
+  if (question.type === 'question')
+    return <QuestionTypeQuestion question={question} nextFill={nextFill} />;
+  else if (question.type === 'fill')
+    return <QuestionTypeFill question={question} nextFill={nextFill} />;
+  else
+    throw new Error(`unkown question type: ${question.type}`);
 }
 
 QuestionCard.defaultProps = {
