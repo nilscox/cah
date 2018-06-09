@@ -15,6 +15,7 @@ import styles from './PlayersAnswer.styles';
 type PlayersAnswerProps = {
   question: Question,
   cards: Array<Choice>,
+  selectedChoices: Array<Choice>,
   isSelected: (Choice) => boolean,
   canToggleChoice: boolean,
   canSubmitAnswer: boolean,
@@ -48,13 +49,14 @@ const mapStateToProps = ({ player, game }) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  toggleChoice: () => dispatch(toggleChoice()),
+  toggleChoice: (choice) => dispatch(toggleChoice(choice)),
   submitAnswer: () => dispatch(submitAnswer()),
 });
 
 const PlayersAnswer = ({
   question,
   cards,
+  selectedChoices,
   isSelected,
   canToggleChoice,
   canSubmitAnswer,
@@ -75,6 +77,7 @@ const PlayersAnswer = ({
       <View style={styles.question}>
         <QuestionCard
           question={question}
+          answer={selectedChoices}
           onPress={() => canSubmitAnswer && submitAnswer()}
         />
       </View>

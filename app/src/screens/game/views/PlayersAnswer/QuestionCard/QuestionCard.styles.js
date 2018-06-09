@@ -19,6 +19,10 @@ export default StyleSheet.create({
     textAlign: 'center',
     lineHeight: 30,
   },
+  question_text_compact: {
+    fontSize: 12,
+    lineHeight: 20,
+  },
   question_blanks: {
     flexDirection: 'row',
     flexWrap: 'wrap',

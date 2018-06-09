@@ -5,6 +5,7 @@ import {
   API_DOWN,
   PLAYER_LOGOUT,
   PLAYER_FETCH, PLAYER_LOGIN,
+  TOGGLE_CHOICE,
 } from '../actions';
 
 export default (state = initialState.player, action) => {
@@ -12,6 +13,28 @@ export default (state = initialState.player, action) => {
 
   if (action.type === API_DOWN || action.type === PLAYER_LOGOUT)
     return initialState.player;
+
+  if (action.type === TOGGLE_CHOICE) {
+    const selectedChoices = state.selectedChoices.slice();
+    const { choice } = action;
+    const idx = selectedChoices.findIndex(c => c && c.id === choice.id);
+
+    if (idx < 0) {
+      const firstNull = selectedChoices.findIndex(c => c === null);
+
+      if (firstNull >= 0)
+        selectedChoices.splice(firstNull, 1, choice);
+      else
+        selectedChoices.push(choice);
+    }
+    else
+      selectedChoices.splice(idx, 1, null);
+
+    return {
+      ...state,
+      selectedChoices,
+    };
+  }
 
   const handlers = {
     [PLAYER_FETCH]: {
