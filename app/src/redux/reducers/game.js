@@ -8,13 +8,50 @@ import {
   GAME_CREATE,
   GAME_JOIN,
   GAME_FETCH_HISTORY,
+  WEBSOCKET_MESSAGE,
 } from '../actions';
+
+const handleWebsocket = (state = initialState.game, action) => {
+  const { type } = action.message;
+
+  const handlers = {
+    PLAYER_JOINED: () => {
+      const players = state.players.slice();
+      const { player } = action.message;
+      const idx = players.findIndex(p => p.nick === player.nick);
+
+      if (idx < 0) {
+        return {
+          ...state,
+          players: [
+            ...state.players,
+            player,
+          ],
+        };
+      }
+
+      players.splice(idx, 1, player);
+
+      return {
+        ...state,
+        players,
+      };
+    },
+  };
+
+  return handlers[type]
+    ? handlers[type]()
+    : state;
+}
 
 export default (state = initialState.game, action) => {
   const { type, payload } = action;
 
   if (action.type === API_DOWN || action.type === PLAYER_LOGOUT)
     return initialState.game;
+
+  if (action.type === WEBSOCKET_MESSAGE)
+    return handleWebsocket(state, action);
 
   const handlers = {
     [GAME_FETCH]: {

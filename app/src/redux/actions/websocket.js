@@ -3,6 +3,8 @@ import { checkApiStatus } from './status';
 // $FlowFixMe
 const WEBSOCKET_URL = process.env.REACT_APP_WEBSOCKET_URL;
 
+let socket = null;
+
 export const WEBSOCKET_CREATE = 'WEBSOCKET_CREATE';
 const wsCreate = (socket) => ({
   type: WEBSOCKET_CREATE,
@@ -41,8 +43,19 @@ const wsError = (socket, event) => (dispatch) => {
   dispatch(checkApiStatus());
 };
 
+export const WEBSOCKET_SEND = 'WEBSOCKET_SEND';
+const wsSend = (socket, message) => (dispatch) => {
+  dispatch({
+    type: WEBSOCKET_SEND,
+    socket,
+    message,
+  });
+
+  socket.send(JSON.stringify(message));
+};
+
 export const createWebSocket = () => (dispatch) => new Promise((resolve, reject) => {
-  const socket = new WebSocket(WEBSOCKET_URL);
+  socket = new WebSocket(WEBSOCKET_URL);
 
   dispatch(wsCreate(socket));
 
@@ -67,3 +80,10 @@ export const createWebSocket = () => (dispatch) => new Promise((resolve, reject)
   socket.onmessage = (evt) => dispatch(wsMessage(socket, evt));
   socket.onclose = (evt) => dispatch(wsClose(socket, evt));
 });
+
+export const sendWebSocket = (message) => {
+  if (!socket)
+    throw new Error('websocket not connected');
+
+  return wsSend(socket, message);
+};

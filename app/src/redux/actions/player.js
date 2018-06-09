@@ -1,5 +1,5 @@
 import { fetchGame } from './game';
-import { createWebSocket } from './websocket';
+import { createWebSocket, sendWebSocket } from './websocket';
 
 const onPlayerFetched = (dispatch, getState) => {
   const { player } = getState();
@@ -13,12 +13,15 @@ const onPlayerFetched = (dispatch, getState) => {
       // expose the socket in the console
       global.socket = socket;
 
-      socket.send(JSON.stringify({
+      dispatch(sendWebSocket({
         action: 'connected',
         nick: player.nick,
       }));
     })
-    .then(() => dispatch(fetchGame()));
+    .then(() => {
+      if (player.game)
+        dispatch(fetchGame());
+    });
 };
 
 export const PLAYER_FETCH = 'PLAYER_FETCH';
