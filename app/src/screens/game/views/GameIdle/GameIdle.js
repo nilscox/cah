@@ -28,7 +28,7 @@ const mapDispatchToProps = (dispatch) => ({
 
 const GameIdle = ({ players, canStartGame, startGame }: GameIdleProps) => (
   <View style={styles.wrapper}>
-    <Text>Waiting for the game to start...</Text>
+    <Text style={styles.waitingText}>Waiting for the game to start...</Text>
     <PlayersList players={players} />
     { canStartGame && <StartGameButton startGame={startGame} /> }
   </View>

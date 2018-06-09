@@ -9,8 +9,8 @@ import styles from './PlayerAvatar.styles.js'
 
 type PlayerAvatarProps = {
   player: Player,
-  style?: Styles,
-  size?: 'big' | 'normal' | 'small',
+  style: ?Styles,
+  size: 'big' | 'normal' | 'small',
 };
 
 const defaultAvatar = require('./default-avatar.png');

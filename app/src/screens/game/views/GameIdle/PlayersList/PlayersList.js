@@ -15,7 +15,12 @@ type PlayersListProps = {
 const PlayersList = ({ players }: PlayersListProps) => (
   <View style={styles.wrapper}>
     { players.map((player) => (
-      <PlayerAvatar key={`players-list-${player.nick}`} player={player} size="small" />
+      <PlayerAvatar
+        key={`players-list-${player.nick}`}
+        style={styles.playerAvatar}
+        player={player}
+        size="small"
+      />
     )) }
   </View>
 );
