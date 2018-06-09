@@ -27,6 +27,7 @@ class Choice(models.Model):
 
     lang = models.CharField(max_length=8)
     text = models.CharField(max_length=255)
+    keep_capitalization = models.BooleanField()
 
     def __str__(self):
         return self.text

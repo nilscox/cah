@@ -38,11 +38,14 @@ a `Question`, or fit in a `Question`'s blank.
 Choice: {
     id: integer,
     text: string,
+    keepCapitalization: boolean,
 }
 ```
 
 - id: The choice's id
 - text: The actual choice text
+- keepCapitailzaiton: True if the choice's first letter must stay upper case
+(ie. if it is a person's name)
 
 ### Player
 

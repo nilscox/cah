@@ -11,7 +11,8 @@ class ChoiceSerializer(serializers.ModelSerializer):
     """
 
     text = serializers.ReadOnlyField(source='__str__')
+    keepCapitalization = serializers.ReadOnlyField(source='keep_capitalization')
 
     class Meta:
         model = Choice
-        fields = ('id', 'text')
+        fields = ('id', 'text', 'keepCapitalization')

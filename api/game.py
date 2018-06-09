@@ -28,7 +28,7 @@ def init(game):
         for place in mquestions[idx].get_blanks():
             question.blanks.create(place=place)
 
-    choices = map(lambda mc: Choice(game=game, text=mc.text), mchoices)
+    choices = map(lambda mc: Choice(game=game, text=mc.text, keep_capitalization=mc.keep_capitalization), mchoices)
     Choice.objects.bulk_create(choices)
 
     events.game_created(game.owner)

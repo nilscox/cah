@@ -29,4 +29,4 @@ class QuestionSerializer(serializers.ModelSerializer):
 class ChoiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Choice
-        fields = ('id', 'lang', 'text')
+        fields = ('id', 'lang', 'text', 'keepCapitalization')

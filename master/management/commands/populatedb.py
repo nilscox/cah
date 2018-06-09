@@ -4,6 +4,13 @@ from master.data import get_questions, get_choices
 from master.models import Question, Choice
 
 
+def create_choice(lang, choice):
+    return Choice(
+        lang=lang,
+        text=choice.get('text'),
+        keep_capitalization=choice.get('keepCapitalization', False),
+    )
+
 class Command(BaseCommand):
     help = 'Populate the database with Questions, Blanks and Choices'
 
@@ -16,7 +23,7 @@ class Command(BaseCommand):
 
     def populate_choices(self, lang):
         data_choices = get_choices(lang)
-        Choice.objects.bulk_create(map(lambda text: Choice(lang=lang, text=text), data_choices))
+        Choice.objects.bulk_create(map(lambda c: create_choice(lang, c), data_choices))
 
     def populate_questions(self, lang):
         data_questions = get_questions(lang)

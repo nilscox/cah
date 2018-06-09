@@ -5,6 +5,7 @@ class Choice(models.Model):
     """
     Choice fields:
         - text: string
+        - keep_capitalization: boolean
         - available: boolean
         - played: boolean
 
@@ -14,6 +15,7 @@ class Choice(models.Model):
     """
 
     text = models.CharField(max_length=255)
+    keep_capitalization = models.BooleanField()
     available = models.BooleanField(default=True)
     played = models.BooleanField(default=False)
     game = models.ForeignKey('Game', related_name='choices', on_delete=models.CASCADE)
