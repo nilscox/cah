@@ -14,9 +14,8 @@ export default StyleSheet.create({
     justifyContent: 'center',
   },
   question_text: {
-    fontWeight: 'bold',
     fontSize: 16,
-    color: '#eee',
+    color: '#ddd',
     textAlign: 'center',
     lineHeight: 30,
   },
@@ -24,6 +23,14 @@ export default StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     marginTop: 30,
+  },
+  fill: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    color: '#fff',
+    textAlign: 'center',
+    lineHeight: 30,
+    marginHorizontal: 5,
   },
   blank: {
     width: 40,

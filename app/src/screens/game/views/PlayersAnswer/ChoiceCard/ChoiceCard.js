@@ -1,29 +1,23 @@
 // @flow
 
 import * as React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 
 import type { Choice } from '~/redux/state/choice';
 
+import styles from './ChoiceCard.styles';
+
 type ChoiceCardProps = {
   choice: Choice,
+  onPress: Function,
 };
 
-const styles = StyleSheet.create({
-  wrapper: {
-    padding: 12,
-    borderBottomColor: '#ccc',
-    borderBottomWidth: 1,
-  },
-  choice: {
-    fontSize: 16,
-  },
-});
-
-const ChoiceCard = ({ choice }: ChoiceCardProps) => (
-  <View style={styles.wrapper}>
-    <Text style={styles.choice}>{ choice.text }</Text>
-  </View>
+const ChoiceCard = ({ choice, onPress }: ChoiceCardProps) => (
+  <TouchableOpacity onPress={onPress}>
+    <View style={styles.wrapper}>
+      <Text style={styles.choice}>{ choice.text }</Text>
+    </View>
+  </TouchableOpacity>
 );
 
 export default ChoiceCard;

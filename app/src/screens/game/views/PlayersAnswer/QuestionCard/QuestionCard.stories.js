@@ -45,6 +45,27 @@ const questions = {
   },
 };
 
+const answers = {
+  answer1: [{
+    id: 42,
+    text: 'Watermelon',
+  }],
+  answer2: [{
+    id: 42,
+    text: 'Watermelon',
+  }, {
+    id: 51,
+    text: 'Fuck',
+  }],
+  answerNullAnswer: [{
+    id: 42,
+    text: 'Watermelon',
+  }, null, {
+    id: 51,
+    text: 'Fuck',
+  }],
+}
+
 storiesOf('QuestionCard', module)
   .addDecorator((story) => (
     <View style={{ flex: 1 }}>
@@ -56,6 +77,11 @@ storiesOf('QuestionCard', module)
   ))
   .add('Question 1', () => <QuestionCard question={questions.question1} />)
   .add('Question 2', () => <QuestionCard question={questions.question2} />)
+  .add('Question with 1 answer', () => <QuestionCard question={questions.question1} answer={answers.answer1} />)
+  .add('Question with 2 answers', () => <QuestionCard question={questions.question2} answer={answers.answer2} />)
   .add('Fill 1', () => <QuestionCard question={questions.fill1} />)
   .add('Fill 2', () => <QuestionCard question={questions.fill2} />)
-  .add('Fill 3', () => <QuestionCard question={questions.fill3} />);
+  .add('Fill 3', () => <QuestionCard question={questions.fill3} />)
+  .add('Fill with 1 answer', () => <QuestionCard question={questions.fill1} answer={answers.answer1} />)
+  .add('Fill with 2 answers', () => <QuestionCard question={questions.fill3} answer={answers.answer2} />)
+  .add('Fill with 2 answers 2', () => <QuestionCard question={questions.fill3} answer={answers.answerNullAnswer} />);

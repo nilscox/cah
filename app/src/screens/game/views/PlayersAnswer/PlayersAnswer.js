@@ -25,6 +25,7 @@ type PlayersAnswerProps = {
 const mapStateToProps = ({ player, game }) => ({
   question: game.question,
   cards: player.cards,
+  selectedChoices: player.selectedChoices,
   isSelected: (choice) => player.selectedChoices.includes(choice),
   canToggleChoice: (() => {
     if (player.submitted)
