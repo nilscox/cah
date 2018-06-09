@@ -33,8 +33,8 @@ const store = createStore(rootReducer, initialState, composeWithDevTools(
   applyMiddleware(
     thunkMiddleware,
     promiseMiddleware,
-    reduxPackMiddleware,
     apiMiddleware,
+    reduxPackMiddleware,
     loggerMiddleware,
   ),
 ));

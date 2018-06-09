@@ -10,8 +10,8 @@ const apiMiddleware = store => next => action => {
   if (!action.route)
     return next(action);
 
-  const { dispatch } = store;
-  const { type, route, meta, ...opts } = action;
+  const { dispatch, getState } = store;
+  const { type, route, after, meta, ...opts } = action;
 
   const handleResponse = (res) => {
     const contentType = res.headers.get('Content-Type');
@@ -42,12 +42,18 @@ const apiMiddleware = store => next => action => {
     throw e;
   };
 
-  return store.dispatch({
+  return next({
     type,
     promise: fetch(API_URL + route, opts)
-      .then(handleResponse)
+      .then((res) => handleResponse(res))
       .catch(handleError),
     meta,
+  })
+  .then((result) => {
+    if (after)
+      return after({ result, dispatch, getState });
+
+    return result;
   });
 };
 
