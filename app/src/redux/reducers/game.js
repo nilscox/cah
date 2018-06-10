@@ -10,67 +10,35 @@ import {
   GAME_FETCH_HISTORY,
   WEBSOCKET_MESSAGE,
 } from '../actions';
+import { replace, replaceOrPush, remove } from './immutable';
+
+const PLAYER_CONNECTED = 'PLAYER_CONNECTED';
+const PLAYER_DISCONNECTED = 'PLAYER_DISCONNECTED';
+const PLAYER_JOINED = 'PLAYER_JOINED';
+const GAME_RESET = 'GAME_RESET';
 
 const handleWebsocket = (state = initialState.game, message) => {
   const { type } = message;
+  const player = message.player;
+  const isPlayer = (p) => p.nick === player.nick;
 
   if (!state)
     return state;
 
   const handlers = {
-    PLAYER_CONNECTED: () => {
-      const players = state.players.slice();
-      const { player } = message;
-      const idx = players.findIndex(p => p.nick === player.nick);
-
-      if (idx < 0)
-        return state;
-
-      players.splice(idx, 1, player);
-
-      return {
-        ...state,
-        players,
-      };
-    },
-    PLAYER_DISCONNECTED: () => {
-      const players = state.players.slice();
-      const { player } = message;
-      const idx = players.findIndex(p => p.nick === player.nick);
-
-      if (idx < 0)
-        return state;
-
-      players.splice(idx, 1);
-
-      return {
-        ...state,
-        players,
-      };
-    },
-    PLAYER_JOINED: () => {
-      const players = state.players.slice();
-      const { player } = message;
-      const idx = players.findIndex(p => p.nick === player.nick);
-
-      if (idx < 0) {
-        return {
-          ...state,
-          players: [
-            ...state.players,
-            player,
-          ],
-        };
-      }
-
-      players.splice(idx, 1, player);
-
-      return {
-        ...state,
-        players,
-      };
-    },
-    GAME_RESET: () => message.game,
+    [PLAYER_CONNECTED]: () => ({
+      ...state,
+      players: replace(state.players, isPlayer, player),
+    }),
+    [PLAYER_DISCONNECTED]: () => ({
+      ...state,
+      players: remove(state.players, isPlayer),
+    }),
+    [PLAYER_JOINED]: () => ({
+      ...state,
+      players: replaceOrPush(state.players, isPlayer, player),
+    }),
+    [GAME_RESET]: () => message.game,
   };
 
   return handlers[type]
