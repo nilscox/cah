@@ -25,14 +25,15 @@ const totalTextLength = (question: Question, answer: Array<?Choice>) => {
 };
 
 type QuestionCardProps = {
+  compact: boolean,
   question: Question,
   answer: Array<?Choice>,
   isSubmitted: boolean,
   onPress: Function,
 };
 
-const QuestionCard = ({ question, answer, isSubmitted, onPress }: QuestionCardProps) => {
-  const compact = totalTextLength(question, answer) > COMPACT_TEXT_LENGTH;
+const QuestionCard = ({ compact: c, question, answer, isSubmitted, onPress }: QuestionCardProps) => {
+  const compact = c || totalTextLength(question, answer) > COMPACT_TEXT_LENGTH;
   const fillIt = (function*() {
     if (!answer)
       return;

@@ -5,6 +5,12 @@ export default StyleSheet.create({
     flex: 1,
     alignItems: 'center',
   },
+  turnNumber: {
+    position: 'absolute',
+    top: 10,
+    left: 10,
+    color: '#999',
+  },
   winner: {
     marginVertical: 35,
   },
@@ -17,5 +23,14 @@ export default StyleSheet.create({
       { translateY: 10 },
       { rotateZ: '-30deg' },
     ],
+  },
+  answers: {
+    flex: 1,
+    alignSelf: 'stretch',
+  },
+  answer: {
+    height: 65,
+    marginTop: 10,
+    marginHorizontal: 20,
   },
 });

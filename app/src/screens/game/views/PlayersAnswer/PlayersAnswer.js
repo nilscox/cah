@@ -64,7 +64,7 @@ const PlayersAnswer = ({
   canSubmitAnswer,
   toggleChoice,
   submitAnswer,
-}: PlayersAnswerProps) => { console.log(submittedAnswer); return (
+}: PlayersAnswerProps) => (
   <View style={styles.wrapper}>
 
     <View style={styles.question}>
@@ -91,6 +91,6 @@ const PlayersAnswer = ({
     </View>
 
   </View>
-);};
+);
 
 export default connect(mapStateToProps, mapDispatchToProps)(PlayersAnswer);
