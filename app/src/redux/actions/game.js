@@ -1,5 +1,14 @@
 // @flow
 
+const onGameFetched = (dispatch, getState) => {
+  const { game } = getState();
+
+  if (!game)
+    return;
+
+  return dispatch(fetchGameHistory());
+};
+
 export const GAMES_LIST = 'GAMES_LIST';
 export const listGames = () => ({
   type: GAMES_LIST,
@@ -10,6 +19,7 @@ export const GAME_FETCH = 'GAME_FETCH';
 export const fetchGame = () => ({
   type: GAME_FETCH,
   route: `/api/game`,
+  after: ({ dispatch, getState }) => onGameFetched(dispatch, getState),
 });
 
 export const GAME_FETCH_HISTORY = 'GAME_FETCH_HISTORY';
@@ -38,5 +48,12 @@ export const GAME_JOIN = 'GAME_JOIN';
 export const joinGame = (id: number) => ({
   type: GAME_JOIN,
   route: `/api/game/join/${id}`,
+  method: 'POST',
+});
+
+export const GAME_NEXT_TURN = 'GAME_NEXT_TURN';
+export const nextTurn = () => ({
+  type: GAME_NEXT_TURN,
+  route: `/api/game/next`,
   method: 'POST',
 });

@@ -7,6 +7,8 @@ import MenuButton from '~/components/MenuButton';
 
 import GameIdleView from './views/GameIdle';
 import PlayersAnswerView from './views/PlayersAnswer';
+import QuestionMasterSelectionView from './views/QuestionMasterSelection';
+import EndOfTurnView from './views/EndOfTurn';
 
 type GameState =
   | 'GAME_IDLE'
@@ -29,8 +31,10 @@ const mapStateToProps = ({ game }) => ({
     if (game.play_state === 'question_master_selection')
       return 'QM_SELECTION';
 
-    if (game.playe_state === 'end_of_turn')
+    if (game.play_state === 'end_of_turn')
       return 'END_OF_TURN';
+
+    throw new Error('Unknown play state: ' + game.play_state);
   })(),
 });
 
@@ -60,6 +64,8 @@ class Game extends React.Component<GameProps> {
     switch (gameState) {
       case 'GAME_IDLE': return <GameIdleView />;
       case 'PLAYERS_ANSWER': return <PlayersAnswerView />;
+      case 'QM_SELECTION': return <QuestionMasterSelectionView />;
+      case 'END_OF_TURN': return <EndOfTurnView />;
       default: throw new Error('Not implemented');
     }
   }
