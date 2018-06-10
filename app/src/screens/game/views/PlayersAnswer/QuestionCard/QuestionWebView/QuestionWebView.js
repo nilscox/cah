@@ -19,7 +19,7 @@ const choice = (choice: Choice): string => {
 const blank = (): string => '<span class="blank"></span>';
 
 const getHtmlTypeQuestion = (question: Question, nextFill: Function): string => {
-  const text = [question.text];
+  const text = [];
 
   for (let i = 0; i < question.nb_choices; i++) {
     const fill = nextFill();
@@ -32,7 +32,7 @@ const getHtmlTypeQuestion = (question: Question, nextFill: Function): string => 
       text.push(blank());
   }
 
-  return text.join('');
+  return `${question.text}<div class="answers">${text.join('')}</div>`;
 }
 
 const getHtmlTypeFill = (question: Question, nextFill: Function): string => {

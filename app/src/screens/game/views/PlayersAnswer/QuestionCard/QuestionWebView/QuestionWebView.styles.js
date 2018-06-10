@@ -23,6 +23,14 @@ export default `
   line-height: 18px;
 }
 
+.answers {
+  margin-top: 15px;
+}
+
+.compact .answers {
+  margin-top: 5px;
+}
+
 .blank {
   display: inline-block;
   width: 40px;
@@ -32,8 +40,16 @@ export default `
   top: 2px;
 }
 
+.answers .blank {
+  min-height: 15px;
+}
+
 .choice {
   color: #fff;
   font-weight: bold;
+}
+
+.answers .choice {
+  margin: 0 10px;
 }
 `;
