@@ -27,11 +27,6 @@ const totalTextLength = (question: Question, answer: Array<?Choice>) => {
   return total;
 };
 
-const {
-  Provider: CompactQuestionProvider,
-  Consumer: CompactQuestionConsumer,
-} = React.createContext();
-
 const Split = ({ text, choice }: { text: ?string, choice: ?Choice }) => {
   if (!text && !choice)
     return <View style={styles.split_blank} />;
@@ -49,15 +44,7 @@ const Split = ({ text, choice }: { text: ?string, choice: ?Choice }) => {
     actualText = text;
   }
 
-  return (
-    <CompactQuestionConsumer>
-      { (compact) => (
-        <Text style={[textStyles, compact && styles.split_text_compact]}>
-          { actualText }
-        </Text>
-      ) }
-    </CompactQuestionConsumer>
-  );
+  return <Text style={textStyles}>{ actualText }</Text>;
 };
 
 Split.defaultProps = {
@@ -149,20 +136,12 @@ const QuestionCard = ({ question, answer }: QuestionCardProps) => {
 
   const nextFill = () => fillIt.next().value;
 
-  const renderQuestion = () => {
-    if (question.type === 'question')
-      return <QuestionTypeQuestion question={question} nextFill={nextFill} />;
-    else if (question.type === 'fill')
-      return <QuestionTypeFill question={question} nextFill={nextFill} />;
-    else
-      throw new Error(`unkown question type: ${question.type}`);
-  };
-
-  return (
-    <CompactQuestionProvider value={compact}>
-      { renderQuestion() }
-    </CompactQuestionProvider>
-  );
+  if (question.type === 'question')
+    return <QuestionTypeQuestion question={question} nextFill={nextFill} />;
+  else if (question.type === 'fill')
+    return <QuestionTypeFill question={question} nextFill={nextFill} />;
+  else
+    throw new Error(`unkown question type: ${question.type}`);
 }
 
 QuestionCard.defaultProps = {
