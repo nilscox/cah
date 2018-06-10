@@ -28,7 +28,7 @@ export default `
 }
 
 .compact .answers {
-  margin-top: 5px;
+  margin-top: 10px;
 }
 
 .blank {

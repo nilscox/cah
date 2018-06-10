@@ -64,10 +64,7 @@ const getHtmlTypeFill = (question: Question, nextFill: Function): string => {
 };
 
 const getHtml = (question: Question, nextFill: Function): string => {
-  if (question.type === 'question')
-    return getHtmlTypeQuestion(question, nextFill);
-  else
-    return getHtmlTypeFill(question, nextFill);
+  return (question.type === 'question' ? getHtmlTypeQuestion : getHtmlTypeFill)(question, nextFill);
 };
 
 type QuestionWebViewProps = {
