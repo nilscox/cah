@@ -7,7 +7,7 @@ export default `
 }
 
 .text {
-  width: 100%;
+  width: 90%;
   position: absolute;
   top: 50%;
   left: 50%;

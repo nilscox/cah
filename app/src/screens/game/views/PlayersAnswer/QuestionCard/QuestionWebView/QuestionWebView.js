@@ -80,7 +80,7 @@ const QuestionWebView = ({ compact, question, nextFill }: QuestionWebViewProps) 
   return (
     <WebView
       /* eslint-disable-next-line react-native/no-inline-styles */
-      style={{ backgroundColor: '#333' }}
+      style={{ backgroundColor: 'transparent' }}
       source={{ html: `${css}${html}`, baseUrl: '' }}
     />
   );

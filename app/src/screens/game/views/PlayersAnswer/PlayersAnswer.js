@@ -16,6 +16,7 @@ type PlayersAnswerProps = {
   question: Question,
   cards: Array<Choice>,
   selectedChoices: Array<?Choice>,
+  submittedAnswer: Array<Choice>,
   isSelected: (Choice) => boolean,
   canToggleChoice: (Choice) => boolean,
   canSubmitAnswer: boolean,
@@ -27,6 +28,7 @@ const mapStateToProps = ({ player, game }) => ({
   question: game.question,
   cards: player.cards,
   selectedChoices: player.selectedChoices,
+  submittedAnswer: player.submitted,
   isSelected: (choice) => {
     return player.selectedChoices
       .filter((c: ?Choice) => c && c.id === choice.id)
@@ -43,7 +45,7 @@ const mapStateToProps = ({ player, game }) => ({
 
     return true;
   },
-  canSubmitAnswer: !player.submitted
+  canSubmitAnswer: player.submitted === null
     && player.selectedChoices.length === game.question.nb_choices,
 });
 
@@ -56,18 +58,20 @@ const PlayersAnswer = ({
   question,
   cards,
   selectedChoices,
+  submittedAnswer,
   isSelected,
   canToggleChoice,
   canSubmitAnswer,
   toggleChoice,
   submitAnswer,
-}: PlayersAnswerProps) => (
+}: PlayersAnswerProps) => { console.log(submittedAnswer); return (
   <View style={styles.wrapper}>
 
     <View style={styles.question}>
       <QuestionCard
         question={question}
-        answer={selectedChoices}
+        answer={(submittedAnswer && submittedAnswer.answers) || selectedChoices}
+        isSubmitted={submittedAnswer !== null}
         onPress={() => canSubmitAnswer && submitAnswer()}
       />
     </View>
@@ -87,6 +91,6 @@ const PlayersAnswer = ({
     </View>
 
   </View>
-);
+);};
 
 export default connect(mapStateToProps, mapDispatchToProps)(PlayersAnswer);

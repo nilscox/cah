@@ -15,7 +15,7 @@ export const submitAnswer = () => (dispatch: Function, getState: Function) => {
 
   dispatch({
     type: SUBMIT_ANSWER,
-    route: `/api/answer/submit`,
+    route: `/api/answer`,
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ ids: choices.map(c => c.id) }),

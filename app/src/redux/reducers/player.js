@@ -5,7 +5,7 @@ import {
   API_DOWN,
   PLAYER_LOGOUT,
   PLAYER_FETCH, PLAYER_LOGIN,
-  TOGGLE_CHOICE,
+  TOGGLE_CHOICE, SUBMIT_ANSWER,
 } from '../actions';
 
 export default (state = initialState.player, action) => {
@@ -46,6 +46,9 @@ export default (state = initialState.player, action) => {
       start: () => null,
       success: () => ({ ...payload, selectedChoices: [] }),
       failure: () => null,
+    },
+    [SUBMIT_ANSWER]: {
+      success: () => ({ ...state, selectedChoices: [], submitted: payload }),
     },
   };
 

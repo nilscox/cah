@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react';
-import { View } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 
 import type { Question } from '~/redux/state/question';
 import type { Choice } from '~/redux/state/choice';
@@ -27,9 +27,11 @@ const totalTextLength = (question: Question, answer: Array<?Choice>) => {
 type QuestionCardProps = {
   question: Question,
   answer: Array<?Choice>,
+  isSubmitted: boolean,
+  onPress: Function,
 };
 
-const QuestionCard = ({ question, answer }: QuestionCardProps) => {
+const QuestionCard = ({ question, answer, isSubmitted, onPress }: QuestionCardProps) => {
   const compact = totalTextLength(question, answer) > COMPACT_TEXT_LENGTH;
   const fillIt = (function*() {
     if (!answer)
@@ -42,9 +44,9 @@ const QuestionCard = ({ question, answer }: QuestionCardProps) => {
   const nextFill = () => fillIt.next().value;
 
   return (
-    <View style={styles.wrapper}>
+    <TouchableOpacity style={[styles.wrapper, isSubmitted && styles.submitted]} onPress={onPress}>
       <QuestionWebView compact={compact} question={question} nextFill={nextFill} />
-    </View>
+    </TouchableOpacity>
   );
 }
 
