@@ -11,8 +11,8 @@ import {
   WEBSOCKET_MESSAGE,
 } from '../actions';
 
-const handleWebsocket = (state = initialState.game, action) => {
-  const { type } = action.message;
+const handleWebsocket = (state = initialState.game, message) => {
+  const { type } = message;
 
   if (!state)
     return state;
@@ -20,7 +20,7 @@ const handleWebsocket = (state = initialState.game, action) => {
   const handlers = {
     PLAYER_CONNECTED: () => {
       const players = state.players.slice();
-      const { player } = action.message;
+      const { player } = message;
       const idx = players.findIndex(p => p.nick === player.nick);
 
       if (idx < 0)
@@ -35,7 +35,7 @@ const handleWebsocket = (state = initialState.game, action) => {
     },
     PLAYER_DISCONNECTED: () => {
       const players = state.players.slice();
-      const { player } = action.message;
+      const { player } = message;
       const idx = players.findIndex(p => p.nick === player.nick);
 
       if (idx < 0)
@@ -50,7 +50,7 @@ const handleWebsocket = (state = initialState.game, action) => {
     },
     PLAYER_JOINED: () => {
       const players = state.players.slice();
-      const { player } = action.message;
+      const { player } = message;
       const idx = players.findIndex(p => p.nick === player.nick);
 
       if (idx < 0) {
@@ -70,6 +70,7 @@ const handleWebsocket = (state = initialState.game, action) => {
         players,
       };
     },
+    GAME_RESET: () => message.game,
   };
 
   return handlers[type]
@@ -84,7 +85,7 @@ export default (state = initialState.game, action) => {
     return initialState.game;
 
   if (action.type === WEBSOCKET_MESSAGE)
-    return handleWebsocket(state, action);
+    return handleWebsocket(state, action.message);
 
   const handlers = {
     [GAME_FETCH]: {

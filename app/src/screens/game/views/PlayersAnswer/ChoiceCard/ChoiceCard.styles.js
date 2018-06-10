@@ -9,4 +9,7 @@ export default StyleSheet.create({
   choice: {
     fontSize: 16,
   },
+  selected: {
+    backgroundColor: '#cec',
+  },
 });

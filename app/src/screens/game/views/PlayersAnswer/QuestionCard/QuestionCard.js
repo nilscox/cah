@@ -7,6 +7,8 @@ import type { Question } from '~/redux/state/question';
 import type { Choice } from '~/redux/state/choice';
 import styles from './QuestionCard.styles';
 
+const COMPACT_TEXT_LENGTH = 300;
+
 type QuestionCardProps = {
   question: Question,
   answer: Array<?Choice>,
@@ -25,33 +27,60 @@ const totalTextLength = (question: Question, answer: Array<?Choice>) => {
   return total;
 };
 
-const Split = ({ text, choice }: { text?: string, choice?: Choice }) => {
+const {
+  Provider: CompactQuestionProvider,
+  Consumer: CompactQuestionConsumer,
+} = React.createContext();
+
+const Split = ({ text, choice }: { text: ?string, choice: ?Choice }) => {
+  if (!text && !choice)
+    return <View style={styles.split_blank} />;
+
+  const textStyles = [styles.split_text];
+  let actualText = null;
+
   if (choice) {
-    let choiceText = choice.text;
+    textStyles.push(styles.split_fill);
+    actualText = choice.text;
 
     if (!choice.keepCapitalization)
-      choiceText = choiceText.charAt(0).toLowerCase() + choiceText.slice(1);
-
-    return (
-      <Text style={[styles.split_text, styles.split_fill]}>
-        { choiceText }
-      </Text>
-    );
+      actualText = actualText.charAt(0).toLowerCase() + actualText.slice(1);
+  } else if (text) {
+    actualText = text;
   }
-  else if (text)
-    return <Text style={styles.split_text}>{ text }</Text>
-  else
-    return <View style={styles.split_blank} />
+
+  return (
+    <CompactQuestionConsumer>
+      { (compact) => (
+        <Text style={[textStyles, compact && styles.split_text_compact]}>
+          { actualText }
+        </Text>
+      ) }
+    </CompactQuestionConsumer>
+  );
 };
 
-const QuestionTypeQuestion = ({ question, nextFill }: { question: Question, nextFill: Function }) => {
+Split.defaultProps = {
+  text: null,
+  choice: null,
+}
+
+const QuestionTypeQuestion = ({
+  question,
+  nextFill,
+}: {
+  question: Question,
+  nextFill: Function,
+}) => {
   const answer = [];
 
   for (let i = 0; i < question.nb_choices; i++) {
     const fill = nextFill();
 
-    if (fill)
+    if (fill) {
+      fill.keepCapitalization = true;
       answer.push(<Split key={`split-${i}`} choice={fill} />);
+    }
     else
       answer.push(<Split key={`split-${i}`} />);
   }
@@ -68,8 +97,15 @@ const QuestionTypeQuestion = ({ question, nextFill }: { question: Question, next
   );
 };
 
-const QuestionTypeFill = ({ question, nextFill }: { question: Question, nextFill: Function }) => {
+const QuestionTypeFill = ({
+  question,
+  nextFill,
+}: {
+  question: Question,
+  nextFill: Function,
+}) => {
   const text = [];
+  let lastSplit = null;
 
   for (let i = 0; i < question.split.length; i++) {
     const split = question.split[i];
@@ -79,11 +115,17 @@ const QuestionTypeFill = ({ question, nextFill }: { question: Question, nextFill
     else {
       const fill = nextFill();
 
-      if (fill)
+      if (fill) {
+        if (i === 0 || (lastSplit && lastSplit.match(/\. */)))
+          fill.keepCapitalization = true;
+
         text.push(<Split key={`split-${i}`} choice={fill} />);
+      }
       else
         text.push(<Split key={`split-${i}`} />);
     }
+
+    lastSplit = split;
   }
 
   return (
@@ -96,7 +138,7 @@ const QuestionTypeFill = ({ question, nextFill }: { question: Question, nextFill
 };
 
 const QuestionCard = ({ question, answer }: QuestionCardProps) => {
-  const textLength = totalTextLength(question, answer);
+  const compact = totalTextLength(question, answer) > COMPACT_TEXT_LENGTH;
   const fillIt = (function*() {
     if (!answer)
       return;
@@ -107,12 +149,20 @@ const QuestionCard = ({ question, answer }: QuestionCardProps) => {
 
   const nextFill = () => fillIt.next().value;
 
-  if (question.type === 'question')
-    return <QuestionTypeQuestion question={question} nextFill={nextFill} />;
-  else if (question.type === 'fill')
-    return <QuestionTypeFill question={question} nextFill={nextFill} />;
-  else
-    throw new Error(`unkown question type: ${question.type}`);
+  const renderQuestion = () => {
+    if (question.type === 'question')
+      return <QuestionTypeQuestion question={question} nextFill={nextFill} />;
+    else if (question.type === 'fill')
+      return <QuestionTypeFill question={question} nextFill={nextFill} />;
+    else
+      throw new Error(`unkown question type: ${question.type}`);
+  };
+
+  return (
+    <CompactQuestionProvider value={compact}>
+      { renderQuestion() }
+    </CompactQuestionProvider>
+  );
 }
 
 QuestionCard.defaultProps = {

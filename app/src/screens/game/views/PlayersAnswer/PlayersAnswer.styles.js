@@ -10,7 +10,4 @@ export default StyleSheet.create({
   choices: {
     flex: 2,
   },
-  choiceSelected: {
-    backgroundColor: '#CCC',
-  },
 });

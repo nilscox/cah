@@ -9,5 +9,5 @@ export type Player = {
   cards?: Array<Choice>,
   score?: number,
 
-  selectedChoices: { [number]: Choice },
+  selectedChoices: Array<?Choice>,
 };

@@ -9,12 +9,13 @@ import styles from './ChoiceCard.styles';
 
 type ChoiceCardProps = {
   choice: Choice,
+  isSelected: boolean,
   onPress: Function,
 };
 
-const ChoiceCard = ({ choice, onPress }: ChoiceCardProps) => (
+const ChoiceCard = ({ choice, isSelected, onPress }: ChoiceCardProps) => (
   <TouchableOpacity onPress={onPress}>
-    <View style={styles.wrapper}>
+    <View style={[styles.wrapper, isSelected && styles.selected]}>
       <Text style={styles.choice}>{ choice.text }</Text>
     </View>
   </TouchableOpacity>

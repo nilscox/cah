@@ -15,9 +15,9 @@ import styles from './PlayersAnswer.styles';
 type PlayersAnswerProps = {
   question: Question,
   cards: Array<Choice>,
-  selectedChoices: Array<Choice>,
+  selectedChoices: Array<?Choice>,
   isSelected: (Choice) => boolean,
-  canToggleChoice: boolean,
+  canToggleChoice: (Choice) => boolean,
   canSubmitAnswer: boolean,
   toggleChoice: Function,
   submitAnswer: Function,
@@ -27,25 +27,24 @@ const mapStateToProps = ({ player, game }) => ({
   question: game.question,
   cards: player.cards,
   selectedChoices: player.selectedChoices,
-  isSelected: (choice) => player.selectedChoices.includes(choice),
-  canToggleChoice: (() => {
+  isSelected: (choice) => {
+    return player.selectedChoices
+      .filter((c: ?Choice) => c && c.id === choice.id)
+      .length;
+  },
+  canToggleChoice: (choice) => {
+    const selectedChoices = player.selectedChoices.filter(i => i !== null);
+
     if (player.submitted)
       return false;
 
-    if (player.selectedChoices.length === game.question.nb_choices)
-      return false;
+    if (selectedChoices.length === game.question.nb_choices)
+      return choice.isSelected;
 
     return true;
-  })(),
-  canSubmitAnswer: (() => {
-    if (player.submitted)
-      return false;
-
-    if (player.selectedChoices.length < game.question.nb_choices)
-      return false;
-
-    return true;
-  })(),
+  },
+  canSubmitAnswer: !player.submitted
+    && player.selectedChoices.length === game.question.nb_choices,
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -62,36 +61,32 @@ const PlayersAnswer = ({
   canSubmitAnswer,
   toggleChoice,
   submitAnswer,
-}: PlayersAnswerProps) => {
-  const renderChoice = ({ item: choice }: { item: Choice }) => (
-    <ChoiceCard
-      style={isSelected(choice) && styles.choiceSelected}
-      choice={choice}
-      onPress={() => canToggleChoice && toggleChoice(choice)}
-    />
-  );
+}: PlayersAnswerProps) => (
+  <View style={styles.wrapper}>
 
-  return (
-    <View style={styles.wrapper}>
-
-      <View style={styles.question}>
-        <QuestionCard
-          question={question}
-          answer={selectedChoices}
-          onPress={() => canSubmitAnswer && submitAnswer()}
-        />
-      </View>
-
-      <View style={styles.choices}>
-        <FlatList
-          data={cards}
-          keyExtractor={(card) => `card-${card.id}`}
-          renderItem={renderChoice}
-        />
-      </View>
-
+    <View style={styles.question}>
+      <QuestionCard
+        question={question}
+        answer={selectedChoices}
+        onPress={() => canSubmitAnswer && submitAnswer()}
+      />
     </View>
-  );
-}
+
+    <View style={styles.choices}>
+      <FlatList
+        data={cards.map(c => ({ ...c, isSelected: isSelected(c) }))}
+        keyExtractor={(card) => `card-${card.id}`}
+        renderItem={({ item: choice }) => (
+          <ChoiceCard
+            choice={choice}
+            isSelected={choice.isSelected}
+            onPress={() => canToggleChoice(choice) && toggleChoice(choice)}
+          />
+        )}
+      />
+    </View>
+
+  </View>
+);
 
 export default connect(mapStateToProps, mapDispatchToProps)(PlayersAnswer);

@@ -22,6 +22,10 @@ export default StyleSheet.create({
     textAlign: 'center',
     lineHeight: 30,
   },
+  split_text_compact: {
+    fontSize: 14,
+    lineHeight: 20,
+  },
   split_fill: {
     fontWeight: 'bold',
     color: '#fff',
