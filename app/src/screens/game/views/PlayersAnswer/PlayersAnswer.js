@@ -7,9 +7,9 @@ import { connect } from 'react-redux';
 import type { Choice } from '~/redux/state/choice';
 import type { Question } from '~/redux/state/question';
 import { toggleChoice, submitAnswer } from '~/redux/actions';
+import QuestionCard from '~/components/QuestionCard';
+import ChoiceCard from '~/components/ChoiceCard';
 
-import QuestionCard from './QuestionCard';
-import ChoiceCard from './ChoiceCard';
 import styles from './PlayersAnswer.styles';
 
 type PlayersAnswerProps = {
@@ -22,6 +22,21 @@ type PlayersAnswerProps = {
   canSubmitAnswer: boolean,
   toggleChoice: Function,
   submitAnswer: Function,
+};
+
+const COMPACT_TEXT_LENGTH = 200;
+
+const totalQuestionTextLength = (question: Question, answer: Array<?Choice>) => {
+  let total = 0;
+  const add = (s: ?string) => {
+    if (s)
+      total += s.length;
+  };
+
+  question.split.forEach(add);
+  answer.map(c => c && c.text).forEach(add);
+
+  return total;
 };
 
 const mapStateToProps = ({ player, game }) => ({
@@ -64,33 +79,41 @@ const PlayersAnswer = ({
   canSubmitAnswer,
   toggleChoice,
   submitAnswer,
-}: PlayersAnswerProps) => (
-  <View style={styles.wrapper}>
+}: PlayersAnswerProps) => {
+  const textLength = totalQuestionTextLength(question, submittedAnswer);
+  const size = textLength > COMPACT_TEXT_LENGTH
+    ? 'compact'
+    : 'normal';
 
-    <View style={styles.question}>
-      <QuestionCard
-        question={question}
-        answer={(submittedAnswer && submittedAnswer.answers) || selectedChoices}
-        isSubmitted={submittedAnswer !== null}
-        onPress={() => canSubmitAnswer && submitAnswer()}
-      />
+  return (
+    <View style={styles.wrapper}>
+
+      <View style={styles.question}>
+        <QuestionCard
+          size={size}
+          question={question}
+          answer={(submittedAnswer && submittedAnswer.answers) || selectedChoices}
+          isSubmitted={submittedAnswer !== null}
+          onPress={() => canSubmitAnswer && submitAnswer()}
+        />
+      </View>
+
+      <View style={styles.choices}>
+        <FlatList
+          data={cards.map(c => ({ ...c, isSelected: isSelected(c) }))}
+          keyExtractor={(card) => `card-${card.id}`}
+          renderItem={({ item: choice }) => (
+            <ChoiceCard
+              choice={choice}
+              isSelected={choice.isSelected}
+              onPress={() => canToggleChoice(choice) && toggleChoice(choice)}
+            />
+          )}
+        />
+      </View>
+
     </View>
-
-    <View style={styles.choices}>
-      <FlatList
-        data={cards.map(c => ({ ...c, isSelected: isSelected(c) }))}
-        keyExtractor={(card) => `card-${card.id}`}
-        renderItem={({ item: choice }) => (
-          <ChoiceCard
-            choice={choice}
-            isSelected={choice.isSelected}
-            onPress={() => canToggleChoice(choice) && toggleChoice(choice)}
-          />
-        )}
-      />
-    </View>
-
-  </View>
-);
+  );
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(PlayersAnswer);

@@ -9,7 +9,7 @@ import type { Question } from '~/redux/state/question';
 import type { AnsweredQuestion } from '~/redux/state/answeredQuestion';
 import { nextTurn } from '~/redux/actions/game';
 import PlayerAvatar from '~/components/PlayerAvatar';
-import QuestionCard from '../PlayersAnswer/QuestionCard';
+import AnsweredQuestionCard from '~/components/AnsweredQuestionCard';
 
 import styles from './EndOfTurn.styles';
 
@@ -33,6 +33,7 @@ const mapStateToProps = ({ player, game }) => {
     answers: turn.answers,
     isQuestionMaster: (player) => player.nick === turn.question_master,
     isWinner: (player) => player === winner,
+    canGoNext: player.nick === game.question_master,
   };
 };
 
@@ -63,7 +64,7 @@ const EndOfTurn = ({
       renderItem={({ item }) => (
         <View style={styles.answer}>
           <Text>{ item.answered_by }</Text>
-          <QuestionCard compact question={question} answer={item.answers} />
+          <AnsweredQuestionCard size="tiny" question={question} answer={item.answers} />
         </View>
       )}
     />

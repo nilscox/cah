@@ -9,31 +9,15 @@ import type { Choice } from '~/redux/state/choice';
 import QuestionWebView from './QuestionWebView';
 import styles from './QuestionCard.styles';
 
-const COMPACT_TEXT_LENGTH = 200;
-
-const totalTextLength = (question: Question, answer: Array<?Choice>) => {
-  let total = 0;
-  const add = (s: ?string) => {
-    if (s)
-      total += s.length;
-  };
-
-  question.split.forEach(add);
-  answer.map(c => c && c.text).forEach(add);
-
-  return total;
-};
-
 type QuestionCardProps = {
-  compact: boolean,
+  size: 'normal' | 'compact' | 'tiny',
   question: Question,
   answer: Array<?Choice>,
   isSubmitted: boolean,
   onPress: Function,
 };
 
-const QuestionCard = ({ compact: c, question, answer, isSubmitted, onPress }: QuestionCardProps) => {
-  const compact = c || totalTextLength(question, answer) > COMPACT_TEXT_LENGTH;
+const QuestionCard = ({ size, question, answer, isSubmitted, onPress }: QuestionCardProps) => {
   const fillIt = (function*() {
     if (!answer)
       return;
@@ -46,12 +30,13 @@ const QuestionCard = ({ compact: c, question, answer, isSubmitted, onPress }: Qu
 
   return (
     <TouchableOpacity style={[styles.wrapper, isSubmitted && styles.submitted]} onPress={onPress}>
-      <QuestionWebView compact={compact} question={question} nextFill={nextFill} />
+      <QuestionWebView size={size} question={question} nextFill={nextFill} />
     </TouchableOpacity>
   );
 }
 
 QuestionCard.defaultProps = {
+  size: 'normal',
   answer: [],
 };
 

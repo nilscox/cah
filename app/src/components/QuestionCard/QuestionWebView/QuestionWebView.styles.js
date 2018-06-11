@@ -23,6 +23,11 @@ export default `
   line-height: 18px;
 }
 
+.tiny {
+  font-size: 10pt;
+  line-height: 15px;
+}
+
 .answers {
   margin-top: 15px;
 }

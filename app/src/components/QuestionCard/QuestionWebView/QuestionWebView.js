@@ -68,14 +68,14 @@ const getHtml = (question: Question, nextFill: Function): string => {
 };
 
 type QuestionWebViewProps = {
-  compact: boolean,
+  size: 'normal' | 'compact' | 'tiny',
   question: Question,
   nextFill: Function,
 };
 
-const QuestionWebView = ({ compact, question, nextFill }: QuestionWebViewProps) => {
+const QuestionWebView = ({ size, question, nextFill }: QuestionWebViewProps) => {
   const css = `<style>${CSS}</style>`;
-  const html = `<div class="text${compact ? ' compact' : ''}">${getHtml(question, nextFill)}</div>`;
+  const html = `<div class="text${size ? ' ' + size : ''}">${getHtml(question, nextFill)}</div>`;
 
   return (
     <WebView

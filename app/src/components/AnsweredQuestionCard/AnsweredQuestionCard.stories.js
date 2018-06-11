@@ -3,9 +3,10 @@
 
 import * as React from 'react';
 import { View } from 'react-native';
-import { storiesOf } from '@storybook/react-native';
+import { storiesOf, addDecorator } from '@storybook/react-native';
+import { withKnobs, select, number } from '@storybook/addon-knobs';
 
-import QuestionCard from './QuestionCard';
+import AnsweredQuestionCard from './AnsweredQuestionCard';
 
 const questions = {
   question1: {
@@ -66,22 +67,37 @@ const answers = {
   }],
 }
 
-storiesOf('QuestionCard', module)
-  .addDecorator((story) => (
-    <View style={{ flex: 1 }}>
-      <View style={{ flex: 1, justifyContent: 'center' }}>
-        { story() }
+addDecorator((storyFn) => {
+  const story = storyFn();
+  const format = select('Format', ['question', 'end of turn'], 'question');
+
+  if (format === 'question') {
+    return (
+      <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, justifyContent: 'center' }}>
+          { story }
+        </View>
+        <View style={{ flex: 2 }} />
       </View>
-      <View style={{ flex: 2 }} />
-    </View>
-  ))
-  .add('Question 1', () => <QuestionCard question={questions.question1} />)
-  .add('Question 2', () => <QuestionCard question={questions.question2} />)
-  .add('Question with 1 answer', () => <QuestionCard question={questions.question1} answer={answers.answer1} />)
-  .add('Question with 2 answers', () => <QuestionCard question={questions.question2} answer={answers.answer2} />)
-  .add('Fill 1', () => <QuestionCard question={questions.fill1} />)
-  .add('Fill 2', () => <QuestionCard question={questions.fill2} />)
-  .add('Fill 3', () => <QuestionCard question={questions.fill3} />)
-  .add('Fill with 1 answer', () => <QuestionCard question={questions.fill1} answer={answers.answer1} />)
-  .add('Fill with 2 answers', () => <QuestionCard question={questions.fill3} answer={answers.answer2} />)
-  .add('Fill with 2 answers 2', () => <QuestionCard question={questions.fill3} answer={answers.answerNullAnswer} />);
+    );
+  } else {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center' }}>
+        <View style={{ height: 80 }}>
+          { story }
+        </View>
+      </View>
+    );
+  }
+});
+
+addDecorator(withKnobs);
+
+// const size = select('Size', ['normal', 'compact', 'tiny'], 'normal');
+
+storiesOf('AnsweredQuestionCard', module)
+  .add('Question 1', () => <AnsweredQuestionCard size={select('Size', ['normal', 'compact', 'tiny'], 'normal')} question={questions.question1} />)
+  .add('Question 2', () => <AnsweredQuestionCard question={questions.question2} />)
+  .add('Fill 1', () => <AnsweredQuestionCard question={questions.fill1} />)
+  .add('Fill 2', () => <AnsweredQuestionCard question={questions.fill2} />)
+  .add('Fill 3', () => <AnsweredQuestionCard question={questions.fill3} />);

@@ -31,6 +31,7 @@
   },
   "devDependencies": {
     "@storybook/addon-actions": "^3.4.6",
+    "@storybook/addon-knobs": "^3.4.7",
     "@storybook/addon-links": "^3.4.6",
     "@storybook/addons": "^3.4.6",
     "@storybook/react-native": "^3.4.6",
