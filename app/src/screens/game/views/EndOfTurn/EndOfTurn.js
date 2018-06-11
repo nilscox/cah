@@ -46,6 +46,7 @@ const EndOfTurn = ({
   winner,
   question,
   answers,
+  isWinner,
   canGoNext,
   isQuestionMaster,
   nextTurn,
@@ -62,8 +63,8 @@ const EndOfTurn = ({
       data={answers}
       keyExtractor={(a) => `answer-${a.id}`}
       renderItem={({ item }) => (
-        <View style={styles.answer}>
-          <Text>{ item.answered_by }</Text>
+        <View style={[styles.answer, isWinner(item) && styles.winnerAnswer]}>
+          <Text style={styles.answeredBy}>{ item.answered_by }</Text>
           <AnsweredQuestionCard size="tiny" question={question} answer={item.answers} />
         </View>
       )}

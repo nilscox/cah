@@ -29,8 +29,18 @@ export default StyleSheet.create({
     alignSelf: 'stretch',
   },
   answer: {
-    height: 65,
-    marginTop: 10,
-    marginHorizontal: 20,
+    paddingTop: 10,
+    paddingHorizontal: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#666',
+    backgroundColor: '#333',
+  },
+  winnerAnswer: {
+    backgroundColor: '#393',
+  },
+  answeredBy: {
+    color: '#eee',
+    fontWeight: 'bold',
+    fontSize: 14,
   },
 });
