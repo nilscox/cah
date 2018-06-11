@@ -10,9 +10,9 @@ import QuestionWebView from './QuestionWebView';
 import styles from './QuestionCard.styles';
 
 type QuestionCardProps = {
-  size: 'normal' | 'compact' | 'tiny',
+  size?: 'normal' | 'compact' | 'tiny',
   question: Question,
-  answer: Array<?Choice>,
+  answer?: Array<?Choice>,
   isSubmitted: boolean,
   onPress: Function,
 };

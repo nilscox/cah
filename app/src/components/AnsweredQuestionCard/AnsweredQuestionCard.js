@@ -19,12 +19,17 @@ const AnsweredQuestionCard = ({ question, answer }: AnsweredQuestionCardProps) =
     return (
       <View style={styles.wrapper}>
         { answer.map((choice) => (
-          <Text key={`choice-${choice.id}`}>{ choice.text }</Text>
+          <Text key={`choice-${choice.id}`} style={styles.answerText}>{ choice.text }</Text>
         )) }
       </View>
     );
-  } else
-    return <QuestionCard size="tiny" question={question} answer={answer} />
+  } else {
+    return (
+      <View style={styles.wrapper}>
+        <QuestionCard size="tiny" question={question} answer={answer} />
+      </View>
+    );
+  }
 };
 
 export default AnsweredQuestionCard;
