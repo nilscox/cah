@@ -11,6 +11,7 @@ import { nextTurn } from '~/redux/actions/game';
 import PlayerAvatar from '~/components/PlayerAvatar';
 import AnsweredQuestionCard from '~/components/AnsweredQuestionCard';
 
+import GoNextButton from './GoNextButton';
 import styles from './EndOfTurn.styles';
 
 type EndOfTurnProps = {
@@ -18,7 +19,8 @@ type EndOfTurnProps = {
   winner: Player,
   question: Question,
   answers: Array<AnsweredQuestion>,
-  isQuestionMaster: (Player) => boolean,
+  isWinner: (string) => boolean,
+  canGoNext: boolean,
   nextTurn: Function,
 };
 
@@ -31,8 +33,7 @@ const mapStateToProps = ({ player, game }) => {
     winner,
     question: turn.question,
     answers: turn.answers,
-    isQuestionMaster: (player) => player.nick === turn.question_master,
-    isWinner: (player) => player === winner,
+    isWinner: (player) => player === winner.nick,
     canGoNext: player.nick === game.question_master,
   };
 };
@@ -48,7 +49,6 @@ const EndOfTurn = ({
   answers,
   isWinner,
   canGoNext,
-  isQuestionMaster,
   nextTurn,
 }: EndOfTurnProps) => (
   <View style={styles.wrapper}>
@@ -58,12 +58,14 @@ const EndOfTurn = ({
     <Image style={styles.crown} source={require('./crown.png')} />
     <PlayerAvatar style={styles.winner} player={winner} size="big" />
 
+    { canGoNext && <GoNextButton winner={winner.nick} nextTurn={nextTurn} /> }
+
     <FlatList
       style={styles.answers}
       data={answers}
       keyExtractor={(a) => `answer-${a.id}`}
       renderItem={({ item }) => (
-        <View style={[styles.answer, isWinner(item) && styles.winnerAnswer]}>
+        <View style={[styles.answer, isWinner(item.answered_by) && styles.winnerAnswer]}>
           <Text style={styles.answeredBy}>{ item.answered_by }</Text>
           <AnsweredQuestionCard size="tiny" question={question} answer={item.answers} />
         </View>
