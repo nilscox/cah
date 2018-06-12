@@ -25,7 +25,7 @@ const mapStateToProps = ({ player }) => ({
   player,
 });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = (dispatch: Function) => ({
   updatePlayer: (player) => dispatch(updatePlayer(player)),
 });
 

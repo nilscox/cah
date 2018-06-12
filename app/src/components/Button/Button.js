@@ -3,13 +3,13 @@
 import * as React from 'react';
 import { TouchableOpacity, Text } from 'react-native';
 
-import type { StyleProp } from '~/types/style';
+import type { Style } from '~/types/style';
 import { styles, variantBig, variantSmall } from './Button.styles';
 
 type ButtonProps = {
-  style: ?StyleProp,
-  textStyle: ?StyleProp,
-  variant: ?('big' | 'small'),
+  style?: ?Style,
+  textStyle?: ?Style,
+  variant?: ?('big' | 'small'),
   onPress: Function,
   children: any,
 };
@@ -41,6 +41,12 @@ const Button = ({ style, textStyle, onPress, variant, children }: ButtonProps) =
       </Text>
     </TouchableOpacity>
   );
+};
+
+Button.defaultProps = {
+  style: null,
+  textStyle: null,
+  variant: null,
 };
 
 export default Button;

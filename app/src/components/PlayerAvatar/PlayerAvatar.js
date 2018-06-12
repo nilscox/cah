@@ -4,19 +4,21 @@ import * as React from 'react';
 import { View, Image, Text } from 'react-native';
 
 import type { Player } from '~/redux/state/player';
-import type { Styles } from '~/types/styles';
+import type { Style } from '~/types/style';
 import styles from './PlayerAvatar.styles.js'
 
 type PlayerAvatarProps = {
   player: Player,
-  style: ?Styles,
-  size: 'big' | 'normal' | 'small',
-  hideNick: boolean,
+  style?: ?Style,
+  size?: 'big' | 'normal' | 'small',
+  showNick?: boolean,
 };
 
 const defaultAvatar = require('./default-avatar.png');
 
-const PlayerAvatar = ({ player, style, size, hideNick }: PlayerAvatarProps) => {
+const PlayerAvatar = ({ player, style, size, showNick }: PlayerAvatarProps) => {
+  if (!size) return;
+
   const imageSize = {
     small: 36,
     normal: 42,
@@ -42,7 +44,7 @@ const PlayerAvatar = ({ player, style, size, hideNick }: PlayerAvatarProps) => {
   return (
     <View style={[wrapperStyles, style]}>
       <Image style={imageStyles} source={player.avatar ? { uri: `http://192.168.0.18:3000${player.avatar}` } : defaultAvatar} />
-      { !hideNick && <Text style={styles.nick}>{player.nick}</Text> }
+      { showNick && <Text style={styles.nick}>{player.nick}</Text> }
     </View>
   );
 };
@@ -50,6 +52,7 @@ const PlayerAvatar = ({ player, style, size, hideNick }: PlayerAvatarProps) => {
 PlayerAvatar.defaultProps = {
   style: null,
   size: 'normal',
+  showNick: true,
 };
 
 export default PlayerAvatar;

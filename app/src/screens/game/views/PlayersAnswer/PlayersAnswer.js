@@ -26,7 +26,7 @@ type PlayersAnswerProps = {
 
 const COMPACT_TEXT_LENGTH = 200;
 
-const totalQuestionTextLength = (question: Question, answer: Array<?Choice>) => {
+const totalQuestionTextLength = (question: Question, answer: Array<Choice>) => {
   let total = 0;
   const add = (s: ?string) => {
     if (s)
@@ -64,7 +64,7 @@ const mapStateToProps = ({ player, game }) => ({
     && player.selectedChoices.length === game.question.nb_choices,
 });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = (dispatch: Function) => ({
   toggleChoice: (choice) => dispatch(toggleChoice(choice)),
   submitAnswer: () => dispatch(submitAnswer()),
 });
@@ -80,7 +80,8 @@ const PlayersAnswer = ({
   toggleChoice,
   submitAnswer,
 }: PlayersAnswerProps) => {
-  const textLength = totalQuestionTextLength(question, submittedAnswer);
+  const answers = submittedAnswer || selectedChoices;
+  const textLength = totalQuestionTextLength(question, answers);
   const size = textLength > COMPACT_TEXT_LENGTH
     ? 'compact'
     : 'normal';

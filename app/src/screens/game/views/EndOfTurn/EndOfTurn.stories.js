@@ -4,15 +4,22 @@
 import * as React from 'react';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
-import { storiesOf, addDecorator } from '@storybook/react-native';
+import { storiesOf } from '@storybook/react-native';
 
 import EndOfTurn from './EndOfTurn';
 
-addDecorator((story) => (
-  <Provider store={createStore(a => a, require('./state'))}>
-    {story()}
-  </Provider>
-));
+storiesOf('EndOfTurn', module)
+  .addDecorator((story) => (
+    <Provider store={createStore(a => a, require('./state.question'))}>
+      {story()}
+    </Provider>
+  ))
+  .add('question', () => <EndOfTurn />);
 
 storiesOf('EndOfTurn', module)
-  .add('End of turn', () => <EndOfTurn />);
+  .addDecorator((story) => (
+    <Provider store={createStore(a => a, require('./state.fill'))}>
+      {story()}
+    </Provider>
+  ))
+  .add('fill', () => <EndOfTurn />);

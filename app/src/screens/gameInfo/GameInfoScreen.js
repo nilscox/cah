@@ -4,6 +4,8 @@ import * as React from 'react';
 import { View, Text } from 'react-native';
 
 import type { Navigation, NavigationProps } from '~/types/navigation';
+import type { Game, GameHistory } from '~/redux/state/game';
+import type { Player } from '~/redux/state/player';
 import MenuButton from '~/components/MenuButton';
 import styles from './GameInfoScreen.styles';
 
@@ -40,7 +42,7 @@ class GameInfoScreen extends React.Component<GameInfoScreenProps> {
     );
   }
 
-  renderMainInfo(game) {
+  renderMainInfo(game: Game) {
     return (
       <View style={styles.mainInfo}>
         <Text style={styles.mainInfoTitle}>Game #{game.id}</Text>
@@ -51,7 +53,7 @@ class GameInfoScreen extends React.Component<GameInfoScreenProps> {
     );
   }
 
-  renderPlayersList(players) {
+  renderPlayersList(players: Array<Player>) {
     return (
       <View style={styles.playersList}>
         <Text style={styles.playersListTitle}>Players</Text>
@@ -60,7 +62,7 @@ class GameInfoScreen extends React.Component<GameInfoScreenProps> {
     );
   }
 
-  renderGameHistory(history) {
+  renderGameHistory(history: GameHistory) {
     return (
       <View style={styles.gameHistory}>
         <Text style={styles.gameHistoryTitle}>History</Text>

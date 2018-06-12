@@ -1,3 +1,9 @@
+// @flow
+
+import type { Status } from './status';
+import type { FullPlayer } from './player';
+import type { Game } from './game';
+
 export default {
   status: {
     app: 'ready',
@@ -7,4 +13,11 @@ export default {
   games: [],
   player: null,
   game: null,
+};
+
+export type State = {
+  status: Status,
+  games: Array<Game>,
+  player: ?FullPlayer,
+  game: ?Game,
 };

@@ -19,7 +19,7 @@ export const GAME_FETCH = 'GAME_FETCH';
 export const fetchGame = () => ({
   type: GAME_FETCH,
   route: `/api/game`,
-  after: ({ dispatch, getState }) => onGameFetched(dispatch, getState),
+  after: ({ dispatch, getState }: { dispatch: Function, getState: Function }) => onGameFetched(dispatch, getState),
 });
 
 export const GAME_FETCH_HISTORY = 'GAME_FETCH_HISTORY';

@@ -31,4 +31,5 @@ storiesOf('AnsweredQuestionCard', module)
   .add('Question short', () => aqc(questions.questionShort, [answers.answer1]))
   .add('Question long', () => aqc(questions.questionLong, [answers.answer2]))
   .add('Fill short', () => aqc(questions.fillShort, [answers.answer3]))
+  // $FlowFixMe
   .add('Fill long', () => aqc(questions.fillLong, Object.values(answers)));

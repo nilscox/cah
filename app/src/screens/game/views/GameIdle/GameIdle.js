@@ -22,7 +22,7 @@ const mapStateToProps = ({ player, game }) => ({
   canStartGame: player.nick === game.owner,
 });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = (dispatch: Function) => ({
   startGame: () => dispatch(startGame()),
 });
 

@@ -40,7 +40,7 @@ const mapStateToProps = ({ player, game }) => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = (dispatch: Function) => ({
   nextTurn: () => dispatch(nextTurn()),
 });
 
@@ -71,7 +71,7 @@ const EndOfTurn = ({
         <View style={[styles.answer, isWinner(item.answered_by) && styles.winnerAnswer]}>
           <Text style={styles.answeredBy}>{ item.answered_by }</Text>
           <AnsweredQuestionCard size="tiny" question={question} answer={item.answers} />
-          <PlayerAvatar style={styles.answeredByAvatar} player={getPlayer(item.answered_by)} size="small" hideNick />
+          <PlayerAvatar style={styles.answeredByAvatar} player={getPlayer(item.answered_by)} size="small" showNick={false} />
         </View>
       )}
     />
