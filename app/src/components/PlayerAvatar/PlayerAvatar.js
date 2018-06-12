@@ -11,11 +11,12 @@ type PlayerAvatarProps = {
   player: Player,
   style: ?Styles,
   size: 'big' | 'normal' | 'small',
+  hideNick: boolean,
 };
 
 const defaultAvatar = require('./default-avatar.png');
 
-const PlayerAvatar = ({ player, style, size }: PlayerAvatarProps) => {
+const PlayerAvatar = ({ player, style, size, hideNick }: PlayerAvatarProps) => {
   const imageSize = {
     small: 36,
     normal: 42,
@@ -41,7 +42,7 @@ const PlayerAvatar = ({ player, style, size }: PlayerAvatarProps) => {
   return (
     <View style={[wrapperStyles, style]}>
       <Image style={imageStyles} source={player.avatar || defaultAvatar} />
-      <Text style={styles.nick}>{player.nick}</Text>
+      { !hideNick && <Text style={styles.nick}>{player.nick}</Text> }
     </View>
   );
 };

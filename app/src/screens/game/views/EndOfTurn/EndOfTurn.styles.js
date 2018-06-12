@@ -45,4 +45,9 @@ export default StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 14,
   },
+  answeredByAvatar: {
+    position: 'absolute',
+    end: 15,
+    top: 5,
+  },
 });

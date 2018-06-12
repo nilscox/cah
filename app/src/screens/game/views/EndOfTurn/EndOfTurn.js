@@ -20,6 +20,7 @@ type EndOfTurnProps = {
   question: Question,
   answers: Array<AnsweredQuestion>,
   isWinner: (string) => boolean,
+  getPlayer: (string) => boolean,
   canGoNext: boolean,
   nextTurn: Function,
 };
@@ -34,6 +35,7 @@ const mapStateToProps = ({ player, game }) => {
     question: turn.question,
     answers: turn.answers,
     isWinner: (player) => player === winner.nick,
+    getPlayer: (nick) => game.players.find(p => p.nick === nick),
     canGoNext: player.nick === game.question_master,
   };
 };
@@ -48,6 +50,7 @@ const EndOfTurn = ({
   question,
   answers,
   isWinner,
+  getPlayer,
   canGoNext,
   nextTurn,
 }: EndOfTurnProps) => (
@@ -68,6 +71,7 @@ const EndOfTurn = ({
         <View style={[styles.answer, isWinner(item.answered_by) && styles.winnerAnswer]}>
           <Text style={styles.answeredBy}>{ item.answered_by }</Text>
           <AnsweredQuestionCard size="tiny" question={question} answer={item.answers} />
+          <PlayerAvatar style={styles.answeredByAvatar} player={getPlayer(item.answered_by)} size="small" hideNick />
         </View>
       )}
     />
