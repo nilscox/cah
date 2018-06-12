@@ -36,7 +36,9 @@ export default StyleSheet.create({
     backgroundColor: '#333',
   },
   winnerAnswer: {
-    backgroundColor: '#393',
+    borderWidth: 1,
+    borderColor: '#393',
+    borderBottomColor: '#393',
   },
   answeredBy: {
     color: '#eee',
