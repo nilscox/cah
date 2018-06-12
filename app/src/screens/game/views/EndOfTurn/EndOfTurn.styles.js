@@ -4,6 +4,7 @@ export default StyleSheet.create({
   wrapper: {
     flex: 1,
     alignItems: 'center',
+    backgroundColor: '#eee',
   },
   turnNumber: {
     position: 'absolute',
@@ -27,18 +28,20 @@ export default StyleSheet.create({
   answers: {
     flex: 1,
     alignSelf: 'stretch',
+    backgroundColor: '#444',
   },
   answer: {
     paddingTop: 10,
     paddingHorizontal: 20,
+    marginBottom: 5,
     borderBottomWidth: 1,
-    borderBottomColor: '#666',
+    borderTopWidth: 1,
+    borderColor: '#666',
     backgroundColor: '#333',
   },
   winnerAnswer: {
     borderWidth: 1,
     borderColor: '#393',
-    borderBottomColor: '#393',
   },
   answeredBy: {
     color: '#eee',

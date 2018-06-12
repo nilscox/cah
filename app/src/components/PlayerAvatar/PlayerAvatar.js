@@ -41,7 +41,7 @@ const PlayerAvatar = ({ player, style, size, hideNick }: PlayerAvatarProps) => {
 
   return (
     <View style={[wrapperStyles, style]}>
-      <Image style={imageStyles} source={player.avatar || defaultAvatar} />
+      <Image style={imageStyles} source={player.avatar ? { uri: `http://192.168.0.18:3000${player.avatar}` } : defaultAvatar} />
       { !hideNick && <Text style={styles.nick}>{player.nick}</Text> }
     </View>
   );

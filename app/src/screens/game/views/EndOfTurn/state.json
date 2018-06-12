@@ -74,13 +74,13 @@
       {
         "nick": "Raspout",
         "connected": true,
-        "avatar": null,
+        "avatar": "/media/avatars/bu.jpg",
         "score": 0
       },
       {
         "nick": "Vio",
         "connected": true,
-        "avatar": null,
+        "avatar": "/media/avatars/walala.jpg",
         "score": 1
       },
       {
@@ -92,13 +92,13 @@
       {
         "nick": "Tom",
         "connected": true,
-        "avatar": null,
+        "avatar": "/media/avatars/cow.jpg",
         "score": 0
       },
       {
         "nick": "Nils",
         "connected": false,
-        "avatar": null,
+        "avatar": "/media/avatars/nilscox.png",
         "score": 0
       }
     ],
