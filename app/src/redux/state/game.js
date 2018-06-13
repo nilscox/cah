@@ -2,23 +2,14 @@
 
 import type { Player } from './player';
 import type { Question } from './question';
-import type { Choice } from './choice';
-import type { AnsweredQuestion } from './answeredQuestion';
-
-type Proposition = {
-  id: number,
-  question: Question,
-  text: string,
-  split: Array<string>,
-  answers: Array<Choice>,
-};
+import type { AnsweredQuestion, FullAnsweredQuestion } from './answeredQuestion';
 
 export type GameTurn = {
   number: number,
   question_master: string,
   winner: string,
   question: Question,
-  answers: Array<AnsweredQuestion>,
+  answers: Array<FullAnsweredQuestion>,
 };
 
 export type GameHistory = Array<GameTurn>;
@@ -29,7 +20,7 @@ export type Game = {
   owner: string,
   play_state: string,
   players: Array<Player>,
-  propositions: Array<Proposition>,
+  propositions: Array<AnsweredQuestion>,
   question: Question,
   question_master: string,
   state: string,

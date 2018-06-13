@@ -8,6 +8,7 @@ configure(() => {
   require('../src/components/PlayerAvatar/PlayerAvatar.stories.js');
   require('../src/components/AnsweredQuestionCard/AnsweredQuestionCard.stories.js');
   require('../src/screens/game/views/EndOfTurn/EndOfTurn.stories.js');
+  require('../src/screens/game/views/QuestionMasterSelection/QuestionMasterSelection.stories.js');
 }, module);
 
 // This assumes that storybook is running on the same host as your RN packager,

@@ -1,6 +1,7 @@
 // @flow
 
 import type { Choice } from '../state/choice';
+import type { AnsweredQuestion } from '../state/answeredQuestion';
 
 export const TOGGLE_CHOICE = 'TOGGLE_CHOICE';
 export const toggleChoice = (choice: Choice) => ({
@@ -21,3 +22,10 @@ export const submitAnswer = () => (dispatch: Function, getState: Function) => {
     body: JSON.stringify({ ids: choices.map(c => c.id) }),
   });
 };
+
+export const SELECT_ANSWER = 'SELECT_ANSWER';
+export const selectAnswer = (answer: AnsweredQuestion) => ({
+  type: SELECT_ANSWER,
+  route: `/api/answer/select/${answer.id}`,
+  method: 'POST',
+});

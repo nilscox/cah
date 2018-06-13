@@ -25,32 +25,4 @@ export default StyleSheet.create({
       { rotateZ: '-30deg' },
     ],
   },
-  answers: {
-    flex: 1,
-    alignSelf: 'stretch',
-    backgroundColor: '#444',
-  },
-  answer: {
-    paddingTop: 10,
-    paddingHorizontal: 20,
-    marginBottom: 5,
-    borderBottomWidth: 1,
-    borderTopWidth: 1,
-    borderColor: '#666',
-    backgroundColor: '#333',
-  },
-  winnerAnswer: {
-    borderWidth: 1,
-    borderColor: '#393',
-  },
-  answeredBy: {
-    color: '#eee',
-    fontWeight: 'bold',
-    fontSize: 14,
-  },
-  answeredByAvatar: {
-    position: 'absolute',
-    end: 15,
-    top: 5,
-  },
 });

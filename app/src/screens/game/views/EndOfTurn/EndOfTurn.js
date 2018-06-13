@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react';
-import { View, Image, Text, FlatList } from 'react-native';
+import { View, Image, Text } from 'react-native';
 import { connect } from 'react-redux';
 
 import type { Player } from '~/redux/state/player';
@@ -9,7 +9,7 @@ import type { Question } from '~/redux/state/question';
 import type { AnsweredQuestion } from '~/redux/state/answeredQuestion';
 import { nextTurn } from '~/redux/actions/game';
 import PlayerAvatar from '~/components/PlayerAvatar';
-import AnsweredQuestionCard from '~/components/AnsweredQuestionCard';
+import AnsweredQuestionsList from '~/components/AnsweredQuestionsList';
 
 import GoNextButton from './GoNextButton';
 import styles from './EndOfTurn.styles';
@@ -34,7 +34,7 @@ const mapStateToProps = ({ player, game }) => {
     winner,
     question: turn.question,
     answers: turn.answers,
-    isWinner: (player) => player === winner.nick,
+    isWinner: (nick) => nick === winner.nick,
     getPlayer: (nick) => game.players.find(p => p.nick === nick),
     canGoNext: player.nick === game.question_master,
   };
@@ -63,17 +63,11 @@ const EndOfTurn = ({
 
     { canGoNext && <GoNextButton winner={winner.nick} nextTurn={nextTurn} /> }
 
-    <FlatList
-      style={styles.answers}
-      data={answers}
-      keyExtractor={(a) => `answer-${a.id}`}
-      renderItem={({ item }) => (
-        <View style={[styles.answer, isWinner(item.answered_by) && styles.winnerAnswer]}>
-          <Text style={styles.answeredBy}>{ item.answered_by }</Text>
-          <AnsweredQuestionCard size="tiny" question={question} answer={item.answers} />
-          <PlayerAvatar style={styles.answeredByAvatar} player={getPlayer(item.answered_by)} size="small" showNick={false} />
-        </View>
-      )}
+    <AnsweredQuestionsList
+      question={question}
+      answers={answers}
+      isWinner={isWinner}
+      getPlayer={getPlayer}
     />
 
   </View>

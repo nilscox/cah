@@ -9,5 +9,8 @@ export type AnsweredQuestion = {
   text: string,
   split: Array<?string>,
   answers: Array<Choice>,
+};
+
+export type FullAnsweredQuestion = AnsweredQuestion & {
   answered_by: string,
 };
