@@ -64,8 +64,7 @@ const EndOfTurn = ({
     { canGoNext && <GoNextButton winner={winner.nick} nextTurn={nextTurn} /> }
 
     <AnsweredQuestionsList
-      question={question}
-      answers={answers}
+      answers={answers.map(a => ({...a, question}))}
       isWinner={isWinner}
       getPlayer={getPlayer}
     />
