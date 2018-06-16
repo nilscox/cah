@@ -16,6 +16,7 @@ const PLAYER_CONNECTED = 'PLAYER_CONNECTED';
 const PLAYER_DISCONNECTED = 'PLAYER_DISCONNECTED';
 const PLAYER_JOINED = 'PLAYER_JOINED';
 const GAME_RESET = 'GAME_RESET';
+const GAME_STARTED = 'GAME_STARTED';
 
 const handleWebsocket = (state = initialState.game, message) => {
   const { type } = message;
@@ -39,6 +40,7 @@ const handleWebsocket = (state = initialState.game, message) => {
       players: replaceOrPush(state.players, isPlayer, player),
     }),
     [GAME_RESET]: () => message.game,
+    [GAME_STARTED]: () => message.game,
   };
 
   return handlers[type]
