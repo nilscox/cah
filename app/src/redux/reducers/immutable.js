@@ -35,3 +35,16 @@ export const remove = (array, predicate) => {
 
   return result;
 };
+
+export const merge = (array, predicate, obj) => {
+  const idx = array.findIndex(predicate);
+
+  if (idx < 0)
+    return array;
+
+  const result = array.slice();
+
+  result.splice(idx, 1, { ...result[idx], ...obj });
+
+  return result;
+};

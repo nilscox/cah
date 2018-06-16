@@ -10,7 +10,7 @@ import {
   GAME_FETCH_HISTORY,
   WEBSOCKET_MESSAGE,
 } from '../actions';
-import { replace, replaceOrPush, remove } from './immutable';
+import { replace, replaceOrPush, merge } from './immutable';
 
 const PLAYER_CONNECTED = 'PLAYER_CONNECTED';
 const PLAYER_DISCONNECTED = 'PLAYER_DISCONNECTED';
@@ -33,7 +33,7 @@ const handleWebsocket = (state = initialState.game, message) => {
     }),
     [PLAYER_DISCONNECTED]: () => ({
       ...state,
-      players: remove(state.players, isPlayer),
+      players: merge(state.players, (p) => p.nick === message.nick, { connected: false }),
     }),
     [PLAYER_JOINED]: () => ({
       ...state,
