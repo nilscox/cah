@@ -87,8 +87,8 @@ const PlayersAnswer = ({
   toggleChoice,
   submitAnswer,
 }: PlayersAnswerProps) => {
-  const answers = submittedAnswer || selectedChoices;
-  const textLength = totalQuestionTextLength(question, answers);
+  const answer = submittedAnswer || selectedChoices;
+  const textLength = totalQuestionTextLength(question, answer.answers);
   const size = textLength > COMPACT_TEXT_LENGTH
     ? 'compact'
     : 'normal';
