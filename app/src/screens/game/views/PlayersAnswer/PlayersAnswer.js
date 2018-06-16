@@ -39,17 +39,12 @@ const totalQuestionTextLength = (question: Question, answer: Array<Choice>) => {
   return total;
 };
 
-const mapStateToProps = ({ player, game }) => ({
-  question: game.question,
-  cards: player.cards,
-  selectedChoices: player.selectedChoices,
-  submittedAnswer: player.submitted,
-  isSelected: (choice) => {
-    return player.selectedChoices
-      .filter((c: ?Choice) => c && c.id === choice.id)
-      .length;
-  },
-  canToggleChoice: (choice) => {
+const mapStateToProps = ({ player, game }) => {
+  const isSelected = (choice) => player.selectedChoices
+    .filter((c: ?Choice) => c && c.id === choice.id)
+    .length > 0;
+
+  const canToggleChoice = (choice) => {
     const selectedChoices = player.selectedChoices.filter(i => i !== null);
 
     if (player.submitted)
@@ -59,10 +54,22 @@ const mapStateToProps = ({ player, game }) => ({
       return choice.isSelected;
 
     return true;
-  },
-  canSubmitAnswer: player.submitted === null
-    && player.selectedChoices.length === game.question.nb_choices,
-});
+  };
+
+  const selectedChoices = player.selectedChoices.filter(c => c !== null);
+  const canSubmitAnswer = player.submitted === null
+    && selectedChoices.length === game.question.nb_choices;
+
+  return {
+    question: game.question,
+    cards: player.cards,
+    selectedChoices: selectedChoices,
+    submittedAnswer: player.submitted,
+    isSelected,
+    canToggleChoice,
+    canSubmitAnswer,
+  };
+};
 
 const mapDispatchToProps = (dispatch: Function) => ({
   toggleChoice: (choice) => dispatch(toggleChoice(choice)),
