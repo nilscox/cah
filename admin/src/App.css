@@ -12,6 +12,10 @@ nav {
   flex-direction: column;
 }
 
+nav h1 {
+  font-size: 26px;
+}
+
 nav a {
   margin: 5px 0;
   padding: 5px 10px;

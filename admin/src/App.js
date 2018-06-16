@@ -14,6 +14,7 @@ class App extends Component {
         <div className="root">
 
           <nav>
+            <h1>CAHdmin</h1>
             <Link to="/">Dashboard</Link>
             <Link to="/players">Players</Link>
             <Link to="/games">Games</Link>
