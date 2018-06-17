@@ -35,20 +35,22 @@ const App = ({ initializing }) => {
     return 'Loading...';
 
   return (
-    <div className="root">
-      <nav>
-        <h1>CAHdmin</h1>
-        <Link to="/">Dashboard</Link>
-        <Link to="/players">Players</Link>
-        <Link to="/games">Games</Link>
-      </nav>
+    <BrowserRouter>
+      <div className="root">
+        <nav>
+          <h1>CAHdmin</h1>
+          <Link to="/">Dashboard</Link>
+          <Link to="/players">Players</Link>
+          <Link to="/games">Games</Link>
+        </nav>
 
-      <main>
-        <Route exact path="/" component={Dashboard} />
-        <Route path="/players" component={Players} />
-        <Route path="/games" component={Games} />
-      </main>
-    </div>
+        <main>
+          <Route exact path="/" component={Dashboard} />
+          <Route path="/players" component={Players} />
+          <Route path="/games" component={Games} />
+        </main>
+      </div>
+    </BrowserRouter>
   );
 };
 
@@ -58,8 +60,6 @@ const ConnectedApp = connect(({ status }) => ({
 
 export default () => (
   <Provider store={store}>
-    <BrowserRouter>
-      <ConnectedApp />
-    </BrowserRouter>
+    <ConnectedApp />
   </Provider>
 );
