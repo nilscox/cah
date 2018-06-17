@@ -1,12 +1,12 @@
 import { handle } from 'redux-pack';
 
-import { GAMES_LIST } from '../actions';
+import { PLAYERS_LIST } from '../actions';
 
 export default (state = [], action) => {
   const { type, payload } = action;
 
   const handlers = {
-    [GAMES_LIST]: {
+    [PLAYERS_LIST]: {
       start   : () => [],
       success : () => payload,
       failure : () => [],

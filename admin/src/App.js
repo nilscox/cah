@@ -30,6 +30,8 @@ const store = createStore(rootReducer, initialState,
   ),
 );
 
+store.dispatch(initialization());
+
 const PrivateRoute = ({ component: Component, user, ...rest }) => (
   <Route
     {...rest}
@@ -72,8 +74,8 @@ class App extends Component {
         <BrowserRouter>
 
         <Switch>
-          <Route path="/login" component={Authentication} />
-          <PrivateRoute path="/" component={Authenticated} />
+          {/* <Route path="/login" component={Authentication} /> */}
+          <Route path="/" component={Authenticated} />
         </Switch>
 
         </BrowserRouter>
