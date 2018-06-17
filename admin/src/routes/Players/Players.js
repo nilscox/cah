@@ -1,7 +1,12 @@
 import * as React from 'react';
+import { connect } from 'react-redux';
 import { Table } from 'react-bootstrap';
 
-const playersList = require('../../playersList');
+const mapStateToProps = (state) => {
+    return {
+        players: state.players,
+    };
+};
 
 const Row = ({ player }) => (
     <tr>
@@ -23,7 +28,7 @@ const Players = ({ players }) => (
                     <th>Nick</th>
                     <th>Connected</th>
                     <th>Score</th>
-                </tr>    
+                </tr>
             </thead>
 
             <tbody>
@@ -35,4 +40,4 @@ const Players = ({ players }) => (
     </div>
 );
 
-export default () => <Players players={playersList} />;
+export default connect(mapStateToProps)(Players);

@@ -34,7 +34,7 @@ const Games = ({ games, players }) => (
       <FormGroup>
 
         <ControlLabel>Select owner</ControlLabel>
-        
+
         <FormControl componentClass="select">
           {players.map((player) => <SelectPlayer key={`player-${player.nick}`} player={player} />)}
         </FormControl>
@@ -44,7 +44,7 @@ const Games = ({ games, players }) => (
       <FormGroup>
 
         <ControlLabel>Select lang</ControlLabel>
-        
+
         <FormControl componentClass="select">
 
           <option value="en">English</option>
