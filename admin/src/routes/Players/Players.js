@@ -4,7 +4,7 @@ import { Table } from 'react-bootstrap';
 
 const mapStateToProps = (state) => {
     return {
-        players: state.players,
+        players: state.get('players').toJSON(),
     };
 };
 

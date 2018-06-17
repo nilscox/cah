@@ -13,12 +13,11 @@ import Players from './routes/Players';
 import apiMiddleware from './redux/middlewares/apiMiddleware';
 import loggerMiddleware from './redux/middlewares/loggerMiddleware';
 import rootReducer from './redux/reducers';
-import initialState from './redux/state';
 import { initialization } from './redux/actions';
 
 import './App.css';
 
-const store = createStore(rootReducer, initialState,
+const store = createStore(rootReducer,
   applyMiddleware(
     thunkMiddleware,
     promiseMiddleware,
@@ -54,8 +53,8 @@ const App = ({ initializing }) => {
   );
 };
 
-const ConnectedApp = connect(({ status }) => ({
-  initializing: status.initializing,
+const ConnectedApp = connect((state) => ({
+  initializing: state.get('status').initializing,
 }))(App);
 
 export default () => (

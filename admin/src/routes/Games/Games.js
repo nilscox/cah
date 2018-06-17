@@ -6,8 +6,8 @@ import './Games.css';
 
 const mapStateToProps = (state) => {
   return {
-    games: state.games,
-    players: state.players,
+    games: state.get('games').toJSON(),
+    players: state.get('players').toJSON(),
   };
 };
 

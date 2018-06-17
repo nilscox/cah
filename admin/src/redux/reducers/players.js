@@ -1,14 +1,15 @@
 import { handle } from 'redux-pack';
+import { fromJS, List } from 'immutable';
 
 import { PLAYERS_LIST } from '../actions';
 
-export default (state = [], action) => {
+export default (state = List(), action) => {
   const { type, payload } = action;
 
   const handlers = {
     [PLAYERS_LIST]: {
       start   : () => [],
-      success : () => payload,
+      success : () => fromJS(payload),
       failure : () => [],
     },
   };
