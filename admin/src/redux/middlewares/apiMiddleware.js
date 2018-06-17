@@ -12,6 +12,17 @@ const apiMiddleware = store => next => action => {
   const { dispatch, getState } = store;
   const { type, route, after, meta, ...opts } = action;
 
+  console.log(opts.body);
+  if (typeof opts.body === 'object') {
+    if (!opts.headers)
+      opts.headers = new Headers();
+
+    if (!opts.headers.has('Content-Type'))
+      opts.headers.append('Content-Type', 'application/json');
+
+    opts.body = JSON.stringify(opts.body);
+  }
+
   const handleResponse = (res) => {
     const contentType = res.headers.get('Content-Type');
     let promise = Promise.resolve();
