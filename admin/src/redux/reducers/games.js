@@ -8,7 +8,7 @@ export default (state = [], action) => {
   const handlers = {
     [GAMES_LIST]: {
       start   : () => [],
-      success : () => ({ ...payload, turns: [] }),
+      success : () => payload.map(game => ({ ...game, turns: [] })),
       failure : () => [],
     },
   };
