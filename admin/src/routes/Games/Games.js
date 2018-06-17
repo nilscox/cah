@@ -33,7 +33,7 @@ const Games = ({ games }) => (
         </thead>
 
         <tbody>
-            {games.map(game => <Row  key={`game-${game.id}`} game={game} />)}
+            {games.map((game) => <Row  key={`game-${game.id}`} game={game} />)}
         </tbody>
 
       </Table>
