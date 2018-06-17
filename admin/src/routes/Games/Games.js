@@ -1,10 +1,15 @@
 import * as React from 'react';
+import { connect } from 'react-redux';
 import { Table, FormGroup, FormControl, ControlLabel, Button } from 'react-bootstrap';
 
 import './Games.css';
 
-const gamesList = require('../../gamesList');
-const playersList = require('../../playersList');
+const mapStateToProps = (state) => {
+  return {
+    games: state.games,
+    players: state.players,
+  };
+};
 
 const SelectPlayer = ({ player }) => (
   <option value={player.nick}>{player.nick}</option>
@@ -77,4 +82,4 @@ const Games = ({ games, players }) => (
   </div>
 );
 
-export default () => <Games games={gamesList} players={playersList}/>;
+export default connect(mapStateToProps)(Games);
