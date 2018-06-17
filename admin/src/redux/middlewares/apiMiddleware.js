@@ -12,7 +12,6 @@ const apiMiddleware = store => next => action => {
   const { dispatch, getState } = store;
   const { type, route, after, meta, ...opts } = action;
 
-  console.log(opts.body);
   if (typeof opts.body === 'object') {
     if (!opts.headers)
       opts.headers = new Headers();
