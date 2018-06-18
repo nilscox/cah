@@ -441,3 +441,42 @@ Available routes are:
     text: string,
 }
 ```
+
+## Admin API documentation
+
+The admin API allows complete control over CAH's system. It can be used to
+control master data with CRUD routes, view and control running games, send
+websocket messages to specific players or games... All sensible routes require
+an authentication, in order to preserve us from anarchy and chaos.
+
+All admin routes are prefixed with `/api/admin`.
+
+### CRUD routes
+
+`create`, `read`, `update` and `delete` object are the essentials operations
+that provide CRUD routes. Some of CAH's objects are availible this way.
+
+All CRUD routes allow theses methods:
+```
+GET    /api/admin/<model>: retrieve all instances of a model
+GET    /api/admin/<model>/<id>: retrieve a specific instance of a model
+POST   /api/admin/<model>: create a new instance of a model
+PUT    /api/admin/<model>/<id>: update an existing model
+PATCH  /api/admin/<model>/<id>: partial update an existing model
+DELETE /api/admin/<model>/<id>: delete an existing model
+```
+
+> Note: partial updating allows to provide only some part of a model. The
+> payload sent with the request will be merged with the existing model
+> instance.
+
+The models that allow access over the CRUD routes are:
+
+- `game`
+- `player`
+
+So that you can access the players with ID 3 with:
+
+```
+curl -v http://$CAH_API_URL/api/admin/player/3
+```
