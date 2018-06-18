@@ -27,40 +27,48 @@ const Row = ({ game }) => (
 );
 
 const Games = ({ games, players }) => (
-  <div>
+  <div className="games">
 
-    <form className="form-wrapper">
+    <div className="games-top">
 
-      <FormGroup>
+      <div className="games-info">
+        {/* game info */}
+      </div>
 
-        <ControlLabel>Select owner</ControlLabel>
+      <form className="add-game-form">
 
-        <FormControl componentClass="select">
-          {players.map((player) => <SelectPlayer key={`player-${player.nick}`} player={player} />)}
-        </FormControl>
+        <FormGroup>
 
-      </FormGroup>
+          <ControlLabel>Select owner</ControlLabel>
 
-      <FormGroup>
+          <FormControl componentClass="select">
+            {players.map((player) => <SelectPlayer key={`player-${player.nick}`} player={player} />)}
+          </FormControl>
 
-        <ControlLabel>Select lang</ControlLabel>
+        </FormGroup>
 
-        <FormControl componentClass="select">
+        <FormGroup>
 
-          <option value="en">English</option>
-          <option value="fr">Français</option>
-        </FormControl>
+          <ControlLabel>Select lang</ControlLabel>
+
+          <FormControl componentClass="select">
+
+            <option value="en">English</option>
+            <option value="fr">Français</option>
+          </FormControl>
 
 
-      </FormGroup>
+        </FormGroup>
 
-      <Button bsClass="add-button btn" type="submit">
-        Create Game
-      </Button>
+        <Button bsClass="add-button btn" type="submit">
+          Create Game
+        </Button>
 
-    </form>
+      </form>
 
-    <Table bordered condensed striped>
+    </div>
+
+    <Table className="games-list" bordered condensed striped>
 
       <thead>
         <tr>

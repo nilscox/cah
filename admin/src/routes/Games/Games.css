@@ -1,4 +1,22 @@
-.form-wrapper {
-    max-width: 640px;
-    margin: 20px 0;
+.games {
+  display: flex;
+  flex-direction: column;
+}
+
+.games-top {
+  display: flex;
+  flex-direction: row;
+  margin: 20px 0;
+}
+
+.games-info {
+    flex: 1;
+}
+
+.add-game-form {
+    flex: 1;
+}
+
+.games-list {
+
 }
