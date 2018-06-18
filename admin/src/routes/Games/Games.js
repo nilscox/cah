@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Table } from 'react-bootstrap';
 
 import CreateGame from './CreateGame';
+import GamesInfo from './GamesInfo';
 
 import './Games.css';
 
@@ -29,9 +30,7 @@ const Games = ({ games, players }) => (
 
     <div className="games-top">
 
-      <div className="games-info">
-        {/* game info */}
-      </div>
+      <GamesInfo />
 
       <CreateGame players={players}/>
 
