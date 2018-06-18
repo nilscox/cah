@@ -478,7 +478,7 @@ The models that allow access over the CRUD routes are:
 So that you can access the players with ID 3 with:
 
 ```
-curl -v http://$CAH_API_URL/api/admin/player/3
+curl -v http://$API_URL/api/admin/player/3
 ```
 
 ### Other routes
