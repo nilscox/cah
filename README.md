@@ -500,7 +500,7 @@ body: {
 }
 ```
 
-- owner: the owner's nick. He must not be in game.
+- owner: the owner's nick. He can not be in game.
 
 Create a game, associated with an owner.
 
