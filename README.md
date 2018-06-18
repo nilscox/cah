@@ -453,24 +453,28 @@ All admin routes are prefixed with `/api/admin`.
 
 ### CRUD routes
 
-`create`, `read`, `update` and `delete` object are the essentials operations
-that provide CRUD routes. Some of CAH's objects are availible this way.
+`create`, `read`, `update` and `delete` objects are the essentials operations
+provided by CRUD routes. Some of CAH's objects (aka. models) are availible via
+CRUD endpoints.
 
 All CRUD routes allow theses methods:
 ```
-GET    /api/admin/<model>: retrieve all instances of a model
-GET    /api/admin/<model>/<id>: retrieve a specific instance of a model
-POST   /api/admin/<model>: create a new instance of a model
-PUT    /api/admin/<model>/<id>: update an existing model
-PATCH  /api/admin/<model>/<id>: partial update an existing model
-DELETE /api/admin/<model>/<id>: delete an existing model
+GET    /api/admin/<model>: retrieve all objects
+GET    /api/admin/<model>/<id>: retrieve a specific object
+POST   /api/admin/<model>: create a new object
+PUT    /api/admin/<model>/<id>: update an existing object
+PATCH  /api/admin/<model>/<id>: partial update an existing object
+DELETE /api/admin/<model>/<id>: delete an existing object
 ```
 
-> Note: partial updating allows to provide only some part of a model. The
+> Note: partial updating allows to provide only some part of an object. The
 > payload sent with the request will be merged with the existing model
-> instance.
+> instance, and saved to the database.
 
-The models that allow access over the CRUD routes are:
+Some objects handle requests with a few <missing word> that are detailed in the
+next section (Other routes).
+
+The objects that allow access over the CRUD endpoints are:
 
 - `game`
 - `player`
@@ -487,10 +491,23 @@ Some models provide more endpoints than the ones available via the CRUD routes.
 
 #### Game
 
-Fetch a game's history.
+```
+route: /api/admin/game
+method: POST
+status: 201
+body: {
+    owner: string,
+}
+```
+
+- owner: the owner's nick. He must not be in game.
+
+Create a game, associated with an owner.
 
 ```
 route: /api/admin/game/<id>/history
 method: GET
 status: 200
 ```
+
+Fetch a game's history.
