@@ -39,7 +39,7 @@ export REACT_APP_API_URL="http://$API_URL"
 export REACT_APP_WEBSOCKET_URL="ws://$API_URL"
 
 runsql() {
-  echo "$1" | psql -U "$CAH_DB_ROOT_USER" -h "$CAH_DB_HOST"
+  echo "$1" | docker exec -i "$CAH_DB_CONTAINER_NAME" psql -U "$CAH_DB_ROOT_USER"
 }
 
 resetdb() {
