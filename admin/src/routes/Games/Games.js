@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Table, FormGroup, FormControl, ControlLabel, Button } from 'react-bootstrap';
+import { Table } from 'react-bootstrap';
+
+import CreateGame from './CreateGame';
 
 import './Games.css';
 
@@ -10,10 +12,6 @@ const mapStateToProps = (state) => {
     players: state.get('players').toJSON(),
   };
 };
-
-const SelectPlayer = ({ player }) => (
-  <option value={player.nick}>{player.nick}</option>
-);
 
 const Row = ({ game }) => (
   <tr>
@@ -35,36 +33,7 @@ const Games = ({ games, players }) => (
         {/* game info */}
       </div>
 
-      <form className="add-game-form">
-
-        <FormGroup>
-
-          <ControlLabel>Select owner</ControlLabel>
-
-          <FormControl componentClass="select">
-            {players.map((player) => <SelectPlayer key={`player-${player.nick}`} player={player} />)}
-          </FormControl>
-
-        </FormGroup>
-
-        <FormGroup>
-
-          <ControlLabel>Select lang</ControlLabel>
-
-          <FormControl componentClass="select">
-
-            <option value="en">English</option>
-            <option value="fr">Français</option>
-          </FormControl>
-
-
-        </FormGroup>
-
-        <Button bsClass="add-button btn" type="submit">
-          Create Game
-        </Button>
-
-      </form>
+      <CreateGame players={players}/>
 
     </div>
 
