@@ -2,6 +2,17 @@
 
 source ./.env
 
+if [ ! -d "$VENV_DIR" ]; then
+  python -m venv "$VENV_DIR"
+  source "$VENV_DIR/bin/activate"
+  pip install -r "requirements.txt"
+fi
+
+if [ -d "app/node_modules/deline/.babelrc" ]; then
+  rm "app/node_modules/deline/.babelrc"
+fi
+
+
 source "$VENV_DIR/bin/activate"
 source "$NVM_DIR/nvm.sh"
 
@@ -77,5 +88,5 @@ startapi() {
 }
 
 ws() {
-  http POST "localhost:8000/api/debug/ws_$1/$2" "message=$3"
+  http POST "$API_URL/api/debug/ws_$1/$2" "message=$3"
 }
