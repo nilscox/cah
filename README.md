@@ -9,6 +9,8 @@ Black cards, white cards, much fun.
 A question represents a black card. It contains a question, or a sentence
 possibly with blanks in it.
 
+#### Data
+
 ```
 Question: {
     id: integer,
@@ -33,6 +35,8 @@ Question: {
 
 A choice represents a white card. It contains a chunk of text that could answer
 a `Question`, or fit in a `Question`'s blank.
+
+#### Data
 
 ```
 Choice: {
@@ -82,6 +86,8 @@ Player: {
 
 #### Routes
 
+Login as a new or existing player.
+
 ```
 POST /api/player
 status: 200 | 201
@@ -92,7 +98,9 @@ body: {
 }
 ```
 
-Login as a new or existing player.
+***
+
+Fetch the currently logged in player.
 
 ```
 GET /api/player
@@ -100,7 +108,9 @@ status: 200
 returns: Player | FullPlayer
 ```
 
-Fetch the currently logged in player.
+***
+
+Log out (the player is not actually deleted).
 
 ```
 DELETE /api/player
@@ -108,7 +118,9 @@ status: 204
 triggers: PLAYER_DISCONNECTED
 ```
 
-Log out (the player is not actually deleted).
+***
+
+Change the current player's avatar.
 
 ```
 PUT /api/player/avatar
@@ -116,8 +128,6 @@ status: 200
 returns: FullPlayer
 triggers: PLAYER_AVATAR_CHANGED
 ```
-
-Change the current player's avatar.
 
 ### Game
 
@@ -169,6 +179,8 @@ GameTurn: {
 
 #### Routes
 
+Create a new game.
+
 ```
 POST /api/game
 status: 201
@@ -180,7 +192,9 @@ body: {
 
 - lang: the game's language
 
-Create a new game.
+***
+
+Fetch the current player's game
 
 ```
 GET /api/game
@@ -188,7 +202,9 @@ status: 200
 returns: Game
 ```
 
-Fetch the current player's game
+***
+
+Fetch the game history
 
 ```
 GET /api/game/history
@@ -196,7 +212,9 @@ status: 200
 returns: GameTurn[]
 ```
 
-Fetch the game history
+***
+
+Join a game.
 
 ```
 POST /api/game/join/:id
@@ -204,14 +222,18 @@ status: 200
 returns: Game
 ```
 
-Join a game.
+***
+
+Leave a game.
 
 ```
 POST /api/game/leave
 status: 204
 ```
 
-Leave a game.
+***
+
+Start a game.
 
 ```
 POST /api/game/start
@@ -219,18 +241,18 @@ status: 200
 returns: Game
 ```
 
-Start a game.
-
 > If the game is started, the current turn is not included, only finished ones
 > are.
+
+***
+
+End the current game turn and start the next one.
 
 ```
 POST /api/game/next
 status: 200
 returns: Game
 ```
-
-End the current game turn and start the next one.
 
 ### AnsweredQuestion
 
@@ -281,6 +303,9 @@ LightAnsweredQuestion: {
 
 #### Routes
 
+Submit an answer to a question. `ids` is an array of the `Choice` ids.
+This route represents a `Player` giving a set of his white cards to the question master.
+
 ```
 POST /api/answer
 status: 200
@@ -290,20 +315,21 @@ body: {
 }
 ```
 
-Submit an answer to a question. `ids` is an array of the `Choice` ids.
-This route represents a `Player` giving a set of his white cards to the question master.
+- ids: the list of `AnsweredQuestion`'s ids.
 
 > For consistency with the number of choices, `id` can be used instead of `ids`.
+
+***
+
+Select a set of choices in the submitted propositions. `id` is the id of the selected AnsweredQuestion.
+This route represents the question master selecting is favorite set of white
+cards within all white cards submitted by the players.
 
 ```
 POST /api/answer/select/:id
 status: 200
 returns: AnsweredQuestion
 ```
-
-Select a set of choices in the submitted propositions. `id` is the id of the selected AnsweredQuestion.
-This route represents the question master selecting is favorite set of white
-cards within all white cards submitted by the players.
 
 ## Websocket API Documentation
 
@@ -491,6 +517,8 @@ Some models provide more endpoints than the ones available via the CRUD routes.
 
 #### Game
 
+Create a game, associated with an owner.
+
 ```
 route: /api/admin/game
 method: POST
@@ -502,12 +530,12 @@ body: {
 
 - owner: the owner's nick. He can not be in game.
 
-Create a game, associated with an owner.
+***
+
+Fetch a game's history.
 
 ```
 route: /api/admin/game/<id>/history
 method: GET
 status: 200
 ```
-
-Fetch a game's history.
