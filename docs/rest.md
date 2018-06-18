@@ -190,7 +190,7 @@ body: {
 
 ***
 
-Fetch the current player's game
+Fetch the current player's game.
 
 ```
 GET /api/game
@@ -200,7 +200,7 @@ returns: Game
 
 ***
 
-Fetch the game history
+Fetch the current player's game history.
 
 ```
 GET /api/game/history
@@ -220,7 +220,7 @@ returns: Game
 
 ***
 
-Leave a game.
+Leave the currently joined game.
 
 ```
 POST /api/game/leave
