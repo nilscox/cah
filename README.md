@@ -471,8 +471,8 @@ DELETE /api/admin/<model>/<id>: delete an existing object
 > payload sent with the request will be merged with the existing model
 > instance, and saved to the database.
 
-Some objects handle requests with a few <missing word> that are detailed in the
-next section (Other routes).
+Some objects handle requests with a few -- missing word -- that are detailed in the
+next section ([Other routes](#other routes)).
 
 The objects that allow access over the CRUD endpoints are:
 
