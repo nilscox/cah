@@ -480,3 +480,17 @@ So that you can access the players with ID 3 with:
 ```
 curl -v http://$CAH_API_URL/api/admin/player/3
 ```
+
+### Other routes
+
+Some models provide more endpoints than the ones available via the CRUD routes.
+
+#### Game
+
+Fetch a game's history.
+
+```
+route: /api/admin/game/<id>/history
+method: GET
+status: 200
+```
