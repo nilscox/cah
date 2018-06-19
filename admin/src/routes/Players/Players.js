@@ -2,11 +2,21 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Table } from 'react-bootstrap';
 
+import { createPlayer } from '../../redux/actions';
+
+import CreatePlayer from './CreatePlayer'
+
 const mapStateToProps = (state) => {
     return {
         players: state.get('players').toJSON(),
     };
 };
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    handleSubmit: (nick) => dispatch(createPlayer(nick)),
+  }
+}; 
 
 const Row = ({ player }) => (
     <tr>
@@ -16,10 +26,10 @@ const Row = ({ player }) => (
     </tr>
 );
 
-const Players = ({ players }) => (
+const Players = ({ players, handleSubmit }) => (
     <div>
 
-        <h1>Players</h1>
+        <CreatePlayer onSubmit={handleSubmit}/>
 
         <Table bordered condensed striped>
 
@@ -40,4 +50,4 @@ const Players = ({ players }) => (
     </div>
 );
 
-export default connect(mapStateToProps)(Players);
+export default connect(mapStateToProps, mapDispatchToProps)(Players);
