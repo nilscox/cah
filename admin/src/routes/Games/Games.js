@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 
 import { createGame } from '../../redux/actions';
 
-
 import GamesInfo from './GamesInfo';
 import CreateGame from './CreateGame';
 import GamesList from './GamesList';

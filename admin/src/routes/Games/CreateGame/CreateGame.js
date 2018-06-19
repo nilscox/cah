@@ -8,61 +8,71 @@ const SelectPlayer = ({ player }) => (
 );
 
 class CreateGame extends React.Component {
-state = {
-  owner: '',
-  lang: 'fr',
-};
-
-handleChangeOwner(e) {
-  this.setState({ owner: e.target.value })
-};
-
-handleChangeLang(e) {
-  this.setState({ lang: e.target.value })
-}; 
-
-onSubmitGame(e) {
-  const { owner, lang } = this.state
-  e.preventDefault();
-  if(owner !== '') {
-    this.props.onSubmit(owner, lang);
+  state = {
+    owner: '',
+    lang: 'fr',
   };
-}
 
-render() {
-  return (
-    <form className="add-game-form" onSubmit={(e) => this.onSubmitGame(e)}>
+  handleChangeOwner(e) {
+    this.setState({ owner: e.target.value })
+  };
 
-      <FormGroup>
+  handleChangeLang(e) {
+    this.setState({ lang: e.target.value })
+  }; 
 
-        <ControlLabel>Select owner</ControlLabel>
+  onSubmitGame(e) {
+    const { owner, lang } = this.state
+    e.preventDefault();
+    if(owner !== '') {
+      this.props.onSubmit(owner, lang);
+    };
+  }
 
-        <FormControl componentClass="select" value={this.state.owner} onChange={(e) => this.handleChangeOwner(e)}>
-          {this.props.players.map((player) => {
-            return (player.game === null) && <SelectPlayer key={`player-${player.nick}`} player={player} />
-          })}
-        </FormControl>
+  render() {
+    return (
+      <form className="add-game-form" onSubmit={(e) => this.onSubmitGame(e)}>
 
-      </FormGroup>
+        <FormGroup>
 
-      <FormGroup>
+          <ControlLabel>Select owner</ControlLabel>
 
-        <ControlLabel>Select lang</ControlLabel>
+          <FormControl
+            componentClass="select"
+            value={this.state.owner}
+            onChange={(e) => this.handleChangeOwner(e)}
+          >
 
-        <FormControl componentClass="select" value={this.state.lang} onChange={(e) => this.handleChangeLang(e)}>
+            {this.props.players.map((player) => {
+              return (player.game === null) && <SelectPlayer key={`player-${player.nick}`} player={player} />
+            })}
+            
+          </FormControl>
 
-          <option value="en">English</option>
-          <option value="fr">Français</option>
+        </FormGroup>
 
-        </FormControl>
+        <FormGroup>
 
-      </FormGroup>
+          <ControlLabel>Select lang</ControlLabel>
 
-      <Button bsClass="add-button btn" type="submit">
-        Create Game
-      </Button>
+          <FormControl
+            componentClass="select"
+            value={this.state.lang}
+            onChange={(e) => this.handleChangeLang(e)}
+          >
 
-    </form>
+            <option value="en">English</option>
+            <option value="fr">Français</option>
+
+          </FormControl>
+
+        </FormGroup>
+
+        <Button bsClass="add-button btn" type="submit">
+          Create Game
+        </Button>
+
+      </form>
 
     );
   };
