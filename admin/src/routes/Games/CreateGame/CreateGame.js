@@ -9,7 +9,7 @@ const SelectPlayer = ({ player }) => (
 
 class CreateGame extends React.Component {
 state = {
-  owner: ' ',
+  owner: '',
   lang: 'fr',
 };
 
@@ -22,8 +22,11 @@ handleChangeLang(e) {
 }; 
 
 onSubmitGame(e) {
+  const { owner, lang } = this.state
   e.preventDefault();
-  this.props.onSubmit(this.state.owner, this.state.lang);
+  if(owner !== '') {
+    this.props.onSubmit(owner, lang);
+  };
 }
 
 render() {
