@@ -1,7 +1,7 @@
 import { handle } from 'redux-pack';
 import { fromJS, List } from 'immutable';
 
-import { GAMES_LIST, GAME_FETCH_HISTORY } from '../actions';
+import { GAMES_LIST, GAME_FETCH_HISTORY, GAME_CREATE } from '../actions';
 
 export default (state = List(), action) => {
   const { type, payload, meta } = action;
@@ -16,6 +16,9 @@ export default (state = List(), action) => {
     [GAME_FETCH_HISTORY]: {
       start   : (games) => games.setIn([findGame(games, meta.gameId), 'turns'], List()),
       success : (games) => games.setIn([findGame(games, meta.gameId), 'turns'], fromJS(payload)),
+    },
+    [GAME_CREATE]: {
+      success : () => state.push(fromJS(payload).merge({ turns: List() })),
     },
   };
 

@@ -17,3 +17,14 @@ export const fetchGameHistory = (game) => ({
     gameId: game.id,
   },
 });
+
+export const GAME_CREATE = 'GAME_CREATE';
+export const createGame = (owner, lang) => ({
+  type: GAME_CREATE,
+  route: `/api/admin/game/`,
+  method: `POST`,
+  body: {
+    owner: owner,
+    lang: lang,
+  },
+});
