@@ -10,7 +10,7 @@ class PlayerSerializer(serializers.ModelSerializer):
         nick: string,
         connected: boolean,
         avatar: string | null,
-        score: integer,
+        score: integer | null,
         cards: Choice[],
         submitted: AnsweredQuestion | null,
     }

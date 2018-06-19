@@ -8,3 +8,4 @@ Black cards, white cards, much fun.
 - [Websocket documentation](./docs/websocket.md)
 - [Master](./docs/master.md)
 - [Admin](./docs/admin.md)
+- [Routes summary](./docs/routes.md)

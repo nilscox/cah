@@ -8,7 +8,7 @@ All websocket events contain a `type` key, along with some information about the
 ```
 event: {
   type: "PLAYER_CONNECTED",
-  player: Player,
+  player: PlayerLight,
 }
 ```
 
@@ -24,7 +24,7 @@ event: {
 ```
 event: {
   type: "PLAYER_AVATAR_CHANGED",
-  player: Player,
+  player: PlayerLight,
 }
 ```
 
@@ -33,14 +33,14 @@ event: {
 ```
 event: {
     type: "PLAYER_JOINED",
-    player: Player,
+    player: PlayerLight,
 }
 ```
 
 ```
 event: {
     type: "PLAYER_LEFT",
-    player: Player,
+    player: PlayerLight,
 }
 ```
 

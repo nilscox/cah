@@ -44,17 +44,17 @@ Choice: {
 - id: The choice's id
 - text: The actual choice text
 
-## Player
+## PlayerLight
 
-`FullPlayer` is a player, seen by himself.
-`Player` is a player, seen by other players.
+`Player` is a player, seen by himself.
+`PlayerLight` is a player, seen by other players.
 
-> Note: a Player is returned instead of a FullPlayer when he is not in game
+> Note: a PlayerLight is returned instead of a Player when he is not in game
 
 ### Data
 
 ```
-FullPlayer: {
+Player: {
     nick: string,
     connected: boolean,
     avatar: string | null,
@@ -65,7 +65,7 @@ FullPlayer: {
 ```
 
 ```
-Player: {
+PlayerLight: {
     nick: string,
     connected: boolean,
     avatar: string | null,
@@ -87,7 +87,7 @@ Login as a new or existing player.
 ```
 POST /api/player
 status: 200 | 201
-returns: Player
+returns: PlayerLight
 triggers: PLAYER_CONNECTED
 body: {
     nick: string,
@@ -101,7 +101,7 @@ Fetch the currently logged in player.
 ```
 GET /api/player
 status: 200
-returns: Player | FullPlayer
+returns: PlayerLight | Player
 ```
 
 ***
@@ -121,7 +121,7 @@ Change the current player's avatar.
 ```
 PUT /api/player/avatar
 status: 200
-returns: FullPlayer
+returns: Player
 triggers: PLAYER_AVATAR_CHANGED
 ```
 
@@ -138,7 +138,7 @@ Game: {
     state: string,
     play_state: string | null,
     owner: string,
-    players: Player[],
+    players: PlayerLight[],
     question_master: string,
     question: Question | null,
     propositions: PartialAnsweredQuestion[] | null,
@@ -150,7 +150,7 @@ Game: {
 - state: one of `["idle", "started", "finished"]`
 - play_state: one of `["players_answer", "question_master_selection", "end_of_turn"]`
 - owner: the owner's nickname
-- players: a list of all the `Player`s who joined this game
+- players: a list of all the `PlayerLight`s who joined this game
 - question_master: the question master's nick
 - question: the current black card, if any
 - propositions: the set of answers given by the players
@@ -190,7 +190,7 @@ body: {
 
 ***
 
-Fetch the current player's game
+Fetch the current player's game.
 
 ```
 GET /api/game
@@ -200,7 +200,7 @@ returns: Game
 
 ***
 
-Fetch the game history
+Fetch the current player's game history.
 
 ```
 GET /api/game/history
@@ -220,7 +220,7 @@ returns: Game
 
 ***
 
-Leave a game.
+Leave the currently joined game.
 
 ```
 POST /api/game/leave
@@ -300,7 +300,7 @@ LightAnsweredQuestion: {
 ### Routes
 
 Submit an answer to a question. `ids` is an array of the `Choice` ids.
-This route represents a `Player` giving a set of his white cards to the question master.
+This route represents a `PlayerLight` giving a set of his white cards to the question master.
 
 ```
 POST /api/answer
