@@ -1,7 +1,7 @@
 import { handle } from 'redux-pack';
 import { fromJS, List } from 'immutable';
 
-import { PLAYERS_LIST } from '../actions';
+import { PLAYERS_LIST , PLAYER_CREATE } from '../actions';
 
 export default (state = List(), action) => {
   const { type, payload } = action;
@@ -11,6 +11,9 @@ export default (state = List(), action) => {
       start   : () => [],
       success : () => fromJS(payload),
       failure : () => [],
+    },
+    [PLAYER_CREATE]: {
+      success : () => state.push(fromJS(payload)),
     },
   };
 
