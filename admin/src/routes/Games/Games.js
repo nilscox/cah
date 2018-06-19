@@ -1,6 +1,9 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
+import { createGame } from '../../redux/actions';
+
+
 import GamesInfo from './GamesInfo';
 import CreateGame from './CreateGame';
 import GamesList from './GamesList';
@@ -14,14 +17,20 @@ const mapStateToProps = (state) => {
   };
 };
 
-const Games = ({ games, players }) => (
+const mapDispatchToProps = (dispatch) => {
+  return {
+    handleSubmit: (owner, lang) => dispatch(createGame(owner, lang)),
+  }
+}; 
+
+const Games = ({ games, players, handleSubmit }) => (
   <div className="games">
 
     <div className="games-top">
 
       <GamesInfo />
 
-      <CreateGame players={players}/>
+      <CreateGame players={players} onSubmit={handleSubmit}/>
 
     </div>
 
@@ -30,4 +39,4 @@ const Games = ({ games, players }) => (
   </div>
 );
 
-export default connect(mapStateToProps)(Games);
+export default connect(mapStateToProps, mapDispatchToProps)(Games);
