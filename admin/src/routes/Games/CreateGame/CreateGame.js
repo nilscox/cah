@@ -14,11 +14,11 @@ class CreateGame extends React.Component {
   };
 
   handleChangeOwner(e) {
-    this.setState({ owner: e.target.value })
+    this.setState({ owner: e.target.value });
   };
 
   handleChangeLang(e) {
-    this.setState({ lang: e.target.value })
+    this.setState({ lang: e.target.value });
   }; 
 
   onSubmitGame(e) {

@@ -9,6 +9,7 @@ import { BrowserRouter, Route, Link } from 'react-router-dom';
 import Dashboard from './routes/Dashboard';
 import Games from './routes/Games';
 import Players from './routes/Players';
+import Player from './routes/Player';
 
 import apiMiddleware from './redux/middlewares/apiMiddleware';
 import loggerMiddleware from './redux/middlewares/loggerMiddleware';
@@ -46,6 +47,7 @@ const App = ({ initializing }) => {
         <main>
           <Route exact path="/" component={Dashboard} />
           <Route path="/players" component={Players} />
+          <Route path="/player/2" component={Player} />
           <Route path="/games" component={Games} />
         </main>
       </div>

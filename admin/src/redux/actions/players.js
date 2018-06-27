@@ -13,3 +13,13 @@ export const createPlayer = (nick) => ({
     nick: nick,
   },
 });
+
+export const PLAYER_UPDATE = 'PLAYER_UPDATE';
+export const updatePlayer = (player, nick) => ({
+  type: PLAYER_UPDATE,
+  route: `/api/admin/player/${player.id}`,
+  method: `PATCH`,
+  body: {
+    nick,
+  },
+});
