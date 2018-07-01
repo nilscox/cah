@@ -38,6 +38,7 @@ export CAH_API_CORS_ORIGIN_WHITELIST="$WEB_URL"
 
 export REACT_APP_API_URL="http://$API_URL"
 export REACT_APP_WEBSOCKET_URL="ws://$API_URL"
+export REACT_APP_API_ADMIN_TOKEN="$CAH_API_ADMIN_TOKEN"
 
 runsql() {
   echo "$1" | docker exec -i "$CAH_DB_CONTAINER_NAME" psql -U "$CAH_DB_ROOT_USER"
