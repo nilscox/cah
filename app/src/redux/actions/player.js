@@ -1,7 +1,11 @@
+// @flow
+
 import { fetchGame } from './game';
 import { createWebSocket, sendWebSocket } from './websocket';
 
-const onPlayerFetched = (dispatch, getState) => {
+type AfterCallback = { dispatch: Function, getState: Function };
+
+const onPlayerFetched = ({ dispatch, getState }: AfterCallback) => {
   const { player } = getState();
 
   if (!player)
@@ -28,17 +32,17 @@ export const PLAYER_FETCH = 'PLAYER_FETCH';
 export const fetchPlayer = () => ({
   type: PLAYER_FETCH,
   route: '/api/player',
-  after: ({ dispatch, getState }) => onPlayerFetched(dispatch, getState),
+  after: onPlayerFetched,
 });
 
 export const PLAYER_LOGIN = 'PLAYER_LOGIN';
-export const loginPlayer = (nick) => ({
+export const loginPlayer = (nick: string) => ({
   type: PLAYER_LOGIN,
   route: '/api/player',
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({ nick }),
-  after: ({ dispatch, getState }) => onPlayerFetched(dispatch, getState),
+  after: onPlayerFetched,
 });
 
 export const PLAYER_LOGOUT = 'PLAYER_LOGOUT';
@@ -49,7 +53,7 @@ export const logoutPlayer = () => ({
 });
 
 export const PLAYER_UPDATE = 'PLAYER_UPDATE';
-export const updatePlayer = (player) => ({
+export const updatePlayer = (player: {}) => ({
   type: PLAYER_UPDATE,
   route: '/api/player',
   method: 'PUT',

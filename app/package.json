@@ -27,7 +27,8 @@
     "redux-logger": "^3.0.6",
     "redux-pack": "^0.1.5",
     "redux-promise": "^0.6.0",
-    "redux-thunk": "^2.3.0"
+    "redux-thunk": "^2.3.0",
+    "reselect": "^3.0.1"
   },
   "devDependencies": {
     "@storybook/addon-actions": "^3.4.6",

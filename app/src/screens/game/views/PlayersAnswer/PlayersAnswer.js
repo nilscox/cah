@@ -9,6 +9,7 @@ import type { Question } from '~/redux/state/question';
 import { toggleChoice, submitAnswer } from '~/redux/actions';
 import QuestionCard from '~/components/QuestionCard';
 import ChoiceCard from '~/components/ChoiceCard';
+import * as selectors from '~/redux/selectors';
 
 import styles from './PlayersAnswer.styles';
 
@@ -39,35 +40,15 @@ const totalQuestionTextLength = (question: Question, answer: Array<Choice>) => {
   return total;
 };
 
-const mapStateToProps = ({ player, game }) => {
-  const isSelected = (choice) => player.selectedChoices
-    .filter((c: ?Choice) => c && c.id === choice.id)
-    .length > 0;
-
-  const canToggleChoice = (choice) => {
-    const selectedChoices = player.selectedChoices.filter(i => i !== null);
-
-    if (player.submitted)
-      return false;
-
-    if (selectedChoices.length === game.question.nb_choices)
-      return choice.isSelected;
-
-    return true;
-  };
-
-  const selectedChoices = player.selectedChoices.filter(c => c !== null);
-  const canSubmitAnswer = player.submitted === null
-    && selectedChoices.length === game.question.nb_choices;
-
+const mapStateToProps = (state) => {
   return {
-    question: game.question,
-    cards: player.cards,
-    selectedChoices: selectedChoices,
-    submittedAnswer: player.submitted,
-    isSelected,
-    canToggleChoice,
-    canSubmitAnswer,
+    question: selectors.gameQuestionSelector(state),
+    cards: selectors.playerCardsSelector(state),
+    selectedChoices: selectors.playerSelectedChoicesSelector(state),
+    submittedAnswer: selectors.playerSubmittedAnswerSelector(state),
+    isSelected: selectors.playerIsChoiceSelectedSelector(state),
+    canToggleChoice: selectors.playerCanToggleChoice(state),
+    canSubmitAnswer: selectors.playerSubmittedAnswerSelector(state),
   };
 };
 
@@ -88,7 +69,7 @@ const PlayersAnswer = ({
   submitAnswer,
 }: PlayersAnswerProps) => {
   const answer = submittedAnswer || selectedChoices;
-  const textLength = totalQuestionTextLength(question, answer.answers);
+  const textLength = totalQuestionTextLength(question, answer);
   const size = textLength > COMPACT_TEXT_LENGTH
     ? 'compact'
     : 'normal';

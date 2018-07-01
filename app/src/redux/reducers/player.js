@@ -6,13 +6,24 @@ import {
   PLAYER_LOGOUT,
   PLAYER_FETCH, PLAYER_LOGIN,
   TOGGLE_CHOICE, SUBMIT_ANSWER,
+  WEBSOCKET_MESSAGE,
 } from '../actions';
+
+const websocket = (state, message) => {
+  if (message.type === 'CARDS_DEALT')
+    return { ...state, cards: message.cards };
+
+  return state;
+};
 
 export default (state = initialState.player, action) => {
   const { type, payload } = action;
 
   if (action.type === API_DOWN || action.type === PLAYER_LOGOUT)
     return initialState.player;
+
+  if (action.type === WEBSOCKET_MESSAGE)
+    return websocket(state, action.message);
 
   if (action.type === TOGGLE_CHOICE) {
     const selectedChoices = state.selectedChoices.slice();
