@@ -127,3 +127,7 @@ body: {
     avatar: Image,
 }
 ```
+
+- avatar: the avatar image.
+
+> Note : this is a file upload endpoint.
