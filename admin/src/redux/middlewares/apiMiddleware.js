@@ -1,6 +1,7 @@
 // import { checkApiStatus } from '../actions/status'
 
 const API_URL = process.env.REACT_APP_API_URL;
+const API_ADMIN_TOKEN = process.env.REACT_APP_API_ADMIN_TOKEN;
 
 const apiMiddleware = store => next => action => {
   if (action === null)
@@ -12,10 +13,13 @@ const apiMiddleware = store => next => action => {
   const { dispatch, getState } = store;
   const { type, route, after, meta, ...opts } = action;
 
-  if (typeof opts.body === 'object') {
-    if (!opts.headers)
-      opts.headers = new Headers();
+  if (!opts.headers)
+    opts.headers = new Headers();
 
+  if (!opts.headers.has('Authorization'))
+    opts.headers.append('Authorization', API_ADMIN_TOKEN);
+
+  if (typeof opts.body === 'object') {
     if (!opts.headers.has('Content-Type'))
       opts.headers.append('Content-Type', 'application/json');
 
