@@ -43,6 +43,29 @@ class GameViewSet(viewsets.ModelViewSet):
 
         return Response(serializer.data)
 
+    @action(methods=['POST'], detail=True)
+    def join(self, request, pk=None):
+        game = self.get_object()
+        nick = request.data.get('player')
+
+        if not nick:
+            raise MissingFieldError('player')
+
+        try:
+            player = Player.objects.get(nick=nick)
+        except Player.DoesNotExist:
+            raise PlayerNotFound()
+
+        if player.in_game():
+            raise PlayerAlreadyInGame
+
+        if game.state != 'idle':
+            raise GameAlreadyStarted
+
+        game.add_player(player)
+
+        return Response(GameSerializer(game).data)
+
 
 class PlayerViewSet(viewsets.ModelViewSet, ChangeAvatarMixin):
 

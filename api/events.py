@@ -61,7 +61,9 @@ def player_avatar_changed(player):
 
 
 def game_joined(player):
-    player_group(player).add(player.socket_id)
+    if player.socket_id is not None:
+        player_group(player).add(player.socket_id)
+
     broadcast(player.game, {
         "type": "PLAYER_JOINED",
         "player": serialize("PlayerLightSerializer", player),
