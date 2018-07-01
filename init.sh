@@ -31,15 +31,16 @@ export CAH_DB_ROOT_USER
 
 export CAH_DATA_PATH
 export CAH_AVATARS_DIR
+export CAH_API_ADMIN_TOKEN
 
-export CAH_API_ALLOWED_HOSTS="localhost;127.0.0.1;$CAH_API_LISTEN_IP"
+export CAH_API_ALLOWED_HOSTS="localhost;127.0.0.1;$CAH_API_LISTEN_IP;$API_URL"
 export CAH_API_CORS_ORIGIN_WHITELIST="$WEB_URL"
 
 export REACT_APP_API_URL="http://$API_URL"
 export REACT_APP_WEBSOCKET_URL="ws://$API_URL"
 
 runsql() {
-  echo "$1" | psql -U "$CAH_DB_ROOT_USER" -h "$CAH_DB_HOST"
+  echo "$1" | docker exec -i "$CAH_DB_CONTAINER_NAME" psql -U "$CAH_DB_ROOT_USER"
 }
 
 resetdb() {
@@ -88,5 +89,5 @@ startapi() {
 }
 
 ws() {
-  http POST "${CAH_API_LISTEN_IP:$CAH_API_LISTEN_PORT}/api/debug/ws_$1/$2" "message=$3"
+  http POST "$API_URL/api/debug/ws_$1/$2" "message=$3"
 }

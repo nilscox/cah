@@ -1,0 +1,10 @@
+.games {
+  display: flex;
+  flex-direction: column;
+}
+
+.games-top {
+  display: flex;
+  flex-direction: row;
+  margin: 20px 0;
+}

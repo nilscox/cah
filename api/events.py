@@ -53,14 +53,17 @@ def game_created(owner):
 
 
 def player_avatar_changed(player):
-    broadcast(player.game, {
-        "type": "PLAYER_AVATAR_CHANGED",
-        "player": serialize("PlayerLightSerializer", player),
-    })
+    if player.in_game():
+        broadcast(player.game, {
+            "type": "PLAYER_AVATAR_CHANGED",
+            "player": serialize("PlayerLightSerializer", player),
+        })
 
 
 def game_joined(player):
-    player_group(player).add(player.socket_id)
+    if player.socket_id is not None:
+        player_group(player).add(player.socket_id)
+
     broadcast(player.game, {
         "type": "PLAYER_JOINED",
         "player": serialize("PlayerLightSerializer", player),
@@ -68,7 +71,9 @@ def game_joined(player):
 
 
 def game_left(player):
-    player_group(player).discard(player.socket_id)
+    if player.socket_id is not None:
+        player_group(player).discard(player.socket_id)
+
     broadcast(player.game, {
         "type": "PLAYER_LEFT",
         "player": serialize("PlayerLightSerializer", player),

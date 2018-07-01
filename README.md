@@ -2,6 +2,7 @@
 
 Black cards, white cards, much fun.
 
+<<<<<<< HEAD
 ## REST API Documentation
 
 ### Question
@@ -478,3 +479,13 @@ Available routes are:
     text: string,
 }
 ```
+=======
+## RTFM
+
+- [Models documentation](./docs/models.md)
+- [REST API documentation](./docs/rest.md)
+- [Websocket documentation](./docs/websocket.md)
+- [Master](./docs/master.md)
+- [Admin](./docs/admin.md)
+- [Routes summary](./docs/routes.md)
+>>>>>>> master
