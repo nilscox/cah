@@ -34,14 +34,20 @@ export function websocketConnected(event: any): ThunkAction {
 }
 
 export const WEBSOCKET_MESSAGE = 'WEBSOCKET_MESSAGE';
+export const WEBSOCKET_MESSAGE_ERROR = 'WEBSOCKET_MESSAGE_ERROR';
 export function websocketMessage(event: any, message: WSMessage): WebsocketMessageAction {
-  if (!message.type)
-    throw new Error('No action in message: ' + message);
-
-  return {
-    type: WEBSOCKET_MESSAGE,
-    message,
-  };
+  if (message.type) {
+    return {
+      type: WEBSOCKET_MESSAGE,
+      message,
+    };
+  } else if (message.error) {
+    return {
+      type: WEBSOCKET_MESSAGE_ERROR,
+      message,
+    };
+  } else
+    throw new Error('No action or error in message: ' + message);
 }
 
 export const WEBSOCKET_CLOSED = 'WEBSOCKET_CLOSED';

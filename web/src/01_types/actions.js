@@ -57,7 +57,7 @@ export type WebsocketConnectedAction = {
 };
 
 export type WebsocketMessageAction = {
-  type: 'WEBSOCKET_MESSAGE',
+  type: 'WEBSOCKET_MESSAGE' | 'WEBSOCKET_MESSAGE_ERROR',
   message: WSMessage,
 };
 
