@@ -84,3 +84,16 @@ FullPlayer: {
     submitted: AnsweredQuestion | null,
 }
 ```
+
+***
+
+Change a player's avatar image.
+
+```
+route: /api/admin/player/<nick>/avatar
+method: POST
+status: 200
+body: {
+    avatar: Image,
+}
+```
