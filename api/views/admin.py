@@ -1,12 +1,17 @@
+from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 
 from api.exceptions import *
 from api.models import Game, Player
-from api.serializers import GameSerializer, GameTurnSerializer, PlayerSerializer
+from api.serializers import GameSerializer, GameTurnSerializer, FullPlayerSerializer
+from api.authentication import AdminAuthentication
 
 class GameViewSet(viewsets.ModelViewSet):
+
+  authentication_classes = [AdminAuthentication]
+  permission_classes = [IsAuthenticated]
 
   queryset = Game.objects.all()
   serializer_class = GameSerializer
@@ -40,5 +45,9 @@ class GameViewSet(viewsets.ModelViewSet):
 
 class PlayerViewSet(viewsets.ModelViewSet):
 
+  authentication_classes = [AdminAuthentication]
+  permission_classes = [IsAuthenticated]
+
   queryset = Player.objects.all()
-  serializer_class = PlayerSerializer
+  serializer_class = FullPlayerSerializer
+  lookup_field = 'nick'

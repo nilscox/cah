@@ -50,7 +50,7 @@ class Player(models.Model):
 
     def has_played(self):
         if self.game is None:
-            return None
+            return False
 
         return self.get_submitted() is not None
 

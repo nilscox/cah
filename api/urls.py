@@ -3,7 +3,7 @@ from rest_framework.routers import DefaultRouter
 
 from api.views import base, game, player, admin, debug
 
-adminRouter = DefaultRouter()
+adminRouter = DefaultRouter(trailing_slash=False)
 adminRouter.register(r'game', admin.GameViewSet)
 adminRouter.register(r'player', admin.PlayerViewSet)
 

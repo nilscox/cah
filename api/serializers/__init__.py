@@ -1,4 +1,4 @@
-from .player_serializer import PlayerSerializer, PlayerLightSerializer
+from .player_serializer import FullPlayerSerializer, PlayerSerializer, PlayerLightSerializer
 from .question_serializer import QuestionSerializer
 from .choice_serializer import ChoiceSerializer
 from .game_serializer import GameSerializer, GameTurnSerializer
