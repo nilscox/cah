@@ -20,7 +20,7 @@ class PlayerViews(views.APIView):
         nick = request.data.get('nick')
 
         if not nick:
-            raise ValidationError('Missing nick field')
+            raise MissingFieldError('nick')
 
         player, created = Player.objects.get_or_create(nick=nick)
         request.session['player_id'] = player.id
@@ -51,7 +51,7 @@ def avatar(request):
     player = request.user
 
     if 'avatar' not in request.FILES:
-        raise ValidationError('Missing avatar field')
+        raise MissingFieldError('avatar')
 
     serializer = PlayerSerializer(player, data=request.data, partial=True)
     serializer.is_valid(raise_exception=True)

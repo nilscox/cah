@@ -3,7 +3,6 @@ import os
 from datetime import datetime
 from rest_framework import views, status
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
-from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
 from api import game as game_controller, events
@@ -38,7 +37,7 @@ class GameViews(views.APIView):
 
         lang = request.data.get('lang')
         if not lang:
-            raise ValidationError('Missing lang field')
+            raise MissingFieldError('lang')
 
         game_serializer = GameSerializer(data=request.data)
         game_serializer.is_valid(raise_exception=True)
@@ -175,7 +174,7 @@ def answer(request):
     ids = request.data.get('ids') or request.data.get('id')
 
     if not ids:
-        raise ValidationError('Missing ids field')
+        raise MissingFieldError('ids | id')
 
     if isinstance(ids, str):
         ids = list(map(int, ids.split(',')))

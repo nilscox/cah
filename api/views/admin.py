@@ -21,7 +21,7 @@ class GameViewSet(viewsets.ModelViewSet):
         owner_nick = request.data.get('owner')
 
         if not owner_nick:
-            raise ValidationError('Missing owner field')
+            raise MissingFieldError('owner')
         try:
             owner = Player.objects.get(nick=owner_nick)
         except Player.DoesNotExist:
