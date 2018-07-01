@@ -44,9 +44,9 @@ class CreateGame extends React.Component {
           >
 
             {this.props.players.map((player) => {
-              return (player.game === null) && <SelectPlayer key={`player-${player.nick}`} player={player} />
+              return !player.inGame && <SelectPlayer key={`player-${player.nick}`} player={player} />
             })}
-            
+
           </FormControl>
 
         </FormGroup>
