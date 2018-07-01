@@ -5,7 +5,7 @@ from .answered_question_serializer import AnsweredQuestionSerializer
 
 class FullPlayerSerializer(serializers.ModelSerializer):
     """
-    DetailedPlayer: {
+    FullPlayer: {
         nick: string,
         socketId: string | null,
         avatar: string | null,

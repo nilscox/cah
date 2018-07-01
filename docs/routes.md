@@ -19,9 +19,9 @@
 
 | Method | Endpoint | Description |
 | ------ | -------- | ----------- |
-| GET    | /api/admin/<model> | retrieve all objects
-| GET    | /api/admin/<model>/<id> | retrieve a specific object
-| POST   | /api/admin/<model> | create a new object
-| PUT    | /api/admin/<model>/<id> | update an existing object
-| PATCH  | /api/admin/<model>/<id> | partial update an existing object
-| DELETE | /api/admin/<model>/<id> | delete an existing object
+| GET    | /api/admin/<model> | retrieve all objects. |
+| GET    | /api/admin/<model>/<id> | retrieve a specific object. |
+| POST   | /api/admin/<model> | create a new object. |
+| PUT    | /api/admin/<model>/<id> | update an existing object. |
+| PATCH  | /api/admin/<model>/<id> | partial update an existing object. |
+| DELETE | /api/admin/<model>/<id> | delete an existing object. |

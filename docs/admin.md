@@ -27,27 +27,21 @@ DELETE /api/admin/<model>/<id>: delete an existing object
 > payload sent with the request will be merged with the existing model
 > instance, and saved to the database.
 
-Some objects handle requests with a few specific behaviour that are detailed in the
-next section ([other routes](#other-routes)).
-
-The objects that allow access over the CRUD endpoints are:
-
-- `game`
-- `player`
-
-So that you can access the players with ID 3 with:
+For instance, you can access the players with nick `raspout` with:
 
 ```
-curl -v http://$API_URL/api/admin/player/3
+curl -v http://$API_URL/api/admin/player/raspout
 ```
 
-## Other routes
+Some objects handle requests with a few specific behaviour that are detailed in
+the next section.
 
-Some models provide more endpoints than the ones available via the CRUD routes.
+## Models
 
 ### Game
 
-Create a game, associated with an owner.
+Create a game, associated with an owner. This overrides the default POST
+request.
 
 ```
 route: /api/admin/game
@@ -55,10 +49,12 @@ method: POST
 status: 201
 body: {
     owner: string,
+    lang: string,
 }
 ```
 
 - owner: the owner's nick. He can not be in game.
+- lang: the game's language.
 
 ***
 
@@ -68,4 +64,23 @@ Fetch a game's history.
 route: /api/admin/game/<id>/history
 method: GET
 status: 200
+```
+
+### Player
+
+The model used in the admin routes is a `FullPlayer`.
+
+```
+FullPlayer: {
+    nick: string,
+    socketId: string | null,
+    avatar: string | null,
+    connected: boolean,
+    inGame: boolean,
+    gameId: number | null,
+    score: integer | null,
+    cards: Choice[],
+    hasPlayed: boolean,
+    submitted: AnsweredQuestion | null,
+}
 ```
