@@ -10,7 +10,7 @@ from api.exceptions import *
 from api.models import Game, AnsweredQuestion
 from api.authentication import PlayerAuthentication
 from api.permissions import IsPlayer, IsConnected
-from api.serializers import GameSerializer, GameTurnSerializer, AnsweredQuestionSerializer
+from api.serializers import GameSerializer, GameListItemSerializer, GameTurnSerializer, AnsweredQuestionSerializer
 
 
 AVATARS_DIR = os.environ['CAH_AVATARS_DIR']

@@ -32,7 +32,7 @@ class GameViewSet(viewsets.ModelViewSet):
 
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
-        game = serializer.save(owner=owner)
+        game = serializer.save(owner=owner, players=[owner])
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 

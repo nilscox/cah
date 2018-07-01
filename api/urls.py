@@ -15,6 +15,7 @@ urlpatterns = [
     path('player/avatar', player.avatar),
 
     path('game', game.GameViews.as_view()),
+    path('game/list', game.games_list),
     path('game/history', game.game_history),
     path('game/join/<int:pk>', game.join_game),
     path('game/leave', game.leave_game),
