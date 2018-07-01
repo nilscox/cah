@@ -66,6 +66,26 @@ class GameViewSet(viewsets.ModelViewSet):
 
         return Response(GameSerializer(game).data)
 
+    @action(methods=['POST'], detail=True)
+    def leave(self, request, pk=None):
+        game = self.get_object()
+        nick = request.data.get('player')
+
+        if not nick:
+            raise MissingFieldError('player')
+
+        try:
+            player = Player.objects.get(nick=nick)
+        except Player.DoesNotExist:
+            raise PlayerNotFound()
+
+        if not player.in_game(game):
+            raise PlayerNotInGame
+
+        game.remove_player(player)
+
+        return Response(None, status.HTTP_204_NO_CONTENT)
+
 
 class PlayerViewSet(viewsets.ModelViewSet, ChangeAvatarMixin):
 

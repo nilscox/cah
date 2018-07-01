@@ -71,7 +71,9 @@ def game_joined(player):
 
 
 def game_left(player):
-    player_group(player).discard(player.socket_id)
+    if player.socket_id is not None:
+        player_group(player).discard(player.socket_id)
+
     broadcast(player.game, {
         "type": "PLAYER_LEFT",
         "player": serialize("PlayerLightSerializer", player),
