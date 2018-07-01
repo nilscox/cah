@@ -53,10 +53,11 @@ def game_created(owner):
 
 
 def player_avatar_changed(player):
-    broadcast(player.game, {
-        "type": "PLAYER_AVATAR_CHANGED",
-        "player": serialize("PlayerLightSerializer", player),
-    })
+    if player.in_game():
+        broadcast(player.game, {
+            "type": "PLAYER_AVATAR_CHANGED",
+            "player": serialize("PlayerLightSerializer", player),
+        })
 
 
 def game_joined(player):
