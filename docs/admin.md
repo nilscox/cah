@@ -66,6 +66,36 @@ method: GET
 status: 200
 ```
 
+***
+
+Add a player to a game.
+
+```
+route: /api/admin/game/<id>/join
+method: POST
+status: 200
+body: {
+    player: string,
+}
+```
+
+- player: the player's nick.
+
+***
+
+Remove a player from a game.
+
+```
+route: /api/admin/game/<id>/leave
+method: POST
+status: 200
+body: {
+    player: string,
+}
+```
+
+- player: the player's nick.
+
 ### Player
 
 The model used in the admin routes is a `FullPlayer`.
