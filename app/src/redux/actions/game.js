@@ -1,9 +1,11 @@
 // @flow
 
-const onGameFetched = (dispatch, getState) => {
+type AfterCallback = { dispatch: Function, getState: Function };
+
+const onGameFetched = ({ dispatch, getState }: AfterCallback) => {
   const { game } = getState();
 
-  if (!game)
+  if (!game || game.state === 'idle')
     return;
 
   return dispatch(fetchGameHistory());
@@ -19,7 +21,7 @@ export const GAME_FETCH = 'GAME_FETCH';
 export const fetchGame = () => ({
   type: GAME_FETCH,
   route: `/api/game`,
-  after: ({ dispatch, getState }: { dispatch: Function, getState: Function }) => onGameFetched(dispatch, getState),
+  after: onGameFetched,
 });
 
 export const GAME_FETCH_HISTORY = 'GAME_FETCH_HISTORY';

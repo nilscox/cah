@@ -1,5 +1,5 @@
 import { fetchPlayer } from './player';
-import { listGames } from './game';
+import { listGames, fetchGame } from './game';
 
 export const INITIALIZATION_STARTED = 'INITIALIZATION_STARTED';
 const initializationStarted = () => ({
@@ -17,9 +17,15 @@ const initializationError = (error) => ({
   error,
 });
 
-export const initialization = () => (dispatch) => Promise.resolve()
+export const initialization = () => (dispatch, getState) => Promise.resolve()
   .then(() => dispatch(initializationStarted()))
   .then(() => dispatch(fetchPlayer()))
-  .then(() => dispatch(listGames()))
+  .then(() => {
+    if (getState().player) {
+      return Promise.resolve()
+        .then(() => dispatch(listGames()))
+        .then(() => dispatch(fetchGame()));
+    }
+  })
   .catch((e) => dispatch(initializationError(e)))
   .then(() => dispatch(initializationFinished()));
