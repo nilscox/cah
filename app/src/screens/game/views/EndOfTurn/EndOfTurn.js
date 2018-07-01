@@ -7,7 +7,8 @@ import { connect } from 'react-redux';
 import type { Player } from '~/redux/state/player';
 import type { Question } from '~/redux/state/question';
 import type { AnsweredQuestion } from '~/redux/state/answeredQuestion';
-import { nextTurn } from '~/redux/actions/game';
+import { nextTurn } from '~/redux/actions';
+import selectors from '~/redux/selectors';
 import PlayerAvatar from '~/components/PlayerAvatar';
 import AnsweredQuestionsList from '~/components/AnsweredQuestionsList';
 
@@ -25,18 +26,18 @@ type EndOfTurnProps = {
   nextTurn: Function,
 };
 
-const mapStateToProps = ({ player, game }) => {
-  const turn = game.history[game.history.length - 1];
-  const winner = game.players.find(p => p.nick === turn.winner);
+const mapStateToProps = (state) => {
+  const turn = selectors.gameLastTurnSelector(state);
+  const winner = selectors.gameLastTurnWinnerSelector(state);
 
   return {
     number: turn.number,
-    winner,
+    winner: winner,
     question: turn.question,
     answers: turn.answers,
     isWinner: (nick) => nick === winner.nick,
-    getPlayer: (nick) => game.players.find(p => p.nick === nick),
-    canGoNext: player.nick === game.question_master,
+    getPlayer: selectors.gamePlayerSelector(state),
+    canGoNext: selectors.gameIsQuestionMasterSelector(state),
   };
 };
 

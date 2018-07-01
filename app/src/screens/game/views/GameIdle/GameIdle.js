@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 
 import type { Player } from '~/redux/state/player';
 import { startGame } from '~/redux/actions';
+import selectors from '~/redux/selectors';
 
 import PlayersList from './PlayersList';
 import StartGameButton from './StartGameButton';
@@ -17,9 +18,9 @@ type GameIdleProps = {
   startGame: Function,
 };
 
-const mapStateToProps = ({ player, game }) => ({
-  players: game.players,
-  canStartGame: player.nick === game.owner,
+const mapStateToProps = (state) => ({
+  players: selectors.gamePlayersSelector(state),
+  canStartGame: selectors.gameCanStartSelector(state),
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({

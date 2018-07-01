@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import type { NavigationProps } from '~/types/navigation';
 import type { Player } from '~/redux/state/player';
 import { updatePlayer } from '~/redux/actions/player';
+import selectors from '~/redux/selectors';
 import PlayerAvatar from '~/components/PlayerAvatar';
 import Button from '~/components/Button';
 
@@ -21,8 +22,8 @@ type ProfileScreenState = {
   nick: string,
 };
 
-const mapStateToProps = ({ player }) => ({
-  player,
+const mapStateToProps = (state) => ({
+  player: selectors.playerSelector(state),
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({

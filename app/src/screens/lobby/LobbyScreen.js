@@ -10,6 +10,7 @@ import type { Game } from '~/redux/state/game';
 import type { Player } from '~/redux/state/player';
 import type { NavigationProps } from '~/types/navigation';
 import { listGames, joinGame } from '~/redux/actions';
+import selectors from '~/redux/selectors';
 import MenuButton from '~/components/MenuButton';
 import GamesList from './components/GamesList';
 import CreateGameButton from './components/CreateGameButton';
@@ -31,10 +32,10 @@ type LobbyPropsType =
   & DispatchPropsType
   & NavigationProps;
 
-const mapStateToProps = ({ player, games, game }) => ({
-  player,
-  games,
-  currentGame: game,
+const mapStateToProps = (state) => ({
+  player: selectors.playerSelector(state),
+  games: selectors.gamesListSelector(state),
+  currentGame: selectors.currentGameSelector(state),
 });
 
 const mapDispatchToProps: Function => DispatchPropsType = (dispatch) => ({

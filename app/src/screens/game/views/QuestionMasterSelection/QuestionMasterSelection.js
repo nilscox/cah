@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import type { Player } from '~/redux/state/player';
 import type { AnsweredQuestion } from '~/redux/state/answeredQuestion';
 import { selectAnswer } from '~/redux/actions/answer';
+import selectors from '~/redux/selectors';
 import PlayerAvatar from '~/components/PlayerAvatar';
 import AnsweredQuestionsList from '~/components/AnsweredQuestionsList'
 
@@ -19,10 +20,10 @@ type QuestionMasterSelectionProps = {
   selectAnswer: Function,
 };
 
-const mapStateToProps = ({ player, game }) => ({
-  questionMaster: game.players.find(p => p.nick === game.question_master),
-  propositions: game.propositions,
-  canSelectAnswer: game.question_master === player.nick,
+const mapStateToProps = (state) => ({
+  questionMaster: selectors.gameQuestionMasterSelector(state),
+  propositions: selectors.gamePropositionsSelector(state),
+  canSelectAnswer: selectors.gameCanSelectAnswerSelector(state),
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({

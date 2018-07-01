@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
+import selectors from '~/redux/selectors';
 import MenuButton from '~/components/MenuButton';
 
 import GameIdleView from './views/GameIdle';
@@ -20,22 +21,8 @@ type GameProps = {
   gameState: GameState,
 };
 
-const mapStateToProps = ({ game }) => ({
-  gameState: (() => {
-    if (game.state === 'idle')
-      return 'GAME_IDLE';
-
-    if (game.play_state === 'players_answer')
-      return 'PLAYERS_ANSWER';
-
-    if (game.play_state === 'question_master_selection')
-      return 'QM_SELECTION';
-
-    if (game.play_state === 'end_of_turn')
-      return 'END_OF_TURN';
-
-    throw new Error('Unknown play state: ' + game.play_state);
-  })(),
+const mapStateToProps = (state) => ({
+  gameState: selectors.gameStateSelector(state),
 });
 
 class Game extends React.Component<GameProps> {

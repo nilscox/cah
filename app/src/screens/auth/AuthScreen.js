@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import type { NavigationProps } from '~/types/navigation';
 import type { Player } from '~/redux/state/player';
 import { loginPlayer } from '~/redux/actions';
+import selectors from '~/redux/selectors';
 
 type StatePropsType = {
   player: ?Player,
@@ -25,8 +26,8 @@ type AuthStateType = {
   nick: string,
 };
 
-const mapStateToProps = ({ player }) => ({
-  player: player,
+const mapStateToProps = (state) => ({
+  player: selectors.playerSelector(state),
 });
 
 const mapDispatchToProps: Function => DispatchPropsType = dispatch => ({

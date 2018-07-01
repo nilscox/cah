@@ -9,7 +9,7 @@ import type { Question } from '~/redux/state/question';
 import { toggleChoice, submitAnswer } from '~/redux/actions';
 import QuestionCard from '~/components/QuestionCard';
 import ChoiceCard from '~/components/ChoiceCard';
-import * as selectors from '~/redux/selectors';
+import selectors from '~/redux/selectors';
 
 import styles from './PlayersAnswer.styles';
 
@@ -40,17 +40,15 @@ const totalQuestionTextLength = (question: Question, answer: Array<Choice>) => {
   return total;
 };
 
-const mapStateToProps = (state) => {
-  return {
-    question: selectors.gameQuestionSelector(state),
-    cards: selectors.playerCardsSelector(state),
-    selectedChoices: selectors.playerSelectedChoicesSelector(state),
-    submittedAnswer: selectors.playerSubmittedAnswerSelector(state),
-    isSelected: selectors.playerIsChoiceSelectedSelector(state),
-    canToggleChoice: selectors.playerCanToggleChoice(state),
-    canSubmitAnswer: selectors.playerSubmittedAnswerSelector(state),
-  };
-};
+const mapStateToProps = (state) => ({
+  question: selectors.gameQuestionSelector(state),
+  cards: selectors.playerCardsSelector(state),
+  selectedChoices: selectors.playerSelectedChoicesSelector(state),
+  submittedAnswer: selectors.playerSubmittedAnswerSelector(state),
+  isSelected: selectors.playerIsChoiceSelectedSelector(state),
+  canToggleChoice: selectors.playerCanToggleChoice(state),
+  canSubmitAnswer: selectors.playerSubmittedAnswerSelector(state),
+});
 
 const mapDispatchToProps = (dispatch: Function) => ({
   toggleChoice: (choice) => dispatch(toggleChoice(choice)),
