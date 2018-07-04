@@ -10,6 +10,7 @@ import Dashboard from './routes/Dashboard';
 import Games from './routes/Games';
 import Players from './routes/Players';
 import Player from './routes/Player';
+import GameDetails from './routes/GameDetails';
 
 import apiMiddleware from './redux/middlewares/apiMiddleware';
 import loggerMiddleware from './redux/middlewares/loggerMiddleware';
@@ -37,6 +38,7 @@ const App = ({ initializing }) => {
   return (
     <BrowserRouter>
       <div className="root">
+
         <nav>
           <h1>CAHdmin</h1>
           <Link to="/">Dashboard</Link>
@@ -48,8 +50,10 @@ const App = ({ initializing }) => {
           <Route exact path="/" component={Dashboard} />
           <Route path="/players" component={Players} />
           <Route path="/player/2" component={Player} />
-          <Route path="/games" component={Games} />
+          <Route exact path="/games" component={Games} />
+          <Route path="/games/:id" component={GameDetails} />
         </main>
+
       </div>
     </BrowserRouter>
   );
