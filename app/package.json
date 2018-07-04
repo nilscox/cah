@@ -9,7 +9,8 @@
     "test": "jest",
     "lint": "eslint App.js src",
     "flow": "flow",
-    "storybook": "storybook start -p 7007"
+    "storybook": "storybook start -p 7007",
+    "postinstall": "rm -rf node_modules/**/.babelrc"
   },
   "dependencies": {
     "babel-plugin-root-import": "^5.1.0",
