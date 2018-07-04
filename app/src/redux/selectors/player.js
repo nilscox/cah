@@ -26,12 +26,12 @@ export const playerIsChoiceSelectedSelector = createSelector(
     .length > 0,
 );
 
-export const playerCanToggleChoice = createSelector(
+export const playerCanToggleChoiceSelector = createSelector(
   gameQuestionSelector,
   playerSelectedChoicesSelector,
   playerSubmittedAnswerSelector,
   (question, selectedChoices, submitted) => choice => {
-    if (submitted)
+    if (submitted.length)
       return false;
 
     if (selectedChoices.length === question.nb_choices)
@@ -41,12 +41,12 @@ export const playerCanToggleChoice = createSelector(
   },
 );
 
-export const playerCanSubmitAnswer = createSelector(
+export const playerCanSubmitAnswerSelector = createSelector(
   gameQuestionSelector,
   playerSelectedChoicesSelector,
   playerSubmittedAnswerSelector,
   (question, selectedChoices, submitted) => {
-    if (submitted)
+    if (submitted.length)
       return false;
 
     return selectedChoices.length === question.nb_choices;

@@ -45,6 +45,11 @@ export const gameIsQuestionMasterSelector = createSelector(
   game => player => game.question_master === player.nick,
 );
 
+export const gameQuestionMasterSelector = createSelector(
+  currentGameSelector,
+  game => game.question_master,
+);
+
 export const gameQuestionSelector = createSelector(
   currentGameSelector,
   game => game.question,

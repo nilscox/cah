@@ -46,8 +46,8 @@ const mapStateToProps = (state) => ({
   selectedChoices: selectors.playerSelectedChoicesSelector(state),
   submittedAnswer: selectors.playerSubmittedAnswerSelector(state),
   isSelected: selectors.playerIsChoiceSelectedSelector(state),
-  canToggleChoice: selectors.playerCanToggleChoice(state),
-  canSubmitAnswer: selectors.playerSubmittedAnswerSelector(state),
+  canToggleChoice: selectors.playerCanToggleChoiceSelector(state),
+  canSubmitAnswer: selectors.playerCanSubmitAnswerSelector(state),
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
