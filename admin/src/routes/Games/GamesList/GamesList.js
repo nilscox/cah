@@ -1,10 +1,11 @@
 import * as React from 'react';
+import { withRouter } from 'react-router';
 import { Table } from 'react-bootstrap';
 
 import './GamesList.css';
 
-const Row = ({ game }) => (
-  <tr>
+const Row = ({ game, onClick }) => (
+  <tr className="game-row" onClick={onClick}>
     <td>{game.id}</td>
     <td>{game.owner}</td>
     <td>{game.players.length}</td>
@@ -14,27 +15,32 @@ const Row = ({ game }) => (
   </tr>
 );
 
-const GamesList = ({ games }) => {
+const GamesList = ({ games, history }) => {
   return (
-  <Table className="games-list" bordered condensed striped>
+    <Table className="games-list" bordered condensed striped>
 
-    <thead>
-      <tr>
-        <th>id</th>
-        <th>Owner</th>
-        <th>Players</th>
-        <th>State</th>
-        <th>Play State</th>
-        <th>Turn</th>
-      </tr>
-    </thead>
+      <thead>
+        <tr>
+          <th>id</th>
+          <th>Owner</th>
+          <th>Players</th>
+          <th>State</th>
+          <th>Play State</th>
+          <th>Turn</th>
+        </tr>
+      </thead>
 
-    <tbody>
-      {games.map((game) => <Row  key={`game-${game.id}`} game={game} />)}
-    </tbody>
+      <tbody>
+        { games.map((game) => (
+          <Row
+            onClick={() => history.push(`/games/${game.id}`)}
+            key={`game-${game.id}`} game={game}
+          />
+        )) }
+      </tbody>
 
-  </Table>
+    </Table>
   );
 };
 
-export default GamesList;
+export default withRouter(GamesList);
