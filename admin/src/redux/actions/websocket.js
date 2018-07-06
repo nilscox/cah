@@ -3,10 +3,10 @@ const API_ADMIN_TOKEN = process.env.REACT_APP_API_ADMIN_TOKEN;
 
 let socket = null;
 
-const WS_OPEN = 'WS_OPEN';
-const WS_CLOSE = 'WS_CLOSE';
-const WS_MESSAGE = 'WS_MESSAGE';
-const WS_ERROR = 'WS_ERROR';
+export const WS_OPEN = 'WS_OPEN';
+export const WS_CLOSE = 'WS_CLOSE';
+export const WS_MESSAGE = 'WS_MESSAGE';
+export const WS_ERROR = 'WS_ERROR';
 
 export const createWebsocket = () => (dispatch) => {
   socket = new WebSocket(WS_URL);

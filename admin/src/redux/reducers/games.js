@@ -1,6 +1,13 @@
 import { handle } from 'redux-pack';
 
-import { GAMES_LIST, GAME_FETCH_HISTORY, GAME_CREATE } from '../actions';
+import {
+  GAMES_LIST,
+  GAME_FETCH_HISTORY,
+  GAME_CREATE,
+  WS_MESSAGE,
+} from '../actions';
+
+const findGame = (games, gameId) => games.find(game => game === gameId);
 
 export default (state = [], action) => {
   const { type, payload, meta } = action;
