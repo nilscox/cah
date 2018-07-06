@@ -11,8 +11,8 @@ import './Games.css';
 
 const mapStateToProps = (state) => {
   return {
-    games: state.get('games').toJSON(),
-    players: state.get('players').toJSON(),
+    games: state.games,
+    players: state.players,
   };
 };
 
@@ -31,7 +31,7 @@ const Games = ({ games, players, handleSubmit }) => (
       <CreateGame players={players} onSubmit={handleSubmit}/>
     </div>
 
-    <GamesList games={games} />}
+    <GamesList games={games} />
 
   </div>
 );

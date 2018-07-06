@@ -60,7 +60,7 @@ const App = ({ initializing }) => {
 };
 
 const ConnectedApp = connect((state) => ({
-  initializing: state.get('status').initializing,
+  initializing: state.status.initializing,
 }))(App);
 
 export default () => (

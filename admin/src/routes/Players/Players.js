@@ -8,7 +8,7 @@ import CreatePlayer from './CreatePlayer'
 
 const mapStateToProps = (state) => {
     return {
-        players: state.get('players').toJSON(),
+        players: state.players,
     };
 };
 

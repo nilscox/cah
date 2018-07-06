@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 
 const mapStateToProps = (state) => ({
-  games: state.get('games').toJS(),
+  games: state.games,
 });
 
 const mapDispatchToProps = (dispatch) => ({});
