@@ -9,7 +9,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({});
 
 const GameDetails = ({ match, games }: GameDetailsProps) => {
-  /* eslint-disable-next-line eqeqeq */
+  // eslint-disable-next-line eqeqeq
   const game = games.find(g => g.id == match.params.id);
 
   if (!game)
