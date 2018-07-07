@@ -54,19 +54,19 @@ class AdminEvents(EventProcessor):
     def on_next_turn(self, game):
         self.broadcast({
             "type": "GAME_NEXT_TURN",
-            "game": serialize("FulllGameSerializer", game),
+            "game": serialize("FullGameSerializer", game),
         })
 
     def on_cards_dealt(self, player, cards):
-        self.send({
+        self.broadcast({
             "type": "CARDS_DEALT",
-            "cards": serialize("FullChoiceSerializer", cards, many=True),
+            "player": serialize("FullPlayerSerializer", player),
         })
 
     def on_answer_submitted(self, game, player):
         self.broadcast({
             "type": "ANSWER_SUBMITTED",
-            "player": serialize("FullPlayerSerializer", player),
+            "game": serialize("FullGameSerializer", game),
         })
 
     def on_all_answers_submitted(self, game, all_answers):

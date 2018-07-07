@@ -8,6 +8,7 @@ import {
   WS_MESSAGE,
 } from '../actions';
 
+const GAME_CREATED = 'GAME_CREATED';
 const GAME_STARTED = 'GAME_STARTED';
 const PLAYER_JOINED = 'PLAYER_JOINED';
 const PLAYER_LEFT = 'PLAYER_LEFT';
@@ -18,23 +19,28 @@ const GAME_NEXT_TURN = 'GAME_NEXT_TURN';
 // eslint-disable-next-line eqeqeq
 const findGameIdx = (games, gameId) => games.findIndex(game => game.id == gameId);
 
+const findPlayerIdx = (players, nick) => players.findIndex(player => player.nick === nick);
+
 const websocket = (state, message) => {
-  const gameIdx = message.gameId && findGameIdx(state, message.gameId);
+  const gameIdx = message.game && findGameIdx(state, message.game.id);
 
   switch (message.type) {
-  case GAME_STARTED:
-  case GAME_NEXT_TURN:
-    delete message.game.players;
-    return state.merge(null, message.game);
-
   case PLAYER_JOINED:
     return state.merge([gameIdx, 'players'], [message.player]);
 
   case PLAYER_LEFT:
-    return state.merge([gameIdx, 'players'], [message.player]);
+    const game = state[gameIdx];
+    const players = game.players;
 
+    return state.merge([gameIdx, 'players'], players.splice(findPlayerIdx(players, message.player.nick), 1));
+
+  case GAME_CREATED:
+    return state.push(message.game);
+
+  case GAME_STARTED:
+  case GAME_NEXT_TURN:
   case ANSWER_SUBMITTED:
-    return state.merge([gameIdx, 'propositions'], [message.answer]);
+    return state.merge(gameIdx, message.game);
 
   case ANSWER_SELECTED:
     return state.merge([gameIdx, 'turns'], message.turn);
@@ -45,7 +51,7 @@ const websocket = (state, message) => {
 };
 
 export default (state = crio([]), action) => {
-  const { type, payload } = action;
+  const { type, payload, meta } = action;
 
   if (type === WS_MESSAGE)
     return websocket(state, action.message);
@@ -53,20 +59,15 @@ export default (state = crio([]), action) => {
   const handlers = {
     [GAMES_LIST]: {
       start   : () => [],
-      success : () => crio(payload)
-        .map(game => game.merge(null, {
-          players: game.players.map(player => player.nick),
-        })),
+      success : () => crio(payload),
       failure : () => [],
     },
     [GAME_FETCH_HISTORY]: {
       start   : (games) => games,
-      success : (games) => games,
+      success : (games) => games.merge([findGameIdx(state, meta.gameId), 'turns'], crio(payload)),
     },
     [GAME_CREATE]: {
-      success : () => state.push(crio(payload).merge(null, {
-        players: state.players.map(player => player.nick),
-      })),
+      success : () => state.push(crio(payload)),
     },
   };
 
