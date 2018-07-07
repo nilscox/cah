@@ -8,6 +8,9 @@ from api.models import Player
 CAH_API_ADMIN_TOKEN = os.environ['CAH_API_ADMIN_TOKEN']
 
 
+admin_sockets = []
+
+
 def on_connected(socket_id, data):
     if "nick" not in data:
         raise RuntimeError("Missing nick")
@@ -27,13 +30,20 @@ def on_admin(socket_id, data):
         raise RuntimeError("Unauthorized")
 
     Group("admin").add(socket_id)
+    admin_sockets.append(socket_id)
 
 
 # TODO: check if it's an admin socket_id
 def on_disconnected(socket_id):
+    if socket_id in admin_sockets:
+        Group("admin").discard(socket_id)
+        return
+
     try:
         player = Player.objects.get(socket_id=socket_id)
         player.on_disconnected()
+        if player.in_game():
+            Group("game-" + player.game.id).discard(socket_id)
     except Player.DoesNotExist:
         print("warn: Cannot find player with socket_id=" + socket_id)
 
