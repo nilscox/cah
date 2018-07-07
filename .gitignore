@@ -1,6 +1,6 @@
 *.pyc
 *.sqlite3
 *.log
-data/
-web/public/media
+data
+media
 .env
