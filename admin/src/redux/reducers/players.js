@@ -10,11 +10,15 @@ const PLAYER_DISCONNECTED = 'PLAYER_DISCONNECTED';
 const isPlayer = nick => player => player.nick === nick;
 
 const websocket = (state, message) => {
-  if (message.type === PLAYER_CONNECTED)
-    return crio(state).set([state.findIndex(isPlayer(message.player.nick)), 'connected'], true);
+  if (message.type === PLAYER_CONNECTED) {
+    return crio(state)
+      .set([state.findIndex(isPlayer(message.player.nick)), 'connected'], true);
+  }
 
-  if (message.type === PLAYER_DISCONNECTED)
-    return crio(state).set([state.findIndex(isPlayer(message.nick)), 'connected'], false);
+  if (message.type === PLAYER_DISCONNECTED) {
+    return crio(state)
+      .set([state.findIndex(isPlayer(message.nick)), 'connected'], false);
+  }
 
   return state;
 };
