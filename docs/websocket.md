@@ -84,7 +84,6 @@ event: {
 ```
 event: {
     type: "ANSWER_SELECTED",
-    answer: AnsweredQuestion,
-    answers: AnsweredQuestion[],
+    turn: GameTurn,
 }
 ```
