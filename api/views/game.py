@@ -13,7 +13,7 @@ from api.permissions import IsPlayer, IsConnected
 from api.serializers import GameSerializer, GameListItemSerializer, GameTurnSerializer, AnsweredQuestionSerializer
 
 
-AVATARS_DIR = os.environ['CAH_AVATARS_DIR']
+AVATARS_DIR = os.environ['CAH_AVATARS_PATH']
 
 
 class GameViews(views.APIView):

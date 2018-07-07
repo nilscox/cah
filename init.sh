@@ -2,17 +2,8 @@
 
 source ./.env
 
-if [ ! -d "$VENV_DIR" ]; then
-  python -m venv "$VENV_DIR"
-  source "$VENV_DIR/bin/activate"
-  pip install -r "requirements.txt"
-fi
-
 source "$VENV_DIR/bin/activate"
 source "$NVM_DIR/nvm.sh"
-
-mkdir -p "$CAH_MEDIA_PATH"
-mkdir -p "$CAH_AVATARS_PATH"
 
 API_URL="http://$CAH_API_IP:$CAH_API_PORT"
 API_WS_URL="ws://$CAH_API_IP:$CAH_API_PORT"
@@ -48,6 +39,16 @@ export CAH_API_CORS_ORIGIN_WHITELIST="$WEB_URL;$ADMIN_URL"
 export REACT_APP_CAH_API_URL=$API_URL
 export REACT_APP_CAH_WEBSOCKET_URL=$API_WS_URL
 export REACT_APP_CAH_API_ADMIN_TOKEN=$CAH_API_ADMIN_TOKEN
+
+mkdir -p "$CAH_MEDIA_PATH"
+mkdir -p "/tmp/avatars"
+ln -sf "/tmp/avatars" "$CAH_AVATARS_PATH"
+
+if [ ! -d "$VENV_DIR" ]; then
+  python -m venv "$VENV_DIR"
+  source "$VENV_DIR/bin/activate"
+  pip install -r "requirements.txt"
+fi
 
 runsql() {
   echo "$1" | docker exec -i "$CAH_DB_CONTAINER_NAME" psql -U "$CAH_DB_ROOT_USER"
