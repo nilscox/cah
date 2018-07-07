@@ -9,7 +9,8 @@ import {
 } from 'Actions/websocket';
 
 // $FlowFixMe
-const WEBSOCKET_URL: string = process.env.REACT_APP_WEBSOCKET_URL;
+const WEBSOCKET_URL: string = process.env.REACT_APP_CAH_WEBSOCKET_URL;
+console.log(process.env.REACT_APP_CAH_WEBSOCKET_URL);
 
 let socket = null;
 

@@ -1,19 +1,48 @@
 import { handle } from 'redux-pack';
-import { fromJS, List } from 'immutable';
 
-import { PLAYERS_LIST , PLAYER_CREATE } from '../actions';
+import { PLAYERS_LIST , PLAYER_CREATE, WS_MESSAGE } from '../actions';
 
-export default (state = List(), action) => {
+const crio = window.crio.default;
+
+const PLAYER_CONNECTED = 'PLAYER_CONNECTED';
+const PLAYER_DISCONNECTED = 'PLAYER_DISCONNECTED';
+const PLAYER_AVATAR_CHANGED = 'PLAYER_AVATAR_CHANGED';
+
+const isPlayer = nick => player => player.nick === nick;
+
+const websocket = (state, message) => {
+  if (message.type === PLAYER_CONNECTED) {
+    return crio(state)
+      .set([state.findIndex(isPlayer(message.player.nick)), 'connected'], true);
+  }
+
+  if (message.type === PLAYER_DISCONNECTED) {
+    return crio(state)
+      .set([state.findIndex(isPlayer(message.nick)), 'connected'], false);
+  }
+
+  if (message.type === PLAYER_AVATAR_CHANGED) {
+    return crio(state)
+      .set([state.findIndex(isPlayer(message.player.nick)), 'avatar'], message.player.avatar);
+  }
+
+  return state;
+};
+
+export default (state = [], action) => {
   const { type, payload } = action;
+
+  if (type === WS_MESSAGE)
+    return websocket(state, action.message);
 
   const handlers = {
     [PLAYERS_LIST]: {
       start   : () => [],
-      success : () => fromJS(payload),
+      success : () => payload,
       failure : () => [],
     },
     [PLAYER_CREATE]: {
-      success : () => state.push(fromJS(payload)),
+      success : (prevState) => crio(prevState).push(payload),
     },
   };
 

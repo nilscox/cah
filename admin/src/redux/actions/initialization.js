@@ -1,5 +1,6 @@
 import { listGames, fetchGamesHistories } from './games';
 import { listPlayers } from './players';
+import { createWebsocket } from './websocket';
 
 export const INITIALIZATION_STARTED = 'INITIALIZATION_STARTED';
 const initializationStarted = () => ({
@@ -23,5 +24,6 @@ export const initialization = () => (dispatch) => Promise.resolve()
   .then(() => dispatch(listGames()))
   .then(({ payload: games }) => dispatch(fetchGamesHistories(games)))
   .then(() => dispatch(listPlayers()))
+  .then(() => dispatch(createWebsocket()))
   .catch((err) => dispatch(initializationError(err)))
   .then(() => dispatch(initializationFinished()));

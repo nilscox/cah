@@ -1,7 +1,7 @@
 // import { checkApiStatus } from '../actions/status'
 
-const API_URL = process.env.REACT_APP_API_URL;
-const API_ADMIN_TOKEN = process.env.REACT_APP_API_ADMIN_TOKEN;
+const API_URL = process.env.REACT_APP_CAH_API_URL;
+const API_ADMIN_TOKEN = process.env.REACT_APP_CAH_API_ADMIN_TOKEN;
 
 const apiMiddleware = store => next => action => {
   if (action === null)

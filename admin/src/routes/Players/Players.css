@@ -1,0 +1,10 @@
+.player img.player-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 16px;
+}
+
+.players .player td {
+  text-align: center;
+  vertical-align: middle;
+}

@@ -21,11 +21,17 @@ def broadcast(game, message):
     print("broadcast: game-" + str(game.id) + ": " + text)
     Group("game-" + str(game.id)).send({"text": text})
 
+    message["gameId"] = str(game.id)
+    Group("admin").send({ "text": json.dumps(message) })
+
 
 def send(player, message):
     text = json.dumps(message)
     print("send: " + str(player) + ": " + text)
-    Channel(player.socket_id).send({"text": text})
+    Channel(player.socket_id).send({ "text": text })
+
+    message["playerId"] = str(player.id)
+    Group("admin").send({ "text": json.dumps(message) })
 
 
 def player_connected(player):

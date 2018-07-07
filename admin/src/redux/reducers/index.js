@@ -1,4 +1,4 @@
-import { combineReducers } from 'redux-immutable';
+import { combineReducers } from 'redux';
 
 import status from './status';
 import games from './games';

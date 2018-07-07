@@ -8,7 +8,7 @@ import { FormGroup, FormControl, ControlLabel } from 'react-bootstrap';
 
 const mapStateToProps = (state) => {
   return {
-    players: state.get('players').toJS(),
+    players: state.players,
   };
 };
 

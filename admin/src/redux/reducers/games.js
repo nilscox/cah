@@ -1,24 +1,30 @@
 import { handle } from 'redux-pack';
-import { fromJS, List } from 'immutable';
 
-import { GAMES_LIST, GAME_FETCH_HISTORY, GAME_CREATE } from '../actions';
+import {
+  GAMES_LIST,
+  GAME_FETCH_HISTORY,
+  GAME_CREATE,
+  WS_MESSAGE,
+} from '../actions';
 
-export default (state = List(), action) => {
+const findGame = (games, gameId) => games.find(game => game === gameId);
+
+export default (state = [], action) => {
   const { type, payload, meta } = action;
   const findGame = (games, id) => games.findIndex(g => g.id === id);
 
   const handlers = {
     [GAMES_LIST]: {
-      start   : () => List(),
-      success : () => fromJS(payload).map(game => game.merge({ turns: List() })),
-      failure : () => List(),
+      start   : () => [],
+      success : () => payload.map(game => ({ ...game, turns: [] })),
+      failure : () => [],
     },
     [GAME_FETCH_HISTORY]: {
-      start   : (games) => games.setIn([findGame(games, meta.gameId), 'turns'], List()),
-      success : (games) => games.setIn([findGame(games, meta.gameId), 'turns'], fromJS(payload)),
+      start   : (games) => games,
+      success : (games) => games,
     },
     [GAME_CREATE]: {
-      success : () => state.push(fromJS(payload).merge({ turns: List() })),
+      success : () => [ ...state, { ...payload, turns: [] } ],
     },
   };
 

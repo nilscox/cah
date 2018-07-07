@@ -19,4 +19,16 @@ if __name__ == "__main__":
                 "forget to activate a virtual environment?"
             )
         raise
+
+    from django.conf import settings
+
+    print('=== CAH SETTINGS ===')
+    print('DEBUG', settings.DEBUG)
+    print('ALLOWED_HOSTS', settings.ALLOWED_HOSTS)
+    print('CORS_ALLOW_CREDENTIALS', settings.CORS_ALLOW_CREDENTIALS)
+    print('CORS_ORIGIN_ALLOW_ALL', settings.CORS_ORIGIN_ALLOW_ALL)
+    print('CORS_ORIGIN_WHITELIST', settings.CORS_ORIGIN_WHITELIST)
+    print('MEDIA_URL', settings.MEDIA_URL)
+    print('MEDIA_ROOT', settings.MEDIA_ROOT)
+
     execute_from_command_line(sys.argv)

@@ -147,7 +147,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'web', 'public', 'media')
+MEDIA_ROOT = os.environ['CAH_MEDIA_PATH']
 UPLOADED_FILES_USE_URL = True
 
 REST_FRAMEWORK = {
@@ -160,10 +160,3 @@ CORS_ORIGIN_WHITELIST = []
 
 for origin in os.environ['CAH_API_CORS_ORIGIN_WHITELIST'].split(';'):
     CORS_ORIGIN_WHITELIST.append(origin)
-
-print('=== CAH SETTINGS ===')
-print('DEBUG', DEBUG)
-print('ALLOWED_HOSTS', ALLOWED_HOSTS)
-print('CORS_ALLOW_CREDENTIALS', CORS_ALLOW_CREDENTIALS)
-print('CORS_ORIGIN_ALLOW_ALL', CORS_ORIGIN_ALLOW_ALL)
-print('CORS_ORIGIN_WHITELIST', CORS_ORIGIN_WHITELIST)

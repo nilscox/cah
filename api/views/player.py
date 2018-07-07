@@ -2,6 +2,7 @@ from rest_framework import views
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
 
+from api import events
 from api.models import Player
 from api.authentication import PlayerAuthentication
 from api.permissions import IsPlayer
