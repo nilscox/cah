@@ -3,7 +3,7 @@ import random
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 
-from api import events
+from api.events import on_event
 from api.exceptions import NoMoreChoices
 
 
@@ -91,16 +91,16 @@ class Player(models.Model):
             self.cards.add(choice)
             choices.remove(choice)
 
-        events.cards_dealt(self, dealt)
+        on_event('cards_dealt', self, dealt)
 
     def on_connected(self, socket_id):
         self.socket_id = socket_id
         self.save()
 
-        events.player_connected(self)
+        on_event('player_connected', self)
 
     def on_disconnected(self):
-        events.player_disconnected(self)
+        on_event('player_disconnected', self)
 
         self.socket_id = None
         self.save()

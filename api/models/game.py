@@ -2,7 +2,7 @@ import random
 
 from django.db import models
 
-from api import events
+from api.events import on_event
 from api.exceptions import NoMoreQuestions
 
 GAME_STATES = (
@@ -51,11 +51,11 @@ class Game(models.Model):
 
     def add_player(self, player):
         self.players.add(player)
-        events.game_joined(player)
+        on_event('game_joined', player)
 
     def remove_player(self, player):
         self.players.remove(player)
-        events.game_left(player)
+        on_event('game_left', player)
 
     def pick_question(self):
         available_questions = self.questions.filter(available=True)

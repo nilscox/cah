@@ -1,6 +1,6 @@
 from rest_framework.response import Response
 
-from api import events
+from api.events import on_event
 from api.serializers import PlayerSerializer
 from api.exceptions import *
 
@@ -15,7 +15,7 @@ class ChangeAvatarMixin(object):
 
         serializer.save()
 
-        events.player_avatar_changed(player)
+        on_event('player_avatar_changed', player)
 
         return Response(serializer.data)
 

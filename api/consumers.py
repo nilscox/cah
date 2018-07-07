@@ -43,7 +43,7 @@ def on_disconnected(socket_id):
         player = Player.objects.get(socket_id=socket_id)
         player.on_disconnected()
         if player.in_game():
-            Group("game-" + player.game.id).discard(socket_id)
+            Group("game-" + str(player.game.id)).discard(socket_id)
     except Player.DoesNotExist:
         print("warn: Cannot find player with socket_id=" + socket_id)
 

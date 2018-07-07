@@ -1,7 +1,7 @@
 import random
 
 from master import models as master
-from api import events
+from api.events import on_event
 from api.exceptions import *
 from api.models import Question, Choice, AnsweredQuestion, GameTurn
 
@@ -31,7 +31,7 @@ def init(game):
     choices = map(lambda mc: Choice(game=game, text=mc.text, keep_capitalization=mc.keep_capitalization), mchoices)
     Choice.objects.bulk_create(choices)
 
-    events.game_created(game.owner)
+    on_event('game_created', game.owner)
 
 
 def start(game):
@@ -45,7 +45,7 @@ def start(game):
     game.pick_question()
     game.save()
 
-    events.game_started(game)
+    on_event('game_started', game)
 
 
 def next_turn(game, question_master):
@@ -55,7 +55,7 @@ def next_turn(game, question_master):
     game.pick_question()
     game.save()
 
-    events.next_turn(game)
+    on_event('next_turn', game)
 
 
 def answer(game, choices, answered_by):
@@ -78,7 +78,7 @@ def answer(game, choices, answered_by):
         choice.played = True
         choice.save()
 
-    events.answer_submitted(game, answered_by)
+    on_event('answer_submitted', game, answered_by)
 
     if game.get_propositions().count() == game.players.count() - 1:
         all_answers_submitted(game)
@@ -94,7 +94,7 @@ def all_answers_submitted(game):
         answer.place = idx
         answer.save()
 
-    events.all_answers_submitted(game, answers)
+    on_event('all_answers_submitted', game, answers)
 
 
 def select_answer(game, selected, selected_by):
@@ -117,4 +117,4 @@ def select_answer(game, selected, selected_by):
         answer.turn = turn
         answer.save()
 
-    events.answer_selected(game, turn)
+    on_event('answer_selected', game, turn)
