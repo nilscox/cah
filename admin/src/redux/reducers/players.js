@@ -10,22 +10,19 @@ const PLAYER_AVATAR_CHANGED = 'PLAYER_AVATAR_CHANGED';
 const isPlayer = nick => player => player.nick === nick;
 
 const websocket = (state, message) => {
-  if (message.type === PLAYER_CONNECTED) {
+  switch (message.type) {
+  case PLAYER_CONNECTED:
     return crio(state)
       .set([state.findIndex(isPlayer(message.player.nick)), 'connected'], true);
-  }
-
-  if (message.type === PLAYER_DISCONNECTED) {
+  case PLAYER_DISCONNECTED:
     return crio(state)
       .set([state.findIndex(isPlayer(message.nick)), 'connected'], false);
-  }
-
-  if (message.type === PLAYER_AVATAR_CHANGED) {
+  case PLAYER_AVATAR_CHANGED:
     return crio(state)
       .set([state.findIndex(isPlayer(message.player.nick)), 'avatar'], message.player.avatar);
+  default:
+    return state;
   }
-
-  return state;
 };
 
 export default (state = [], action) => {
