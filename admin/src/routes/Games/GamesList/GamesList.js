@@ -11,7 +11,7 @@ const Row = ({ game, onClick }) => (
     <td>{game.players.length}</td>
     <td>{game.state}</td>
     <td>{game.play_state && game.play_state.replace(/_/g, ' ')}</td>
-    <td>{game.turns.length}</td>
+    <td>{game.turns && game.turns.length}</td>
   </tr>
 );
 

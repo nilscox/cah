@@ -17,7 +17,8 @@ const GameDetails = ({ match, games }: GameDetailsProps) => {
 
   return (
     <div>
-      { JSON.stringify(game) }
+      <h2>Game #{ game.id }</h2>
+      <pre>{ JSON.stringify(game, 2, 2) }</pre>
     </div>
   );
 };
