@@ -6,6 +6,7 @@ const crio = window.crio.default;
 
 const PLAYER_CONNECTED = 'PLAYER_CONNECTED';
 const PLAYER_DISCONNECTED = 'PLAYER_DISCONNECTED';
+const PLAYER_AVATAR_CHANGED = 'PLAYER_AVATAR_CHANGED';
 
 const isPlayer = nick => player => player.nick === nick;
 
@@ -18,6 +19,11 @@ const websocket = (state, message) => {
   if (message.type === PLAYER_DISCONNECTED) {
     return crio(state)
       .set([state.findIndex(isPlayer(message.nick)), 'connected'], false);
+  }
+
+  if (message.type === PLAYER_AVATAR_CHANGED) {
+    return crio(state)
+      .set([state.findIndex(isPlayer(message.player.nick)), 'avatar'], message.player.avatar);
   }
 
   return state;
