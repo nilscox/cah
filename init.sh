@@ -8,18 +8,16 @@ if [ ! -d "$VENV_DIR" ]; then
   pip install -r "requirements.txt"
 fi
 
-if [ -d "app/node_modules/deline/.babelrc" ]; then
-  rm "app/node_modules/deline/.babelrc"
-fi
-
-
 source "$VENV_DIR/bin/activate"
 source "$NVM_DIR/nvm.sh"
 
-mkdir -p "$CAH_AVATARS_DIR"
+mkdir -p "$CAH_MEDIA_PATH"
+mkdir -p "$CAH_AVATARS_PATH"
 
-API_URL="$CAH_API_LISTEN_IP:$CAH_API_LISTEN_PORT"
-WEB_URL="$CAH_WEB_LISTEN_IP:$CAH_WEB_LISTEN_PORT"
+API_URL="http://$CAH_API_IP:$CAH_API_PORT"
+API_WS_URL="ws://$CAH_API_IP:$CAH_API_PORT"
+WEB_URL="http://$CAH_WEB_IP:$CAH_WEB_PORT"
+ADMIN_URL="http://$CAH_ADMIN_IP:$CAH_ADMIN_PORT"
 
 export CAH_DB_NAME
 export CAH_DB_USER
@@ -30,15 +28,26 @@ export CAH_DB_PORT
 export CAH_DB_ROOT_USER
 
 export CAH_DATA_PATH
-export CAH_AVATARS_DIR
+export CAH_MEDIA_PATH
+export CAH_AVATARS_PATH
+
+export CAH_API_IP
+export CAH_API_PORT
+
+export CAH_WEB_IP
+export CAH_WEB_PORT
+
+export CAH_ADMIN_IP
+export CAH_ADMIN_PORT
+
 export CAH_API_ADMIN_TOKEN
 
-export CAH_API_ALLOWED_HOSTS="localhost;127.0.0.1;$CAH_API_LISTEN_IP;$API_URL"
-export CAH_API_CORS_ORIGIN_WHITELIST="$WEB_URL"
+export CAH_API_ALLOWED_HOSTS="localhost;127.0.0.1;$API_URL"
+export CAH_API_CORS_ORIGIN_WHITELIST="$WEB_URL;$ADMIN_URL"
 
-export REACT_APP_API_URL="http://$API_URL"
-export REACT_APP_WEBSOCKET_URL="ws://$API_URL"
-export REACT_APP_API_ADMIN_TOKEN="$CAH_API_ADMIN_TOKEN"
+export REACT_APP_CAH_API_URL=$API_URL
+export REACT_APP_CAH_WEBSOCKET_URL=$API_WS_URL
+export REACT_APP_CAH_API_ADMIN_TOKEN=$CAH_API_ADMIN_TOKEN
 
 runsql() {
   echo "$1" | docker exec -i "$CAH_DB_CONTAINER_NAME" psql -U "$CAH_DB_ROOT_USER"
@@ -84,9 +93,7 @@ resetdb() {
 }
 
 startapi() {
-    [ -n "$1" ] && $CAH_API_LISTEN_IP="$1"
-    [ -n "$2" ] && $CAH_API_LISTEN_PORT="$2"
-    python manage.py runserver $CAH_API_LISTEN_IP:$CAH_API_LISTEN_PORT
+    python manage.py runserver "$CAH_API_IP:$CAH_API_PORT"
 }
 
 ws() {

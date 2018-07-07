@@ -1,7 +1,7 @@
 // @flow
 
 // $FlowFixMe
-const API_URL: string = process.env.REACT_APP_API_URL;
+const API_URL: string = process.env.REACT_APP_CAH_API_URL;
 
 export class ApiRequestError extends Error {
   method: string;
