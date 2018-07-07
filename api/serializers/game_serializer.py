@@ -1,29 +1,31 @@
 from rest_framework import serializers
 from api.models import Game, GameTurn
 from .player_serializer import PlayerLightSerializer
+from .choice_serializer import ChoiceSerializer
 from .question_serializer import QuestionSerializer
 from .answered_question_serializer import \
     LightAnsweredQuestionSerializer, \
+    AnsweredQuestionSerializer, \
     PartialAnsweredQuestionSerializer
 
-class GameSerializer(serializers.ModelSerializer):
+class FullGameSerializer(serializers.ModelSerializer):
     """
-    Game: {
+    FullGame: {
         id: integer,
         lang: string,
         state: string,
         play_state: string,
-        players: Player[],
+        players: string[],
         owner: string,
         question_master: string,
         question: Question,
-        propositions: PartialAnsweredQuestion[],
+        propositions: AnsweredQuestion[],
     }
     """
 
     state = serializers.ReadOnlyField()
     play_state = serializers.SerializerMethodField()
-    players = PlayerLightSerializer(many=True, read_only=True)
+    players = serializers.SerializerMethodField()
     owner = serializers.ReadOnlyField(source='owner.nick')
     question_master = serializers.ReadOnlyField(source='question_master.nick')
     question = QuestionSerializer(source='current_question', read_only=True)
@@ -32,6 +34,9 @@ class GameSerializer(serializers.ModelSerializer):
     class Meta:
         model = Game
         fields = ('id', 'lang', 'state', 'play_state', 'owner', 'players', 'question_master', 'question', 'propositions')
+
+    def get_players(self, game):
+        return [ p.nick for p in game.players.all() ]
 
     def get_play_state(self, game):
         answers = game.get_propositions()
@@ -54,11 +59,40 @@ class GameSerializer(serializers.ModelSerializer):
         if answers is None:
             return None
 
+        return AnsweredQuestionSerializer(answers, many=True).data
+
+class GameSerializer(FullGameSerializer):
+
+    """
+    Game: {
+        id: integer,
+        lang: string,
+        state: string,
+        play_state: string,
+        players: Player[],
+        owner: string,
+        question_master: string,
+        question: Question,
+        propositions: PartialAnsweredQuestion[],
+    }
+    """
+
+    players = PlayerLightSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Game
+        fields = ('id', 'lang', 'state', 'play_state', 'owner', 'players', 'question_master', 'question', 'propositions')
+
+    def get_propositions(self, game):
+        answers = game.get_propositions()
+
+        if answers is None:
+            return None
+
         if len(answers) != game.players.count() - 1:
             return []
 
         return PartialAnsweredQuestionSerializer(answers, many=True).data
-
 
 class GameTurnSerializer(serializers.ModelSerializer):
     """

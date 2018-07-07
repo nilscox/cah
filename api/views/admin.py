@@ -5,7 +5,11 @@ from rest_framework.decorators import action
 
 from api.exceptions import *
 from api.models import Game, Player
-from api.serializers import GameSerializer, GameTurnSerializer, FullPlayerSerializer
+from api.serializers import FullGameSerializer, \
+    GameTurnSerializer, \
+    FullPlayerSerializer, \
+    ChoiceSerializer, \
+    QuestionSerializer
 from api.authentication import AdminAuthentication
 from api.mixins import ChangeAvatarMixin
 
@@ -15,7 +19,7 @@ class GameViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAdminUser]
 
     queryset = Game.objects.all()
-    serializer_class = GameSerializer
+    serializer_class = FullGameSerializer
 
     def create(self, request):
         owner_nick = request.data.get('owner')
@@ -35,6 +39,20 @@ class GameViewSet(viewsets.ModelViewSet):
         game = serializer.save(owner=owner, players=[owner])
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @action(detail=True)
+    def questions(self, request, pk=None):
+        game = self.get_object()
+        serializer = QuestionSerializer(game.questions, many=True)
+
+        return Response(serializer.data)
+
+    @action(detail=True)
+    def choices(self, request, pk=None):
+        game = self.get_object()
+        serializer = ChoiceSerializer(game.choices, many=True)
+
+        return Response(serializer.data)
 
     @action(detail=True)
     def history(self, request, pk=None):
@@ -64,7 +82,7 @@ class GameViewSet(viewsets.ModelViewSet):
 
         game.add_player(player)
 
-        return Response(GameSerializer(game).data)
+        return Response(FullGameSerializer(game).data)
 
     @action(methods=['POST'], detail=True)
     def leave(self, request, pk=None):
