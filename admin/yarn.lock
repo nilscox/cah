@@ -1703,14 +1703,14 @@ create-hmac@^1.1.0, create-hmac@^1.1.2, create-hmac@^1.1.4:
     safe-buffer "^5.0.1"
     sha.js "^2.4.8"
 
-crio@^5.0.1:
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/crio/-/crio-5.0.1.tgz#ecd626d82aaa859a937fb7ca9fdeb3c711621c9e"
+crio@^5.0.2:
+  version "5.0.2"
+  resolved "https://registry.yarnpkg.com/crio/-/crio-5.0.2.tgz#bdaa7aee4d4ebd7f9109ae9db0b38c991306d6c5"
   dependencies:
-    hash-it "^3.1.2"
+    hash-it "^4.0.1"
     json-stringify-safe "^5.0.1"
     pathington "^1.1.5"
-    unchanged "^1.2.1"
+    unchanged "^1.3.2"
 
 cross-spawn@5.1.0, cross-spawn@^5.0.1, cross-spawn@^5.1.0:
   version "5.1.0"
@@ -1848,7 +1848,7 @@ currently-unhandled@^0.4.1:
   dependencies:
     array-find-index "^1.0.1"
 
-curriable@^1.0.0:
+curriable@^1.0.0, curriable@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/curriable/-/curriable-1.1.0.tgz#51817788748032244e73d24b98128a7b6d9c799d"
 
@@ -2659,6 +2659,10 @@ fast-levenshtein@~2.0.4:
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/fast-levenshtein/-/fast-levenshtein-2.0.6.tgz#3d8a5c66883a16a30ca8643e851f19baa7797917"
 
+fast-stringify@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/fast-stringify/-/fast-stringify-1.0.4.tgz#7279707663aea3efbed1d9f5da36d7adbeadf5b6"
+
 fastparse@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/fastparse/-/fastparse-1.1.1.tgz#d1e2643b38a94d7583b479060e6c4affc94071f8"
@@ -3134,10 +3138,12 @@ hash-base@^3.0.0:
     inherits "^2.0.1"
     safe-buffer "^5.0.1"
 
-hash-it@^3.1.2:
-  version "3.1.2"
-  resolved "https://registry.yarnpkg.com/hash-it/-/hash-it-3.1.2.tgz#2f5231a497da726c65f0758060032e5a894a93ee"
+hash-it@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/hash-it/-/hash-it-4.0.1.tgz#3d73f2c0659a96ff85dfff42ee9c74ed17dd15b0"
   dependencies:
+    curriable "^1.1.0"
+    fast-stringify "^1.0.4"
     json-prune "^1.1.0"
 
 hash.js@^1.0.0, hash.js@^1.0.3:
@@ -6809,9 +6815,9 @@ uglifyjs-webpack-plugin@^0.4.6:
     uglify-js "^2.8.29"
     webpack-sources "^1.0.1"
 
-unchanged@^1.2.1:
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/unchanged/-/unchanged-1.3.1.tgz#413b3774c3200f2a673e48e99b38a20af493ce42"
+unchanged@^1.3.2:
+  version "1.3.2"
+  resolved "https://registry.yarnpkg.com/unchanged/-/unchanged-1.3.2.tgz#52b5463fb10dc97695aea95a2c40cd8bbff9c99d"
   dependencies:
     curriable "^1.0.0"
     pathington "^1.1.5"

@@ -1,8 +1,7 @@
+import crio from 'crio';
 import { handle } from 'redux-pack';
 
 import { PLAYERS_LIST , PLAYER_CREATE, WS_MESSAGE } from '../actions';
-
-const crio = window.crio.default;
 
 const PLAYER_CONNECTED = 'PLAYER_CONNECTED';
 const PLAYER_DISCONNECTED = 'PLAYER_DISCONNECTED';
