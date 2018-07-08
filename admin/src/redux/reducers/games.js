@@ -40,7 +40,7 @@ const websocket = (state, message) => {
   case GAME_STARTED:
   case GAME_NEXT_TURN:
   case ANSWER_SUBMITTED:
-    return state.merge(gameIdx, message.game);
+    return state.set(gameIdx, message.game);
 
   case ANSWER_SELECTED:
     return state.merge([gameIdx, 'turns'], message.turn);

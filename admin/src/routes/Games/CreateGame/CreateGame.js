@@ -19,7 +19,7 @@ class CreateGame extends React.Component {
 
   handleChangeLang(e) {
     this.setState({ lang: e.target.value });
-  }; 
+  };
 
   onSubmitGame(e) {
     const { owner, lang } = this.state
@@ -43,9 +43,9 @@ class CreateGame extends React.Component {
             onChange={(e) => this.handleChangeOwner(e)}
           >
 
-            {this.props.players.map((player) => {
+            { this.props.players.map((player) => {
               return !player.inGame && <SelectPlayer key={`player-${player.nick}`} player={player} />
-            })}
+            }) }
 
           </FormControl>
 
