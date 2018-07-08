@@ -1,5 +1,10 @@
-from .events import serialize, player_group, send, broadcast
+from .events import player_group, send, broadcast
 from .events_processor import EventProcessor
+from api.serializers import PlayerSerializer, \
+    ChoiceSerializer, \
+    FullGameSerializer, \
+    GameTurnSerializer, \
+    AnsweredQuestionSerializer
 
 class AdminEvents(EventProcessor):
 
@@ -25,20 +30,20 @@ class AdminEvents(EventProcessor):
         self.broadcast({
             "type": "PLAYER_AVATAR_CHANGED",
             "nick": player.nick,
-            "avatar": serialize("PlayerSerializer", player)["avatar"],
+            "avatar": PlayerSerializer(player).data["avatar"],
         })
 
     def on_cards_dealt(self, player, cards):
         self.broadcast({
             "type": "PLAYER_CARDS_DEALT",
             "nick": player.nick,
-            "cards": serialize("ChoiceSerializer", cards),
+            "cards": ChoiceSerializer(cards, many=True).data,
         })
 
     def on_game_created(self, game):
         self.broadcast({
             "type": "GAME_CREATED",
-            "game": serialize("FullGameSerializer", game),
+            "game": FullGameSerializer(game).data,
         })
 
     def on_game_joined(self, player):
@@ -58,13 +63,13 @@ class AdminEvents(EventProcessor):
     def on_game_started(self, game):
         self.broadcast({
             "type": "GAME_STARTED",
-            "game": serialize("FullGameSerializer", game),
+            "game": FullGameSerializer(game).data,
         })
 
     def on_next_turn(self, game):
         self.broadcast({
             "type": "GAME_NEXT_TURN",
-            "game": serialize("FullGameSerializer", game),
+            "game": FullGameSerializer(game).data,
         })
 
     def on_answer_submitted(self, game, player, answer):
@@ -72,7 +77,7 @@ class AdminEvents(EventProcessor):
             "type": "GAME_ANSWER_SUBMITTED",
             "nick": player.nick,
             "gameId": game.id,
-            "answer": serialize("AnsweredQuestionSerializer", answer),
+            "answer": AnsweredQuestionSerializer(answer).data,
         })
 
     def on_all_answers_submitted(self, game, all_answers):
@@ -85,5 +90,5 @@ class AdminEvents(EventProcessor):
         self.broadcast({
             "type": "GAME_ANSWER_SELECTED",
             "gameId": game.id,
-            "turn": serialize("GameTurnSerializer", turn),
+            "turn": GameTurnSerializer(turn).data,
         })

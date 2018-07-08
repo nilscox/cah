@@ -3,15 +3,6 @@ import json
 from channels import Channel, Group
 
 
-def serialize(serializer, *args, **kwargs):
-    from api import serializers
-
-    if not hasattr(serializers, serializer):
-        raise RuntimeError("Cannot find serializer " + serializer)
-
-    return getattr(serializers, serializer)(*args, **kwargs).data
-
-
 def player_group(player):
     return Group("game-" + str(player.game.id))
 

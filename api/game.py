@@ -78,7 +78,7 @@ def answer(game, choices, answered_by):
         choice.played = True
         choice.save()
 
-    on_event('answer_submitted', game, player, answered_question)
+    on_event('answer_submitted', game, answered_by, answered_question)
 
     if game.get_propositions().count() == game.players.count() - 1:
         all_answers_submitted(game)
