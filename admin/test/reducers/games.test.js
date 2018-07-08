@@ -57,4 +57,13 @@ describe('games reducers', () => {
     [{ id: 69, players: [{ nick: 'toto' }], state: 'started' }],
   ));
 
+  it('should process a WS_GAME_NEXT_TURN action', () => testWS(
+    {
+      type: 'GAME_NEXT_TURN',
+      game: { id: 69, players: [{ nick: 'toto' }], 'play_state': 'players_answer' },
+    },
+    [{ id: 69, players: [{ nick: 'toto' }], 'play_state': 'end_of_turn' }],
+    [{ id: 69, players: [{ nick: 'toto' }], 'play_state': 'players_answer' }],
+  ));
+
 });
