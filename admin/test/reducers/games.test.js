@@ -9,7 +9,12 @@ const testWS = (message, state, expected) => {
     message,
   };
 
-  return expect(reducer(crio(state), action)).to.deep.equal(crio(expected));
+  return expect(
+    reducer(crio(state), action).thaw()
+  )
+  .to.deep.equal(
+    crio(expected).thaw()
+  );
 }
 
 describe('games reducers', () => {
@@ -32,6 +37,15 @@ describe('games reducers', () => {
     },
     [{ id: 42, players: [{ nick: 'toto' }] }],
     [{ id: 42, players: [] }],
+  ));
+
+  it('should process a WS_GAME_CREATED action', () => testWS(
+    {
+      type: 'GAME_CREATED',
+      game: { id: 69, players: [] },
+    },
+    [{ id: 42, players: [] }],
+    [{ id: 42, players: [] }, { id: 69, players: [] }],
   ));
 
 });
