@@ -56,7 +56,7 @@
   "scripts": {
     "start": "export HOST=$CAH_ADMIN_IP && export PORT=$CAH_ADMIN_PORT && node scripts/start.js",
     "build": "node scripts/build.js",
-    "test": "node scripts/test.js --env=jsdom"
+    "test": "NODE_ENV=test webpack --config config/webpack.config.test.js && mocha test/bundle.test.js"
   },
   "jest": {
     "collectCoverageFrom": [
@@ -99,5 +99,9 @@
   },
   "eslintConfig": {
     "extends": "react-app"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "mocha": "^5.2.0"
   }
 }
