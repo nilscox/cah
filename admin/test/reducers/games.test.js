@@ -24,4 +24,14 @@ describe('games reducers', () => {
     [{ id: 42, players: [{ nick: 'toto' }] }],
   ));
 
+  it('should process a WS_GAME_PLAYER_LEFT action', () => testWS(
+    {
+      type: 'GAME_PLAYER_LEFT',
+      gameId: 42,
+      nick: 'toto',
+    },
+    [{ id: 42, players: [{ nick: 'toto' }] }],
+    [{ id: 42, players: [] }],
+  ));
+
 });
