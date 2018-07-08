@@ -20,7 +20,15 @@ const GAME_NEXT_TURN = 'GAME_NEXT_TURN';
 const findGameIdx = (games, gameId) => games.findIndex(game => game.id == gameId);
 
 const websocket = (state, message) => {
-  const gameIdx = message.gameId && findGameIdx(state, message.gameId);
+  const gameIdx = (() => {
+    if (message.gameId)
+      return findGameIdx(state, message.gameId);
+
+    if (message.game && message.game.id)
+      return findGameIdx(state, message.game.id);
+
+    return -1;
+  })();
 
   switch (message.type) {
   case GAME_PLAYER_JOINED:

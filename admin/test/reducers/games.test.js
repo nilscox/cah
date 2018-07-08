@@ -48,4 +48,13 @@ describe('games reducers', () => {
     [{ id: 42, players: [] }, { id: 69, players: [] }],
   ));
 
+  it('should process a WS_GAME_STARTED action', () => testWS(
+    {
+      type: 'GAME_STARTED',
+      game: { id: 69, players: [{ nick: 'toto' }], state: 'started' },
+    },
+    [{ id: 69, players: [], state: 'idle' }],
+    [{ id: 69, players: [{ nick: 'toto' }], state: 'started' }],
+  ));
+
 });
