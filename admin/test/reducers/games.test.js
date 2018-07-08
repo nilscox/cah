@@ -66,4 +66,14 @@ describe('games reducers', () => {
     [{ id: 69, players: [{ nick: 'toto' }], 'play_state': 'players_answer' }],
   ));
 
+  it('should process a WS_GAME_ANSWER_SUBMITTED action', () => testWS(
+    {
+      type: 'GAME_ANSWER_SUBMITTED',
+      gameId: 69,
+      answer: { id: 99 },
+    },
+    [{ id: 69, players: [{ nick: 'toto' }], propositions: [{ id: 101 }] }],
+    [{ id: 69, players: [{ nick: 'toto' }], propositions: [{ id: 101 }, { id: 99 }] }],
+  ));
+
 });
