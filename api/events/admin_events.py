@@ -12,13 +12,27 @@ class AdminEvents(EventProcessor):
     def on_player_connected(self, player):
         self.broadcast({
             "type": "PLAYER_CONNECTED",
-            "player": serialize("FullPlayerSerializer", player),
+            "nick": player.nick,
         })
 
     def on_player_disconnected(self, player):
         self.broadcast({
             "type": "PLAYER_DISCONNECTED",
-            "player": serialize("FullPlayerSerializer", player),
+            "nick": player.nick,
+        })
+
+    def on_player_avatar_changed(self, player):
+        self.broadcast({
+            "type": "PLAYER_AVATAR_CHANGED",
+            "nick": player.nick,
+            "avatar": player.avatar,
+        })
+
+    def on_cards_dealt(self, player, cards):
+        self.broadcast({
+            "type": "PLAYER_CARDS_DEALT",
+            "nick": player.nick,
+            "cards": serialize("ChoiceSerializer", cards),
         })
 
     def on_game_created(self, game):
@@ -27,22 +41,18 @@ class AdminEvents(EventProcessor):
             "game": serialize("FullGameSerializer", game),
         })
 
-    def on_player_avatar_changed(self, player):
-        self.broadcast({
-            "type": "PLAYER_AVATAR_CHANGED",
-            "player": serialize("FullPlayerSerializer", player),
-        })
-
     def on_game_joined(self, player):
         self.broadcast({
-            "type": "PLAYER_JOINED",
-            "player": serialize("FullPlayerSerializer", player),
+            "type": "GAME_PLAYER_JOINED",
+            "nick": player.nick,
+            "gameId": player.game.id,
         })
 
     def on_game_left(self, player):
         self.broadcast(player.game, {
-            "type": "PLAYER_LEFT",
-            "player": serialize("FullPlayerSerializer", player),
+            "type": "GAME_PLAYER_LEFT",
+            "nick": player.nick,
+            "gameId": player.game.id,
         })
 
     def on_game_started(self, game):
@@ -57,26 +67,23 @@ class AdminEvents(EventProcessor):
             "game": serialize("FullGameSerializer", game),
         })
 
-    def on_cards_dealt(self, player, cards):
+    def on_answer_submitted(self, game, player, answer):
         self.broadcast({
-            "type": "CARDS_DEALT",
-            "player": serialize("FullPlayerSerializer", player),
-        })
-
-    def on_answer_submitted(self, game, player):
-        self.broadcast({
-            "type": "ANSWER_SUBMITTED",
-            "game": serialize("FullGameSerializer", game),
+            "type": "GAME_ANSWER_SUBMITTED",
+            "nick": player.nick,
+            "gameId": game.id,
+            "answer": serialize("AnsweredQuestionSerializer", answer),
         })
 
     def on_all_answers_submitted(self, game, all_answers):
         self.broadcast({
-            "type": "ALL_ANSWERS_SUBMITTED",
-            "game": serialize("FullGameSerializer", game)
+            "type": "GAME_ALL_ANSWERS_SUBMITTED",
+            "gameId": game.id,
         })
 
     def on_answer_selected(self, game, turn):
         self.broadcast({
-            "type": "ANSWER_SELECTED",
+            "type": "GAME_ANSWER_SELECTED",
+            "gameId": game.id,
             "turn": serialize("GameTurnSerializer", turn),
         })

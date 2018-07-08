@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 
 from api.exceptions import *
+from api.events import on_event
 from api.models import Game, Player
 from api.serializers import FullGameSerializer, \
     GameTurnSerializer, \
@@ -37,6 +38,8 @@ class GameViewSet(viewsets.ModelViewSet):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         game = serializer.save(owner=owner, players=[owner])
+
+        on_event('game_created', game)
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 

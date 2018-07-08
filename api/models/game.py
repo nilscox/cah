@@ -54,8 +54,8 @@ class Game(models.Model):
         on_event('game_joined', player)
 
     def remove_player(self, player):
-        self.players.remove(player)
         on_event('game_left', player)
+        self.players.remove(player)
 
     def pick_question(self):
         available_questions = self.questions.filter(available=True)
