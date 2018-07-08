@@ -4,7 +4,7 @@ Be sure you read the player websocket docs. This is the documentation for the ad
 
 ## Player connection
 
-*`PLAYER_CONNECTED`*
+**`PLAYER_CONNECTED`**
 
 ```
 {
@@ -15,7 +15,7 @@ Be sure you read the player websocket docs. This is the documentation for the ad
 
 ---
 
-*`PLAYER_DISCONNECTED`*
+**`PLAYER_DISCONNECTED`**
 
 ```
 {
