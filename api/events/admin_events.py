@@ -25,7 +25,7 @@ class AdminEvents(EventProcessor):
         self.broadcast({
             "type": "PLAYER_AVATAR_CHANGED",
             "nick": player.nick,
-            "avatar": player.avatar,
+            "avatar": serialize("PlayerSerializer", player)["avatar"],
         })
 
     def on_cards_dealt(self, player, cards):

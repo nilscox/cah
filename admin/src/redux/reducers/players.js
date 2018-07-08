@@ -8,21 +8,20 @@ const PLAYER_DISCONNECTED = 'PLAYER_DISCONNECTED';
 const PLAYER_AVATAR_CHANGED = 'PLAYER_AVATAR_CHANGED';
 const CARDS_DEALT = 'CARDS_DEALT';
 
-const findPlayerIdx = (players, message) => {
-  if (message.player && message.player.nick)
-    return players.findIndex(player => player.nick === message.player.nick);
-  else
-    return null;
-};
+const findPlayerIdx = (players, nick) => players.findIndex(player => player.nick === nick);
 
 const websocket = (state, message) => {
-  const playerIdx = findPlayerIdx(state, message);
+  const playerIdx = findPlayerIdx(state, message.nick);
 
   switch (message.type) {
   case PLAYER_CONNECTED:
+    return state.set([playerIdx, 'connected'], true);
+
   case PLAYER_DISCONNECTED:
+    return state.set([playerIdx, 'connected'], false);
+
   case PLAYER_AVATAR_CHANGED:
-    return state.merge(playerIdx, message.player);
+    return state.set([playerIdx, 'avatar'], message.avatar);
 
   case CARDS_DEALT:
     return state.merge([playerIdx, 'cards'], message.cards);
