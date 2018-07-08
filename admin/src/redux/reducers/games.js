@@ -4,7 +4,6 @@ import { handle } from 'redux-pack';
 import {
   GAMES_LIST,
   GAME_FETCH_HISTORY,
-  GAME_CREATE,
   WS_MESSAGE,
 } from '../actions';
 
@@ -41,7 +40,7 @@ const websocket = (state, message) => {
     return state.set([gameIdx, 'players'], players.filter(p => p.nick !== message.nick));
 
   case GAME_CREATED:
-    return state.push(message.game);
+    return state.push(crio({ ...message.game, turns: [] }));
 
   case GAME_STARTED:
   case GAME_NEXT_TURN:
@@ -73,9 +72,6 @@ export default (state = crio([]), action) => {
     [GAME_FETCH_HISTORY]: {
       start   : (games) => games,
       success : (games) => games.merge([findGameIdx(state, meta.gameId), 'turns'], crio(payload)),
-    },
-    [GAME_CREATE]: {
-      success : () => state.push(crio(payload)),
     },
   };
 

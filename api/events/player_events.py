@@ -32,8 +32,11 @@ class PlayerEvents(EventProcessor):
                 "nick": player.nick,
             })
 
-    def on_game_created(self, owner):
-        player_group(owner).add(owner.socket_id)
+    def on_game_created(self, game):
+        owner = game.owner
+
+        if owner.socket_id:
+            player_group(owner).add(owner.socket_id)
 
     def on_player_avatar_changed(self, player):
         if player.in_game():

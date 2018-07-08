@@ -9,9 +9,19 @@ const SelectPlayer = ({ player }) => (
 
 class CreateGame extends React.Component {
   state = {
+    players: [],
     owner: '',
     lang: 'fr',
   };
+
+  static getDerivedStateFromProps(props) {
+    const players = props.players.filter(player => !player.inGame);
+
+    if (players.length > 0)
+      return { players, owner: players[0].nick };
+
+    return null;
+  }
 
   handleChangeOwner(e) {
     this.setState({ owner: e.target.value });
@@ -43,9 +53,13 @@ class CreateGame extends React.Component {
             onChange={(e) => this.handleChangeOwner(e)}
           >
 
-            { this.props.players.map((player) => {
-              return !player.inGame && <SelectPlayer key={`player-${player.nick}`} player={player} />
-            }) }
+            { this.state.players.map((player) => (
+              <SelectPlayer
+                key={`player-${player.nick}`}
+                player={player}
+                selected={this.state.owner === player.nick}
+              />
+            )) }
 
           </FormControl>
 
