@@ -3,87 +3,21 @@
 Websocket endpoint listens on the same port as the API.
 All websocket events contain a `type` key, along with some information about the event that happened.
 
+There are 2 types of websocket events:
+
+- player events (the ones sent to the players, with partial informations)
+- admin events (the ones sent to the admins, with full informations)
+
+The same events type are sent to players and admin, but with a different payload. This is the documentation for the player events. Admin websocket events are documented [here](./websocket-admin.md).
+
 ## Player connection
 
+*`PLAYER_CONNECTED`*
+
 ```
-event: {
+{
   type: "PLAYER_CONNECTED",
-  player: PlayerLight,
 }
 ```
 
-```
-event: {
-  type: "PLAYER_DISCONNECTED",
-  nick: string,
-}
-```
-
-## Player actions
-
-```
-event: {
-  type: "PLAYER_AVATAR_CHANGED",
-  player: PlayerLight,
-}
-```
-
-## Game joining
-
-```
-event: {
-    type: "PLAYER_JOINED",
-    player: PlayerLight,
-}
-```
-
-```
-event: {
-    type: "PLAYER_LEFT",
-    player: PlayerLight,
-}
-```
-
-## Game actions
-
-```
-event: {
-    type: "GAME_STARTED",
-    game: Game,
-}
-```
-
-```
-event: {
-    type: "GAME_NEXT_TURN",
-    game: Game,
-}
-```
-
-```
-event: {
-    type: "CARDS_DEALT",
-    cards: Choice[],
-}
-```
-
-```
-event: {
-    type: "ANSWER_SUBMITTED",
-    nick: string,
-}
-```
-
-```
-event: {
-    type: "ALL_ANSWERS_SUBMITTED",
-    answers: PartialAnsweredQuestion[],
-}
-```
-
-```
-event: {
-    type: "ANSWER_SELECTED",
-    turn: GameTurn,
-}
-```
+---
