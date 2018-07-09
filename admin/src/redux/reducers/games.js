@@ -40,7 +40,7 @@ const websocket = (state, message) => {
     return state.set([gameIdx, 'players'], players.filter(p => p.nick !== message.nick));
 
   case GAME_CREATED:
-    return state.push(crio({ ...message.game, turns: [] }));
+    return state.push(crio(message.game).set('turns', []));
 
   case GAME_STARTED:
   case GAME_NEXT_TURN:
@@ -65,9 +65,9 @@ export default (state = crio([]), action) => {
 
   const handlers = {
     [GAMES_LIST]: {
-      start   : () => [],
+      start   : () => crio([]),
       success : () => crio(payload),
-      failure : () => [],
+      failure : () => crio([]),
     },
     [GAME_FETCH_HISTORY]: {
       start   : (games) => games,
