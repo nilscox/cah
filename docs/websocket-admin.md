@@ -9,7 +9,7 @@ Be sure you read the player websocket docs. This is the documentation for the ad
 ```
 {
   type: "PLAYER_CONNECTED",
-  nick: string,
+  player: FullPlayer,
 }
 ```
 
@@ -20,7 +20,7 @@ Be sure you read the player websocket docs. This is the documentation for the ad
 ```
 {
   type: "PLAYER_DISCONNECTED",
-  nick: string,
+  player: fullPlayer,
 }
 ```
 
@@ -31,8 +31,7 @@ Be sure you read the player websocket docs. This is the documentation for the ad
 ```
 {
   type: "PLAYER_AVATAR_CHANGED",
-  nick: string,
-  avatar: string,
+  player: FullPlayer,
 }
 ```
 
@@ -43,8 +42,7 @@ Be sure you read the player websocket docs. This is the documentation for the ad
 ```
 {
   type: "PLAYER_CARDS_DEALT",
-  nick: string,
-  cards: Choice[],
+  player: FullPlayer,
 }
 ```
 
@@ -66,8 +64,8 @@ Be sure you read the player websocket docs. This is the documentation for the ad
 ```
 {
   type: "GAME_PLAYER_JOINED",
+  game: FullGame,
   nick: string,
-  gameId: number,
 }
 ```
 
@@ -78,8 +76,8 @@ Be sure you read the player websocket docs. This is the documentation for the ad
 ```
 {
   type: "GAME_PLAYER_LEFT",
+  game: FullGame,
   nick: string,
-  gameId: number,
 }
 ```
 
@@ -112,9 +110,8 @@ Be sure you read the player websocket docs. This is the documentation for the ad
 ```
 {
   type: "GAME_ANSWER_SUBMITTED",
+  game: FullGame,
   nick: string,
-  gameId: number,
-  answer: AnsweredQuestion[],
 }
 ```
 
@@ -124,8 +121,8 @@ Be sure you read the player websocket docs. This is the documentation for the ad
 
 ```
 {
-  type: "GAME_ANSWER_SUBMITTED",
-  gameId: number,
+  type: "GAME_ALL_ANSWERS_SUBMITTED",
+  game: FullGame,
 }
 ```
 
@@ -136,7 +133,7 @@ Be sure you read the player websocket docs. This is the documentation for the ad
 ```
 {
   type: "GAME_ANSWER_SELECTED",
-  gameId: number,
+  game: FullGame,
   turn: GameTurn,
 }
 ```
