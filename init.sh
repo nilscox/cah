@@ -17,6 +17,7 @@ export CAH_DB_HOST
 export CAH_DB_PORT
 
 export CAH_DB_ROOT_USER
+export CAH_DB_ROOT_PASSWORD
 
 export CAH_DATA_PATH
 export CAH_MEDIA_PATH
