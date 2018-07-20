@@ -20,6 +20,7 @@ module.exports = {
     database: config.DB_NAME,
     host: config.DB_HOST,
     dialect: 'postgres',
+    operatorsAliases: false,
   },
   'test': {},
   'production': {},
