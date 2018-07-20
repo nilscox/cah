@@ -33,16 +33,18 @@ class AdminEvents(EventProcessor):
             "player": serialize("FullPlayerSerializer", player),
         })
 
-    def on_game_joined(self, player):
+    def on_game_joined(self, game, player):
         self.broadcast({
-            "type": "PLAYER_JOINED",
-            "player": serialize("FullPlayerSerializer", player),
+            "type": "GAME_PLAYER_JOINED",
+            "game": FullGameSerializer(game).data,
+            "nick": player.nick,
         })
 
-    def on_game_left(self, player):
+    def on_game_left(self, game, player):
         self.broadcast(player.game, {
-            "type": "PLAYER_LEFT",
-            "player": serialize("FullPlayerSerializer", player),
+            "type": "GAME_PLAYER_LEFT",
+            "game": FullGameSerializer(game).data,
+            "nick": player.nick,
         })
 
     def on_game_started(self, game):
@@ -65,18 +67,21 @@ class AdminEvents(EventProcessor):
 
     def on_answer_submitted(self, game, player):
         self.broadcast({
-            "type": "ANSWER_SUBMITTED",
-            "player": serialize("FullPlayerSerializer", player),
+            "type": "GAME_ANSWER_SUBMITTED",
+            "game": FullGameSerializer(game.id),
+            "answer": AnsweredQuestionSerializer(answer).data,
+            "nick": player.nick,
         })
 
     def on_all_answers_submitted(self, game, all_answers):
         self.broadcast({
-            "type": "ALL_ANSWERS_SUBMITTED",
-            "game": serialize("FullGameSerializer", game)
+            "type": "GAME_ALL_ANSWERS_SUBMITTED",
+            "game": FullGameSerializer(game.id),
         })
 
     def on_answer_selected(self, game, turn):
         self.broadcast({
-            "type": "ANSWER_SELECTED",
-            "turn": serialize("GameTurnSerializer", turn),
+            "type": "GAME_ANSWER_SELECTED",
+            "game": FullGameSerializer(game.id),
+            "turn": GameTurnSerializer(turn).data,
         })
