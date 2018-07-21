@@ -1,5 +1,10 @@
-from .events import serialize, player_group, send, broadcast
+from .events import player_group, send, broadcast
 from .events_processor import EventProcessor
+from api.serializers import PlayerLightSerializer, \
+    ChoiceSerializer, \
+    GameSerializer, \
+    GameTurnSerializer, \
+    PartialAnsweredQuestionSerializer
 
 class PlayerEvents(EventProcessor):
 
@@ -15,7 +20,7 @@ class PlayerEvents(EventProcessor):
 
             self.broadcast(player.game, {
                 "type": "PLAYER_CONNECTED",
-                "player": serialize("PlayerLightSerializer", player),
+                "player": PlayerLightSerializer(player).data,
             })
 
     def on_player_disconnected(self, player):
@@ -27,14 +32,17 @@ class PlayerEvents(EventProcessor):
                 "nick": player.nick,
             })
 
-    def on_game_created(self, owner):
-        player_group(owner).add(owner.socket_id)
+    def on_game_created(self, game):
+        owner = game.owner
+
+        if owner.socket_id:
+            player_group(owner).add(owner.socket_id)
 
     def on_player_avatar_changed(self, player):
         if player.in_game():
             self.broadcast(player.game, {
                 "type": "PLAYER_AVATAR_CHANGED",
-                "player": serialize("PlayerLightSerializer", player),
+                "player": PlayerLightSerializer(player).data,
             })
 
     def on_game_joined(self, player):
@@ -43,7 +51,7 @@ class PlayerEvents(EventProcessor):
 
         self.broadcast(player.game, {
             "type": "PLAYER_JOINED",
-            "player": serialize("PlayerLightSerializer", player),
+            "player": PlayerLightSerializer(player).data,
         })
 
     def on_game_left(self, player):
@@ -52,28 +60,28 @@ class PlayerEvents(EventProcessor):
 
         self.broadcast(player.game, {
             "type": "PLAYER_LEFT",
-            "player": serialize("PlayerLightSerializer", player),
+            "player": PlayerLightSerializer(player).data,
         })
 
     def on_game_started(self, game):
         self.broadcast(game, {
             "type": "GAME_STARTED",
-            "game": serialize("GameSerializer", game),
+            "game": GameSerializer(game).data,
         })
 
     def on_next_turn(self, game):
         self.broadcast(game, {
             "type": "GAME_NEXT_TURN",
-            "game": serialize("GameSerializer", game),
+            "game": GameSerializer(game).data,
         })
 
     def on_cards_dealt(self, player, cards):
         self.send(player, {
             "type": "CARDS_DEALT",
-            "cards": serialize("ChoiceSerializer", cards, many=True),
+            "cards": ChoiceSerializer(cards, many=True).data,
         })
 
-    def on_answer_submitted(self, game, player):
+    def on_answer_submitted(self, game, player, answer):
         self.broadcast(game, {
             "type": "ANSWER_SUBMITTED",
             "nick": player.nick,
@@ -82,11 +90,11 @@ class PlayerEvents(EventProcessor):
     def on_all_answers_submitted(self, game, all_answers):
         self.broadcast(game, {
             "type": "ALL_ANSWERS_SUBMITTED",
-            "answers": serialize("PartialAnsweredQuestionSerializer", all_answers, many=True),
+            "answers": PartialAnsweredQuestionSerializer(all_answers, many=True).data,
         })
 
     def on_answer_selected(self, game, turn):
         self.broadcast(game, {
             "type": "ANSWER_SELECTED",
-            "turn": serialize("GameTurnSerializer", turn),
+            "turn": GameTurnSerializer(turn).data,
         })

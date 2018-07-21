@@ -104,4 +104,3 @@ class Player(models.Model):
 
         self.socket_id = None
         self.save()
-

@@ -31,9 +31,9 @@ const store = createStore(rootReducer,
 
 store.dispatch(initialization());
 
-const App = ({ initializing }) => {
-  if (initializing)
-    return 'Loading...';
+const App = ({ ready }) => {
+  if (!ready)
+    return <img className="loading" src={require('./loading.gif')} alt="loading" />;
 
   return (
     <BrowserRouter>
@@ -60,7 +60,7 @@ const App = ({ initializing }) => {
 };
 
 const ConnectedApp = connect((state) => ({
-  initializing: state.status.initializing,
+  ready: state.status.ready,
 }))(App);
 
 export default () => (

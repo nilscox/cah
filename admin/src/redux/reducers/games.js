@@ -1,13 +1,19 @@
+import crio from 'crio';
 import { handle } from 'redux-pack';
 
 import {
   GAMES_LIST,
   GAME_FETCH_HISTORY,
-  GAME_CREATE,
   WS_MESSAGE,
 } from '../actions';
 
-const findGame = (games, gameId) => games.find(game => game === gameId);
+const GAME_CREATED = 'GAME_CREATED';
+const GAME_STARTED = 'GAME_STARTED';
+const GAME_PLAYER_JOINED = 'GAME_PLAYER_JOINED';
+const GAME_PLAYER_LEFT = 'GAME_PLAYER_LEFT';
+const GAME_ANSWER_SUBMITTED = 'GAME_ANSWER_SUBMITTED';
+const GAME_ANSWER_SELECTED = 'GAME_ANSWER_SELECTED';
+const GAME_NEXT_TURN = 'GAME_NEXT_TURN';
 
 // eslint-disable-next-line eqeqeq
 const findGameIdx = (games, gameId) => games.findIndex(game => game.id == gameId);
@@ -25,7 +31,7 @@ const websocket = (state, message) => {
 
   switch (message.type) {
   case GAME_PLAYER_JOINED:
-    return state.merge([gameIdx, 'players'], [message.nick]);
+    return state.merge([gameIdx, 'players'], [message.player]);
 
   case GAME_PLAYER_LEFT:
     const game = state[gameIdx];
@@ -49,20 +55,19 @@ const websocket = (state, message) => {
 
 export default (state = crio([]), action) => {
   const { type, payload, meta } = action;
-  const findGame = (games, id) => games.findIndex(g => g.id === id);
+
+  if (type === WS_MESSAGE)
+    return websocket(state, action.message);
 
   const handlers = {
     [GAMES_LIST]: {
-      start   : () => [],
-      success : () => payload.map(game => ({ ...game, turns: [] })),
-      failure : () => [],
+      start   : () => crio([]),
+      success : () => crio(payload),
+      failure : () => crio([]),
     },
     [GAME_FETCH_HISTORY]: {
       start   : (games) => games,
-      success : (games) => games,
-    },
-    [GAME_CREATE]: {
-      success : () => [ ...state, { ...payload, turns: [] } ],
+      success : (games) => games.merge([findGameIdx(state, meta.gameId), 'turns'], crio(payload)),
     },
   };
 

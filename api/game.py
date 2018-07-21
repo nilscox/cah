@@ -31,7 +31,7 @@ def init(game):
     choices = map(lambda mc: Choice(game=game, text=mc.text, keep_capitalization=mc.keep_capitalization), mchoices)
     Choice.objects.bulk_create(choices)
 
-    on_event('game_created', game.owner)
+    on_event('game_created', game)
 
 
 def start(game):
@@ -78,7 +78,7 @@ def answer(game, choices, answered_by):
         choice.played = True
         choice.save()
 
-    on_event('answer_submitted', game, answered_by)
+    on_event('answer_submitted', game, answered_by, answered_question)
 
     if game.get_propositions().count() == game.players.count() - 1:
         all_answers_submitted(game)

@@ -1,5 +1,10 @@
-from .events import serialize, player_group, send, broadcast
+from .events import player_group, send, broadcast
 from .events_processor import EventProcessor
+from api.serializers import PlayerSerializer, \
+    ChoiceSerializer, \
+    FullGameSerializer, \
+    GameTurnSerializer, \
+    AnsweredQuestionSerializer
 
 class AdminEvents(EventProcessor):
 
@@ -12,25 +17,33 @@ class AdminEvents(EventProcessor):
     def on_player_connected(self, player):
         self.broadcast({
             "type": "PLAYER_CONNECTED",
-            "player": serialize("FullPlayerSerializer", player),
+            "nick": player.nick,
         })
 
     def on_player_disconnected(self, player):
         self.broadcast({
             "type": "PLAYER_DISCONNECTED",
-            "player": serialize("FullPlayerSerializer", player),
-        })
-
-    def on_game_created(self, game):
-        self.broadcast({
-            "type": "GAME_CREATED",
-            "game": serialize("FullGameSerializer", game),
+            "nick": player.nick,
         })
 
     def on_player_avatar_changed(self, player):
         self.broadcast({
             "type": "PLAYER_AVATAR_CHANGED",
-            "player": serialize("FullPlayerSerializer", player),
+            "nick": player.nick,
+            "avatar": PlayerSerializer(player).data["avatar"],
+        })
+
+    def on_cards_dealt(self, player, cards):
+        self.broadcast({
+            "type": "PLAYER_CARDS_DEALT",
+            "nick": player.nick,
+            "cards": ChoiceSerializer(cards, many=True).data,
+        })
+
+    def on_game_created(self, game):
+        self.broadcast({
+            "type": "GAME_CREATED",
+            "game": FullGameSerializer(game).data,
         })
 
     def on_game_joined(self, game, player):
@@ -50,22 +63,16 @@ class AdminEvents(EventProcessor):
     def on_game_started(self, game):
         self.broadcast({
             "type": "GAME_STARTED",
-            "game": serialize("FullGameSerializer", game),
+            "game": FullGameSerializer(game).data,
         })
 
     def on_next_turn(self, game):
         self.broadcast({
             "type": "GAME_NEXT_TURN",
-            "game": serialize("FulllGameSerializer", game),
+            "game": FullGameSerializer(game).data,
         })
 
-    def on_cards_dealt(self, player, cards):
-        self.send({
-            "type": "CARDS_DEALT",
-            "cards": serialize("FullChoiceSerializer", cards, many=True),
-        })
-
-    def on_answer_submitted(self, game, player):
+    def on_answer_submitted(self, game, player, answer):
         self.broadcast({
             "type": "GAME_ANSWER_SUBMITTED",
             "game": FullGameSerializer(game.id),

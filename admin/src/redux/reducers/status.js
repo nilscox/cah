@@ -1,16 +1,20 @@
+import crio from 'crio';
+
 import initialState from '../state';
 import {
   INITIALIZATION_STARTED,
   INITIALIZATION_FINISHED,
 } from '../actions'
 
-export default (state = initialState.status, action) => {
+export default (state = crio(initialState.status), action) => {
   switch (action.type) {
     case INITIALIZATION_STARTED:
-      return { ...state, initializing: true };
+      return state.set('initializing', true);
 
     case INITIALIZATION_FINISHED:
-      return { ...state, initializing: false };
+      return state
+        .set('initializing', false)
+        .set('ready', true);
 
     default:
       return state;
