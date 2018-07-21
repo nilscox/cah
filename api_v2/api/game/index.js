@@ -6,7 +6,7 @@ const router = require('./router');
 router.param('id', (req, res, next, id) => {
   Game.findOne({
     where: { id },
-    include: 'players',
+    include: ['players', 'owner']
   })
     .then(game => {
       if (!game)
@@ -19,6 +19,7 @@ router.param('id', (req, res, next, id) => {
 });
 
 require('./game-crud');
+require('./game-history');
 require('./game-players');
 
 module.exports = router;

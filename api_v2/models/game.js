@@ -5,14 +5,16 @@ module.exports = (sequelize, DataTypes) => {
     state: DataTypes.STRING,
   }, {
     tableName: 'game',
-    // defaultScope: {
-    //   include: 'players',
-    // },
   });
 
-  Game.associate = function({ Player }) {
+  Game.associate = function({ Player, GameTurn }) {
+    Game.belongsTo(Player, { as: 'owner', foreignKey: 'ownerId', targetKey: 'id' });
     Game.hasMany(Player, { as: 'players', foreignKey: 'gameId' });
-    Game.belongsTo(Player, { as: 'owner', foreignKey: 'ownerNick', targetKey: 'nick' })
+    Game.hasMany(GameTurn, { as: 'turns', foreignKey: 'gameId' });
+
+    Game.defaultScope = {
+      include: ['players', 'owner'],
+    };
   };
 
   return Game;

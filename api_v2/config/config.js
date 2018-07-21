@@ -1,3 +1,5 @@
+const sql = require('sql-formatter');
+
 const config = {
   DB_HOST: process.env.CAH_DB_HOST,
   DB_PORT: process.env.CAH_DB_PORT,
@@ -21,6 +23,7 @@ module.exports = {
     host: config.DB_HOST,
     dialect: 'postgres',
     operatorsAliases: false,
+    logging: str => console.log(sql.format(str)),
   },
   'test': {},
   'production': {},

@@ -12,6 +12,7 @@ const db = {};
 
 db.Player = sequelize['import'](path.join(__dirname, 'player.js'));
 db.Game = sequelize['import'](path.join(__dirname, 'game.js'));
+db.GameTurn = sequelize['import'](path.join(__dirname, 'game-turn.js'));
 
 Object.keys(db).forEach(modelName => {
   if (db[modelName].associate) {

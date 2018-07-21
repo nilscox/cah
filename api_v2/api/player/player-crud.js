@@ -1,4 +1,4 @@
-const { Player } = require('../../models');
+const { Player, Game } = require('../../models');
 const validatePlayer = require('../../validation/validatePlayer');
 const { ValidationError, NotFoundError } = require('../../errors');
 const router = require('./router');
@@ -12,7 +12,10 @@ const validatePlayerNickUnique = (nick) => {
 }
 
 router.param('nick', (req, res, next, nick) => {
-  Player.findOne({ where: { nick: nick } })
+  Player.findOne({
+    where: { nick: nick },
+    include: ['game'],
+  })
     .then(player => {
       if (!player)
         throw new NotFoundError('player');
@@ -24,7 +27,7 @@ router.param('nick', (req, res, next, nick) => {
 });
 
 router.get('/list', (req, res, next) => {
-  Player.findAll()
+  Player.findAll({ include: ['game'] })
     .then(players => res.json(players))
     .catch(next);
 });

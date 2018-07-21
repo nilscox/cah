@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   Player.associate = function({ Game }) {
-    Player.belongsTo(Game, { as: 'game', foreignKey: 'gameId' })
+    Player.belongsTo(Game, { as: 'game', foreignKey: 'gameId' });
   };
 
   return Player;
