@@ -1,15 +1,8 @@
 const { Player, Game } = require('../../models');
-const validatePlayer = require('../../validation/validatePlayer');
+const { PlayerValidator } = require('../../validators');
+const { PlayerFormatter } = require('../../formatters');
 const { ValidationError, NotFoundError } = require('../../errors');
 const router = require('./router');
-
-const validatePlayerNickUnique = (nick) => {
-  return Player.count({ where: { nick } })
-    .then(count => {
-      if (count > 0)
-        throw new ValidationError('nick', 'this nick is already taken');
-    });
-}
 
 router.param('nick', (req, res, next, nick) => {
   Player.findOne({
@@ -28,7 +21,7 @@ router.param('nick', (req, res, next, nick) => {
 
 router.get('/list', (req, res, next) => {
   Player.findAll({ include: ['game'] })
-    .then(players => res.json(players))
+    .then(players => res.format(PlayerFormatter, players, { many: true }))
     .catch(next);
 });
 
@@ -36,16 +29,15 @@ router.get('/', (req, res, next) => {
   if (!req.player)
     return next();
 
-  res.json(req.player);
+  res.format(PlayerFormatter, req.player);
 });
 
 router.get('/:nick', (req, res) => {
-  res.json(req.player);
+  res.format(PlayerFormatter, req.player);
 });
 
 router.post('/', (req, res, next) => {
-  validatePlayer(req.body)
-    .tap(player => validatePlayerNickUnique(player.nick))
+  PlayerValidator.validate(req.body, null)
     .then(player => Player.create(player))
     .tap(player => req.session.player = player.nick)
     .then(player => res.status(201).json(player))
@@ -56,8 +48,7 @@ router.put('/:nick', (req, res, next) => {
   if (req.body.nick)
     throw new ValidationError('you can\'t change your nick');
 
-  validatePlayer(req.body, { partial: true })
-    .tap(player => validatePlayerNickUnique(player.nick))
+  PlayerValidator.validate(req.body, { partial: true }, { nick: { unique: false } })
     .then(player => req.player.update(player))
     .then(player => res.json(player))
     .catch(next);

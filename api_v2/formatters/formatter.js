@@ -4,16 +4,18 @@ class Formatter {
     this.fields = fields;
   }
 
-  format(entity) {
-    const values = entity.get();
+  format(inst) {
+    const values = inst.get();
     const reducer = (data, field) => {
       const value = values[field];
 
       if (typeof value === 'undefined')
-        throw new Error(`Formatter: missing field ${field} in ${entity}`);
+        throw new Error(`Formatter: missing field ${field} in ${inst}`);
 
-      if (typeof this[field] === 'function')
-        data[field] = this[field](value);
+      const func = this[`format_${field}`]
+
+      if (typeof func === 'function')
+        data[field] = func(value);
       else
         data[field] = value;
 
