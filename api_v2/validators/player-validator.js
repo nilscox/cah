@@ -1,4 +1,5 @@
 const Validator = require('./validator');
+const { Player } = require('../models');
 const {
   ValidationError,
   MissingFieldError,
@@ -19,11 +20,17 @@ class PlayerValidator extends Validator {
     super(['nick', 'avatar']);
   }
 
-  validate_nick(nick, opts = {}) {
+  validate_nick(nick, opts) {
+    opts = opts || {};
+
     const unique = opts.unique || true;
+    const readOnly = opts.readOnly || false;
 
     if (!nick)
       throw new MissingFieldError('nick');
+
+    if (readOnly)
+      throw new ReadOnlyField('nick');
 
     if (typeof nick !== 'string')
       throw new InvalidFieldTypeError('nick', 'string');

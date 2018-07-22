@@ -11,7 +11,9 @@ class Validator {
     });
   }
 
-  validate(values, opts = {}) {
+  validate(values, opts) {
+    opts = opts || {};
+
     const partial = !!opts.partial;
 
     const errors = [];
@@ -21,9 +23,11 @@ class Validator {
     if (!values)
       values = {};
 
-    Object.keys(this.fields).map(field => {
+    this.fields.forEach(field => {
       if (!values[field] && partial)
         return;
+
+      console.log(field);
 
       promise = promise
         .then(() => this[`validate_${field}`](values[field], opts[field]))

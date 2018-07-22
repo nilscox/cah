@@ -45,10 +45,7 @@ router.post('/', (req, res, next) => {
 });
 
 router.put('/:nick', (req, res, next) => {
-  if (req.body.nick)
-    throw new ValidationError('you can\'t change your nick');
-
-  PlayerValidator.validate(req.body, { partial: true }, { nick: { unique: false } })
+  PlayerValidator.validate(req.body, { partial: true, nick: { readOnly: true } })
     .then(player => req.player.update(player))
     .then(player => res.json(player))
     .catch(next);
@@ -56,5 +53,6 @@ router.put('/:nick', (req, res, next) => {
 
 router.delete('/:nick', (req, res, next) => {
   req.player.destroy()
-    .then(() => res.status(204).end());
+    .then(() => res.status(204).end())
+    .catch(next);
 });
