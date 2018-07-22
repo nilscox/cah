@@ -26,10 +26,10 @@ returns: PlayerLight | Player
 
 ***
 
-Log out (the player is not actually deleted).
+Log out the currently logged in player.
 
 ```
-DELETE /api/player
+POST /api/player/login
 status: 204
 triggers: PLAYER_DISCONNECTED
 ```
