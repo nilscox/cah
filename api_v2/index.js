@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 
 const { Player } = require('./models');
-const api = require('./api');
+const routes = require('./routes');
 const { APIError } = require('./errors');
 
 const PORT = process.env.CAH_API_PORT || 4242;
@@ -46,7 +46,7 @@ app.use((req, res, next) => {
     .catch(next);
 });
 
-app.use('/api', api);
+app.use('/api', routes);
 
 app.use((err, req, res, next) => {
   if (!(err instanceof APIError))
