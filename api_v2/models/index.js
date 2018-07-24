@@ -6,21 +6,34 @@ const path = require('path');
 const Sequelize = require('sequelize');
 const config = require(__dirname + '/../config/config')[env];
 
-const sequelize = new Sequelize(config.database, config.username, config.password, config);
+const models = {
+  Player: 'player.js',
+  Game: 'game.js',
+  GameTurn: 'game-turn.js',
+}
 
-const db = {};
+const loadDB = (sequelize) => {
+  const db = Object.keys(models).reduce((db, name) => {
+    db[name] = sequelize['import'](path.join(__dirname, models[name]));
 
-db.Player = sequelize['import'](path.join(__dirname, 'player.js'));
-db.Game = sequelize['import'](path.join(__dirname, 'game.js'));
-db.GameTurn = sequelize['import'](path.join(__dirname, 'game-turn.js'));
+    return db;
+  }, {});
 
-Object.keys(db).forEach(modelName => {
-  if (db[modelName].associate) {
-    db[modelName].associate(db);
-  }
-});
+  Object.values(db).forEach(model => {
+    if (model.associate)
+      model.associate(db);
+  });
 
-db.sequelize = sequelize;
-db.Sequelize = Sequelize;
+  db.sequelize = sequelize;
+  db.Sequelize = Sequelize;
 
-module.exports = db;
+  return db;
+};
+
+module.exports = loadDB(
+  new Sequelize(config.database, config.username, config.password, config),
+);
+
+module.exports.withDatabase = dbName => loadDB(
+  new Sequelize(dbName, config.username, config.password, config),
+);
