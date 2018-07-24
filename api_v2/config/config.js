@@ -6,6 +6,8 @@ const config = {
   DB_USER: process.env.CAH_DB_USER,
   DB_PASSWORD: process.env.CAH_DB_PASSWORD,
   DB_NAME: process.env.CAH_DB_NAME,
+  DB_ROOT_USER: process.env.CAH_DB_ROOT_USER,
+  DB_ROOT_PASSWORD: process.env.CAH_DB_ROOT_PASSWORD,
 };
 
 ['DB_HOST', 'DB_PORT', 'DB_USER', 'DB_PASSWORD', 'DB_NAME'].forEach(v => {
@@ -23,8 +25,14 @@ module.exports = {
     host: config.DB_HOST,
     dialect: 'postgres',
     operatorsAliases: false,
-    logging: str => console.log(sql.format(str)),
   },
-  'test': {},
+  'test': {
+    username: config.DB_ROOT_USER,
+    password: config.DB_ROOT_PASSWORD,
+    database: config.DB_NAME_TEST,
+    host: config.DB_HOST,
+    dialect: 'postgres',
+    operatorsAliases: false,
+  },
   'production': {},
 };
