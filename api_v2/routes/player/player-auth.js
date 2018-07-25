@@ -1,8 +1,9 @@
-const { Player } = require('../../models');
 const { NotFoundError } = require('../../errors');
+const { PlayerFormatter } = require('../../formatters');
 const router = require('./router');
 
 router.post('/login', (req, res, next) => {
+  const { Player } = req.models;
   const { nick } = req.body;
 
   Player.findOne({ where: { nick } })
@@ -11,8 +12,9 @@ router.post('/login', (req, res, next) => {
         return next(new NotFoundError('player'));
 
       req.session.player = player.nick;
-      res.json(player);
-    });
+      res.format(PlayerFormatter, player);
+    })
+    .catch(next);
 });
 
 router.post('/logout', (req, res, next) => {

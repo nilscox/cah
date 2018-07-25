@@ -2,7 +2,8 @@ const { ValidationErrors, ValidationError } = require('../errors');
 
 class Validator {
 
-  constructor(fields) {
+  constructor(models, fields) {
+    this.models = models;
     this.fields = fields;
 
     this.fields.forEach(field => {

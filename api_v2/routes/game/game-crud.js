@@ -1,11 +1,11 @@
-const { Game } = require('../../models');
 const router = require('./router');
 const { NotFoundError } = require('../../errors');
-const { GameValidator } = require('../../validators');
 const { GameFormatter } = require('../../formatters');
 const { isPlayer } = require('../../auth');
 
 router.get('/', (req, res, next) => {
+  const { Game } = req.models;
+
   Game.findAll()
     .then(games => res.format(GameFormatter, games, { many: true }))
     .catch(next);
@@ -16,7 +16,10 @@ router.get('/:id', (req, res) => {
 });
 
 router.post('/', isPlayer, (req, res, next) => {
-  validateGame(req.body)
+  const { Game } = req.models;
+  const { GameValidator } = req.validators;
+
+  GameValidator.validate(req.body)
     .then(game => Game.create(game))
     .then(game => game.setOwner(req.player))
     .then(game => game.reload({ include: ['players', 'owner'] }))
@@ -25,7 +28,9 @@ router.post('/', isPlayer, (req, res, next) => {
 });
 
 router.put('/:id', (req, res, next) => {
-  validateGame(req.body, { partial: true })
+  const { GameValidator } = req.validators;
+
+  GameValidator.validate(req.body, { partial: true })
     .then(game => req.game.update(game))
     .then(game => res.format(GameFormatter, game))
     .catch(next);

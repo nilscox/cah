@@ -4,8 +4,9 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 
-const { Player } = require('./models');
+const models = require('./models');
 const routes = require('./routes');
+const validators = require('./validators');
 const { APIError } = require('./errors');
 
 const app = express();
@@ -28,10 +29,36 @@ app.use((req, res, next) => {
 });
 
 app.use((req, res, next) => {
+  if (process.env.NODE_ENV !== 'test') {
+    req.models = models;
+    return next();
+  }
+
+  const db = req.get('Test-DB');
+
+  if (!db)
+    throw new Error('Missing Test-DB header');
+
+  req.models = models.withDatabase(db);
+  next();
+});
+
+app.use((req, res, next) => {
+  req.validators = {};
+
+  Object.keys(validators).forEach(validator => {
+    const Validator = validators[validator];
+    req.validators[validator] = new Validator(req.models);
+  });
+
+  next();
+});
+
+app.use((req, res, next) => {
   if (!req.session.player)
     return next();
 
-  Player.find({ where: { nick: req.session.player }})
+  models.Player.find({ where: { nick: req.session.player }})
     .then(player => {
       if (!player) {
         delete req.session.player;

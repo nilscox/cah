@@ -1,4 +1,3 @@
-const { Game } = require('../../models');
 const router = require('./router');
 const { isPlayer } = require('../../auth');
 const { BadRequestError } = require('../../errors');

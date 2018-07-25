@@ -1,5 +1,4 @@
 const Validator = require('./validator');
-const { Player } = require('../models');
 const {
   ValidationError,
   MissingFieldError,
@@ -16,8 +15,8 @@ const RESERVED_NICKS = [
 
 class PlayerValidator extends Validator {
 
-  constructor() {
-    super(['nick', 'avatar']);
+  constructor(models) {
+    super(models, ['nick', 'avatar']);
   }
 
   validate_nick(nick, opts) {
@@ -47,7 +46,7 @@ class PlayerValidator extends Validator {
     if (!unique)
       return nick;
 
-    return Player.count({ where: { nick } })
+    return this.models.Player.count({ where: { nick } })
       .then(count => {
         if (count > 0)
           throw new ValidationError('nick', 'this nick is already taken');

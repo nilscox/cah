@@ -8,8 +8,8 @@ const {
 
 class GameValidator extends Validator {
 
-  constructor() {
-    super(['lang', 'state']);
+  constructor(models) {
+    super(models, ['lang', 'state']);
   }
 
   validate_lang(lang) {

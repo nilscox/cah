@@ -1,10 +1,11 @@
-const { Player, Game } = require('../../models');
 const { PlayerValidator } = require('../../validators');
 const { PlayerFormatter } = require('../../formatters');
 const { ValidationError, NotFoundError } = require('../../errors');
 const router = require('./router');
 
 router.param('nick', (req, res, next, nick) => {
+  const { Player } = req.models;
+
   Player.findOne({
     where: { nick: nick },
     include: ['game'],
@@ -20,6 +21,8 @@ router.param('nick', (req, res, next, nick) => {
 });
 
 router.get('/list', (req, res, next) => {
+  const { Player } = req.models;
+
   Player.findAll({ include: ['game'] })
     .then(players => res.format(PlayerFormatter, players, { many: true }))
     .catch(next);
@@ -37,6 +40,9 @@ router.get('/:nick', (req, res) => {
 });
 
 router.post('/', (req, res, next) => {
+  const { Player } = req.models;
+  const { PlayerValidator } = req.validators;
+
   PlayerValidator.validate(req.body, null)
     .then(player => Player.create(player))
     .tap(player => req.session.player = player.nick)
@@ -45,6 +51,8 @@ router.post('/', (req, res, next) => {
 });
 
 router.put('/:nick', (req, res, next) => {
+  const { PlayerValidator } = req.validators;
+
   PlayerValidator.validate(req.body, { partial: true, nick: { readOnly: true } })
     .then(player => req.player.update(player))
     .then(player => res.json(player))
