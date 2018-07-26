@@ -1,3 +1,4 @@
+const Promise = require('bluebird');
 
 const env = process.env.NODE_ENV || 'test';
 
@@ -12,94 +13,80 @@ const API_URL = process.env.REACT_APP_CAH_API_URL;
 const API_TOKEN = process.env.CAH_API_ADMIN_TOKEN;
 const DB_TEMPLATE_NAME = 'cah_test';
 
-const pgClient = async () => {
+const pgClient = () => {
   const pg = new Client({
     host: config.host,
     port: config.port,
-    user: config.username,
-    password: config.password,
+    user: config.rootUsername,
+    password: config.rootPassword,
     database: 'postgres',
   });
 
-  await pg.connect();
-
-  return pg;
+  return Promise.resolve(pg)
+    .tap(pg => pg.connect());
 }
 
-const setupDB = async () => {
-  const pg = await pgClient();
+const setup = () => {
+  let count = null;
 
-  const res = await pg.query(`SELECT COUNT(*) FROM pg_database where datname = '${DB_TEMPLATE_NAME}'`);
+  return pgClient()
+    .tap(pg => pg.query(`CREATE DATABASE ${DB_TEMPLATE_NAME}`))
+    .tap(pg => pg.query(`GRANT ALL ON DATABASE ${DB_TEMPLATE_NAME} TO ${config.username}`))
+    .tap(() => {
+      const sequelize = new Sequelize(DB_TEMPLATE_NAME, config.username, config.password, config);
 
-  if (res.rows[0].count > 0)
-    await pg.query(`DROP DATABASE ${DB_TEMPLATE_NAME}`);
+      return new Umzug({
+        storage: 'sequelize',
 
-  await pg.query(`CREATE DATABASE ${DB_TEMPLATE_NAME}`);
+        storageOptions: {
+          sequelize: sequelize
+        },
 
-  const sequelize = new Sequelize(DB_TEMPLATE_NAME, config.username, config.password, config);
-  const umzug = new Umzug({
-    storage: 'sequelize',
-
-    storageOptions: {
-      sequelize: sequelize
-    },
-
-    migrations: {
-      params: [
-        sequelize.getQueryInterface(),
-        Sequelize,
-      ],
-      path: path.resolve(__dirname, '..', 'migrations'),
-    },
-  });
-
-  await umzug.up();
-  await pg.end();
+        migrations: {
+          params: [
+            sequelize.getQueryInterface(),
+            Sequelize,
+          ],
+          path: path.resolve(__dirname, '..', 'migrations'),
+        },
+      })
+        .up()
+        .then(() => sequelize.close());
+    })
+    .tap(pg => pg.end());
 };
 
-const cleanupDB = async () => {
-  const pg = await pgClient();
-
-  await pg.query(`
-    SELECT pg_terminate_backend(pg_stat_activity.pid)
-    FROM pg_stat_activity
-    WHERE pg_stat_activity.datname = '${DB_TEMPLATE_NAME}' AND pid <> pg_backend_pid()
-  `);
-  await pg.query(`DROP DATABASE ${DB_TEMPLATE_NAME}`);
-  await pg.end();
+const cleanup = () => {
+  return pgClient()
+    .tap(pg => pg.query(`DROP DATABASE ${DB_TEMPLATE_NAME}`))
+    .tap(pg => pg.end());
 }
 
-const createTestDB = dbName => async () => {
-  const pg = await pgClient();
-
-  await pg.query(`CREATE DATABASE ${dbName} WITH TEMPLATE ${DB_TEMPLATE_NAME}`);
-  await pg.query(`GRANT ALL ON DATABASE ${dbName} TO ${DB_USER}`);
-  await pg.end();
+const setupTest = dbName => {
+  return pgClient()
+    .tap(pg => pg.query(`CREATE DATABASE ${dbName} WITH TEMPLATE ${DB_TEMPLATE_NAME}`))
+    .tap(pg => pg.query(`GRANT ALL ON DATABASE ${dbName} TO ${config.username}`))
+    .tap(pg => pg.end());
 };
 
-const dropTestDB = dbName => async () => {
-  const pg = await pgClient();
-
-  await pg.query(`DROP DATABASE ${dbName}`);
-  await pg.end();
+const cleanupTest = dbName => {
+  return pgClient()
+    .tap(pg => pg.query(`DROP DATABASE ${dbName}`))
+    .tap(pg => pg.end());
 };
 
-const trycatch = f => (...args) => {
-  try {
-    return f(...args);
-  } catch (e) {
-    console.error(e);
-  }
-}
+before(setup);
+after(cleanup);
 
-before(trycatch(setupDB));
-after(trycatch(cleanupDB));
+beforeEach(function() {
+  this.dbName = 'cah_test__' + Math.random().toString(16).slice(7);
 
-beforeEach(trycatch(function() {
-  this.dbName = 'cah_test_player__' + Math.random().toString(16).slice(7);
-  createTestDB(this.dbName);
-}));
+  process.env.CAH_DB_NAME = this.dbName;
+  this.app = require('../app');
 
-afterEach(trycatch(function() {
-  dropTestDB(this.dbName);
-}));
+  return setupTest(this.dbName);
+});
+
+afterEach(function() {
+  return cleanupTest(this.dbName);
+});

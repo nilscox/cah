@@ -30,10 +30,4 @@ const loadDB = (sequelize) => {
   return db;
 };
 
-module.exports = loadDB(
-  new Sequelize(config.database, config.username, config.password, config),
-);
-
-module.exports.withDatabase = dbName => loadDB(
-  new Sequelize(dbName, config.username, config.password, config),
-);
+module.exports = new Sequelize(process.env.CAH_TEST_DB, config.username, config.password, config),
