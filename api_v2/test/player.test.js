@@ -34,24 +34,6 @@ describe('player', () => {
 
     });
 
-    describe('create', () => {
-
-      it('should create a new player', function() {
-        return request(this.app)
-          .post('/api/player')
-          .send({ nick: 'nils' })
-          .expect(201)
-          .then(res => {
-            expect(res.body).to.exist;
-            expect(res.body).to.have.property('id');
-            expect(res.body).to.have.property('nick', 'nils');
-            expect(res.body).to.have.property('avatar', null);
-          });
-
-      });
-
-    });
-
   });
 
 });
