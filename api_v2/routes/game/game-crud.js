@@ -6,7 +6,9 @@ const { GameFormatter } = require('../../formatters');
 const { isPlayer } = require('../../auth');
 
 router.get('/', (req, res, next) => {
-  Game.findAll()
+  Game.findAll({
+    include: 'owner',
+  })
     .then(games => res.format(GameFormatter, games, { many: true }))
     .catch(next);
 });
