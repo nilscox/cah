@@ -9,7 +9,7 @@ env:
   global:
     - CAH_DB_USER="cah"
     - CAH_DB_PASSWORD=""
-    - CAH_DB_HOST="postgres"
+    - CAH_DB_HOST="localhost"
     - CAH_DB_PORT="5432"
     - CAH_DB_ROOT_USER="postgres"
     - CAH_DB_ROOT_PASSWORD=""
