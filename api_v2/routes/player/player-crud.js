@@ -40,14 +40,14 @@ router.post('/', (req, res, next) => {
   PlayerValidator.validate(req.body, null)
     .then(player => Player.create(player))
     .tap(player => req.session.player = player.nick)
-    .then(player => res.status(201).json(player))
+    .then(player => res.status(201).format(PlayerFormatter, player))
     .catch(next);
 });
 
 router.put('/:nick', (req, res, next) => {
   PlayerValidator.validate(req.body, { partial: true, nick: { readOnly: true } })
     .then(player => req.player.update(player))
-    .then(player => res.json(player))
+    .then(player => res.format(PlayerFormatter, player))
     .catch(next);
 });
 
