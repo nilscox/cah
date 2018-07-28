@@ -15,7 +15,13 @@ const createGame = async ({ Player, Game }, opts = {}) => {
   return game;
 };
 
+const loginPlayer = (app, player) => app
+  .post('/api/player/login')
+  .send({ nick: player.nick })
+  .expect(200);
+
 module.exports = {
   createPlayer,
   createGame,
+  loginPlayer,
 };

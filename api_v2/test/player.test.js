@@ -1,7 +1,7 @@
 const request = require('supertest');
 const expect = require('chai').expect;
 
-const { createPlayer } = require('./utils');
+const { createPlayer, loginPlayer } = require('./utils');
 
 describe('player', () => {
 
@@ -257,24 +257,26 @@ describe('player', () => {
 
   describe('auth', () => {
 
+    beforeEach(async function() {
+      this.player = await createPlayer(this.models);
+    });
+
     describe('login', () => {
 
-      it('should login an existing player', async function() {
-        const player = await createPlayer(this.models);
-
+      it('should login an existing player', function() {
         return this.app
           .post('/api/player/login')
-          .send({ nick: player.nick })
+          .send({ nick: this.player.nick })
           .expect(200)
           .then(res => {
-            expect(res.body).to.have.property('nick', player.nick);
+            expect(res.body).to.have.property('nick', this.player.nick);
           });
       });
 
       it('should not login a non-existing player', function() {
         return this.app
           .get('/api/player/login')
-          .send({ nick: 'nils' })
+          .send({ nick: 'tom' })
           .expect(404);
       });
 
@@ -282,37 +284,32 @@ describe('player', () => {
 
     describe('log out', () => {
 
-      it('should logout a logged in player', async function() {
-        const player = await createPlayer(this.models);
-
-        return this.app
-          .post('/api/player/login')
-          .send({ nick: player.nick })
-          .then(() => this.app
-            .post('/api/player/logout')
-            .expect(204)
-          );
+      beforeEach(async function() {
+        await loginPlayer(this.app, this.player);
       });
 
-      it('should not retrieve a player after he logged out', async function() {
-        const player = await createPlayer(this.models);
-
+      it('should logout a logged in player', function() {
         return this.app
-          .post('/api/player/login')
-          .send({ nick: player.nick })
+          .post('/api/player/logout')
+          .expect(204);
+      });
+
+      it('should logout logout nobody', function() {
+        return this.app
+          .post('/api/player/logout')
           .then(() => this.app
             .post('/api/player/logout')
-          )
-          .then(() => this.app
-            .get('/api/player')
             .expect(404)
           );
       });
 
-      it('should not logout a non-existing player', function() {
+      it('should not retrieve a player after he logged out', function() {
         return this.app
           .post('/api/player/logout')
-          .expect(404);
+          .then(() => this.app
+            .get('/api/player')
+            .expect(404)
+          );
       });
 
     });

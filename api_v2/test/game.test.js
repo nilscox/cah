@@ -1,7 +1,7 @@
 const request = require('supertest');
 const expect = require('chai').expect;
 
-const { createPlayer, createGame } = require('./utils');
+const { createPlayer, createGame, loginPlayer } = require('./utils');
 
 describe('game', () => {
 
@@ -59,15 +59,15 @@ describe('game', () => {
 
     describe('create', () => {
 
+      beforeEach(async function() {
+        await loginPlayer(this.app, this.player);
+      });
+
       it('should create a game', function() {
         return this.app
-          .post('/api/player/login')
-          .send({ nick: this.player.nick })
-          .then(() => this.app
-            .post('/api/game')
-            .send({ lang: 'fr' })
-            .expect(201)
-          )
+          .post('/api/game')
+          .send({ lang: 'fr' })
+          .expect(201)
           .then(res => {
             expect(res.body).to.have.property('id');
             expect(res.body).to.have.property('lang', 'fr');
@@ -77,46 +77,30 @@ describe('game', () => {
 
       it('should not create a game with a missing lang', function() {
         return this.app
-          .post('/api/player/login')
-          .send({ nick: this.player.nick })
-          .then(() => this.app
-            .post('/api/game')
-            .send({})
-            .expect(400)
-          );
+          .post('/api/game')
+          .send({})
+          .expect(400);
       });
 
       it('should not create a game with a language of type number', function() {
         return this.app
-          .post('/api/player/login')
-          .send({ nick: this.player.nick })
-          .then(() => this.app
-            .post('/api/game')
-            .send({ lang: 1234 })
-            .expect(400)
-          );
+          .post('/api/game')
+          .send({ lang: 1234 })
+          .expect(400);
       });
 
       it('should not create a game with an invalid language', function() {
         return this.app
-          .post('/api/player/login')
-          .send({ nick: this.player.nick })
-          .then(() => this.app
-            .post('/api/game')
-            .send({ lang: 'ok' })
-            .expect(400)
-          );
+          .post('/api/game')
+          .send({ lang: 'ok' })
+          .expect(400);
       });
 
       it('should not create a game with a state', function() {
         return this.app
-          .post('/api/player/login')
-          .send({ nick: this.player.nick })
-          .then(() => this.app
-            .post('/api/game')
-            .send({ lang: 'fr', state: 'started' })
-            .expect(400)
-          );
+          .post('/api/game')
+          .send({ lang: 'fr', state: 'started' })
+          .expect(400);
       });
 
     });
@@ -195,6 +179,31 @@ describe('game', () => {
     });
 
     it.skip('should fetch a game\'s history', function() {
+
+    });
+
+  });
+
+  describe('players', () => {
+
+    beforeEach(async function() {
+      this.player = await createPlayer(this.models);
+      this.game = await createGame(this.models, { owner: this.player });
+
+      await loginPlayer(this.app, this.player);
+    })
+
+    describe('join', () => {
+
+      it('a player should join a game', function() {
+        return this.app
+          .post('/api/game/' + this.game.id + '/join')
+          .expect(200)
+          .then(res => {
+            expect(res.body).to.have.property('players').of.length(1);
+            expect(res.body.players[0]).to.have.property('nick', this.player.nick);
+          });
+      });
 
     });
 
