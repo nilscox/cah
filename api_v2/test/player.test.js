@@ -104,13 +104,33 @@ describe('player', () => {
           });
       });
 
-      it('should not create a new player with an avatar', function() {
+      it('should not create a new player with nick null', function() {
         return this.app
           .post('/api/player')
-          .send({ nick: 'nils', avatar: 'avatar' })
+          .send({ nick: null })
           .expect(400)
           .then(res => {
-            expect(res.body).to.have.property('avatar');
+            expect(res.body).to.have.property('nick');
+          });
+      });
+
+      it('should not create a new player with nick of length < 3', function() {
+        return this.app
+          .post('/api/player')
+          .send({ nick: '<3' })
+          .expect(400)
+          .then(res => {
+            expect(res.body).to.have.property('nick');
+          });
+      });
+
+      it('should not create a new player with nick of length > 64', function() {
+        return this.app
+          .post('/api/player')
+          .send({ nick: '>64'.repeat(22) })
+          .expect(400)
+          .then(res => {
+            expect(res.body).to.have.property('nick');
           });
       });
 
@@ -125,6 +145,16 @@ describe('player', () => {
           .expect(400)
           .then(res => {
             expect(res.body).to.have.property('nick');
+          });
+      });
+
+      it('should not create a new player with an avatar', function() {
+        return this.app
+          .post('/api/player')
+          .send({ nick: 'nils', avatar: 'avatar' })
+          .expect(400)
+          .then(res => {
+            expect(res.body).to.have.property('avatar');
           });
       });
 
