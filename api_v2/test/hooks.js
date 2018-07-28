@@ -4,6 +4,7 @@ const path = require('path');
 const { Client } = require('pg');
 const Sequelize = require('sequelize');
 const Umzug = require('umzug');
+const session = require('supertest-session');
 
 const config = require('../config');
 
@@ -89,7 +90,7 @@ beforeEach(function() {
       delete require.cache[k];
   });
 
-  this.app = require('../app');
+  this.app = session(require('../app'));
   this.models = require('../models');
 
   return setupTest(this.dbName);

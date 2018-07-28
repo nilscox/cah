@@ -11,7 +11,8 @@
     "pg": "^7.4.3",
     "pg-hstore": "^2.3.2",
     "sequelize": "^4.38.0",
-    "sql-formatter": "^2.3.1"
+    "sql-formatter": "^2.3.1",
+    "supertest-session": "^3.3.0"
   },
   "devDependencies": {
     "chai": "^4.1.2",

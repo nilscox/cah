@@ -8,7 +8,7 @@ describe('player', () => {
     describe('list', () => {
 
       it('should list all players 0', function() {
-        return request(this.app)
+        return this.app
           .get('/api/player/list')
           .expect(200)
           .then(res => {
@@ -23,7 +23,7 @@ describe('player', () => {
         await new Player({ nick: 'nils' }).save();
         await new Player({ nick: 'tom' }).save();
 
-        return request(this.app)
+        return this.app
           .get('/api/player/list')
           .expect(200)
           .then(res => {
@@ -37,17 +37,62 @@ describe('player', () => {
     describe('create', () => {
 
       it('should create a new player', function() {
-        return request(this.app)
+        return this.app
           .post('/api/player')
           .send({ nick: 'nils' })
           .expect(201)
           .then(res => {
-            expect(res.body).to.exist;
-            expect(res.body).to.have.property('id');
-            expect(res.body).to.have.property('nick', 'nils');
-            expect(res.body).to.have.property('avatar', null);
+            expect(res.body).to.deep.eql({
+              nick: 'nils',
+              avatar: null,
+            });
           });
+      });
 
+    });
+
+    describe('fetch', () => {
+
+      it('should fetch nothing when no player is logged in', function() {
+        return this.app
+          .get('/api/player')
+          .expect(404);
+      });
+
+      it('should fetch a created player', function() {
+        return this.app
+          .post('/api/player')
+          .send({ nick: 'nils' })
+          .then(() => this.app
+            .get('/api/player')
+            .expect(200)
+          )
+          .then(res => {
+            expect(res.body).to.deep.eql({
+              nick: 'nils',
+              avatar: null,
+            });
+          });
+      });
+
+      it('should fetch a logged in player', async function() {
+        const { Player } = this.models;
+
+        await new Player({ nick: 'nils' }).save();
+
+        return this.app
+          .post('/api/player/login')
+          .send({ nick: 'nils' })
+          .then(() => this.app
+            .get('/api/player')
+            .expect(200)
+          )
+          .then(res => {
+            expect(res.body).to.deep.eql({
+              nick: 'nils',
+              avatar: null,
+            });
+          });
       });
 
     });
