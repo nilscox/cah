@@ -2,8 +2,22 @@ language: node_js
 node_js:
   - "8"
 
-before_install: cd api_v2
-install: npm install
+services:
+  - postgresql
 
-before_script: cd api_v2
+env:
+  - CAH_DB_NAME="cah"
+  - CAH_DB_USER="cah"
+  - CAH_DB_PASSWORD=""
+  - CAH_DB_HOST="postgres"
+  - CAH_DB_PORT="5432"
+  - CAH_DB_ROOT_USER="postgres"
+  - CAH_DB_ROOT_PASSWORD=""
+
+before_install: cd api_v2
+before_script:
+  - psql -U postgres -c 'CREATE ROLE cah'
+  - psql -U postgres -c 'GRANT ALL ON DATABASE cah TO cah'
+
+install: npm install
 script: npm test
