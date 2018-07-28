@@ -6,7 +6,7 @@ class GameFormatter extends Formatter {
     super(['id', 'lang', 'owner']);
   }
 
-  owner(player) {
+  format_owner(player) {
     if (!player)
       return undefined;
 
