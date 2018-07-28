@@ -10,6 +10,7 @@ router.post('/:id/join', isPlayer, (req, res, next) => {
 
       return req.game.addPlayer(req.player);
     })
+    .then(game => game.reload({ include: ['owner', 'players'] }))
     .then(game => res.json(game))
     .catch(next);
 });
