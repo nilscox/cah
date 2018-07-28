@@ -1,9 +1,10 @@
 const { NotFoundError } = require('../../errors');
+const { Game } = require('../../models');
 
 const router = require('./router');
 
 router.param('id', (req, res, next, id) => {
-  req.models.Game.findOne({
+  Game.findOne({
     where: { id },
     include: ['players', 'owner']
   })
