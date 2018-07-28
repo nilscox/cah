@@ -34,7 +34,29 @@ describe('player', () => {
 
     });
 
-    describe('fetch', () => {
+    describe('retrieve', () => {
+
+      it('should retrieve an existing player', async function() {
+        const { Player } = this.models;
+        const player = await new Player({ nick: 'nils' }).save();
+
+        return this.app
+          .get('/api/player/' + player.nick)
+          .expect(200)
+          .then(res => {
+            expect(res.body).to.have.property('nick', 'nils');
+          });
+      });
+
+      it('should not retrieve a non-existing player', function() {
+        return this.app
+          .get('/api/player/nils')
+          .expect(404);
+      });
+
+    });
+
+    describe('fetch me', () => {
 
       it('should fetch nothing when no player is logged in', function() {
         return this.app
@@ -232,6 +254,31 @@ describe('player', () => {
       });
 
     });
+
+  });
+
+  describe('auth', () => {
+
+    it('should login an existing player', async function() {
+      const { Player } = this.models;
+
+      await new Player({ nick: 'nils' }).save();
+
+      return this.app
+        .post('/api/player/login')
+        .send({ nick: 'nils' })
+        .expect(200)
+        .then(res => {
+          expect(res.body).to.have.property('nick', 'nils');
+        });
+    })
+
+    it('should not login a non-existing player', async function() {
+      return this.app
+        .get('/api/player/login')
+        .send({ nick: 'nils' })
+        .expect(404);
+    })
 
   });
 
