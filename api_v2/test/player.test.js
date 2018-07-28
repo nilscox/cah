@@ -304,8 +304,7 @@ describe('player', () => {
       it('should not logout a non-existing player', async function() {
         return this.app
           .post('/api/player/logout')
-          .expect(404)
-        );
+          .expect(404);
       });
 
     });
