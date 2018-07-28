@@ -134,6 +134,24 @@ describe('player', () => {
           });
       });
 
+      it('should not create a new player with a reserved nick', function() {
+        const RESERVED_NICKS = [
+          'list',
+          'login',
+          'logout',
+          'avatar',
+        ];
+
+        return Promise.all(RESERVED_NICKS.map(nick => this.app
+          .post('/api/player')
+          .send({ nick })
+          .expect(400)
+          .then(res => {
+            expect(res.body).to.have.property('nick');
+          })
+        ));
+      });
+
       it('should not create a new player with an already existing nick', async function() {
         const { Player } = this.models;
 
@@ -174,6 +192,19 @@ describe('player', () => {
               nick: 'nils',
               avatar: null,
             });
+          });
+      });
+
+      it('should update an existing player\'s nick', async function() {
+        const { Player } = this.models;
+        const player = await new Player({ nick: 'nils' }).save();
+
+        return this.app
+          .put('/api/player/' + player.nick)
+          .send({ nick: 'tom' })
+          .expect(400)
+          .then(res => {
+            expect(res.body).to.have.property('nick');
           });
       });
 
