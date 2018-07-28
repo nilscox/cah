@@ -1,13 +1,11 @@
 const Promise = require('bluebird');
 
-const env = process.env.NODE_ENV || 'test';
-
 const path = require('path');
 const { Client } = require('pg');
 const Sequelize = require('sequelize');
 const Umzug = require('umzug');
 
-const config = require('../config/config')[env];
+const config = require('../config');
 
 const API_URL = process.env.REACT_APP_CAH_API_URL;
 const API_TOKEN = process.env.CAH_API_ADMIN_TOKEN;
@@ -27,8 +25,6 @@ const pgClient = () => {
 }
 
 const setup = () => {
-  let count = null;
-
   return pgClient()
     .tap(pg => pg.query(`CREATE DATABASE ${DB_TEMPLATE_NAME}`))
     .tap(pg => pg.query(`GRANT ALL ON DATABASE ${DB_TEMPLATE_NAME} TO ${config.username}`))
@@ -71,6 +67,11 @@ const setupTest = dbName => {
 
 const cleanupTest = dbName => {
   return pgClient()
+    .tap(pg => pg.query(`
+      SELECT pg_terminate_backend(pg_stat_activity.pid)
+      FROM pg_stat_activity
+      WHERE pg_stat_activity.datname = '${dbName}' AND pid <> pg_backend_pid();
+    `))
     .tap(pg => pg.query(`DROP DATABASE ${dbName}`))
     .tap(pg => pg.end());
 };
@@ -82,7 +83,14 @@ beforeEach(function() {
   this.dbName = 'cah_test__' + Math.random().toString(16).slice(7);
 
   process.env.CAH_DB_NAME = this.dbName;
+
+  Object.keys(require.cache).forEach(k => {
+    if (!/node_modules/.exec(k))
+      delete require.cache[k];
+  });
+
   this.app = require('../app');
+  this.models = require('../models');
 
   return setupTest(this.dbName);
 });
