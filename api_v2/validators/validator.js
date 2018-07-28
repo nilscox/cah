@@ -27,8 +27,6 @@ class Validator {
       if (!values[field] && partial)
         return;
 
-      console.log(field);
-
       promise = promise
         .then(() => this[`validate_${field}`](values[field], opts[field]))
         .then(value => validated[field] = value)
