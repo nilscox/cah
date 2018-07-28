@@ -12,9 +12,16 @@ class GameValidator extends Validator {
     super(['lang', 'state']);
   }
 
-  validate_lang(lang) {
+  validate_lang(lang, opts) {
+    opts = opts || {};
+
+    const readOnly = opts.readOnly || false;
+
     if (!lang)
       throw new MissingFieldError('lang');
+
+    if (readOnly)
+      throw new ReadOnlyField('lang');
 
     if (typeof lang !== 'string')
       throw new InvalidFieldTypeError('lang', 'string');

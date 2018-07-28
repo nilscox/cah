@@ -27,7 +27,7 @@ router.post('/', isPlayer, (req, res, next) => {
 });
 
 router.put('/:id', (req, res, next) => {
-  GameValidator.validate(req.body, { partial: true })
+  GameValidator.validate(req.body, { partial: true, lang: { readOnly: true } })
     .then(game => req.game.update(game))
     .then(game => res.format(GameFormatter, game))
     .catch(next);
