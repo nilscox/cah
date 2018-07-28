@@ -37,6 +37,29 @@ describe('game', () => {
 
     });
 
+    describe('retrieve', () => {
+
+      it('should retrieve a game', async function() {
+        const { Game } = this.models;
+        const game = await new Game({ lang: 'fr' }).save();
+        await game.setOwner(this.player);
+
+        return this.app
+          .get('/api/game/' + game.id)
+          .expect(200)
+          .then(res => {
+            expect(res.body).to.have.property('id', game.id);
+          });
+      });
+
+      it('should not retrieve a non-existing game', async function() {
+        return this.app
+          .get('/api/game/6')
+          .expect(404);
+      });
+
+    });
+
     describe('create', () => {
 
       it('should create a game', function() {
