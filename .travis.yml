@@ -16,14 +16,14 @@ env:
     - CAH_DB_ROOT_PASSWORD=""
 
 before_install:
-  - npm install -g nyc codecov
+  - npm install -g yarn nyc codecov
   - cd api_v2
 
 before_script:
   - psql -U postgres -c 'CREATE ROLE cah LOGIN'
 
-install: npm install
+install: yarn
 script:
-  - nyc npm test
+  - yarn test:coverage
   - nyc report --reporter=text-lcov > coverage.lcov
   - codecov

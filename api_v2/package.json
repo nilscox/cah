@@ -27,6 +27,7 @@
     "db:migrate": "yarn sequelize db:migrate",
     "db:reset": "yarn db:drop && yarn db:create && yarn db:migrate",
     "start": "nodemon index.js",
-    "test": "NODE_ENV=test mocha --exit"
+    "test": "NODE_ENV=test mocha --exit",
+    "test:coverage": "nyc yarn test"
   }
 }
