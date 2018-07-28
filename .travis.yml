@@ -7,7 +7,6 @@ services:
 
 env:
   global:
-    - CAH_DB_NAME="cah"
     - CAH_DB_USER="cah"
     - CAH_DB_PASSWORD=""
     - CAH_DB_HOST="postgres"
@@ -18,7 +17,6 @@ env:
 before_install: cd api_v2
 before_script:
   - psql -U postgres -c 'CREATE ROLE cah'
-  - psql -U postgres -c 'GRANT ALL ON DATABASE cah TO cah'
 
 install: npm install
 script: npm test
