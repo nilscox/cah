@@ -185,4 +185,30 @@ describe('game', () => {
 
   });
 
+  describe('history', () => {
+
+    beforeEach(async function() {
+      const { Player, Game } = this.models;
+
+      this.player = await new Player({ nick: 'nils' }).save();
+      this.game = await new Game({ lang: 'fr' }).save();
+
+      await this.game.setOwner(this.player);
+    });
+
+    it('should fetch an empty game history', function() {
+      return this.app
+        .get('/api/game/' + this.game.id + '/history')
+        .expect(200)
+        .then(res => {
+          expect(res.body).to.be.an('array').of.length(0);
+        });
+    });
+
+    it.skip('should fetch a game\'s history', function() {
+
+    });
+
+  });
+
 });
