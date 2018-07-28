@@ -1,14 +1,14 @@
 const request = require('supertest');
 const expect = require('chai').expect;
 
+const { createPlayer, createGame } = require('./utils');
+
 describe('game', () => {
 
   describe('crud', () => {
 
     beforeEach(async function() {
-      const { Player } = this.models;
-
-      this.player = await new Player({ nick: 'nils' }).save();
+      this.player = await createPlayer(this.models);
     });
 
     describe('list', () => {
@@ -23,15 +23,14 @@ describe('game', () => {
       });
 
       it('should list all the games 1', async function() {
-        const { Game } = this.models;
-        const game = await new Game({ lang: 'fr' }).save();
-        await game.setOwner(this.player);
+        const game = await createGame(this.models, { owner: this.player });
 
         return this.app
           .get('/api/game')
           .expect(200)
           .then(res => {
             expect(res.body).to.be.an('array').of.length(1);
+            expect(res.body[0]).to.have.property('id', game.id);
           });
       });
 
@@ -40,9 +39,7 @@ describe('game', () => {
     describe('retrieve', () => {
 
       it('should retrieve a game', async function() {
-        const { Game } = this.models;
-        const game = await new Game({ lang: 'fr' }).save();
-        await game.setOwner(this.player);
+        const game = await createGame(this.models, { owner: this.player });
 
         return this.app
           .get('/api/game/' + game.id)
@@ -52,7 +49,7 @@ describe('game', () => {
           });
       });
 
-      it('should not retrieve a non-existing game', async function() {
+      it('should not retrieve a non-existing game', function() {
         return this.app
           .get('/api/game/6')
           .expect(404);
@@ -127,11 +124,8 @@ describe('game', () => {
     describe('update', () => {
 
       beforeEach(async function() {
-        const { Game } = this.models;
-
-        this.game = await new Game({ lang: 'fr' }).save();
+        this.game = await createGame(this.models, { owner: this.player });
         this.url = '/api/game/' + this.game.id;
-        await this.game.setOwner(this.player);
       });
 
       it('should update an existing game', function() {
@@ -165,13 +159,13 @@ describe('game', () => {
 
     describe('delete', () => {
 
-      it('should delete an existing game', async function() {
-        const { Game } = this.models;
-        const game = await new Game({ lang: 'fr' }).save();
-        await game.setOwner(this.player);
+      beforeEach(async function() {
+        this.game = await createGame(this.models, { owner: this.player });
+      });
 
+      it('should delete an existing game', function() {
         return this.app
-          .delete('/api/game/' + game.id)
+          .delete('/api/game/' + this.game.id)
           .expect(204);
       });
 
@@ -188,12 +182,7 @@ describe('game', () => {
   describe('history', () => {
 
     beforeEach(async function() {
-      const { Player, Game } = this.models;
-
-      this.player = await new Player({ nick: 'nils' }).save();
-      this.game = await new Game({ lang: 'fr' }).save();
-
-      await this.game.setOwner(this.player);
+      this.game = await createGame(this.models);
     });
 
     it('should fetch an empty game history', function() {
