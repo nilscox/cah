@@ -27,6 +27,17 @@ describe('game', () => {
         });
     });
 
+    it('should not create a game with a missing lang', function() {
+      return this.app
+        .post('/api/player/login')
+        .send({ nick: this.player.nick })
+        .then(() => this.app
+          .post('/api/game')
+          .send({})
+          .expect(400)
+        );
+    });
+
     it('should not create a game with a language of type number', function() {
       return this.app
         .post('/api/player/login')
