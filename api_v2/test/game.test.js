@@ -22,6 +22,19 @@ describe('game', () => {
           });
       });
 
+      it('should list all the games 1', async function() {
+        const { Game } = this.models;
+        const game = await new Game({ lang: 'fr' }).save();
+        await game.setOwner(this.player);
+
+        return this.app
+          .get('/api/game')
+          .expect(200)
+          .then(res => {
+            expect(res.body).to.be.an('array').of.length(1);
+          });
+      });
+
     });
 
     describe('create', () => {
