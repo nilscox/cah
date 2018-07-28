@@ -4,3 +4,4 @@
 data
 media
 .env
+.nyc_output/
