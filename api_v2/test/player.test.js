@@ -259,26 +259,55 @@ describe('player', () => {
 
   describe('auth', () => {
 
-    it('should login an existing player', async function() {
-      const { Player } = this.models;
+    describe('login', () => {
 
-      await new Player({ nick: 'nils' }).save();
+      it('should login an existing player', async function() {
+        const { Player } = this.models;
 
-      return this.app
-        .post('/api/player/login')
-        .send({ nick: 'nils' })
-        .expect(200)
-        .then(res => {
-          expect(res.body).to.have.property('nick', 'nils');
-        });
-    })
+        await new Player({ nick: 'nils' }).save();
 
-    it('should not login a non-existing player', async function() {
-      return this.app
-        .get('/api/player/login')
-        .send({ nick: 'nils' })
-        .expect(404);
-    })
+        return this.app
+          .post('/api/player/login')
+          .send({ nick: 'nils' })
+          .expect(200)
+          .then(res => {
+            expect(res.body).to.have.property('nick', 'nils');
+          });
+      });
+
+      it('should not login a non-existing player', async function() {
+        return this.app
+          .get('/api/player/login')
+          .send({ nick: 'nils' })
+          .expect(404);
+      });
+
+    });
+
+    describe('log out', () => {
+
+      it('should logout a logged in player', async function() {
+        const { Player } = this.models;
+
+        await new Player({ nick: 'nils' }).save();
+
+        return this.app
+          .post('/api/player/login')
+          .send({ nick: 'nils' })
+          .then(() => this.app
+            .post('/api/player/logout')
+            .expect(204)
+          );
+      });
+
+      it('should not logout a non-existing player', async function() {
+        return this.app
+          .post('/api/player/logout')
+          .expect(404)
+        );
+      });
+
+    });
 
   });
 
