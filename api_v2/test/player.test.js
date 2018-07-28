@@ -95,6 +95,39 @@ describe('player', () => {
           });
       });
 
+      it('should not create a new player without a nick', function() {
+        return this.app
+          .post('/api/player')
+          .expect(400)
+          .then(res => {
+            expect(res.body).to.have.property('nick');
+          });
+      });
+
+      it('should not create a new player with an avatar', function() {
+        return this.app
+          .post('/api/player')
+          .send({ nick: 'nils', avatar: 'avatar' })
+          .expect(400)
+          .then(res => {
+            expect(res.body).to.have.property('avatar');
+          });
+      });
+
+      it('should not create a new player with an already existing nick', async function() {
+        const { Player } = this.models;
+
+        await new Player({ nick: 'nils' }).save();
+
+        return this.app
+          .post('/api/player')
+          .send({ nick: 'nils' })
+          .expect(400)
+          .then(res => {
+            expect(res.body).to.have.property('nick');
+          });
+      });
+
     });
 
     describe('update', () => {
