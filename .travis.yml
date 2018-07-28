@@ -3,3 +3,4 @@ node_js:
   - "8"
 script: npm test
 before_script: cd api_v2
+before_script: npm install
