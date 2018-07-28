@@ -97,6 +97,38 @@ describe('player', () => {
 
     });
 
+    describe('update', () => {
+
+      it('should update an existing player', async function() {
+        const { Player } = this.models;
+        const player = await new Player({ nick: 'nils' }).save();
+
+        return this.app
+          .put('/api/player/' + player.nick)
+          .expect(200)
+          .then(res => {
+            expect(res.body).to.deep.eql({
+              nick: 'nils',
+              avatar: null,
+            });
+          });
+      });
+
+    });
+
+    describe('remove', () => {
+
+      it('should remove an existing player', async function() {
+        const { Player } = this.models;
+        const player = await new Player({ nick: 'nils' }).save();
+
+        return this.app
+          .delete('/api/player/' + player.nick)
+          .expect(204);
+      });
+
+    });
+
   });
 
 });
