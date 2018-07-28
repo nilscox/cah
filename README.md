@@ -1,5 +1,7 @@
 # Cards Against Humanity
 
+[![Build Status](https://travis-ci.org/nilscox/cah.svg?branch=api_v2)](https://travis-ci.org/nilscox/cah)
+
 Black cards, white cards, much fun.
 
 ## RTFM
