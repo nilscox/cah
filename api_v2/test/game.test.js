@@ -124,6 +124,65 @@ describe('game', () => {
 
     });
 
+    describe('update', () => {
+
+      beforeEach(async function() {
+        const { Game } = this.models;
+
+        this.game = await new Game({ lang: 'fr' }).save();
+        this.url = '/api/game/' + this.game.id;
+        await this.game.setOwner(this.player);
+      });
+
+      it('should update an existing game', function() {
+        return this.app
+          .put(this.url)
+          .send({})
+          .expect(200)
+          .then(res => {
+            expect(res.body).to.have.property('id', this.game.id);
+          });
+      });
+
+      it('should not update a non-existing game', function() {
+        return this.app
+          .put('/api/game/6')
+          .send({})
+          .expect(404);
+      });
+
+      it('should not update a game\'s language', function() {
+        return this.app
+          .put(this.url)
+          .send({ lang: 'en' })
+          .expect(400)
+          .then(res => {
+            expect(res.body).to.have.property('lang');
+          });
+      });
+
+    });
+
+    describe('delete', () => {
+
+      it('should delete an existing game', async function() {
+        const { Game } = this.models;
+        const game = await new Game({ lang: 'fr' }).save();
+        await game.setOwner(this.player);
+
+        return this.app
+          .delete('/api/game/' + game.id)
+          .expect(204);
+      });
+
+      it('should not delete a non-existing game', function() {
+        return this.app
+          .delete('/api/game/6')
+          .expect(404);
+      });
+
+    });
+
   });
 
 });
