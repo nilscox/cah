@@ -120,6 +120,7 @@ describe('player', () => {
       it('should not create a new player without a nick', function() {
         return this.app
           .post('/api/player')
+          .send({})
           .expect(400)
           .then(res => {
             expect(res.body).to.have.property('nick');
