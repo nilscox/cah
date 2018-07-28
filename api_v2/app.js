@@ -49,7 +49,8 @@ app.use((req, res, next) => {
 app.use('/api', routes);
 
 app.use((err, req, res, next) => {
-  console.log(err);
+  if (process.env.NODE_ENV === 'development')
+    console.log(err);
 
   if (!(err instanceof APIError))
     throw err;
