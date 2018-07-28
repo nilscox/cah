@@ -1,5 +1,9 @@
 language: node_js
 node_js:
   - "8"
+
+before_install: cd api_v2
+install: npm install
+
+before_script: cd api_v2
 script: npm test
-before_script: cd api_v2 && npm install
