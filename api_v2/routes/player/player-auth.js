@@ -1,9 +1,9 @@
 const { NotFoundError } = require('../../errors');
 const { PlayerFormatter } = require('../../formatters');
+const { Player } = require('../../models');
 const router = require('./router');
 
 router.post('/login', (req, res, next) => {
-  const { Player } = req.models;
   const { nick } = req.body;
 
   Player.findOne({ where: { nick } })
