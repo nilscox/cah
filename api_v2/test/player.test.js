@@ -34,23 +34,6 @@ describe('player', () => {
 
     });
 
-    describe('create', () => {
-
-      it('should create a new player', function() {
-        return this.app
-          .post('/api/player')
-          .send({ nick: 'nils' })
-          .expect(201)
-          .then(res => {
-            expect(res.body).to.deep.eql({
-              nick: 'nils',
-              avatar: null,
-            });
-          });
-      });
-
-    });
-
     describe('fetch', () => {
 
       it('should fetch nothing when no player is logged in', function() {
@@ -87,6 +70,23 @@ describe('player', () => {
             .get('/api/player')
             .expect(200)
           )
+          .then(res => {
+            expect(res.body).to.deep.eql({
+              nick: 'nils',
+              avatar: null,
+            });
+          });
+      });
+
+    });
+
+    describe('create', () => {
+
+      it('should create a new player', function() {
+        return this.app
+          .post('/api/player')
+          .send({ nick: 'nils' })
+          .expect(201)
           .then(res => {
             expect(res.body).to.deep.eql({
               nick: 'nils',
