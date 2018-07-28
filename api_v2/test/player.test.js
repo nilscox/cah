@@ -114,6 +114,16 @@ describe('player', () => {
           });
       });
 
+      it('should not create a new player with nick a number', function() {
+        return this.app
+          .post('/api/player')
+          .send({ nick: 1234 })
+          .expect(400)
+          .then(res => {
+            expect(res.body).to.have.property('nick');
+          });
+      });
+
       it('should not create a new player with nick of length < 3', function() {
         return this.app
           .post('/api/player')
@@ -195,7 +205,7 @@ describe('player', () => {
           });
       });
 
-      it('should update an existing player\'s nick', async function() {
+      it('should not update an existing player\'s nick', async function() {
         const { Player } = this.models;
         const player = await new Player({ nick: 'nils' }).save();
 
