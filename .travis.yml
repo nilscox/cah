@@ -16,7 +16,7 @@ env:
 
 before_install: cd api_v2
 before_script:
-  - psql -U postgres -c 'CREATE ROLE cah'
+  - psql -U postgres -c 'CREATE ROLE cah LOGIN'
 
 install: npm install
 script: npm test
