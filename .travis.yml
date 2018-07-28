@@ -6,13 +6,14 @@ services:
   - postgresql
 
 env:
-  - CAH_DB_NAME="cah"
-  - CAH_DB_USER="cah"
-  - CAH_DB_PASSWORD=""
-  - CAH_DB_HOST="postgres"
-  - CAH_DB_PORT="5432"
-  - CAH_DB_ROOT_USER="postgres"
-  - CAH_DB_ROOT_PASSWORD=""
+  global:
+    - CAH_DB_NAME="cah"
+    - CAH_DB_USER="cah"
+    - CAH_DB_PASSWORD=""
+    - CAH_DB_HOST="postgres"
+    - CAH_DB_PORT="5432"
+    - CAH_DB_ROOT_USER="postgres"
+    - CAH_DB_ROOT_PASSWORD=""
 
 before_install: cd api_v2
 before_script:
