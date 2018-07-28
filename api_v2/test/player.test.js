@@ -12,8 +12,7 @@ describe('player', () => {
           .get('/api/player/list')
           .expect(200)
           .then(res => {
-            expect(res.body).to.be.a('array');
-            expect(res.body).to.have.length(0);
+            expect(res.body).to.be.an('array').of.length(0);
           });
       });
 
