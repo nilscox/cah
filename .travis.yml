@@ -24,5 +24,6 @@ before_script:
 
 install: npm install
 script:
-  - npm run nyc mocha --exit
+  - nyc npm test
+  - nyc report --reporter=text-lcov > coverage.lcov
   - codecov
