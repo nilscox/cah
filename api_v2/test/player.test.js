@@ -284,17 +284,15 @@ describe('player', () => {
 
     describe('log out', () => {
 
-      beforeEach(async function() {
+      it('should logout a logged in player', async function() {
         await loginPlayer(this.app, this.player);
-      });
 
-      it('should logout a logged in player', function() {
         return this.app
           .post('/api/player/logout')
           .expect(204);
       });
 
-      it('should logout logout nobody', function() {
+      it('should not logout nobody', function() {
         return this.app
           .post('/api/player/logout')
           .then(() => this.app
@@ -303,7 +301,9 @@ describe('player', () => {
           );
       });
 
-      it('should not retrieve a player after he logged out', function() {
+      it('should not retrieve a player after he logged out', async function() {
+        await loginPlayer(this.app, this.player);
+
         return this.app
           .post('/api/player/logout')
           .then(() => this.app
