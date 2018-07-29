@@ -1,8 +1,7 @@
 const router = require('./router');
-const { isPlayer } = require('../../auth');
 const { BadRequestError } = require('../../errors');
 
-router.post('/:id/join', isPlayer, (req, res, next) => {
+router.post('/:id/join', (req, res, next) => {
   req.player.getGame()
     .then(game => {
       if (game)
@@ -15,7 +14,7 @@ router.post('/:id/join', isPlayer, (req, res, next) => {
     .catch(next);
 });
 
-router.post('/:id/leave', isPlayer, (req, res, next) => {
+router.post('/:id/leave', (req, res, next) => {
   if (!player.game)
     return next(new BadRequestError('player is not in game'));
 

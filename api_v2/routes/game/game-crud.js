@@ -3,7 +3,6 @@ const { NotFoundError } = require('../../errors');
 const { Game } = require('../../models');
 const { GameValidator } = require('../../validators');
 const { GameFormatter } = require('../../formatters');
-const { isPlayer } = require('../../auth');
 
 router.get('/', (req, res, next) => {
   Game.findAll({
@@ -17,7 +16,7 @@ router.get('/:id', (req, res) => {
   res.format(GameFormatter, req.game);
 });
 
-router.post('/', isPlayer, (req, res, next) => {
+router.post('/', (req, res, next) => {
   GameValidator.validate(req.body)
     .then(game => Game.create(game))
     .then(game => game.setOwner(req.player))
