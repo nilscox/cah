@@ -6,7 +6,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 
-const models = require('./models');
+const { Player } = require('./models');
 const routes = require('./routes');
 const { APIError } = require('./errors');
 
@@ -33,7 +33,7 @@ app.use((req, res, next) => {
   if (!req.session.player)
     return next();
 
-  models.Player.find({ where: { nick: req.session.player }})
+  Player.find({ where: { nick: req.session.player }})
     .then(player => {
       if (!player) {
         delete req.session.player;
