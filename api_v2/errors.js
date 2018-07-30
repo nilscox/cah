@@ -89,8 +89,8 @@ class ReadOnlyField extends ValidationError {
 
 class AuthenticationError extends APIError {
 
-  constructor() {
-    super(401, 'unauthorized');
+  constructor(message) {
+    super(401, 'unauthorized: ' + message);
   }
 
 }
