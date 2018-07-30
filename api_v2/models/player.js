@@ -9,6 +9,7 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   Player.associate = function({ Game }) {
+    Player.hasOne(Game, { as: 'ownerOf', foreignKey: 'ownerId' });
     Player.belongsTo(Game, { as: 'game', foreignKey: 'gameId' });
   };
 
