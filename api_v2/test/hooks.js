@@ -90,7 +90,9 @@ beforeEach(function() {
       delete require.cache[k];
   });
 
-  this.app = session(require('../app'));
+  this.createSession = () => session(require('../app'));
+
+  this.app = this.createSession();
   this.models = require('../models');
 
   return setupTest(this.dbName);

@@ -58,10 +58,10 @@ describe('player', () => {
 
     describe('fetch me', () => {
 
-      it('should fetch nothing when no player is logged in', function() {
+      it('should not be able to fetch me when not logged in', function() {
         return this.app
           .get('/api/player')
-          .expect(404);
+          .expect(401);
       });
 
       it('should fetch a created player', function() {
@@ -103,6 +103,16 @@ describe('player', () => {
     });
 
     describe('create', () => {
+
+      it('should not create a new player when already logged in', async function() {
+        const player = await createPlayer(this.models)
+        await(loginPlayer(this.app, player));
+
+        return this.app
+          .post('/api/player')
+          .send({ nick: 'nils' })
+          .expect(401);
+      });
 
       it('should create a new player', function() {
         return this.app
@@ -213,6 +223,23 @@ describe('player', () => {
 
       beforeEach(async function() {
         this.player = await createPlayer(this.models);
+        await loginPlayer(this.app, this.player);
+      });
+
+      it('should not update a player when not logged in ', async function() {
+        const player = await createPlayer(this.models, { nick: 'toto' });
+
+        return this.createSession()
+          .put('/api/player/' + player.nick)
+          .expect(401);
+      });
+
+      it('should not update another player ', async function() {
+        const player = await createPlayer(this.models, { nick: 'toto' });
+
+        return this.app
+          .put('/api/player/' + player.nick)
+          .expect(401);
       });
 
       it('should update an existing player', function() {
@@ -243,6 +270,23 @@ describe('player', () => {
 
       beforeEach(async function() {
         this.player = await createPlayer(this.models);
+        await loginPlayer(this.app, this.player);
+      });
+
+      it('should not remove a player when not logged in ', async function() {
+        const player = await createPlayer(this.models, { nick: 'toto' });
+
+        return this.createSession()
+          .delete('/api/player/' + player.nick)
+          .expect(401);
+      });
+
+      it('should not remove another player ', async function() {
+        const player = await createPlayer(this.models, { nick: 'toto' });
+
+        return this.app
+          .delete('/api/player/' + player.nick)
+          .expect(401);
       });
 
       it('should remove an existing player', function() {
@@ -263,7 +307,16 @@ describe('player', () => {
 
     describe('login', () => {
 
-      it('should login an existing player', function() {
+      it('should not login when already logged in', async function() {
+        await loginPlayer(this.app, this.player);
+
+        return this.app
+          .post('/api/player/login')
+          .send({ nick: this.player.nick })
+          .expect(401);
+      });
+
+      it('should login as an existing player', function() {
         return this.app
           .post('/api/player/login')
           .send({ nick: this.player.nick })
@@ -273,7 +326,7 @@ describe('player', () => {
           });
       });
 
-      it('should not login a non-existing player', function() {
+      it('should not login as a non-existing player', function() {
         return this.app
           .get('/api/player/login')
           .send({ nick: 'tom' })
@@ -284,31 +337,28 @@ describe('player', () => {
 
     describe('log out', () => {
 
-      it('should logout a logged in player', async function() {
+      beforeEach(async function() {
         await loginPlayer(this.app, this.player);
+      });
 
+      it('shoud not log a not logged in player', function() {
+        return this.createSession()
+          .post('/api/player/logout')
+          .expect(401);
+      });
+
+      it('should log out a logged in player', function() {
         return this.app
           .post('/api/player/logout')
           .expect(204);
       });
 
-      it('should not logout nobody', function() {
-        return this.app
-          .post('/api/player/logout')
-          .then(() => this.app
-            .post('/api/player/logout')
-            .expect(404)
-          );
-      });
-
-      it('should not retrieve a player after he logged out', async function() {
-        await loginPlayer(this.app, this.player);
-
+      it('should not retrieve a player after he logged out', function() {
         return this.app
           .post('/api/player/logout')
           .then(() => this.app
             .get('/api/player')
-            .expect(404)
+            .expect(401)
           );
       });
 
