@@ -32,7 +32,6 @@ const isNotInGame = req => {
 };
 
 const isGameOwner = req => {
-  console.log('TOTO');
   return req.player.getGame({ include: 'owner' })
     .then(game => {
       if (game.owner.nick !== req.player.nick)
@@ -50,7 +49,10 @@ module.exports = {
     '/:nick': {
       GET: allow,
       PUT: (req, params) => isPlayer(req, params, params.nick),
-      DELETE: (req, params) => isPlayer(req, params, params.nick),
+      DELETE: [
+        (req, params) => isPlayer(req, params, params.nick),
+        isNotInGame,
+      ],
     },
 
     '/list': {
