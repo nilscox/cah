@@ -19,12 +19,12 @@ const cfg = {
   port: getEnv('CAH_DB_PORT'),
   dialect: 'postgres',
   operatorsAliases: false,
-  logging: () => {},
 };
 
 if (getEnv('NODE_ENV') === 'test') {
   cfg.rootUsername = getEnv('CAH_DB_ROOT_USER');
   cfg.rootPassword = getEnv('CAH_DB_ROOT_PASSWORD');
+  cfg.logging = () => {};
 }
 
 module.exports = cfg;
