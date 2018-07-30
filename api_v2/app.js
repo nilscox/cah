@@ -9,6 +9,8 @@ const session = require('express-session');
 const { Player } = require('./models');
 const routes = require('./routes');
 const { APIError } = require('./errors');
+const authorize = require('./authorize');
+const permissions = require('./permissions');
 
 const app = express();
 
@@ -46,6 +48,7 @@ app.use((req, res, next) => {
     .catch(next);
 });
 
+app.use(authorize(permissions));
 app.use('/api', routes);
 
 app.use((err, req, res, next) => {
