@@ -38,6 +38,13 @@ module.exports = permissions => (req, res, next) => {
     return next();
 
   const { path, match } = route;
+  const params = path.split('/')
+    .filter(part => part.startsWith(':'))
+    .map(part => part.slice(1))
+    .reduce((params, param, n) => {
+      params[param] = match[n + 1];
+      return params;
+    }, {});
 
   const authorize = permissions[path][req.method];
 
@@ -45,8 +52,8 @@ module.exports = permissions => (req, res, next) => {
     return next();
 
   const promise = authorize instanceof Array
-    ? Promise.all(authorize.map(f => f(req)))
-    : Promise.resolve(authorize(req));
+    ? Promise.all(authorize.map(f => f(req, params)))
+    : Promise.resolve(authorize(req, params));
 
   return promise
     .then(() => next())

@@ -2,7 +2,7 @@ const { AuthenticationError } = require('./errors');
 
 const allow = () => {};
 
-const isPlayer = (req, nick) => {
+const isPlayer = (req, params, nick) => {
   if (!req.player)
     throw new AuthenticationError('you must a player');
 
@@ -10,7 +10,7 @@ const isPlayer = (req, nick) => {
     throw new AuthenticationError('you must be ' + nick);
 };
 
-const isNotPlayer = (req) => {
+const isNotPlayer = req => {
   if (req.player)
     throw new AuthenticationError('you must not be a player');
 };
@@ -49,8 +49,8 @@ module.exports = {
 
     '/:nick': {
       GET: allow,
-      PUT: req => isPlayer(req, req.params.nick),
-      DELETE: req => isPlayer(req, req.params.nick),
+      PUT: (req, params) => isPlayer(req, params, params.nick),
+      DELETE: (req, params) => isPlayer(req, params, params.nick),
     },
 
     '/list': {
