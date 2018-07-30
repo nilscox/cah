@@ -2,21 +2,14 @@ const router = require('./router');
 const { BadRequestError } = require('../../errors');
 
 router.post('/:id/join', (req, res, next) => {
-  req.player.getGame()
-    .then(game => {
-      if (game)
-        throw new BadRequestError('player is already in game');
-
-      return req.game.addPlayer(req.player);
-    })
+  req.game.addPlayer(req.player)
     .then(game => game.reload({ include: ['owner', 'players'] }))
     .then(game => res.json(game))
     .catch(next);
 });
 
 router.post('/:id/leave', (req, res, next) => {
-  if (!player.game)
-    return next(new BadRequestError('player is not in game'));
-
-  req.game.players.add(req.player);
+  req.game.removePlayer(req.player)
+    .then(() => res.status(204).end())
+    .catch(next);
 });

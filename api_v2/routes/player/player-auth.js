@@ -1,10 +1,13 @@
-const { NotFoundError } = require('../../errors');
+const { NotFoundError, MissingFieldError } = require('../../errors');
 const { PlayerFormatter } = require('../../formatters');
 const { Player } = require('../../models');
 const router = require('./router');
 
 router.post('/login', (req, res, next) => {
   const { nick } = req.body;
+
+  if (!nick)
+    return next(new MissingFieldError('nick'))
 
   Player.findOne({ where: { nick } })
     .then(player => {
@@ -18,9 +21,6 @@ router.post('/login', (req, res, next) => {
 });
 
 router.post('/logout', (req, res, next) => {
-  if (!req.session.player)
-    return next();
-
   delete req.session.player;
   res.status(204).end();
 });
