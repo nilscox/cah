@@ -19,10 +19,8 @@ describe('player', () => {
       });
 
       it('should list all players 2', async function() {
-        const { Player } = this.models;
-
-        await new Player({ nick: 'nils' }).save();
-        await new Player({ nick: 'tom' }).save();
+        await this.createPlayer({ nick: 'nils' });
+        await this.createPlayer({ nick: 'tom' });
 
         return this.app
           .get('/api/player/list')
@@ -38,7 +36,7 @@ describe('player', () => {
     describe('retrieve', () => {
 
       it('should retrieve an existing player', async function() {
-        const player = await createPlayer(this.models);
+        const player = await this.createPlayer();
 
         return this.app
           .get('/api/player/' + player.nick)
@@ -81,9 +79,7 @@ describe('player', () => {
       });
 
       it('should fetch a logged in player', async function() {
-        const { Player } = this.models;
-
-        await new Player({ nick: 'nils' }).save();
+        await this.createPlayer();
 
         return this.app
           .post('/api/player/login')
@@ -105,8 +101,7 @@ describe('player', () => {
     describe('create', () => {
 
       it('should not create a new player when already logged in', async function() {
-        const player = await createPlayer(this.models)
-        await(loginPlayer(this.app, player));
+        const player = await this.createLoginPlayer()
 
         return this.app
           .post('/api/player')
@@ -196,7 +191,7 @@ describe('player', () => {
       });
 
       it('should not create a new player with an already existing nick', async function() {
-        const player = await createPlayer(this.models);
+        const player = await this.createPlayer({ nick: 'nils' });
 
         return this.app
           .post('/api/player')
@@ -222,12 +217,11 @@ describe('player', () => {
     describe('update', () => {
 
       beforeEach(async function() {
-        this.player = await createPlayer(this.models);
-        await loginPlayer(this.app, this.player);
+        this.player = await this.createLoginPlayer();
       });
 
       it('should not update a player when not logged in ', async function() {
-        const player = await createPlayer(this.models, { nick: 'toto' });
+        const player = await this.createPlayer({ nick: 'toto' });
 
         return this.createSession()
           .put('/api/player/' + player.nick)
@@ -235,7 +229,7 @@ describe('player', () => {
       });
 
       it('should not update another player ', async function() {
-        const player = await createPlayer(this.models, { nick: 'toto' });
+        const player = await this.createPlayer({ nick: 'toto' });
 
         return this.app
           .put('/api/player/' + player.nick)
@@ -269,12 +263,11 @@ describe('player', () => {
     describe('remove', () => {
 
       beforeEach(async function() {
-        this.player = await createPlayer(this.models);
-        await loginPlayer(this.app, this.player);
+        this.player = await this.createLoginPlayer();
       });
 
       it('should not remove a player when not logged in ', async function() {
-        const player = await createPlayer(this.models, { nick: 'toto' });
+        const player = await this.createPlayer({ nick: 'toto' });
 
         return this.createSession()
           .delete('/api/player/' + player.nick)
@@ -282,7 +275,7 @@ describe('player', () => {
       });
 
       it('should not remove another player ', async function() {
-        const player = await createPlayer(this.models, { nick: 'toto' });
+        const player = await this.createPlayer({ nick: 'toto' });
 
         return this.app
           .delete('/api/player/' + player.nick)
@@ -302,13 +295,13 @@ describe('player', () => {
   describe('auth', () => {
 
     beforeEach(async function() {
-      this.player = await createPlayer(this.models);
+      this.player = await this.createPlayer();
     });
 
     describe('login', () => {
 
       it('should not login when already logged in', async function() {
-        await loginPlayer(this.app, this.player);
+        await this.loginPlayer(this.player);
 
         return this.app
           .post('/api/player/login')
@@ -338,7 +331,7 @@ describe('player', () => {
     describe('log out', () => {
 
       beforeEach(async function() {
-        await loginPlayer(this.app, this.player);
+        await this.loginPlayer(this.player);
       });
 
       it('shoud not log a not logged in player', function() {

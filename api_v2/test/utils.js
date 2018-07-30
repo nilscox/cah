@@ -1,27 +1,50 @@
-const createPlayer = async ({ Player }, opts = {}) => {
-  const nick = opts.nick || 'nils';
+async function createPlayer(opts = {}) {
+  opts = {
+    nick: 'nils',
+    ...opts,
+  };
 
-  return await new Player({ nick }).save();
-};
+  const { Player } = this.models;
 
-const createGame = async ({ Player, Game }, opts = {}) => {
-  const lang = opts.lang || 'fr';
-  const owner = opts.owner || await createPlayer({ Player });
+  return await new Player(opts).save();
+}
 
-  const game = await new Game({ lang }).save();
+async function loginPlayer(player, app) {
+  return await (app || this.app)
+    .post('/api/player/login')
+    .send({ nick: player.nick })
+    .expect(200)
+}
 
-  await game.setOwner(owner);
+async function createLoginPlayer(opts, app) {
+  const player = await this.createPlayer(opts);
+
+  await this.loginPlayer(player, app);
+
+  return player;
+}
+
+async function createGame(opts = {}) {
+  opts = {
+    lang: 'fr',
+    ...opts,
+  };
+
+  if (!opts.owner)
+    opts.owner = await this.createPlayer();
+
+  const { Game } = this.models;
+  const game = await new Game(opts).save();
+
+  await game.addPlayer(opts.owner);
+  await game.setOwner(opts.owner);
 
   return game;
-};
-
-const loginPlayer = (app, player) => app
-  .post('/api/player/login')
-  .send({ nick: player.nick })
-  .expect(200);
+}
 
 module.exports = {
   createPlayer,
-  createGame,
   loginPlayer,
-};
+  createLoginPlayer,
+  createGame,
+}

@@ -1,17 +1,21 @@
 const request = require('supertest');
 const expect = require('chai').expect;
 
-const { createPlayer, createGame, loginPlayer } = require('./utils');
-
 describe('game', () => {
 
   describe('crud', () => {
 
     beforeEach(async function() {
-      this.player = await createPlayer(this.models);
+      this.player = await this.createLoginPlayer();
     });
 
     describe('list', () => {
+
+      it('should not list the games if not logged in', function() {
+        return this.createSession()
+          .get('/api/game')
+          .expect(401);
+      });
 
       it('should list all the games 0', function() {
         return this.app
@@ -23,7 +27,7 @@ describe('game', () => {
       });
 
       it('should list all the games 1', async function() {
-        const game = await createGame(this.models, { owner: this.player });
+        const game = await this.createGame({ owner: this.player });
 
         return this.app
           .get('/api/game')
@@ -39,7 +43,7 @@ describe('game', () => {
     describe('retrieve', () => {
 
       it('should retrieve a game', async function() {
-        const game = await createGame(this.models, { owner: this.player });
+        const game = await this.createGame({ owner: this.player });
 
         return this.app
           .get('/api/game/' + game.id)
@@ -58,10 +62,6 @@ describe('game', () => {
     });
 
     describe('create', () => {
-
-      beforeEach(async function() {
-        await loginPlayer(this.app, this.player);
-      });
 
       it('should create a game', function() {
         return this.app
@@ -108,7 +108,7 @@ describe('game', () => {
     describe('update', () => {
 
       beforeEach(async function() {
-        this.game = await createGame(this.models, { owner: this.player });
+        this.game = await this.createGame({ owner: this.player });
         this.url = '/api/game/' + this.game.id;
       });
 
@@ -117,6 +117,7 @@ describe('game', () => {
           .put(this.url)
           .send({})
           .expect(200)
+          .on('error', e => console.log(e.response.body))
           .then(res => {
             expect(res.body).to.have.property('id', this.game.id);
           });
@@ -144,7 +145,7 @@ describe('game', () => {
     describe('delete', () => {
 
       beforeEach(async function() {
-        this.game = await createGame(this.models, { owner: this.player });
+        this.game = await this.createGame({ owner: this.player });
       });
 
       it('should delete an existing game', function() {
@@ -166,7 +167,7 @@ describe('game', () => {
   describe('history', () => {
 
     beforeEach(async function() {
-      this.game = await createGame(this.models);
+      this.game = await this.createGame();
     });
 
     it('should fetch an empty game history', function() {
@@ -187,21 +188,21 @@ describe('game', () => {
   describe('players', () => {
 
     beforeEach(async function() {
-      this.player = await createPlayer(this.models);
-      this.game = await createGame(this.models, { owner: this.player });
-
-      await loginPlayer(this.app, this.player);
+      this.player = await this.createLoginPlayer();
+      this.game = await this.createGame({ owner: this.player });
     })
 
     describe('join', () => {
 
-      it('a player should join a game', function() {
-        return this.app
+      it('a player should join a game', async function() {
+        const app = this.createSession();
+        const player = await this.createLoginPlayer({ nick: 'toto' }, app);
+
+        return app
           .post('/api/game/' + this.game.id + '/join')
           .expect(200)
           .then(res => {
-            expect(res.body).to.have.property('players').of.length(1);
-            expect(res.body.players[0]).to.have.property('nick', this.player.nick);
+            expect(res.body).to.have.property('players').of.length(2);
           });
       });
 

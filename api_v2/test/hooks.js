@@ -7,6 +7,7 @@ const Umzug = require('umzug');
 const session = require('supertest-session');
 
 const config = require('../config');
+const utils = require('./utils');
 
 const API_URL = process.env.REACT_APP_CAH_API_URL;
 const API_TOKEN = process.env.CAH_API_ADMIN_TOKEN;
@@ -90,10 +91,15 @@ beforeEach(function() {
       delete require.cache[k];
   });
 
-  this.createSession = () => session(require('../app'));
+  const app = require('../app');
+  const models = require('../models');
+
+  this.createSession = () => session(app);
 
   this.app = this.createSession();
-  this.models = require('../models');
+  this.models = models;
+
+  Object.keys(utils).forEach(func => this[func] = utils[func].bind(this));
 
   return setupTest(this.dbName);
 });
