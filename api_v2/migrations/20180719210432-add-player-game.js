@@ -8,6 +8,7 @@ module.exports = {
       'gameId',
       {
         type: Sequelize.INTEGER,
+        onDelete: 'SET NULL',
         references: {
           model: 'game',
           key: 'id',
