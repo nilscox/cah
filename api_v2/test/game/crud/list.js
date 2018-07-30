@@ -13,7 +13,7 @@ function listGames0() {
     .then(res => {
       expect(res.body).to.be.an('array').of.length(0);
     });
-};
+}
 
 async function listGames1() {
   const game = await this.createGame({ owner: this.player });
@@ -25,7 +25,7 @@ async function listGames1() {
       expect(res.body).to.be.an('array').of.length(1);
       expect(res.body[0]).to.have.property('id', game.id);
     });
-};
+}
 
 module.exports = {
   listGamesNotLoggedIn,
