@@ -1,43 +1,24 @@
 const request = require('supertest');
 const expect = require('chai').expect;
 
+const game = require('./game');
+
 describe('game', () => {
 
   describe('crud', () => {
+
+    const { crud } = game;
 
     beforeEach(async function() {
       this.player = await this.createLoginPlayer();
     });
 
     describe('list', () => {
+      const { list } = crud;
 
-      it('should not list the games if not logged in', function() {
-        return this.createSession()
-          .get('/api/game')
-          .expect(401);
-      });
-
-      it('should list all the games 0', function() {
-        return this.app
-          .get('/api/game')
-          .expect(200)
-          .then(res => {
-            expect(res.body).to.be.an('array').of.length(0);
-          });
-      });
-
-      it('should list all the games 1', async function() {
-        const game = await this.createGame({ owner: this.player });
-
-        return this.app
-          .get('/api/game')
-          .expect(200)
-          .then(res => {
-            expect(res.body).to.be.an('array').of.length(1);
-            expect(res.body[0]).to.have.property('id', game.id);
-          });
-      });
-
+      it('should not list the games if not logged in', list.listGamesNotLoggedIn);
+      it('should list all the games 0', list.listGames0);
+      it('should list all the games 1', list.listGames1);
     });
 
     describe('retrieve', () => {
