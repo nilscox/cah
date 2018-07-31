@@ -75,6 +75,8 @@ module.exports = {
     POST: [isPlayer, isNotInGame],
 
     '/:id': {
+
+      GET: isPlayer,
       PUT: [isPlayer, isInGame, isGameOwner],
       DELETE: [isPlayer, isInGame, isGameOwner],
 
