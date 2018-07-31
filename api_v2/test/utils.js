@@ -42,9 +42,17 @@ async function createGame(opts = {}) {
   return game;
 }
 
+async function joinGame(game, player) {
+  if (player instanceof Array)
+    return await Promise.all(player.map(async p => await game.appPlayer(p)));
+
+  return await game.addPlayer(player);
+}
+
 module.exports = {
   createPlayer,
   loginPlayer,
   createLoginPlayer,
   createGame,
+  joinGame,
 }

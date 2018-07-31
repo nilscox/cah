@@ -18,6 +18,16 @@ async function removePlayerNotMe() {
     .expect(401);
 }
 
+async function removePlayerInGame() {
+  const owner = await this.createPlayer({ nick: 'toto' });
+  const game = await this.createGame({ owner });
+  await this.joinGame(game, this.player);
+
+  return this.app
+    .delete('/api/player/' + this.player.nick)
+    .expect(401);
+}
+
 function removePlayer() {
   return this.app
     .delete('/api/player/' + this.player.nick)
@@ -28,5 +38,6 @@ module.exports = {
   beforeEach,
   removePlayerNotLogin,
   removePlayerNotMe,
+  removePlayerInGame,
   removePlayer,
 };

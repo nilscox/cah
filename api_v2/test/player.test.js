@@ -65,6 +65,7 @@ describe('player', () => {
       beforeEach(remove.beforeEach || noop);
       it('should not remove a player when not logged in ', remove.removePlayerNotLogin);
       it('should not remove another player ', remove.removePlayerNotMe);
+      it('should not remove a player in game', remove.removePlayerInGame);
       it('should remove an existing player', remove.removePlayer);
     });
 
