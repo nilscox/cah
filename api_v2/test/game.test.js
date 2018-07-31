@@ -33,7 +33,7 @@ describe('game', () => {
       beforeEach(create.beforeEach || noop);
       it('should not create a game when not logged in', create.createGameNotPlayer);
       it('should not create a game when in game', create.createGameInGame);
-      it('should not create a game with a missing lang', create.createGameMissingLang);
+      it('should not create a game with lang is missing', create.createGameMissingLang);
       it('should not create a game with a language of type number', create.createGameLangNotNumber);
       it('should not create a game with an invalid language', create.createGameInvalidLang);
       it('should not create a game with a state', create.createGameWithState);
@@ -133,6 +133,8 @@ describe('game', () => {
       it('should not submit an answer when game is not started');
       it('should not submit an answer when game state is not players answer');
       it('should not submit an answer when player already submitted');
+      it('should not submit an answer when choiceIds is missing');
+      it('should not submit an answer when choiceIds are not numbers');
       it('should not submit an answer when player dont have the cards');
       it('should not submit an answer when choices number dont match');
       it('should submit an answer to a game');
@@ -149,6 +151,9 @@ describe('game', () => {
       it('should not select an answer when game is not started');
       it('should not select an answer when game state is not question master selection');
       it('should not select an answer when player is not question master');
+      it('should not select an answer when answerId is missing');
+      it('should not select an answer when answerId is not a number');
+      it('should not select an answer when choice is not selectable');
       it('should select an answer player is not question master');
     });
 
