@@ -33,6 +33,8 @@ async function createGame(opts = {}) {
   if (!opts.owner)
     opts.owner = await this.createPlayer();
 
+  opts.ownerId = opts.owner.id;
+
   const { Game } = this.models;
   const game = await new Game(opts).save();
 
