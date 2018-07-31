@@ -10,7 +10,7 @@ module.exports = {
       },
       place: {
         allowNull: true,
-        type: Sequelize.NUMBER,
+        type: Sequelize.INTEGER,
       },
       createdAt: {
         allowNull: false,
