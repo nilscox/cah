@@ -5,6 +5,7 @@ module.exports = {
       'choice',
       'playerId',
       {
+        allowNull: true,
         type: Sequelize.INTEGER,
         references: {
           model: 'game',

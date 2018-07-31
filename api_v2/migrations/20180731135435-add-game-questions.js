@@ -5,6 +5,7 @@ module.exports = {
       'question',
       'gameId',
       {
+        allowNull: false,
         type: Sequelize.INTEGER,
         references: {
           model: 'game',
