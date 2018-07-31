@@ -15,7 +15,6 @@ const models = {
   Game: 'game.js',
   GameTurn: 'game-turn.js',
   Answer: 'answer.js',
-  AnsweredQuestion: 'answered-question.js',
 };
 
 const db = Object.keys(models).reduce((db, name) => {
