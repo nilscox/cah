@@ -1,360 +1,96 @@
-const request = require('supertest');
-const expect = require('chai').expect;
-
-const { createPlayer, loginPlayer } = require('./utils');
+const player = require('./player');
+const noop = () => {};
 
 describe('player', () => {
 
   describe('crud', () => {
+    const { crud } = player;
+
+    beforeEach(crud.beforeEach || noop);
 
     describe('list', () => {
+      const { list } = crud;
 
-      it('should list all players 0', function() {
-        return this.app
-          .get('/api/player/list')
-          .expect(200)
-          .then(res => {
-            expect(res.body).to.be.an('array').of.length(0);
-          });
-      });
-
-      it('should list all players 2', async function() {
-        await this.createPlayer({ nick: 'nils' });
-        await this.createPlayer({ nick: 'tom' });
-
-        return this.app
-          .get('/api/player/list')
-          .expect(200)
-          .then(res => {
-            expect(res.body).to.be.a('array');
-            expect(res.body).to.have.length(2);
-          });
-      });
-
+      beforeEach(list.beforeEach || noop);
+      it('should list all players 0', list.listPlayers0);
+      it('should list all players 2', list.listPlayers2);
     });
 
     describe('retrieve', () => {
+      const { retrieve } = crud;
 
-      it('should retrieve an existing player', async function() {
-        const player = await this.createPlayer();
-
-        return this.app
-          .get('/api/player/' + player.nick)
-          .expect(200)
-          .then(res => {
-            expect(res.body).to.have.property('nick', player.nick);
-          });
-      });
-
-      it('should not retrieve a non-existing player', function() {
-        return this.app
-          .get('/api/player/nils')
-          .expect(404);
-      });
-
+      beforeEach(retrieve.beforeEach || noop);
+      it('should retrieve an existing player', retrieve.retrievePlayer);
+      it('should not retrieve a non-existing player', retrieve.retrievePlayerDontExist);
     });
 
     describe('fetch me', () => {
+      const { me } = crud;
 
-      it('should not be able to fetch me when not logged in', function() {
-        return this.app
-          .get('/api/player')
-          .expect(401);
-      });
-
-      it('should fetch a created player', function() {
-        return this.app
-          .post('/api/player')
-          .send({ nick: 'nils' })
-          .then(() => this.app
-            .get('/api/player')
-            .expect(200)
-          )
-          .then(res => {
-            expect(res.body).to.deep.eql({
-              nick: 'nils',
-              avatar: null,
-            });
-          });
-      });
-
-      it('should fetch a logged in player', async function() {
-        await this.createPlayer();
-
-        return this.app
-          .post('/api/player/login')
-          .send({ nick: 'nils' })
-          .then(() => this.app
-            .get('/api/player')
-            .expect(200)
-          )
-          .then(res => {
-            expect(res.body).to.deep.eql({
-              nick: 'nils',
-              avatar: null,
-            });
-          });
-      });
-
+      beforeEach(me.beforeEach || noop);
+      it('should not be able to fetch me when not logged in', me.fetchMeNotPlayer);
+      it('should fetch a created player', me.fetchMeCreated);
+      it('should fetch a logged in player', me.fetchMeLogin);
     });
 
     describe('create', () => {
+      const { create } = crud;
 
-      it('should not create a new player when already logged in', async function() {
-        const player = await this.createLoginPlayer()
-
-        return this.app
-          .post('/api/player')
-          .send({ nick: 'nils' })
-          .expect(401);
-      });
-
-      it('should create a new player', function() {
-        return this.app
-          .post('/api/player')
-          .send({ nick: 'nils' })
-          .expect(201)
-          .then(res => {
-            expect(res.body).to.deep.eql({
-              nick: 'nils',
-              avatar: null,
-            });
-          });
-      });
-
-      it('should not create a new player without a nick', function() {
-        return this.app
-          .post('/api/player')
-          .send({})
-          .expect(400)
-          .then(res => {
-            expect(res.body).to.have.property('nick');
-          });
-      });
-
-      it('should not create a new player with nick null', function() {
-        return this.app
-          .post('/api/player')
-          .send({ nick: null })
-          .expect(400)
-          .then(res => {
-            expect(res.body).to.have.property('nick');
-          });
-      });
-
-      it('should not create a new player with nick a number', function() {
-        return this.app
-          .post('/api/player')
-          .send({ nick: 1234 })
-          .expect(400)
-          .then(res => {
-            expect(res.body).to.have.property('nick');
-          });
-      });
-
-      it('should not create a new player with nick of length < 3', function() {
-        return this.app
-          .post('/api/player')
-          .send({ nick: '<3' })
-          .expect(400)
-          .then(res => {
-            expect(res.body).to.have.property('nick');
-          });
-      });
-
-      it('should not create a new player with nick of length > 64', function() {
-        return this.app
-          .post('/api/player')
-          .send({ nick: '>64'.repeat(22) })
-          .expect(400)
-          .then(res => {
-            expect(res.body).to.have.property('nick');
-          });
-      });
-
-      it('should not create a new player with a reserved nick', function() {
-        const RESERVED_NICKS = [
-          'list',
-          'login',
-          'logout',
-          'avatar',
-        ];
-
-        return Promise.all(RESERVED_NICKS.map(nick => this.app
-          .post('/api/player')
-          .send({ nick })
-          .expect(400)
-          .then(res => {
-            expect(res.body).to.have.property('nick');
-          })
-        ));
-      });
-
-      it('should not create a new player with an already existing nick', async function() {
-        const player = await this.createPlayer({ nick: 'nils' });
-
-        return this.app
-          .post('/api/player')
-          .send({ nick: 'nils' })
-          .expect(400)
-          .then(res => {
-            expect(res.body).to.have.property('nick');
-          });
-      });
-
-      it('should not create a new player with an avatar', function() {
-        return this.app
-          .post('/api/player')
-          .send({ nick: 'nils', avatar: 'avatar' })
-          .expect(400)
-          .then(res => {
-            expect(res.body).to.have.property('avatar');
-          });
-      });
-
+      beforeEach(create.beforeEach || noop);
+      it('should not create a new player when already logged in', create.createPlayerNotLogin);
+      it('should create a new player', create.createPlayer);
+      it('should not create a new player without a nick', create.createPlayerNoNick);
+      it('should not create a new player with nick null', create.createPlayerNickNull);
+      it('should not create a new player with nick a number', create.createPlayerNickNumber);
+      it('should not create a new player with nick of length < 3', create.createPlayerNickInf3);
+      it('should not create a new player with nick of length > 64', create.createPlayerNickSup64);
+      it('should not create a new player with a reserved nick', create.createPlayerNickReserved);
+      it('should not create a new player with an already existing nick', create.createPlayerNickExist);
+      it('should not create a new player with an avatar', create.createPlayerWithAvatar);
     });
 
     describe('update', () => {
+      const { update } = crud;
 
-      beforeEach(async function() {
-        this.player = await this.createLoginPlayer();
-      });
-
-      it('should not update a player when not logged in ', async function() {
-        const player = await this.createPlayer({ nick: 'toto' });
-
-        return this.createSession()
-          .put('/api/player/' + player.nick)
-          .expect(401);
-      });
-
-      it('should not update another player ', async function() {
-        const player = await this.createPlayer({ nick: 'toto' });
-
-        return this.app
-          .put('/api/player/' + player.nick)
-          .expect(401);
-      });
-
-      it('should update an existing player', function() {
-        return this.app
-          .put('/api/player/' + this.player.nick)
-          .expect(200)
-          .then(res => {
-            expect(res.body).to.deep.eql({
-              nick: this.player.nick,
-              avatar: this.player.avatar,
-            });
-          });
-      });
-
-      it('should not update an existing player\'s nick', function() {
-        return this.app
-          .put('/api/player/' + this.player.nick)
-          .send({ nick: 'tom' })
-          .expect(400)
-          .then(res => {
-            expect(res.body).to.have.property('nick');
-          });
-      });
-
+      beforeEach(update.beforeEach || noop);
+      it('should not update a player when not logged in ', update.updatePlayerNotLogin);
+      it('should not update another player ', update.updatePlayerNotMe);
+      it('should update an existing player', update.updatePlayer);
+      it('should not update an existing player\'s nick', update.updatePlayerNick);
     });
 
     describe('remove', () => {
+      const { remove } = crud;
 
-      beforeEach(async function() {
-        this.player = await this.createLoginPlayer();
-      });
-
-      it('should not remove a player when not logged in ', async function() {
-        const player = await this.createPlayer({ nick: 'toto' });
-
-        return this.createSession()
-          .delete('/api/player/' + player.nick)
-          .expect(401);
-      });
-
-      it('should not remove another player ', async function() {
-        const player = await this.createPlayer({ nick: 'toto' });
-
-        return this.app
-          .delete('/api/player/' + player.nick)
-          .expect(401);
-      });
-
-      it('should remove an existing player', function() {
-        return this.app
-          .delete('/api/player/' + this.player.nick)
-          .expect(204);
-      });
-
+      beforeEach(remove.beforeEach || noop);
+      it('should not remove a player when not logged in ', remove.removePlayerNotLogin);
+      it('should not remove another player ', remove.removePlayerNotMe);
+      it('should remove an existing player', remove.removePlayer);
     });
 
   });
 
   describe('auth', () => {
+    const { auth } = player;
 
-    beforeEach(async function() {
-      this.player = await this.createPlayer();
-    });
+    beforeEach(auth.beforeEach || noop);
 
     describe('login', () => {
+      const { login } = auth;
 
-      it('should not login when already logged in', async function() {
-        await this.loginPlayer(this.player);
-
-        return this.app
-          .post('/api/player/login')
-          .send({ nick: this.player.nick })
-          .expect(401);
-      });
-
-      it('should login as an existing player', function() {
-        return this.app
-          .post('/api/player/login')
-          .send({ nick: this.player.nick })
-          .expect(200)
-          .then(res => {
-            expect(res.body).to.have.property('nick', this.player.nick);
-          });
-      });
-
-      it('should not login as a non-existing player', function() {
-        return this.app
-          .get('/api/player/login')
-          .send({ nick: 'tom' })
-          .expect(404);
-      });
-
+      beforeEach(login.beforeEach || noop);
+      it('should not login when already logged in', login.loginPlayerLogin);
+      it('should login as an existing player', login.loginPlayer);
+      it('should not login as a non-existing player', login.loginPlayerDontExist);
     });
 
     describe('log out', () => {
+      const { logout } = auth;
 
-      beforeEach(async function() {
-        await this.loginPlayer(this.player);
-      });
-
-      it('shoud not log a not logged in player', function() {
-        return this.createSession()
-          .post('/api/player/logout')
-          .expect(401);
-      });
-
-      it('should log out a logged in player', function() {
-        return this.app
-          .post('/api/player/logout')
-          .expect(204);
-      });
-
-      it('should not retrieve a player after he logged out', function() {
-        return this.app
-          .post('/api/player/logout')
-          .then(() => this.app
-            .get('/api/player')
-            .expect(401)
-          );
-      });
-
+      beforeEach(logout.beforeEach || noop);
+      it('shoud not log a not logged in player', logout.logoutPlayerNotLogin);
+      it('should log out a logged in player', logout.logoutPlayer);
+      it('should not retrieve a player after he logged out', logout.logoutPlayerLogout);
     });
 
   });
