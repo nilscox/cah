@@ -11,6 +11,9 @@ module.exports = {
       text: {
         type: Sequelize.STRING,
       },
+      blanks: {
+        type: Sequelize.JSON,
+      },
       available: {
         type: Sequelize.BOOLEAN,
       },
