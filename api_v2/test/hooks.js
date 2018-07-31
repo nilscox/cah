@@ -6,7 +6,7 @@ const Sequelize = require('sequelize');
 const Umzug = require('umzug');
 const session = require('supertest-session');
 
-const config = require('../config');
+const config = require('../src/config');
 const utils = require('./utils');
 
 const API_URL = process.env.REACT_APP_CAH_API_URL;
@@ -91,8 +91,8 @@ beforeEach(function() {
       delete require.cache[k];
   });
 
-  const app = require('../app');
-  const models = require('../models');
+  const app = require('../src/app');
+  const models = require('../src/models');
 
   this.createSession = () => session(app);
 

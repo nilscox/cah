@@ -71,12 +71,12 @@ module.exports = {
 
   '/api/game': {
 
-    GET: isPlayer,
+    GET: [isPlayer],
     POST: [isPlayer, isNotInGame],
 
     '/:id': {
 
-      GET: isPlayer,
+      GET: [isPlayer],
       PUT: [isPlayer, isInGame, isGameOwner],
       DELETE: [isPlayer, isInGame, isGameOwner],
 

@@ -1,6 +1,6 @@
 const expect = require('chai').expect;
 
-const Validator = require('../validators/validator');
+const Validator = require('../src/validators/validator');
 
 describe('validator', () => {
 

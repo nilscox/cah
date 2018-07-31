@@ -1,5 +1,5 @@
-const app = require('./app');
-const { info } = require('./utils/logger');
+const app = require('./src/app');
+const { info } = require('./src/utils/logger');
 
 const PORT = process.env.CAH_API_PORT || 4242;
 
