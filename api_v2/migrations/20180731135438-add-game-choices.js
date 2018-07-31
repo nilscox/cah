@@ -1,13 +1,15 @@
+'use strict';
+
 module.exports = {
 
   up: (queryInterface, Sequelize) => {
     return queryInterface.addColumn(
-      'gameturn',
-      'winnerId',
+      'choice',
+      'gameId',
       {
         type: Sequelize.INTEGER,
         references: {
-          model: 'player',
+          model: 'game',
           key: 'id',
         },
       },
@@ -16,8 +18,8 @@ module.exports = {
 
   down: (queryInterface, Sequelize) => {
     return queryInterface.removeColumn(
-      'gameturn',
-      'winnerId',
+      'choice',
+      'gameId',
     );
   },
 

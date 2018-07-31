@@ -1,10 +1,12 @@
-'use strict';
 module.exports = (sequelize, DataTypes) => {
-  var answered - question = sequelize.define('answered-question', {
-    place: DataTypes.NUMBER
+
+  const AnsweredQuestion = sequelize.define('answered-question', {
+    place: DataTypes.NUMBER,
   }, {});
-  answered - question.associate = function(models) {
-    // associations can be defined here
+
+  AnsweredQuestion.associate = function(models) {
+
   };
-  return answered - question;
+
+  return AnsweredQuestion;
 };

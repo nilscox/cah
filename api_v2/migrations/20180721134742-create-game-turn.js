@@ -1,5 +1,5 @@
-'use strict';
 module.exports = {
+
   up: (queryInterface, Sequelize) => {
     return queryInterface.createTable('gameturn', {
       id: {
@@ -15,10 +15,12 @@ module.exports = {
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE,
-      }
+      },
     });
   },
+
   down: (queryInterface, Sequelize) => {
     return queryInterface.dropTable('GameTurns');
-  }
+  },
+
 };

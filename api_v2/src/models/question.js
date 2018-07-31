@@ -5,8 +5,8 @@ module.exports = (sequelize, DataTypes) => {
     available: DataTypes.BOOLEAN,
   }, {});
 
-  question.associate = function(models) {
-
+  question.associate = function({ Game }) {
+    question.belongsTo(Game, { as: 'game', foreignKey: 'gameId' });
   };
 
   return question;

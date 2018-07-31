@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {});
 
   choice.associate = function(models) {
-
+    question.belongsTo(Game, { as: 'game', foreignKey: 'gameId' });
   };
 
   return choice;
