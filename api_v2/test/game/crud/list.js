@@ -1,6 +1,6 @@
 const expect = require('chai').expect;
 
-function listGamesNotLoggedIn() {
+function listGamesNotPlayer() {
   return this.createSession()
     .get('/api/game')
     .expect(401);
@@ -28,7 +28,7 @@ async function listGames1() {
 }
 
 module.exports = {
-  listGamesNotLoggedIn,
+  listGamesNotPlayer,
   listGames0,
   listGames1,
 };

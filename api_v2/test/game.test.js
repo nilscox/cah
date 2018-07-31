@@ -13,7 +13,7 @@ describe('game', () => {
       const { list } = crud;
 
       beforeEach(list.beforeEach || noop);
-      it('should not list the games if not logged in', list.listGamesNotLoggedIn);
+      it('should not list the games if not logged in', list.listGamesNotPlayer);
       it('should list all the games 0', list.listGames0);
       it('should list all the games 1', list.listGames1);
     });
@@ -22,19 +22,22 @@ describe('game', () => {
       const { retrieve } = crud;
 
       beforeEach(retrieve.beforeEach || noop);
-      it('should retrieve a game', retrieve.retrieveGame);
+      it('should not retrieve a game when not logged in', retrieve.retrieveGameNotPlayer);
       it('should not retrieve a non-existing game', retrieve.retrieveGameDontExist);
+      it('should retrieve a game', retrieve.retrieveGame);
     });
 
     describe('create', () => {
       const { create } = crud;
 
       beforeEach(create.beforeEach || noop);
-      it('should create a game', create.createGame);
+      it('should not create a game when not logged in', create.createGameNotPlayer);
+      it('should not create a game when in game', create.createGameInGame);
       it('should not create a game with a missing lang', create.createGameMissingLang);
       it('should not create a game with a language of type number', create.createGameLangNotNumber);
       it('should not create a game with an invalid language', create.createGameInvalidLang);
       it('should not create a game with a state', create.createGameWithState);
+      it('should create a game', create.createGame);
     });
 
     describe('update', () => {

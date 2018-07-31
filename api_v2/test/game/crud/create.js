@@ -1,15 +1,19 @@
 const expect = require('chai').expect;
 
-function createGame() {
+function createGameNotPlayer() {
+  return this.createSession()
+    .post('/api/game')
+    .send({ lang: 'fr' })
+    .expect(401);
+}
+
+async function createGameInGame() {
+  const game = await this.createGame({ owner: this.player });
+
   return this.app
     .post('/api/game')
     .send({ lang: 'fr' })
-    .expect(201)
-    .then(res => {
-      expect(res.body).to.have.property('id');
-      expect(res.body).to.have.property('lang', 'fr');
-      expect(res.body).to.have.property('owner', this.player.nick);
-    });
+    .expect(401);
 }
 
 function createGameMissingLang() {
@@ -40,10 +44,24 @@ function createGameWithState() {
     .expect(400);
 }
 
+function createGame() {
+  return this.app
+    .post('/api/game')
+    .send({ lang: 'fr' })
+    .expect(201)
+    .then(res => {
+      expect(res.body).to.have.property('id');
+      expect(res.body).to.have.property('lang', 'fr');
+      expect(res.body).to.have.property('owner', this.player.nick);
+    });
+}
+
 module.exports = {
-  createGame,
+  createGameNotPlayer,
+  createGameInGame,
   createGameMissingLang,
   createGameLangNotNumber,
   createGameInvalidLang,
   createGameWithState,
+  createGame,
 };
