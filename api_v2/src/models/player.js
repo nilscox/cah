@@ -8,9 +8,10 @@ module.exports = (sequelize, DataTypes) => {
     tableName: 'player',
   });
 
-  Player.associate = function({ Game }) {
+  Player.associate = function({ Game, Choice }) {
     Player.hasOne(Game, { as: 'ownerOf', foreignKey: 'ownerId' });
     Player.belongsTo(Game, { as: 'game', foreignKey: 'gameId' });
+    Player.hasMany(Choice, { as: 'cards', foreignKey: 'playerId' });
   };
 
   return Player;

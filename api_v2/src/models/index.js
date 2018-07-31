@@ -9,9 +9,13 @@ const config = require('../config');
 const sequelize = new Sequelize(config.database, config.username, config.password, config);
 
 const models = {
+  Question: 'question.js',
+  Choice: 'choice.js',
   Player: 'player.js',
   Game: 'game.js',
   GameTurn: 'game-turn.js',
+  Answer: 'answer.js',
+  AnsweredQuestion: 'answered-question.js',
 };
 
 const db = Object.keys(models).reduce((db, name) => {

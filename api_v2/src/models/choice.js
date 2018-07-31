@@ -7,8 +7,9 @@ module.exports = (sequelize, DataTypes) => {
     played: DataTypes.BOOLEAN,
   }, {});
 
-  Choice.associate = function(models) {
-    question.belongsTo(Game, { as: 'game', foreignKey: 'gameId' });
+  Choice.associate = function({ Game, Player }) {
+    Choice.belongsTo(Game, { as: 'game', foreignKey: 'gameId' });
+    Choice.belongsTo(Player, { as: 'card', foreignKey: 'playerId' });
   };
 
   return Choice;

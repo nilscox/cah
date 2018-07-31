@@ -1,10 +1,10 @@
 module.exports = (sequelize, DataTypes) => {
 
   const AnsweredQuestion = sequelize.define('answeredquestion', {
-    place: DataTypes.NUMBER,
+    place: DataTypes.INTEGER,
   }, {});
 
-  AnsweredQuestion.associate = function(models) {
+  AnsweredQuestion.associate = function({ }) {
 
   };
 
