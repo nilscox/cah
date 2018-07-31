@@ -1,10 +1,10 @@
 module.exports = (sequelize, DataTypes) => {
 
-  const answer = sequelize.define('answer', {}, {});
+  const Answer = sequelize.define('answer', {}, {});
 
-  answer.associate = function(models) {
+  Answer.associate = function(models) {
 
   };
 
-  return answer;
+  return Answer;
 };

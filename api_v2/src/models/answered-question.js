@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
 
-  const AnsweredQuestion = sequelize.define('answered-question', {
+  const AnsweredQuestion = sequelize.define('answeredquestion', {
     place: DataTypes.NUMBER,
   }, {});
 
