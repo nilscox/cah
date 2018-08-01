@@ -46,7 +46,7 @@ describe('game', () => {
       beforeEach(update.beforeEach || noop);
       it('should not update a game when not logged in', update.updateGameNotPlayer);
       it('should not update a non-existing game', update.updateGameDontExist);
-      it('should not update a game not by its owner');
+      it('should not update a game not by its owner', update.updateGamePlayerNotOwner);
       it('should not update a game\'s language', update.updateGameLanguage);
       it('should update an existing game', update.updateGame);
     });

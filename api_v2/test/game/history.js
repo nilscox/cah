@@ -4,8 +4,24 @@ async function beforeEach() {
   this.game = await this.createGame();
 }
 
-function gameHistory() {
+function gameHistoryGameDontExist() {
+  expect.fail();
+}
 
+function gameHistoryNotPlayer() {
+  expect.fail();
+}
+
+function gameHistoryNotInGame() {
+  expect.fail();
+}
+
+function gameHistoryNotInThisGame() {
+  expect.fail();
+}
+
+function gameHistoryGameNotStarted() {
+  expect.fail();
 }
 
 function gameHistoryEmpty() {
@@ -17,8 +33,17 @@ function gameHistoryEmpty() {
     });
 }
 
+function gameHistory() {
+  expect.fail();
+}
+
 module.exports = {
   beforeEach,
-  gameHistory,
+  gameHistoryGameDontExist,
+  gameHistoryNotPlayer,
+  gameHistoryNotInGame,
+  gameHistoryNotInThisGame,
+  gameHistoryGameNotStarted,
   gameHistoryEmpty,
+  gameHistory,
 };

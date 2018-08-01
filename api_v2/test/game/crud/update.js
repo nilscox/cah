@@ -5,22 +5,33 @@ async function beforeEach() {
   this.url = '/api/game/' + this.game.id;
 }
 
-function updateGame() {
-  return this.app
-    .put(this.url)
-    .send({})
-    .expect(200)
-    .on('error', e => console.log(e.response.body))
-    .then(res => {
-      expect(res.body).to.have.property('id', this.game.id);
-    });
-}
-
 function updateGameDontExist() {
   return this.app
     .put('/api/game/6')
     .send({})
     .expect(404);
+}
+
+async function updateGameNotPlayer() {
+  const game = await this.createGame({ owner: this.player });
+
+  return this.createSession()
+    .put('/api/game/' + game.id)
+    .send({})
+    .expect(401);
+}
+
+async function updateGamePlayerNotOwner() {
+  const app = this.createSession();
+  const owner = await this.createPlayer({ nick: 'toto' });
+  const game = await this.createGame({ owner });
+  await this.loginPlayer(this.player, app);
+  await this.joinGame(game, this.player);
+
+  return app
+    .put('/api/game/' + this.game.id)
+    .send({})
+    .expect(401);
 }
 
 function updateGameLanguage() {
@@ -33,9 +44,22 @@ function updateGameLanguage() {
     });
 }
 
+function updateGame() {
+  return this.app
+    .put(this.url)
+    .send({})
+    .expect(200)
+    .on('error', e => console.log(e.response.body))
+    .then(res => {
+      expect(res.body).to.have.property('id', this.game.id);
+    });
+}
+
 module.exports = {
   beforeEach,
-  updateGame,
   updateGameDontExist,
+  updateGameNotPlayer,
+  updateGamePlayerNotOwner,
   updateGameLanguage,
+  updateGame,
 };

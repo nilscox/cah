@@ -1,5 +1,21 @@
 const expect = require('chai').expect;
 
+function joinGameDontExist() {
+  expect.fail();
+}
+
+function joinNotPlayer() {
+  expect.fail();
+}
+
+function joinPlayerInGame() {
+  expect.fail();
+}
+
+function joinGameStarted() {
+  expect.fail();
+}
+
 async function joinGame() {
   const app = this.createSession();
   const player = await this.createLoginPlayer({ nick: 'toto' }, app);
@@ -13,5 +29,9 @@ async function joinGame() {
 }
 
 module.exports = {
+  joinGameDontExist,
+  joinNotPlayer,
+  joinPlayerInGame,
+  joinGameStarted,
   joinGame,
 };

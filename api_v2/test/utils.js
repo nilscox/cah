@@ -13,7 +13,7 @@ async function loginPlayer(player, app) {
   return await (app || this.app)
     .post('/api/player/login')
     .send({ nick: player.nick })
-    .expect(200)
+    .expect(200);
 }
 
 async function createLoginPlayer(opts, app) {
