@@ -46,14 +46,15 @@ module.exports = permissions => (req, res, next) => {
       return params;
     }, {});
 
-  const authorize = permissions[path][req.method];
+  const authorizer = permissions[path][req.method];
+  const authorize = f => f(req, params);
 
-  if (!isAuthorizer(authorize))
+  if (!isAuthorizer(authorizer))
     return next();
 
-  const promise = authorize instanceof Array
-    ? Promise.all(authorize.map(f => f(req, params)))
-    : Promise.resolve(authorize(req, params));
+  const promise = authorizer instanceof Array
+    ? Promise.all(authorizer.map(authorize))
+    : Promise.resolve(authorize(authorizer));
 
   return promise
     .then(() => next())

@@ -85,7 +85,34 @@ module.exports = {
       },
 
       '/leave': {
-        POST: [isPlayer, isInGame],
+        POST: [
+          isPlayer,
+          (req, params) => isInGame(req, params, params.id),
+        ],
+      },
+
+      '/answer': {
+        POST: [
+          isPlayer,
+          (req, params) => isInGame(req, params, params.id),
+          req => {
+            return false;
+          },
+        ],
+      },
+
+      '/select': {
+        POST: [
+          isPlayer,
+          (req, params) => isInGame(req, params, params.id),
+        ],
+      },
+
+      '/next': {
+        POST: [
+          isPlayer,
+          (req, params) => isInGame(req, params, params.id),
+        ],
       },
 
     },
