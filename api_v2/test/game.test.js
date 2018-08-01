@@ -161,16 +161,28 @@ describe('game', () => {
       const { next } = loop;
 
       beforeEach(next.beforeEach || noop);
-      it('should not select an answer from a non-existing game');
-      it('should not select an answer when not logged in');
-      it('should not select an answer when player is not in game');
-      it('should not select an answer when player is not in this game');
-      it('should not select an answer when game is not started');
-      it('should not select an answer when game state is not end of turn');
-      it('should not select an answer when player is not question master');
-      it('should select an answer');
+      it('should not go next on a non-existing game');
+      it('should not go next when not logged in');
+      it('should not go next when player is not in game');
+      it('should not go next when player is not in this game');
+      it('should not go next when game is not started');
+      it('should not go next when game state is not end of turn');
+      it('should not go next when player is not question master');
+      it('should go next');
     });
 
+  });
+
+  describe('end', () => {
+    const { end } = game;
+
+    beforeEach(end.beforeEach || noop);
+    it('should not end a non-existing game');
+    it('should not end a game when not logged in');
+    it('should not end a game when player is not in game');
+    it('should not end a game when player is not in this game');
+    it('should not end a game when not running');
+    it('should end a game');
   });
 
 });
