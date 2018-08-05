@@ -2,7 +2,7 @@ module.exports = (sequelize, DataTypes) => {
 
   const Choice = sequelize.define('choice', {
     text: DataTypes.STRING,
-    keep_capitalization: DataTypes.BOOLEAN,
+    keepCapitalization: DataTypes.BOOLEAN,
     available: DataTypes.BOOLEAN,
   }, {
     tableName: 'choice',

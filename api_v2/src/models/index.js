@@ -10,6 +10,8 @@ const game = require('../game');
 const sequelize = new Sequelize(config.database, config.username, config.password, config);
 
 const models = {
+  MasterQuestion: 'master-question.js',
+  MasterChoice: 'master-choice.js',
   Question: 'question.js',
   Choice: 'choice.js',
   Player: 'player.js',

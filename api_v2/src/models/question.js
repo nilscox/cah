@@ -2,7 +2,7 @@ module.exports = (sequelize, DataTypes) => {
 
   const Question = sequelize.define('question', {
     text: DataTypes.STRING,
-    blanks: DataTypes.JSON,
+    blanks: DataTypes.ARRAY(DataTypes.INTEGER),
     available: DataTypes.BOOLEAN,
   }, {
     tableName: 'question',

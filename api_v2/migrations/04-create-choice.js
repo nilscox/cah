@@ -12,7 +12,7 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING,
       },
-      keep_capitalization: {
+      keepCapitalization: {
         allowNull: false,
         type: Sequelize.BOOLEAN,
       },

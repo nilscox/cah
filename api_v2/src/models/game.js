@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
     Game.hasMany(GameTurn, { as: 'turns', foreignKey: 'gameId' });
     Game.hasMany(Question, { as: 'questions', foreignKey: 'gameId' });
     Game.hasMany(Choice, { as: 'choices', foreignKey: 'gameId' });
+    Game.belongsTo(Question, { as: 'currentQuestion', foreignKey: 'questionId' });
 
     Game.defaultScope = {
       include: ['players', 'owner'],
