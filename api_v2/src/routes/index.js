@@ -6,14 +6,14 @@ const game = require('./game');
 const router = express.Router();
 
 router.use((req, res, next) => {
-  res.format = (Formatter, inst, opts = {}) => {
+  res.format = async (Formatter, inst, opts = {}) => {
     const many = opts.many || false;
     let result = null;
 
     if (many)
-      result = inst.map(i => Formatter.format(i))
+      result = await Promise.all(inst.map(i => Formatter.format(i)));
     else
-      result = Formatter.format(inst)
+      result = await Formatter.format(inst);
 
     return res.json(result);
   };

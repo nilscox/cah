@@ -19,7 +19,7 @@ router.get('/:id', (req, res) => {
 router.post('/', (req, res, next) => {
   GameValidator.validate(req.body)
     .then(game => Game.create({ ...game, ownerId: req.player.id }))
-    .tap(game => game.addPlayer(req.player))
+    .tap(game => game.join(req.player))
     .tap(game => game.reload({ include: ['players', 'owner'] }))
     .then(game => res.status(201).format(GameFormatter, game))
     .catch(next);
