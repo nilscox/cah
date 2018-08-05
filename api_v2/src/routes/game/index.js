@@ -3,19 +3,21 @@ const { Game } = require('../../models');
 
 const router = require('./router');
 
-router.param('id', (req, res, next, id) => {
-  Game.findOne({
-    where: { id },
-    include: ['players', 'owner']
-  })
-    .then(game => {
-      if (!game)
-        throw new NotFoundError('game');
+router.param('id', async (req, res, next, id) => {
+  try {
+    const game = await Game.findOne({
+      where: { id },
+      include: ['players', 'owner']
+    });
 
-      req.game = game;
-      next();
-    })
-    .catch(next);
+    if (!game)
+      throw new NotFoundError('game');
+
+    req.game = game;
+    next();
+  } catch (e) {
+    next(e);
+  }
 });
 
 require('./game-crud');

@@ -2,15 +2,22 @@ const router = require('./router');
 const { BadRequestError } = require('../../errors');
 const { GameFormatter } = require('../../formatters')
 
-router.post('/:id/join', (req, res, next) => {
-  req.game.join(req.player)
-    .then(game => game.reload({ include: ['owner', 'players'] }))
-    .then(game => res.format(GameFormatter, game))
-    .catch(next);
+router.post('/:id/join', async (req, res, next) => {
+  try {
+    await req.game.join(req.player);
+
+    res.json(await GameFormatter.full(game));
+  } catch (e) {
+    next(e);
+  }
 });
 
-router.post('/:id/leave', (req, res, next) => {
-  req.game.leave(req.player)
-    .then(() => res.status(204).end())
-    .catch(next);
+router.post('/:id/leave', async (req, res, next) => {
+  try {
+    await req.game.leave(req.player);
+
+    res.status(204).end();
+  } catch (e) {
+    next(e);
+  }
 });

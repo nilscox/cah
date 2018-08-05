@@ -3,21 +3,23 @@ const { PlayerFormatter } = require('../../formatters');
 const { Player } = require('../../models');
 const router = require('./router');
 
-router.post('/login', (req, res, next) => {
+router.post('/login', async (req, res, next) => {
   const { nick } = req.body;
 
   if (!nick)
     return next(new MissingFieldError('nick'))
 
-  Player.findOne({ where: { nick } })
-    .then(player => {
-      if (!player)
-        return next(new NotFoundError('player'));
+  try {
+    const player = await Player.findOne({ where: { nick } })
 
-      req.session.player = player.nick;
-      res.format(PlayerFormatter, player);
-    })
-    .catch(next);
+    if (!player)
+      return next(new NotFoundError('player'));
+
+    req.session.player = player.nick;
+    res.json(await PlayerFormatter.full(player));
+  } catch (e) {
+    next(e);
+  }
 });
 
 router.post('/logout', (req, res, next) => {

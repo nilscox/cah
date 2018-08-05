@@ -4,55 +4,77 @@ const { PlayerFormatter } = require('../../formatters');
 const { ValidationError, NotFoundError } = require('../../errors');
 const router = require('./router');
 
-router.param('nick', (req, res, next, nick) => {
-  Player.findOne({
-    where: { nick: nick },
-    include: ['game'],
-  })
-    .then(player => {
-      if (!player)
-        throw new NotFoundError('player');
+router.param('nick', async (req, res, next, nick) => {
+  try {
+    const player = await Player.findOne({
+      where: { nick: nick },
+      include: ['game'],
+    });
 
-      req.player = player;
-      next();
-    })
-    .catch(next);
+    if (!player)
+      throw new NotFoundError('player');
+
+    req.player = player;
+    next();
+  } catch (e) {
+    next(e);
+  }
 });
 
-router.get('/list', (req, res, next) => {
-  Player.findAll({ include: ['game'] })
-    .then(players => res.format(PlayerFormatter, players, { many: true }))
-    .catch(next);
+router.get('/list', async (req, res, next) => {
+  try {
+    const players = await Player.findAll({ include: ['game'] });
+
+    res.json(await PlayerFormatter.full(players, { many: true }));
+  } catch (e) {
+    next(e);
+  }
 });
 
-router.get('/', (req, res, next) => {
+router.get('/', async (req, res, next) => {
   if (!req.player)
     return next();
 
-  res.format(PlayerFormatter, req.player);
+  res.json(await PlayerFormatter.full(req.player));
 });
 
-router.get('/:nick', (req, res) => {
-  res.format(PlayerFormatter, req.player);
+router.get('/:nick', async (req, res) => {
+  res.json(await PlayerFormatter.full(req.player));
 });
 
-router.post('/', (req, res, next) => {
-  PlayerValidator.validate(req.body, null)
-    .then(player => Player.create(player))
-    .tap(player => req.session.player = player.nick)
-    .then(player => res.status(201).format(PlayerFormatter, player))
-    .catch(next);
+router.post('/', async (req, res, next) => {
+  try {
+    const data = await PlayerValidator.validate(req.body);
+    const player = await Player.create(data);
+
+    req.session.player = player.nick;
+
+    res.status(201).json(await PlayerFormatter.full(player));
+  } catch (e) {
+    next(e);
+  }
 });
 
-router.put('/:nick', (req, res, next) => {
-  PlayerValidator.validate(req.body, { partial: true, nick: { readOnly: true } })
-    .then(player => req.player.update(player))
-    .then(player => res.format(PlayerFormatter, player))
-    .catch(next);
+router.put('/:nick', async (req, res, next) => {
+  try {
+    const data = await PlayerValidator.validate(req.body, {
+      partial: true,
+      nick: { readOnly: true },
+    });
+
+    const player = await req.player.update(data);
+
+    res.json(await PlayerFormatter.full(player));
+  } catch (e) {
+    next(e);
+  }
 });
 
-router.delete('/:nick', (req, res, next) => {
-  req.player.destroy()
-    .then(() => res.status(204).end())
-    .catch(next);
+router.delete('/:nick', async (req, res, next) => {
+  try {
+    await req.player.destroy();
+    res.status(204).end();
+  } catch (e) {
+    next(e);
+  }
 });

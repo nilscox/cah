@@ -4,35 +4,56 @@ const { Game } = require('../../models');
 const { GameValidator } = require('../../validators');
 const { GameFormatter } = require('../../formatters');
 
-router.get('/', (req, res, next) => {
-  Game.findAll({
-    include: 'owner',
-  })
-    .then(games => res.format(GameFormatter, games, { many: true }))
-    .catch(next);
+router.get('/', async (req, res, next) => {
+  try {
+    const games = await Game.findAll({
+      include: 'owner',
+    });
+
+    res.json(await GameFormatter.full(games, { many: true }));
+  } catch (e) {
+    next(e);
+  }
 });
 
-router.get('/:id', (req, res) => {
-  res.format(GameFormatter, req.game);
+router.get('/:id', async (req, res, next) => {
+  try {
+    res.json(await GameFormatter.full(req.game));
+  } catch (e) {
+    next(e);
+  }
 });
 
-router.post('/', (req, res, next) => {
-  GameValidator.validate(req.body)
-    .then(game => Game.create({ ...game, ownerId: req.player.id }))
-    .tap(game => game.join(req.player))
-    .tap(game => game.reload({ include: ['players', 'owner'] }))
-    .then(game => res.status(201).format(GameFormatter, game))
-    .catch(next);
+router.post('/', async (req, res, next) => {
+  try {
+    const data = await GameValidator.validate(req.body);
+    const game = await Game.create({ ...data, ownerId: req.player.id });
+
+    await game.join(req.player);
+
+    res.status(201).json(await GameFormatter.full(game));
+  } catch (e) {
+    next(e);
+  }
 });
 
-router.put('/:id', (req, res, next) => {
-  GameValidator.validate(req.body, { partial: true, lang: { readOnly: true } })
-    .then(game => req.game.update(game))
-    .then(game => res.format(GameFormatter, game))
-    .catch(next);
+router.put('/:id', async (req, res, next) => {
+  try {
+    const data = await GameValidator.validate(req.body, { partial: true, lang: { readOnly: true } });
+
+    await req.game.update(game);
+
+    res.json(await GameFormatter.full(game));
+  } catch (e) {
+    next(e);
+  }
 });
 
-router.delete('/:id', (req, res, next) => {
-  req.game.destroy()
-    .then(() => res.status(204).end());
+router.delete('/:id', async (req, res, next) => {
+  try {
+    await req.game.destroy();
+    res.status(204).end();
+  } catch (e) {
+    next(e);
+  }
 });
