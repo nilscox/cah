@@ -9,10 +9,13 @@ module.exports = {
         type: Sequelize.INTEGER,
       },
       lang: {
+        allowNull: false,
         type: Sequelize.STRING,
       },
       state: {
+        allowNull: false,
         type: Sequelize.STRING,
+        defaultValue: 'idle',
       },
       createdAt: {
         allowNull: false,
