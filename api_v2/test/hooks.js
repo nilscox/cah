@@ -1,5 +1,6 @@
 const Promise = require('bluebird');
 
+const fs = require('fs-extra');
 const path = require('path');
 const { Client } = require('pg');
 const Sequelize = require('sequelize');
@@ -34,21 +35,26 @@ const setup = () => {
       const sequelize = new Sequelize(DB_TEMPLATE_NAME, config.username, config.password, config);
 
       return new Umzug({
-        storage: 'sequelize',
+          storage: 'sequelize',
 
-        storageOptions: {
-          sequelize: sequelize
-        },
+          storageOptions: {
+            sequelize: sequelize
+          },
 
-        migrations: {
-          params: [
-            sequelize.getQueryInterface(),
-            Sequelize,
-          ],
-          path: path.resolve(__dirname, '..', 'migrations'),
-        },
-      })
+          migrations: {
+            params: [
+              sequelize.getQueryInterface(),
+              Sequelize,
+            ],
+            path: path.resolve(__dirname, '..', 'migrations'),
+          },
+        })
         .up()
+        .then(() => {
+          const dir = path.resolve(__dirname, '..', 'seeders');
+          return Promise.resolve(fs.readdir(dir))
+            .mapSeries(f => require(path.join(dir, f)).up(sequelize.getQueryInterface(), Sequelize));
+        })
         .then(() => sequelize.close());
     })
     .tap(pg => pg.end());

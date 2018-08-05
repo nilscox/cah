@@ -39,7 +39,6 @@ async function createGame(opts = {}) {
   const game = await new Game(opts).save();
 
   await game.addPlayer(opts.owner);
-  await game.setOwner(opts.owner);
 
   return game;
 }
@@ -48,7 +47,27 @@ async function joinGame(game, player) {
   if (player instanceof Array)
     return await Promise.all(player.map(async p => await game.appPlayer(p)));
 
-  return await game.addPlayer(player);
+  return await game.join(player);
+}
+
+async function createReadyGame(opts = {}, nicks = ['toto', 'tata']) {
+  if (!opts.owner)
+    opts.owner = await this.createLoginPlayer();
+
+  const game = await this.createGame(opts);
+
+  for (let i = 0; i < nicks.length; ++i)
+    await game.addPlayer(await this.createPlayer({ nick: nicks[i] }));
+
+  return game.reload({ include: ['owner', 'players'] });
+}
+
+async function createStartedGame(opts, nicks) {
+  const game = await this.createReadyGame();
+
+  await game.start();
+
+  return game.reload({ include: ['questionMaster'] });
 }
 
 module.exports = {
@@ -57,4 +76,6 @@ module.exports = {
   createLoginPlayer,
   createGame,
   joinGame,
+  createReadyGame,
+  createStartedGame,
 }
