@@ -28,6 +28,7 @@
     "db:migrate": "yarn sequelize db:migrate --config src/config.js",
     "db:seed": "yarn sequelize db:seed:all --config src/config.js --models-path src/models",
     "db:reset": "yarn db:drop; yarn db:create && yarn db:migrate && yarn db:seed",
+    "db:truncate": "for t in answer gameturn game player question choice; do echo \"TRUNCATE TABLE $t CASCADE;\"; done | psql -U $CAH_DB_USER -h $CAH_DB_HOST $CAH_DB_NAME",
     "start": "nodemon index.js",
     "test": "NODE_ENV=test mocha --exit",
     "test:coverage": "nyc -x migrations yarn test"
