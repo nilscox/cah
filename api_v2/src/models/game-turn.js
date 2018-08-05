@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
 
   GameTurn.associate = function({ Game, Player }) {
     GameTurn.belongsTo(Game, { as: 'game', foreignKey: 'gameId' });
-    GameTurn.belongsTo(Player, { as: 'winner', foreignKey: 'id' });
+    GameTurn.belongsTo(Player, { as: 'winner', foreignKey: 'winnerId' });
   };
 
   return GameTurn;

@@ -4,7 +4,9 @@ module.exports = (sequelize, DataTypes) => {
     text: DataTypes.STRING,
     blanks: DataTypes.JSON,
     available: DataTypes.BOOLEAN,
-  }, {});
+  }, {
+    tableName: 'question',
+  });
 
   Question.associate = function({ Game }) {
     Question.belongsTo(Game, { as: 'game', foreignKey: 'gameId' });

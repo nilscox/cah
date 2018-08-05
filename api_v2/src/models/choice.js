@@ -4,12 +4,13 @@ module.exports = (sequelize, DataTypes) => {
     text: DataTypes.STRING,
     keep_capitalization: DataTypes.BOOLEAN,
     available: DataTypes.BOOLEAN,
-    played: DataTypes.BOOLEAN,
-  }, {});
+  }, {
+    tableName: 'choice',
+  });
 
   Choice.associate = function({ Game, Player }) {
     Choice.belongsTo(Game, { as: 'game', foreignKey: 'gameId' });
-    Choice.belongsTo(Player, { as: 'card', foreignKey: 'playerId' });
+    Choice.belongsTo(Player, { as: 'player', foreignKey: 'playerId' });
   };
 
   return Choice;

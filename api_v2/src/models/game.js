@@ -8,7 +8,8 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   Game.associate = function({ Question, Choice, Player, GameTurn }) {
-    Game.belongsTo(Player, { as: 'owner', foreignKey: 'ownerId', targetKey: 'id' });
+    Game.belongsTo(Player, { as: 'owner', foreignKey: 'ownerId' });
+    Game.belongsTo(Player, { as: 'questionMaster', foreignKey: 'questionMasterId' });
     Game.hasMany(Player, { as: 'players', foreignKey: 'gameId' });
     Game.hasMany(GameTurn, { as: 'turns', foreignKey: 'gameId' });
     Game.hasMany(Question, { as: 'questions', foreignKey: 'gameId' });
