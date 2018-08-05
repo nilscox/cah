@@ -9,63 +9,87 @@ function shuffle(a) {
     return a;
 }
 
-async function createCards(game, nq, nc) {
-  const questions = await masterQuestion.findAll({
-    where: { lang: game.lang },
-    order: Sequelize.fn('RAND'),
-    limit: nq,
-  });
+module.exports = ({
+  Sequelize,
+  MasterQuestion,
+  MasterChoice,
+  Question,
+  Choice,
+  Answer,
+}) => {
 
-  const choices = await masterChoice.findAll({
-    where: { lang: game.lang },
-    order: Sequelize.fn('RAND'),
-    limit: nc,
-  });
+  const Op = Sequelize.Op;
 
-  await Question.bulkCreate(questions.map(q => ({
-    ...q,
-    available: true,
-    gameId: game.id,
-  })));
+  async function createCards(game, nq, nc) {
+    const getEntity = async (Model, limit) => {
+      let instances = await Model.findAll({
+        where: { lang: game.lang },
+        order: Sequelize.fn('RANDOM'),
+        limit,
+      });
 
-  await Choice.bulkCreate(choices.map(c => ({
-    ...c,
-    available: true,
-    gameId: game.id,
-  })));
-}
+      return instances.map(i => {
+        const values = i.get();
 
-module.exports = ({ Answer }) => ({
+        values.available = true;
+        values.gameId = game.id;
 
-  join: async function join(player) {
+        return values;
+      });
+    };
+
+    await Question.bulkCreate(await getEntity(MasterQuestion, nq));
+    await Choice.bulkCreate(await getEntity(MasterChoice, nc));
+  }
+
+  async function join(player) {
     return await this.addPlayer(player);
-  },
+  }
 
-  leave: async function leave(player) {
+  async function leave(player) {
     return await this.removePlayer(player);
-  },
+  }
 
-  dealCards: async function dealCards(player) {
+  async function dealCards(player) {
     const choices = await this.getChoices({
       where: { available: true },
       limit: 2 - await player.countCards(),
     });
 
-    await Choice.update({ playerId: player.id }, {
+    await Choice.update({ playerId: player.id, available: false }, {
       where: {
         id: { [Op.in]: choices.map(c => c.id) },
       },
     });
-  },
+  }
 
-  start: async function start({ questions, choices } = {}) {
+  async function pickQuestion() {
+    const question = (await this.getQuestions({
+      where: { available: true },
+      limit: 1,
+    }))[0];
+
+    await question.update({ available: false });
+    await this.setCurrentQuestion(question);
+  }
+
+  async function start({ questions, choices } = {}) {
+    const qm = (await this.getPlayers({
+      order: Sequelize.fn('RANDOM'),
+      limit: 1,
+    }))[0];
+
     await createCards(this, questions, choices);
-    await this.setQuestionMaster(this.players[~~(Math.random() * this.players.length)]);
-    await Promise.all(this.game.players.map(p => this.dealCards(p)));
-    await this.update({ state: 'started' });
-  },
+    await this.pickQuestion();
+    await this.setQuestionMaster(qm);
 
-  answer: async function answer(player, choices) {
+    for (let i = 0; i < this.players.length; ++i)
+      await this.dealCards(this.players[i]);
+
+    await this.update({ state: 'started' });
+  }
+
+  async function answer(player, choices) {
     const answer = new Answer({
       gameId: this.id,
       playerId: player.id,
@@ -80,6 +104,15 @@ module.exports = ({ Answer }) => ({
     });
 
     await this.addAnswer(answer);
-  },
+  }
 
-});
+  return {
+    join,
+    leave,
+    start,
+    dealCards,
+    pickQuestion,
+    answer,
+  };
+
+};
