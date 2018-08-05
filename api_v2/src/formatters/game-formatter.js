@@ -1,4 +1,4 @@
-const Formatter = require('./formatter');
+const formatter = require('./formatter');
 const PlayerFormatter = require('./player-formatter');
 const QuestionFormatter = require('./question-formatter');
 
@@ -12,11 +12,11 @@ const owner = async game => {
   if (!owner)
     return;
 
-  return owner.nick;
+  return owner.get('nick');
 };
 
 const players = game => {
-  return Promise.map(game.getPlayers(), p => new PlayerFormatter().format(p));
+  return Promise.all(game.getPlayers().map(p => PlayerFormatter.full(p)));
 };
 
 const question = async game => {
@@ -25,15 +25,25 @@ const question = async game => {
   if (!question)
     return;
 
-  return await new QuestionFormatter().format(question);
+  return await QuestionFormatter.full(question);
 };
 
-class GameFormatter extends Formatter {
+const questionMaster = async game => {
+  const qm = await game.getQuestionMaster();
 
-  static full(game, opts) {
-    return new GameFormatter({ id, owner, state, players, question }).format(game, opts);
-  }
+  if (!qm)
+    return;
 
+  return qm.get('nick');
 };
 
-module.exports = GameFormatter;
+module.exports = {
+  full: formatter({
+    id,
+    state,
+    owner,
+    players,
+    question,
+    questionMaster,
+  }),
+};

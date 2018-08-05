@@ -1,33 +1,23 @@
-class Formatter {
+module.exports = fields => (inst, opts = {}) => {
+  const keys = Object.keys(fields);
 
-  constructor(fields) {
-    this.fields = fields;
-  }
+  const formatInstance = async inst => {
+    const data = {};
 
-  format(inst, opts = {}) {
-    const fields = Object.keys(this.fields);
+    for (let i = 0; i < keys.length; ++i) {
+      const field = keys[i];
+      const formatter = fields[field];
 
-    const formatInstance = async inst => {
-      const data = {};
+      const value = await formatter(inst);
 
-      for (let i = 0; i < fields.length; ++i) {
-        const field = fields[i];
-        const formatter = this.fields[field];
+      if (typeof value !== 'undefined')
+        data[field] = value;
+    }
 
-        const value = await formatter(inst);
+    return data;
+  };
 
-        if (typeof value !== 'undefined')
-          data[field] = value;
-      }
-
-      return data;
-    };
-
-    return opts.many
-      ? Promise.all(inst.map(i => formatInstance(i)))
-      : formatInstance(inst);
-  }
-
+  return opts.many
+    ? Promise.all(inst.map(i => formatInstance(i)))
+    : formatInstance(inst);
 }
-
-module.exports = Formatter;

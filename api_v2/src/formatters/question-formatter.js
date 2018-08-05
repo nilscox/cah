@@ -1,15 +1,9 @@
-const Formatter = require('./formatter');
+const formatter = require('./formatter');
 
-class QuestionFormatter extends Formatter {
-
-  constructor() {
-    super({
-      id: q => q.get('id'),
-      text: q => q.get('text'),
-      blanks: q => q.get('blanks'),
-    });
-  }
-
+module.exports = {
+  full: formatter({
+    id: q => q.get('id'),
+    text: q => q.get('text'),
+    blanks: q => q.get('blanks'),
+  }),
 };
-
-module.exports = QuestionFormatter;

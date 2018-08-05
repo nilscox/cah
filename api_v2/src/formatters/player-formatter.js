@@ -1,14 +1,8 @@
-const Formatter = require('./formatter');
+const formatter = require('./formatter');
 
-class PlayerFormatter extends Formatter {
-
-  constructor() {
-    super({
-      nick: player => player.get('nick'),
-      avatar: player => player.get('avatar'),
-    });
-  }
-
+module.exports = {
+  full: formatter({
+    nick: player => player.get('nick'),
+    avatar: player => player.get('avatar'),
+  }),
 };
-
-module.exports = PlayerFormatter;
