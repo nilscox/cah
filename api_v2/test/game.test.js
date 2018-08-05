@@ -71,7 +71,6 @@ describe('game', () => {
     it('should not fetch a non-existing game history', history.gameHistoryGameDontExist);
     it('should not fetch a game history when not logged in', history.gameHistoryNotPlayer);
     it('should not fetch a game history when not in game', history.gameHistoryNotInGame);
-    it('should not fetch a game history when not in this game', history.gameHistoryNotInThisGame);
     it('should not fetch a game history when not started', history.gameHistoryGameNotStarted);
     it('should fetch an empty game history', history.gameHistoryEmpty);
     it('should fetch a game\'s history', history.gameHistory);
@@ -100,7 +99,6 @@ describe('game', () => {
       it('should not leave a non-existing game', leave.leaveGameDontExist);
       it('should not leave a game when not logged in', leave.leaveNotPlayer);
       it('should not leave a game when not in game', leave.leaveNotInGame);
-      it('should not leave a game when not in this game', leave.leaveNotInThisGame);
       it('should leave a game', leave.leaveGame);
     });
 
@@ -130,7 +128,6 @@ describe('game', () => {
       it('should not submit an answer to a non-existing game', submit.submitGameDontExist);
       it('should not submit an answer when not logged in', submit.submitNotPlayer);
       it('should not submit an answer when player is not in game', submit.submitNotInGame);
-      it('should not submit an answer when player is not in this game', submit.submitNotInThisGame);
       it('should not submit an answer when game is not started', submit.submitGameNotStarted);
       it('should not submit an answer when player is not game master', submit.submitNotGameMaster);
       it('should not submit an answer when game state is not players answer', submit.submitGameInvalidState);
@@ -149,7 +146,6 @@ describe('game', () => {
       it('should not select an answer from a non-existing game', select.selectGameDontExist);
       it('should not select an answer when not logged in', select.selectNotPlayer);
       it('should not select an answer when player is not in game', select.selectNotInGame);
-      it('should not select an answer when player is not in this game', select.selectNotInThisGame);
       it('should not select an answer when game is not started', select.selectGameNotStarted);
       it('should not select an answer when game state is not question master selection', select.selectGameInvalidState);
       it('should not select an answer when player is not question master', select.selectPlayerNotQuestionMaster);
@@ -166,7 +162,6 @@ describe('game', () => {
       it('should not go next on a non-existing game', next.nextGameDontExist);
       it('should not go next when not logged in', next.nextNotPlayer);
       it('should not go next when player is not in game', next.nextNotInGame);
-      it('should not go next when player is not in this game', next.nextNotInThisGame);
       it('should not go next when game is not started', next.nextGameNotStarted);
       it('should not go next when game state is not end of turn', next.nextGameInvalidState);
       it('should not go next when player is not question master', next.nextPlayerNotQuestionMaster);
