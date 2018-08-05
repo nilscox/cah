@@ -3,7 +3,10 @@ const Formatter = require('./formatter');
 class PlayerFormatter extends Formatter {
 
   constructor() {
-    super(['nick', 'avatar']);
+    super({
+      nick: player => player.get('nick'),
+      avatar: player => player.get('avatar'),
+    });
   }
 
 };

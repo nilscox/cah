@@ -1,7 +1,5 @@
-const PlayerFormatter = require('./player-formatter');
-const GameFormatter = require('./game-formatter');
-
 module.exports = {
-  PlayerFormatter: new PlayerFormatter(),
-  GameFormatter: new GameFormatter(),
+  PlayerFormatter: require('./player-formatter'),
+  GameFormatter: require('./game-formatter'),
+  QuestionFormatter: require('./question-formatter'),
 };

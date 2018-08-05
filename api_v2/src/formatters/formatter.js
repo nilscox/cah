@@ -4,25 +4,28 @@ class Formatter {
     this.fields = fields;
   }
 
-  format(inst) {
-    const values = inst.get();
-    const reducer = (data, field) => {
-      const value = values[field];
+  format(inst, opts = {}) {
+    const fields = Object.keys(this.fields);
 
-      if (typeof value === 'undefined')
-        throw new Error(`Formatter: missing field ${field} in ${inst}`);
+    const formatInstance = async inst => {
+      const data = {};
 
-      const func = this[`format_${field}`]
+      for (let i = 0; i < fields.length; ++i) {
+        const field = fields[i];
+        const formatter = this.fields[field];
 
-      if (typeof func === 'function')
-        data[field] = func(value);
-      else
-        data[field] = value;
+        const value = await formatter(inst);
+
+        if (typeof value !== 'undefined')
+          data[field] = value;
+      }
 
       return data;
     };
 
-    return this.fields.reduce(reducer, {});
+    return opts.many
+      ? Promise.all(inst.map(i => formatInstance(i)))
+      : formatInstance(inst);
   }
 
 }

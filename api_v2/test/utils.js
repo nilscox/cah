@@ -63,7 +63,7 @@ async function createReadyGame(opts = {}, nicks = ['toto', 'tata']) {
 }
 
 async function createStartedGame(opts, nicks) {
-  const game = await this.createReadyGame();
+  const game = await this.createReadyGame(opts, nicks);
 
   await game.start();
 
