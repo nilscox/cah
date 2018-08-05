@@ -1,30 +1,30 @@
-'use strict';
 module.exports = {
+
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('game', {
+    return queryInterface.createTable('answer', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
-      lang: {
-        type: Sequelize.STRING
-      },
-      state: {
-        type: Sequelize.STRING
+      place: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+      },
     });
   },
+
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('games');
-  }
+    return queryInterface.dropTable('answer');
+  },
+
 };

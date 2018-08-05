@@ -1,24 +1,24 @@
 module.exports = {
 
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('choice', {
+    return queryInterface.createTable('master_question', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
+      lang: {
+        allowNull: false,
+        type: Sequelize.STRING,
+      },
       text: {
         allowNull: false,
         type: Sequelize.STRING,
       },
-      keep_capitalization: {
-        allowNull: false,
-        type: Sequelize.BOOLEAN,
-      },
-      available: {
-        allowNull: false,
-        type: Sequelize.BOOLEAN,
+      blanks: {
+        allowNull: true,
+        type: Sequelize.ARRAY(Sequelize.INTEGER),
       },
       createdAt: {
         allowNull: false,
@@ -32,7 +32,7 @@ module.exports = {
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('choice');
-  }
+    return queryInterface.dropTable('master_question');
+  },
 
 };

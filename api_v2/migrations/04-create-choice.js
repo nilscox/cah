@@ -1,22 +1,24 @@
-'use strict';
 module.exports = {
+
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('player', {
+    return queryInterface.createTable('choice', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      nick: {
-        type: Sequelize.STRING,
-        unique: true,
-      },
-      socket: {
+      text: {
+        allowNull: false,
         type: Sequelize.STRING,
       },
-      avatar: {
-        type: Sequelize.STRING,
+      keep_capitalization: {
+        allowNull: false,
+        type: Sequelize.BOOLEAN,
+      },
+      available: {
+        allowNull: false,
+        type: Sequelize.BOOLEAN,
       },
       createdAt: {
         allowNull: false,
@@ -28,7 +30,9 @@ module.exports = {
       },
     });
   },
+
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('players');
+    return queryInterface.dropTable('choice');
   },
+
 };
