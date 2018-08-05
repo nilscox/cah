@@ -5,6 +5,7 @@ const env = process.env.NODE_ENV || 'development';
 const path = require('path');
 const Sequelize = require('sequelize');
 const config = require('../config');
+const game = require('../game');
 
 const sequelize = new Sequelize(config.database, config.username, config.password, config);
 
@@ -30,5 +31,8 @@ Object.values(db).forEach(model => {
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
+
+const ctrl = game(db);
+Object.keys(ctrl).forEach(f => db.Game.prototype[f] = ctrl[f])
 
 module.exports = db;
