@@ -1,28 +1,34 @@
 const { NotFoundError, MissingFieldError } = require('../../errors');
-const { PlayerFormatter } = require('../../formatters');
 const { Player } = require('../../models');
-const router = require('./router');
+const { isNotPlayer, isPlayer } = require('../../permissions');
+const { PlayerFormatter } = require('../../formatters');
+const createRouter = require('../createRouter');
 
-router.post('/login', async (req, res, next) => {
-  const { nick } = req.body;
+const router = createRouter();
+module.exports = router.router;
 
-  if (!nick)
-    return next(new MissingFieldError('nick'))
+router.post('/login', {
+  authorize: isNotPlayer,
+  validator: req => {
+    const { nick } = req.body;
 
-  try {
-    const player = await Player.findOne({ where: { nick } })
+    if (!nick)
+      throw new MissingFieldError('nick');
 
-    if (!player)
-      return next(new NotFoundError('player'));
+    return { nick };
+  },
+  formatter: PlayerFormatter.full,
+}, async (req, res, data) => {
+  const player = await Player.findOne({ where: { nick: data.nick } })
 
-    req.session.player = player.nick;
-    res.json(await PlayerFormatter.full(player));
-  } catch (e) {
-    next(e);
-  }
+  if (!player)
+    throw new NotFoundError('player');
+
+  req.session.player = player.nick;
+
+  return player;
 });
 
-router.post('/logout', (req, res, next) => {
-  delete req.session.player;
-  res.status(204).end();
-});
+router.post('/logout', {
+  authorize: isPlayer,
+}, req => delete req.session.player);
