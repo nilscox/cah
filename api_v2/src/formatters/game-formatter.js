@@ -32,7 +32,7 @@ const owner = async game => {
 };
 
 const players = game => {
-  return Promise.all(game.getPlayers().map(p => PlayerFormatter.full(p)));
+  return Promise.all(game.getPlayers().map(p => PlayerFormatter.light(p)));
 };
 
 const question = async game => {
