@@ -2,7 +2,7 @@ const expect = require('chai').expect;
 
 function fetchMeNotPlayer() {
   return this.app
-    .get('/api/player')
+    .get('/api/player/me')
     .expect(401);
 }
 
@@ -11,7 +11,7 @@ function fetchMeCreated() {
     .post('/api/player')
     .send({ nick: 'nils' })
     .then(() => this.app
-      .get('/api/player')
+      .get('/api/player/me')
       .expect(200)
     )
     .then(res => {
@@ -29,7 +29,7 @@ async function fetchMeLogin() {
     .post('/api/player/login')
     .send({ nick: 'nils' })
     .then(() => this.app
-      .get('/api/player')
+      .get('/api/player/me')
       .expect(200)
     )
     .then(res => {
