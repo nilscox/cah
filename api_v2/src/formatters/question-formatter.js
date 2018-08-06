@@ -5,5 +5,6 @@ module.exports = {
     id: q => q.get('id'),
     text: q => q.get('text'),
     blanks: q => q.get('blanks'),
+    nbChoices: q => q.getNbChoices(),
   }),
 };
