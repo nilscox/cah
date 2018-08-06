@@ -6,10 +6,12 @@ module.exports = {
     nick: player => player.get('nick'),
     avatar: player => player.get('avatar'),
     cards: async player => {
-      const cards = await player.getCards();
+      const game = await player.getGame();
 
-      if (!cards.length)
+      if (game.state !== 'started')
         return;
+
+      const cards = await player.getCards();
 
       return await ChoiceFormatter.full(cards, { many: true });
     },
