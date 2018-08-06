@@ -2,6 +2,7 @@ const { InvalidFieldTypeError, BadRequestError, MissingFieldError } = require('.
 const { Sequelize, Game } = require('../../models');
 const { GameValidator } = require('../../validators');
 const { GameFormatter } = require('../../formatters');
+const { isPlayer, isGameOwner, isInGame, isGameState, isQuestionMaster, isNotQuestionMaster } = require('../../permissions');
 const findGame = require('./find-game');
 
 const router = require('../createRouter')();
