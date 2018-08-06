@@ -3,9 +3,12 @@ const { PlayerValidator } = require('../../validators');
 const { PlayerFormatter } = require('../../formatters');
 const { ValidationError, NotFoundError } = require('../../errors');
 const { allow, isNotPlayer, isPlayer, isNotInGame } = require('../../permissions');
+const findPlayer = require('./find-player');
 
 const router = require('../createRouter')();
 module.exports = router.router;
+
+router.param('nick', findPlayer);
 
 router.get('/', {
   authorize: allow,

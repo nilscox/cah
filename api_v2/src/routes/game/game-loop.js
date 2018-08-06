@@ -2,11 +2,14 @@ const { InvalidFieldTypeError, BadRequestError, MissingFieldError } = require('.
 const { Sequelize, Game } = require('../../models');
 const { GameValidator } = require('../../validators');
 const { GameFormatter } = require('../../formatters');
+const findGame = require('./find-game');
 
 const router = require('../createRouter')();
 module.exports = router.router;
 
 const Op = Sequelize.Op;
+
+router.param('id', findGame);
 
 router.post('/:id/start', {
   authorize: [

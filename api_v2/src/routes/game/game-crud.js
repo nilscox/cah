@@ -2,9 +2,12 @@ const { Game } = require('../../models');
 const { GameValidator } = require('../../validators');
 const { GameFormatter } = require('../../formatters');
 const { isPlayer, isNotInGame, isInGame, isGameOwner } = require('../../permissions');
+const findGame = require('./find-game');
 
 const router = require('../createRouter')();
 module.exports = router.router;
+
+router.param('id', findGame);
 
 router.get('/', {
   authorize: isPlayer,

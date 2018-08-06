@@ -1,9 +1,12 @@
 const { Game } = require('../../models');
 const { GameTurnFormatter } = require('../../formatters');
-const { isNotPlayer, isPlayer } = require('../../permissions');
+const { isPlayer, isInGame } = require('../../permissions');
+const findGame = require('./find-game');
 
 const router = require('../createRouter')();
 module.exports = router.router;
+
+router.param('id', findGame);
 
 router.get('/:id/history', {
   authorize: [
@@ -12,7 +15,7 @@ router.get('/:id/history', {
   ],
   formatter: GameTurnFormatter.full,
 }, async (req, res, next) => {
-  return await req.game.getTurns({
-    include: ['winner'],
+  return await req.params.game.getTurns({
+    include: ['questionMaster', 'winner', 'question'],
   });
 });

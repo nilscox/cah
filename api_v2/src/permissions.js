@@ -21,7 +21,8 @@ const isInGame = async (player, gameId) => {
   if (!game)
     throw new AuthenticationError('you must be in game');
 
-  if (gameId && game.id !== gameId)
+  // gameId may be a string
+  if (gameId && game.id != gameId)
     throw new AuthenticationError('you must be in the game with id ' + gameId);
 };
 

@@ -2,9 +2,12 @@ const { NotFoundError, MissingFieldError } = require('../../errors');
 const { Player } = require('../../models');
 const { isNotPlayer, isPlayer } = require('../../permissions');
 const { PlayerFormatter } = require('../../formatters');
+const findPlayer = require('./find-player');
 
 const router = require('../createRouter')();
 module.exports = router.router;
+
+router.param('nick', findPlayer);
 
 router.post('/login', {
   authorize: req => isNotPlayer(req.player),

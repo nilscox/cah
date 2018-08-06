@@ -1,8 +1,11 @@
 const { BadRequestError } = require('../../errors');
 const { GameFormatter } = require('../../formatters')
+const findGame = require('./find-game');
 
 const router = require('../createRouter')();
 module.exports = router.router;
+
+router.param('id', findGame);
 
 router.post('/:id/join', {
   authorize: [
