@@ -19,6 +19,7 @@ module.exports = ({
   Question,
   Choice,
   Answer,
+  GameTurn,
 }) => {
 
   const Op = Sequelize.Op;
@@ -98,18 +99,20 @@ module.exports = ({
 
   async function nextTurn() {
     const players = await this.getPlayers();
-    const winner = await answer.getPlayer();
-    const turn = await this.addGameTurn({
+    const answer = await this.getSelectedAnswer({ include: ['player'] });
+    const winner = answer.player;
+    const turn = await this.createTurn({
       questionId: this.questionId,
       questionMasterId: this.questionMasterId,
       winnerId: winner.id,
     });
 
-    for (let i = 0; i < players.length; ++i)
-      await this.dealCards(players[i]);
-
+    await this.setSelectedAnswer(null);
     await this.pickQuestion();
     await this.setQuestionMaster(winner);
+
+    for (let i = 0; i < players.length; ++i)
+      await this.dealCards(players[i]);
   }
 
   return {
@@ -120,6 +123,7 @@ module.exports = ({
     pickQuestion,
     answer,
     select,
+    nextTurn,
   };
 
 };

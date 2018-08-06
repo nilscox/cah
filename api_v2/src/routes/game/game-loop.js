@@ -101,3 +101,24 @@ router.post('/:id/select', async (req, res, next) => {
     next(e);
   }
 });
+
+router.post('/:id/next', async (req, res, next) => {
+  const { game } = req;
+
+  try {
+    if (game.state !== 'started')
+      throw new BadRequestError('game is not started');
+
+    if (game.questionMasterId !== req.player.id)
+      throw new BadRequestError('you must be the question master');
+
+    if (await game.getPlayState() !== 'end_of_turn')
+      throw new BadRequestError('you cannot go next yet');
+
+    await game.nextTurn();
+
+    res.json(await GameFormatter.full(game));
+ } catch (e) {
+    next(e);
+ }
+});
