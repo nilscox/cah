@@ -73,6 +73,20 @@ async function createStartedGame(opts, nicks) {
   return game.reload({ include: ['questionMaster'] });
 }
 
+async function createRunningGame(opts, nicks, turns = 1) {
+  const game = await createStartedGame(opts, nicks);
+
+  for (let i = 0; i < turns; ++i) {
+    const players = await this.getPlayersWithoutQM(game);
+
+    for (let j = 0; j < players.length; ++j)
+      await this.answerRandomCard(game, players[j]);
+
+    await this.selectRandomAnswer(game);
+    await this.nextTurn(game);
+  }
+}
+
 async function getPlayersWithoutQM(game) {
   return await this.models.Player.findAll({
     where: {
@@ -94,6 +108,16 @@ async function answerRandomCard(game, player) {
   await game.answer(player, cards);
 }
 
+async function selectRandomAnswer(game) {
+  const propositions = await game.getPropositions();
+
+  await game.answer(propositions[~~(Math.random() * propositions.length)]);
+}
+
+async function nextTurn(game) {
+  await game.nextTurn();
+}
+
 module.exports = {
   createPlayer,
   loginPlayer,
@@ -102,6 +126,9 @@ module.exports = {
   joinGame,
   createReadyGame,
   createStartedGame,
+  createRunningGame,
   getPlayersWithoutQM,
   answerRandomCard,
+  selectRandomAnswer,
+  nextTurn,
 }

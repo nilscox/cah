@@ -37,6 +37,24 @@ const questionMaster = async game => {
   return qm.get('nick');
 };
 
+const propositions = async game => {
+  const propositions = await game.getPropositions();
+
+  if (!propositions)
+    return;
+
+  return propositions;
+};
+
+const selectedAnswer = async game => {
+  const answer = await game.getSelectedAnswer();
+
+  if (!answer)
+    return;
+
+  return answer;
+};
+
 module.exports = {
   full: formatter({
     id,
@@ -45,5 +63,7 @@ module.exports = {
     players,
     question,
     questionMaster,
+    propositions,
+    selectedAnswer,
   }),
 };

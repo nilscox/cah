@@ -53,7 +53,7 @@ module.exports = permissions => (req, res, next) => {
     return next();
 
   const promise = authorizer instanceof Array
-    ? Promise.all(authorizer.map(authorize))
+    ? Promise.mapSeries(authorizer, authorize)
     : Promise.resolve(authorize(authorizer));
 
   return promise

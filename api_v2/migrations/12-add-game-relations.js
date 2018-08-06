@@ -17,6 +17,11 @@ module.exports = {
         type: Sequelize.INTEGER,
         references: { model: 'question', key: 'id' },
       }),
+      queryInterface.addColumn('game', 'selectedAnswerId', {
+        allowNull: true,
+        type: Sequelize.INTEGER,
+        references: { model: 'answer', key: 'id' },
+      }),
     ]);
   },
 

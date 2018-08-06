@@ -24,7 +24,7 @@ describe('game-controller', () => {
   });
 
   it('should answer a question', async function() {
-    const game = await this.createStartedGame();
+    const game = await this.createRunningGame();
     const question = await game.getCurrentQuestion();
     const player = (await this.getPlayersWithoutQM(game))[0];
     const cards = await player.getCards({
@@ -45,6 +45,10 @@ describe('game-controller', () => {
       expect(choice).to.have.property('available', false);
 
     expect(await player.countCards()).to.eql(2 - question.getNbChoices());
+  });
+
+  it('should select an answer', async function() {
+
   });
 
 });

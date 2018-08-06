@@ -1,5 +1,4 @@
 const router = require('./router');
-const { NotFoundError } = require('../../errors');
 const { Game } = require('../../models');
 const { GameValidator } = require('../../validators');
 const { GameFormatter } = require('../../formatters');

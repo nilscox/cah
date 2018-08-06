@@ -23,5 +23,6 @@ router.param('id', async (req, res, next, id) => {
 require('./game-crud');
 require('./game-history');
 require('./game-players');
+require('./game-loop');
 
 module.exports = router;

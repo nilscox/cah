@@ -91,13 +91,18 @@ module.exports = {
         ],
       },
 
+      '/start': {
+        POST: [
+          isPlayer,
+          (req, params) => isInGame(req, params, params.id),
+          isGameOwner,
+        ],
+      },
+
       '/answer': {
         POST: [
           isPlayer,
           (req, params) => isInGame(req, params, params.id),
-          req => {
-            return false;
-          },
         ],
       },
 

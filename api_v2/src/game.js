@@ -93,12 +93,23 @@ module.exports = ({
   }
 
   async function select(answer) {
+    await this.setSelectedAnswer(answer);
+  }
+
+  async function nextTurn() {
+    const players = await this.getPlayers();
     const winner = await answer.getPlayer();
     const turn = await this.addGameTurn({
       questionId: this.questionId,
       questionMasterId: this.questionMasterId,
       winnerId: winner.id,
     });
+
+    for (let i = 0; i < players.length; ++i)
+      await this.dealCards(players[i]);
+
+    await this.pickQuestion();
+    await this.setQuestionMaster(winner);
   }
 
   return {

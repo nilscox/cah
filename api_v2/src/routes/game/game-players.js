@@ -6,7 +6,7 @@ router.post('/:id/join', async (req, res, next) => {
   try {
     await req.game.join(req.player);
 
-    res.json(await GameFormatter.full(game));
+    res.json(await GameFormatter.full(req.game));
   } catch (e) {
     next(e);
   }
