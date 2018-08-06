@@ -41,7 +41,7 @@ async function createGame(opts = {}) {
   const { Game } = this.models;
   const game = await new Game(opts).save();
 
-  await game.addPlayer(opts.owner);
+  await game.join(opts.owner);
 
   return game;
 }

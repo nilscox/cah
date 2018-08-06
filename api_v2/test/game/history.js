@@ -1,7 +1,8 @@
 const expect = require('chai').expect;
 
 async function beforeEach() {
-  this.game = await this.createGame();
+  const owner = await this.createLoginPlayer();
+  this.game = await this.createGame({ owner });
 }
 
 function gameHistoryGameDontExist() {
