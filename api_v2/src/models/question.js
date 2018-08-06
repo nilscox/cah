@@ -12,5 +12,12 @@ module.exports = (sequelize, DataTypes) => {
     Question.belongsTo(Game, { as: 'game', foreignKey: 'gameId' });
   };
 
+  Question.prototype.getNbChoices = function() {
+    if (!this.blanks)
+      return 1;
+
+    return this.blanks.length;
+  };
+
   return Question;
 };

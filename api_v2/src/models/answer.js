@@ -6,7 +6,8 @@ module.exports = (sequelize, DataTypes) => {
     tableName: 'answer',
   });
 
-  Answer.associate = function({ Question, Choice, Player }) {
+  Answer.associate = function({ Question, Choice, Game, Player }) {
+    Answer.belongsTo(Game, { as: 'game', foreignKey: 'gameId' });
     Answer.belongsTo(Player, { as: 'player', foreignKey: 'playerId' });
     Answer.belongsTo(Question, { as: 'question', foreignKey: 'questionId' });
     Answer.hasMany(Choice, { as: 'choices', foreignKey: 'answerId' });

@@ -1,3 +1,6 @@
+const Sequelize = require('sequelize');
+const Op = Sequelize.Op;
+
 async function createPlayer(opts = {}) {
   opts = {
     nick: 'nils',
@@ -70,6 +73,27 @@ async function createStartedGame(opts, nicks) {
   return game.reload({ include: ['questionMaster'] });
 }
 
+async function getPlayersWithoutQM(game) {
+  return await this.models.Player.findAll({
+    where: {
+      id: { [Op.not]: game.questionMasterId },
+    },
+  });
+}
+
+async function answerRandomCard(game, player) {
+  const question = await game.getCurrentQuestion();
+  const cards = await player.getCards({
+    order: Sequelize.fn('RANDOM'),
+    limit: question.getNbChoices(),
+  });
+
+  if (!cards)
+    throw new Error('player has no cards');
+
+  await game.answer(player, cards);
+}
+
 module.exports = {
   createPlayer,
   loginPlayer,
@@ -78,4 +102,6 @@ module.exports = {
   joinGame,
   createReadyGame,
   createStartedGame,
+  getPlayersWithoutQM,
+  answerRandomCard,
 }

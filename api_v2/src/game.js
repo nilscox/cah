@@ -1,4 +1,5 @@
-const NB_CARDS = 2;
+const NB_CARDS_PER_PLAYER = 2;
+const NB_QUESTIONS = 10;
 
 function shuffle(a) {
     var j, x, i;
@@ -33,7 +34,7 @@ module.exports = ({
   async function dealCards(player) {
     const choices = await this.getChoices({
       where: { available: true },
-      limit: NB_CARDS - await player.countCards(),
+      limit: NB_CARDS_PER_PLAYER - await player.countCards(),
     });
 
     await Choice.update({ playerId: player.id, available: false }, {
@@ -53,7 +54,9 @@ module.exports = ({
     await this.setCurrentQuestion(question);
   }
 
-  async function start({ questions } = {}) {
+  async function start(opts = {}) {
+    const questions = opts.questions || NB_QUESTIONS;
+
     const playersCount = await this.countPlayers();
     const qm = (await this.getPlayers({
       order: Sequelize.fn('RANDOM'),
@@ -71,20 +74,31 @@ module.exports = ({
   }
 
   async function answer(player, choices) {
+    const propositions = await this.getPropositions();
     const answer = new Answer({
       gameId: this.id,
       playerId: player.id,
-      questionId: this.question.id,
+      questionId: this.questionId,
+      place: propositions.length,
     });
 
     await answer.save();
-    await Choice.update({ answerId: answer.id }, {
+    await Choice.update({ answerId: answer.id, playerId: null }, {
       where: {
         id: { [Op.in]: choices.map(c => c.id) },
       },
     });
 
     await this.addAnswer(answer);
+  }
+
+  async function select(answer) {
+    const winner = await answer.getPlayer();
+    const turn = await this.addGameTurn({
+      questionId: this.questionId,
+      questionMasterId: this.questionMasterId,
+      winnerId: winner.id,
+    });
   }
 
   return {
@@ -94,6 +108,7 @@ module.exports = ({
     dealCards,
     pickQuestion,
     answer,
+    select,
   };
 
 };

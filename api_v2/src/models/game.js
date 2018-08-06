@@ -1,4 +1,5 @@
 const Sequelize = require('sequelize');
+const Op = Sequelize.Op;
 
 module.exports = (sequelize, DataTypes) => {
 
@@ -9,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
     tableName: 'game',
   });
 
-  Game.associate = function({ Question, Choice, Player, GameTurn }) {
+  Game.associate = function({ Question, Choice, Player, Answer, GameTurn }) {
     Game.belongsTo(Player, { as: 'owner', foreignKey: 'ownerId' });
     Game.belongsTo(Player, { as: 'questionMaster', foreignKey: 'questionMasterId' });
     Game.hasMany(Player, { as: 'players', foreignKey: 'gameId' });
@@ -17,6 +18,7 @@ module.exports = (sequelize, DataTypes) => {
     Game.hasMany(Question, { as: 'questions', foreignKey: 'gameId' });
     Game.hasMany(Choice, { as: 'choices', foreignKey: 'gameId' });
     Game.belongsTo(Question, { as: 'currentQuestion', foreignKey: 'questionId' });
+    Game.hasMany(Answer, { as: 'answers', foreignKey: 'gameId' });
 
     Game.defaultScope = {
       include: ['players', 'owner'],
@@ -32,7 +34,7 @@ module.exports = (sequelize, DataTypes) => {
    * @param opts.questions {number} - the number of questions
    * @param opts.choices {number} - the number of choices
    */
-  Game.prototype.createCards = async function (opts = {}) {
+  Game.prototype.createCards = async function(opts = {}) {
     const MasterQuestion = sequelize.model('masterquestion');
     const MasterChoice = sequelize.model('masterchoice');
     const Question = sequelize.model('question');
@@ -59,6 +61,18 @@ module.exports = (sequelize, DataTypes) => {
     await Choice.bulkCreate(await getEntity(MasterChoice, opts.choices));
   }
 
+  Game.prototype.getPropositions = async function() {
+    if (!this.questionId)
+      return;
+
+    return await this.getAnswers({
+      where: {
+        questionId: { [Op.eq]: this.questionId },
+      },
+      orderBy: ['place'],
+      include: ['choices'],
+    });
+  }
 
   return Game;
 };
