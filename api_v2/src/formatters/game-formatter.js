@@ -6,6 +6,22 @@ const id = game => game.get('id');
 
 const state = game => game.get('state');
 
+const playState = async game => {
+  if (game.state !== 'started')
+    return;
+
+  if (game.selectedAnswerId)
+    return 'end_of_turn';
+
+  const propositions = await game.getPropositions();
+  const playersCount = await game.countPlayers();
+
+  if (propositions.length === playersCount - 1)
+    return 'question_master_selection';
+
+  return 'players_answer';
+};
+
 const owner = async game => {
   const owner = await game.getOwner();
 
@@ -59,6 +75,7 @@ module.exports = {
   full: formatter({
     id,
     state,
+    playState,
     owner,
     players,
     question,

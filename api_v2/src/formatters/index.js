@@ -3,4 +3,5 @@ module.exports = {
   GameFormatter: require('./game-formatter'),
   GameTurnFormatter: require('./gameTurn-formatter'),
   QuestionFormatter: require('./question-formatter'),
+  ChoiceFormatter: require('./choice-formatter'),
 };
