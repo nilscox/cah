@@ -39,8 +39,8 @@ describe('formatter', () => {
       const data = await QuestionFormatter.full(questions, { many: true });
 
       expect(data).to.deep.eql([
-        { id: questions[0].id, text: 'q1', blanks: null },
-        { id: questions[1].id, text: 'q2', blanks: [1, 3] },
+        { id: questions[0].id, text: 'q1', blanks: null, nbChoices: questions[0].getNbChoices() },
+        { id: questions[1].id, text: 'q2', blanks: [1, 3], nbChoices: questions[1].getNbChoices() },
       ]);
     });
 
