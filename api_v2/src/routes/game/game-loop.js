@@ -37,7 +37,6 @@ router.post('/:id/answer', async (req, res, next) => {
       throw new BadRequestError('you cannot sumbit an answer');
 
     const ids = req.body.ids || req.body.id && [req.body.id];
-    console.log(ids);
 
     if (!ids)
       throw new MissingFieldError('id | ids');
