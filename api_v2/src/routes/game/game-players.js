@@ -1,5 +1,6 @@
 const { BadRequestError } = require('../../errors');
-const { GameFormatter } = require('../../formatters')
+const { GameFormatter } = require('../../formatters');
+const { isPlayer, isInGame, isNotInGame } = require('../../permissions');
 const findGame = require('./find-game');
 
 const router = require('../createRouter')();
@@ -14,8 +15,8 @@ router.post('/:id/join', {
   ],
   formatter: GameFormatter.full,
 }, async (req, res, next) => {
-  await req.game.join(req.player);
-  return req.game;
+  await req.params.game.join(req.player);
+  return req.params.game;
 });
 
 router.post('/:id/leave', {
@@ -23,4 +24,4 @@ router.post('/:id/leave', {
     req => isPlayer(req.player),
     req => isInGame(req.player, req.params.id),
   ],
-}, async req => await req.game.leave(req.player));
+}, async req => { await req.params.game.leave(req.player) });

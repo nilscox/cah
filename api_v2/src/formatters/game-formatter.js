@@ -6,6 +6,8 @@ const AnswerFormatter = require('./answer-formatter');
 
 const id = game => game.get('id');
 
+const lang = game => game.get('lang');
+
 const state = game => game.get('state');
 
 const playState = game => game.getPlayState();
@@ -65,6 +67,7 @@ const selectedAnswer = async game => {
 module.exports = {
   full: formatter({
     id,
+    lang,
     state,
     playState,
     owner,

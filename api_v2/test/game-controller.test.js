@@ -34,11 +34,11 @@ describe('game-controller', () => {
 
     await game.answer(player, cards);
 
-    const answers = await game.getAnswers();
+    const propositions = await game.getPropositions();
 
-    expect(answers).to.be.an('array').of.length(1);
+    expect(propositions).to.be.an('array').of.length(1);
 
-    const choices = await answers[0].getChoices();
+    const choices = await propositions[0].getChoices();
 
     expect(choices).to.be.an('array').of.length(question.getNbChoices());
     for (let choice of choices)

@@ -44,7 +44,7 @@ const isGameState = async (game, state, playState) => {
 const isGameOwner = async (player, gameId) => {
   await isInGame(player, gameId);
 
-  const game = player.getGame();
+  const game = await player.getGame();
 
   if (game.ownerId !== player.id)
     throw new AuthenticationError('you must be the game owner');

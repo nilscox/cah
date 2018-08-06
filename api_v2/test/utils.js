@@ -74,17 +74,19 @@ async function createStartedGame(opts, nicks) {
 }
 
 async function createRunningGame(opts, nicks, turns = 1) {
-  const game = await createStartedGame(opts, nicks);
+  const game = await this.createStartedGame(opts, nicks);
 
   for (let i = 0; i < turns; ++i) {
     const players = await this.getPlayersWithoutQM(game);
 
     for (let j = 0; j < players.length; ++j)
-      await this.answerRandomCard(game, players[j]);
+      await this.answerRandomCards(game, players[j]);
 
     await this.selectRandomAnswer(game);
-    await this.nextTurn(game);
+    await game.nextTurn();
   }
+
+  return game;
 }
 
 async function getPlayersWithoutQM(game) {
@@ -95,7 +97,7 @@ async function getPlayersWithoutQM(game) {
   });
 }
 
-async function answerRandomCard(game, player) {
+async function answerRandomCards(game, player) {
   const question = await game.getCurrentQuestion();
   const cards = await player.getCards({
     order: Sequelize.fn('RANDOM'),
@@ -111,11 +113,7 @@ async function answerRandomCard(game, player) {
 async function selectRandomAnswer(game) {
   const propositions = await game.getPropositions();
 
-  await game.answer(propositions[~~(Math.random() * propositions.length)]);
-}
-
-async function nextTurn(game) {
-  await game.nextTurn();
+  await game.select(propositions[~~(Math.random() * propositions.length)]);
 }
 
 module.exports = {
@@ -128,7 +126,6 @@ module.exports = {
   createStartedGame,
   createRunningGame,
   getPlayersWithoutQM,
-  answerRandomCard,
+  answerRandomCards,
   selectRandomAnswer,
-  nextTurn,
 }

@@ -49,7 +49,6 @@ function updateGame() {
     .put(this.url)
     .send({})
     .expect(200)
-    .on('error', e => console.log(e.response.body))
     .then(res => {
       expect(res.body).to.have.property('id', this.game.id);
     });
