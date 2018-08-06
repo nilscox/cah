@@ -1,41 +1,42 @@
-const Op = require('sequelize').Op;
-const router = require('./router');
 const { InvalidFieldTypeError, BadRequestError, MissingFieldError } = require('../../errors');
-const { Game } = require('../../models');
+const { Sequelize, Game } = require('../../models');
 const { GameValidator } = require('../../validators');
 const { GameFormatter } = require('../../formatters');
 
-router.post('/:id/start', async (req, res, next) => {
-  try {
-    if (req.game.state !== 'idle')
-      throw new BadRequestError('game has already started');
+const router = require('../createRouter')();
+module.exports = router.router;
 
-    const { questions } = req.body;
+const Op = Sequelize.Op;
+
+router.post('/:id/start', {
+  authorize: [
+    req => isPlayer(req.player),
+    req => isGameOwner(req.player, req.params.id),
+    req => {
+      if (req.game.state !== 'idle')
+        throw new BadRequestError('game has already started');
+    },
+  ],
+  validator: (data) => {
+    const { questions } = data;
 
     if (questions && typeof questions !== 'number')
       throw new InvalidFieldTypeError('questions', 'number');
-
-    await req.game.start({ questions });
-
-    res.json(await GameFormatter.full(req.game));
-  } catch (e) {
-    next(e);
-  }
+  },
+  formatter: GameFormatter.full,
+}, async (req, res, data) => {
+  await req.game.start(data.questions);
+  return req.game;
 });
 
-router.post('/:id/answer', async (req, res, next) => {
-  const { game } = req;
-
-  try {
-    if (game.state !== 'started')
-      throw new BadRequestError('game is not started');
-
-    if (game.questionMasterId === req.player.id)
-      throw new BadRequestError('you must not be the question master');
-
-    if (await game.getPlayState() !== 'players_answer')
-      throw new BadRequestError('you cannot sumbit an answer');
-
+router.post('/:id/answer', {
+  authorize: [
+    req => isPlayer(req.player),
+    req => isInGame(req.player, req.params.id),
+    req => isGameState(req.game, 'started', 'players_answer'),
+    req => isNotQuestionMaster(req.player),
+  ],
+  validator: req => {
     const ids = req.body.ids || req.body.id && [req.body.id];
 
     if (!ids)
@@ -44,41 +45,39 @@ router.post('/:id/answer', async (req, res, next) => {
     if (!(ids instanceof Array) || ids.map(id => typeof id !== 'number').indexOf(true) >= 0)
       throw new InvalidFieldTypeError('id | ids', 'number | number[]');
 
-    const choices = await req.player.getCards({
-      where: {
-        id: { [Op.in]: ids },
-      },
-    });
-
-    if (ids.length !== choices.length)
-      throw new BadRequestError('invalid id | ids');
-
-    const question = await game.getCurrentQuestion();
-
-    if (choices.length !== question.getNbChoices())
-      throw new BadRequestError('invalid number of answers');
-
-    await game.answer(req.player, choices);
-
-    res.json(await GameFormatter.full(game));
-  } catch (e) {
-    next(e);
-  }
-});
-
-router.post('/:id/select', async (req, res, next) => {
+    return { ids };
+  },
+  formatter: GameFormatter.full,
+}, async (req, res, data) => {
   const { game } = req;
 
-  try {
-    if (game.state !== 'started')
-      throw new BadRequestError('game is not started');
+  const choices = await req.player.getCards({
+    where: {
+      id: { [Op.in]: ids },
+    },
+  });
 
-    if (game.questionMasterId !== req.player.id)
-      throw new BadRequestError('you must be the question master');
+  if (ids.length !== choices.length)
+    throw new BadRequestError('invalid id | ids');
 
-    if (await game.getPlayState() !== 'question_master_selection')
-      throw new BadRequestError('you cannot sumbit an answer');
+  const question = await game.getCurrentQuestion();
 
+  if (choices.length !== question.getNbChoices())
+    throw new BadRequestError('invalid number of answers');
+
+  await game.answer(req.player, choices);
+
+  return game;
+});
+
+router.post('/:id/select', {
+  authorize: [
+    req => isPlayer(req.player),
+    req => isInGame(req.player, req.params.id),
+    req => isGameState(req.game, 'started', 'question_master_selection'),
+    req => isQuestionMaster(req.player),
+  ],
+  validator: req => {
     const answerId = req.body.id;
 
     if (!answerId)
@@ -86,38 +85,30 @@ router.post('/:id/select', async (req, res, next) => {
 
     if (typeof answerId !== 'number')
       throw new InvalidFieldTypeError('id', 'number');
-
-    const propositions = await game.getPropositions();
-    const answer = propositions.filter(p => p.id === answerId)[0];
-
-    if (!answer)
-      throw new BadRequestError('invalid answer id');
-
-    await game.select(answer);
-
-    res.json(await GameFormatter.full(game));
-  } catch (e) {
-    next(e);
-  }
-});
-
-router.post('/:id/next', async (req, res, next) => {
+  },
+  formatter: GameFormatter.full,
+}, async (req, res, next) => {
   const { game } = req;
 
-  try {
-    if (game.state !== 'started')
-      throw new BadRequestError('game is not started');
+  const propositions = await game.getPropositions();
+  const answer = propositions.filter(p => p.id === answerId)[0];
 
-    if (game.questionMasterId !== req.player.id)
-      throw new BadRequestError('you must be the question master');
+  if (!answer)
+    throw new BadRequestError('invalid answer id');
 
-    if (await game.getPlayState() !== 'end_of_turn')
-      throw new BadRequestError('you cannot go next yet');
+  await game.select(answer);
 
-    await game.nextTurn();
+  return game;
+});
 
-    res.json(await GameFormatter.full(game));
- } catch (e) {
-    next(e);
- }
+router.post('/:id/next', {
+  authorize: [
+    req => isPlayer(req.player),
+    req => isInGame(req.player, req.params.game),
+    req => isGameState(req.game, 'started', 'end_of_turn'),
+    req => isQuestionMaster(req.player),
+  ],
+}, async (req, res, next) => {
+  await req.game.nextTurn();
+  return req.game;
 });

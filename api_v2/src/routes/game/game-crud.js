@@ -1,58 +1,47 @@
-const router = require('./router');
 const { Game } = require('../../models');
 const { GameValidator } = require('../../validators');
 const { GameFormatter } = require('../../formatters');
+const { isPlayer, isNotInGame, isInGame, isGameOwner } = require('../../permissions');
 
-router.get('/', async (req, res, next) => {
-  try {
-    const games = await Game.findAll({
-      include: 'owner',
-    });
+const router = require('../createRouter')();
+module.exports = router.router;
 
-    res.json(await GameFormatter.full(games, { many: true }));
-  } catch (e) {
-    next(e);
-  }
+router.get('/', {
+  authorize: isPlayer,
+  formatter: GameFormatter.full,
+}, async () => {
+  return await Game.findAll({
+    include: 'owner',
+  });
 });
 
-router.get('/:id', async (req, res, next) => {
-  try {
-    res.json(await GameFormatter.full(req.game));
-  } catch (e) {
-    next(e);
-  }
+router.get('/:id', {
+  authorize: isPlayer,
+  formatter: GameFormatter.full,
+}, req => req.params.game);
+
+router.post('/', {
+  authorize: [isPlayer, isNotInGame],
+  validator: req => GameValidator.validate(req.body),
+  formatter: GameFormatter.full,
+}, async (req, res, data) => {
+  const game = await Game.create({ ...data, ownerId: req.player.id });
+
+  await game.join(req.player);
+
+  return game;
 });
 
-router.post('/', async (req, res, next) => {
-  try {
-    const data = await GameValidator.validate(req.body);
-    const game = await Game.create({ ...data, ownerId: req.player.id });
+router.put('/:id', {
+  authorize: [isPlayer, isGameOwner],
+  validator: req => GameValidator.validate(req.body, { partial: true, lang: { readOnly: true } }),
+  formatter: GameFormatter.full,
+}, async (req, res, data) => {
+  await req.params.game.update(game);
 
-    await game.join(req.player);
-
-    res.status(201).json(await GameFormatter.full(game));
-  } catch (e) {
-    next(e);
-  }
+  return game;
 });
 
-router.put('/:id', async (req, res, next) => {
-  try {
-    const data = await GameValidator.validate(req.body, { partial: true, lang: { readOnly: true } });
-
-    await req.game.update(game);
-
-    res.json(await GameFormatter.full(game));
-  } catch (e) {
-    next(e);
-  }
-});
-
-router.delete('/:id', async (req, res, next) => {
-  try {
-    await req.game.destroy();
-    res.status(204).end();
-  } catch (e) {
-    next(e);
-  }
-});
+router.delete('/:id', {
+  authorize: [isPlayer, isGameOwner],
+}, async req => await req.params.game.destroy());

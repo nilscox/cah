@@ -2,13 +2,12 @@ const { NotFoundError, MissingFieldError } = require('../../errors');
 const { Player } = require('../../models');
 const { isNotPlayer, isPlayer } = require('../../permissions');
 const { PlayerFormatter } = require('../../formatters');
-const createRouter = require('../createRouter');
 
-const router = createRouter();
+const router = require('../createRouter')();
 module.exports = router.router;
 
 router.post('/login', {
-  authorize: isNotPlayer,
+  authorize: req => isNotPlayer(req.player),
   validator: req => {
     const { nick } = req.body;
 
@@ -30,5 +29,5 @@ router.post('/login', {
 });
 
 router.post('/logout', {
-  authorize: isPlayer,
+  authorize: req => isPlayer(req.player),
 }, req => delete req.session.player);

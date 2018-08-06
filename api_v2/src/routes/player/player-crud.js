@@ -2,28 +2,10 @@ const { Player } = require('../../models');
 const { PlayerValidator } = require('../../validators');
 const { PlayerFormatter } = require('../../formatters');
 const { ValidationError, NotFoundError } = require('../../errors');
-const { allow, isNotPlayer, isPlayer, isMe, isNotInGame } = require('../../permissions');
-const createRouter = require('../createRouter');
+const { allow, isNotPlayer, isPlayer, isNotInGame } = require('../../permissions');
 
-const router = createRouter();
+const router = require('../createRouter')();
 module.exports = router.router;
-
-router.param('nick', async (req, res, next, nick) => {
-  try {
-    const player = await Player.findOne({
-      where: { nick },
-      include: ['game'],
-    });
-
-    if (!player)
-      throw new NotFoundError('player');
-
-    req.params.player = player;
-    next();
-  } catch (e) {
-    next(e);
-  }
-});
 
 router.get('/', {
   authorize: allow,
@@ -31,7 +13,7 @@ router.get('/', {
 }, async () => await Player.findAll());
 
 router.get('/me', {
-  authorize: isPlayer,
+  authorize: req => isPlayer(req.player),
   formatter: PlayerFormatter.full,
 }, req => req.player);
 
@@ -41,7 +23,7 @@ router.get('/:nick', {
 }, req => req.params.player);
 
 router.post('/', {
-  authorize: isNotPlayer,
+  authorize: req => isNotPlayer(req.player),
   validator: req => PlayerValidator.validate(req.body),
   formatter: PlayerFormatter.full,
 }, async (req, res, data) => {
@@ -54,7 +36,7 @@ router.post('/', {
 });
 
 router.put('/:nick', {
-  authorize: isMe,
+  authorize: req => isPlayer(req.player, req.params.nick),
   validator: req => PlayerValidator.validate(req.body, {
     partial: true,
     nick: { readOnly: true },
@@ -63,7 +45,10 @@ router.put('/:nick', {
 }, async (req, res, data) => await req.player.update(data));
 
 router.delete('/:nick', {
-  authorize: [isMe, isNotInGame],
+  authorize: [
+    req => isPlayer(req.player, req.params.nick),
+    req => isNotInGame(req.player),
+  ],
 }, async (req, res, next) => {
   await req.player.destroy();
   delete req.session.player;

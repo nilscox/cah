@@ -2,49 +2,71 @@ const { AuthenticationError } = require('./errors');
 
 const allow = () => {};
 
-const isPlayer = async req => {
-  if (!req.player)
+const isPlayer = async (player, nick) => {
+  if (!player)
     throw new AuthenticationError('you must a player');
+
+  if (nick && player.nick !== nick)
+    throw new AuthenticationError('you must be ' + nick);
 };
 
-const isNotPlayer = async req => {
-  if (req.player)
+const isNotPlayer = async player => {
+  if (player)
     throw new AuthenticationError('you must not be a player');
 };
 
-const isMe = async req => {
-  await isPlayer(req);
-
-  if (req.player.nick !== req.params.nick)
-    throw new AuthenticationError('you must be ' + req.params.nick);
-};
-
-const isInGame = async req => {
-  const game = await req.player.getGame();
+const isInGame = async (player, gameId) => {
+  const game = await player.getGame();
 
   if (!game)
     throw new AuthenticationError('you must be in game');
+
+  if (gameId && game.id !== gameId)
+    throw new AuthenticationError('you must be in the game with id ' + gameId);
 };
 
-const isNotInGame = async req => {
-  const game = await req.player.getGame();
+const isNotInGame = async player => {
+  const game = await player.getGame();
 
   if (game)
     throw new AuthenticationError('you must not be in game');
 };
 
-const isGameOwner = async req => {
-  const game = req.player.getGame({ include: 'owner' });
+const isGameState = async (game, state, playState) => {
+  if (game.state !== starte)
+    throw new BadRequestError('game is not ' + state);
 
-  if (game.owner.nick !== req.player.nick)
+  if (playState && await game.getPlayState() !== playState)
+    throw new BadRequestError('game is not in playState ' + playState);
+};
+
+const isGameOwner = async (player, gameId) => {
+  await isInGame(player, gameId);
+
+  const game = player.getGame();
+
+  if (game.ownerId !== player.id)
     throw new AuthenticationError('you must be the game owner');
+};
+
+const isQuestionMaster = async (player) => {
+  const game = await player.getGame();
+
+  if (game.questionMasterId !== player.id)
+    throw new BadRequestError('you must be the question master');
+};
+
+const isNotQuestionMaster = async (player) => {
+  const game = await player.getGame();
+
+  if (game.questionMasterId === player.id)
+    throw new BadRequestError('you must not be the question master');
 };
 
 module.exports = {
   allow,
   isPlayer,
   isNotPlayer,
-  isMe,
   isInGame,
   isNotInGame,
   isGameOwner,

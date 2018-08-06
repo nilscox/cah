@@ -1,15 +1,18 @@
 const { Game } = require('../../models');
 const { GameTurnFormatter } = require('../../formatters');
-const router = require('./router');
+const { isNotPlayer, isPlayer } = require('../../permissions');
 
-router.get('/:id/history', async (req, res, next) => {
-  try {
-    const turns = await req.game.getTurns({
-      include: ['winner'],
-    });
+const router = require('../createRouter')();
+module.exports = router.router;
 
-    res.json(await GameTurnFormatter.full(turns, { many: true }));
-  } catch (e) {
-    next(e);
-  }
+router.get('/:id/history', {
+  authorize: [
+    req => isPlayer(req.player),
+    req => isInGame(req.player, req.params.id),
+  ],
+  formatter: GameTurnFormatter.full,
+}, async (req, res, next) => {
+  return await req.game.getTurns({
+    include: ['winner'],
+  });
 });

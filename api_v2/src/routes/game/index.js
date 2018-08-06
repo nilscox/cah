@@ -1,28 +1,30 @@
+const router = require('express').Router();
 const { NotFoundError } = require('../../errors');
 const { Game } = require('../../models');
-
-const router = require('./router');
 
 router.param('id', async (req, res, next, id) => {
   try {
     const game = await Game.findOne({
       where: { id },
-      include: ['players', 'owner']
+      include: ['owner', {
+        association: 'players',
+        include: ['cards'],
+      }],
     });
 
     if (!game)
       throw new NotFoundError('game');
 
-    req.game = game;
+    req.params.game = game;
     next();
   } catch (e) {
     next(e);
   }
 });
 
-require('./game-crud');
-require('./game-history');
-require('./game-players');
-require('./game-loop');
+router.use(require('./game-crud'));
+router.use(require('./game-history'));
+router.use(require('./game-players'));
+router.use(require('./game-loop'));
 
 module.exports = router;
