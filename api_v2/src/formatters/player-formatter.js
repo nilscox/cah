@@ -8,7 +8,7 @@ module.exports = {
     cards: async player => {
       const game = await player.getGame();
 
-      if (game.state !== 'started')
+      if (!game || game.state !== 'started')
         return;
 
       const cards = await player.getCards();
