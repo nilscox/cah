@@ -47,6 +47,9 @@ const propositions = async game => {
   if (!propositions)
     return;
 
+  if (await game.getPlayState() === 'players_answer')
+    return null;
+
   return await AnswerFormatter.anonymous(propositions, { many: true });
 };
 
