@@ -1,26 +1,14 @@
 const formatter = require('./formatter');
 const PlayerFormatter = require('./player-formatter');
 const QuestionFormatter = require('./question-formatter');
+const ChoiceFormatter = require('./choice-formatter');
+const AnswerFormatter = require('./answer-formatter');
 
 const id = game => game.get('id');
 
 const state = game => game.get('state');
 
-const playState = async game => {
-  if (game.state !== 'started')
-    return;
-
-  if (game.selectedAnswerId)
-    return 'end_of_turn';
-
-  const propositions = await game.getPropositions();
-  const playersCount = await game.countPlayers();
-
-  if (propositions.length === playersCount - 1)
-    return 'question_master_selection';
-
-  return 'players_answer';
-};
+const playState = game => game.getPlayState();
 
 const owner = async game => {
   const owner = await game.getOwner();
@@ -59,7 +47,7 @@ const propositions = async game => {
   if (!propositions)
     return;
 
-  return propositions;
+  return await AnswerFormatter.anonymous(propositions, { many: true });
 };
 
 const selectedAnswer = async game => {
@@ -68,7 +56,7 @@ const selectedAnswer = async game => {
   if (!answer)
     return;
 
-  return answer;
+  return await AnswerFormatter.full(answer);
 };
 
 module.exports = {

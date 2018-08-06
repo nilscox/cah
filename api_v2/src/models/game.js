@@ -26,6 +26,22 @@ module.exports = (sequelize, DataTypes) => {
     };
   };
 
+  Game.prototype.getPlayState = async function() {
+    if (this.state !== 'started')
+      return null;
+
+    if (this.selectedAnswerId)
+      return 'end_of_turn';
+
+    const propositions = await this.getPropositions();
+    const playersCount = await this.countPlayers();
+
+    if (propositions.length === playersCount - 1)
+      return 'question_master_selection';
+
+    return 'players_answer';
+  }
+
   /**
    * Create the questions and choices from master data
    * @param MasterQuesiton
