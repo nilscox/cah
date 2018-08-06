@@ -1,14 +1,5 @@
 const expect = require('chai').expect;
 
-async function retrieveGameNotPlayer() {
-  const app = this.createSession();
-  const game = await this.createGame({ owner: this.player });
-
-  return app
-    .get('/api/game/' + game.id)
-    .expect(401);
-}
-
 function retrieveGameDontExist() {
   return this.app
     .get('/api/game/6')
@@ -27,7 +18,6 @@ async function retrieveGame() {
 }
 
 module.exports = {
-  retrieveGameNotPlayer,
   retrieveGameDontExist,
   retrieveGame,
 };

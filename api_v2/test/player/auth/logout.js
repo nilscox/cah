@@ -20,7 +20,7 @@ function logoutPlayerLogout() {
   return this.app
     .post('/api/player/logout')
     .then(() => this.app
-      .get('/api/player')
+      .get('/api/player/me')
       .expect(401)
     );
 }

@@ -33,4 +33,4 @@ router.post('/login', {
 
 router.post('/logout', {
   authorize: req => isPlayer(req.player),
-}, req => delete req.session.player);
+}, req => { delete req.session.player });

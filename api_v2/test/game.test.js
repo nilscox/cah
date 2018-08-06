@@ -13,7 +13,6 @@ describe('game', () => {
       const { list } = crud;
 
       beforeEach(list.beforeEach || noop);
-      it('should not list the games if not logged in', list.listGamesNotPlayer);
       it('should list all the games 0', list.listGames0);
       it('should list all the games 1', list.listGames1);
     });
@@ -23,7 +22,6 @@ describe('game', () => {
 
       beforeEach(retrieve.beforeEach || noop);
       it('should not retrieve a non-existing game', retrieve.retrieveGameDontExist);
-      it('should not retrieve a game when not logged in', retrieve.retrieveGameNotPlayer);
       it('should retrieve a game', retrieve.retrieveGame);
     });
 
