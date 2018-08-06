@@ -1,3 +1,5 @@
+const Sequelize = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
 
   const Game = sequelize.define('Game', {
@@ -20,6 +22,43 @@ module.exports = (sequelize, DataTypes) => {
       include: ['players', 'owner'],
     };
   };
+
+  /**
+   * Create the questions and choices from master data
+   * @param MasterQuesiton
+   * @param MasterChoice
+   * @param Question
+   * @param Choice
+   * @param opts.questions {number} - the number of questions
+   * @param opts.choices {number} - the number of choices
+   */
+  Game.prototype.createCards = async function (opts = {}) {
+    const MasterQuestion = sequelize.model('masterquestion');
+    const MasterChoice = sequelize.model('masterchoice');
+    const Question = sequelize.model('question');
+    const Choice = sequelize.model('choice');
+
+    const getEntity = async (Model, limit) => {
+      let instances = await Model.findAll({
+        where: { lang: this.lang },
+        order: Sequelize.fn('RANDOM'),
+        limit,
+      });
+
+      return instances.map(i => {
+        const values = i.get();
+
+        values.available = true;
+        values.gameId = this.id;
+
+        return values;
+      });
+    };
+
+    await Question.bulkCreate(await getEntity(MasterQuestion, opts.questions));
+    await Choice.bulkCreate(await getEntity(MasterChoice, opts.choices));
+  }
+
 
   return Game;
 };

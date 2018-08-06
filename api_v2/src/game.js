@@ -1,3 +1,5 @@
+const NB_CARDS = 2;
+
 function shuffle(a) {
     var j, x, i;
     for (i = a.length - 1; i > 0; i--) {
@@ -20,28 +22,6 @@ module.exports = ({
 
   const Op = Sequelize.Op;
 
-  async function createCards(game, nq, nc) {
-    const getEntity = async (Model, limit) => {
-      let instances = await Model.findAll({
-        where: { lang: game.lang },
-        order: Sequelize.fn('RANDOM'),
-        limit,
-      });
-
-      return instances.map(i => {
-        const values = i.get();
-
-        values.available = true;
-        values.gameId = game.id;
-
-        return values;
-      });
-    };
-
-    await Question.bulkCreate(await getEntity(MasterQuestion, nq));
-    await Choice.bulkCreate(await getEntity(MasterChoice, nc));
-  }
-
   async function join(player) {
     return await this.addPlayer(player);
   }
@@ -53,7 +33,7 @@ module.exports = ({
   async function dealCards(player) {
     const choices = await this.getChoices({
       where: { available: true },
-      limit: 2 - await player.countCards(),
+      limit: NB_CARDS - await player.countCards(),
     });
 
     await Choice.update({ playerId: player.id, available: false }, {
@@ -73,13 +53,14 @@ module.exports = ({
     await this.setCurrentQuestion(question);
   }
 
-  async function start({ questions, choices } = {}) {
+  async function start({ questions } = {}) {
+    const playersCount = await this.countPlayers();
     const qm = (await this.getPlayers({
       order: Sequelize.fn('RANDOM'),
       limit: 1,
     }))[0];
 
-    await createCards(this, questions, choices);
+    await this.createCards({ questions, choices: questions * playersCount });
     await this.pickQuestion();
     await this.setQuestionMaster(qm);
 

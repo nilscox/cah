@@ -7,7 +7,6 @@ describe('game-controller', () => {
 
     await game.start({
       questions: 3,
-      choices: 10,
     });
 
     const questions = await game.getQuestions({ where: { available: true } });
@@ -15,7 +14,7 @@ describe('game-controller', () => {
     const questionMaster = await game.getQuestionMaster();
 
     expect(questions).to.be.an('array').of.length(2);
-    expect(choices).to.be.an('array').of.length(4);
+    expect(choices).to.be.an('array').of.length(3);
     expect(questionMaster).to.not.be.null;
     expect(game).to.have.property('state', 'started');
 
