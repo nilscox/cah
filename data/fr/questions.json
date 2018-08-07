@@ -1,0 +1,18 @@
+[
+  {
+    "text": "tu aimes la tarte ?",
+    "blanks": null
+  },
+  {
+    "text": "j'aime .",
+    "blanks": [7]
+  },
+  {
+    "text": "est-ce qu'on fait  ou  ?",
+    "blanks": [18, 22]
+  },
+  {
+    "text": " etait mieux que  avant .",
+    "blanks": [0, 17, 24]
+  },
+]

@@ -1,0 +1,18 @@
+[
+  {
+    "text": "do you like pie?",
+    "blanks": null
+  },
+  {
+    "text": "i like .",
+    "blanks": [7]
+  },
+  {
+    "text": "should we do  or  ?",
+    "blanks": [13, 17]
+  },
+  {
+    "text": " was beter than  before .",
+    "blanks": [0, 16, 24]
+  },
+]

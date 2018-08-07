@@ -1,7 +1,6 @@
 *.pyc
 *.sqlite3
 *.log
-data
 media
 .env
 .nyc_output/
