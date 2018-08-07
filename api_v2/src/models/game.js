@@ -104,7 +104,7 @@ module.exports = (sequelize, DataTypes) => {
     const nbChoices = b * (p - 1) + n * p;
 
     await this.createChoices(nbChoices);
-    console.log('nbChoices: ' + nbChoices);
+    // console.log('nbChoices: ' + nbChoices);
   }
 
   Game.prototype.getPropositions = async function() {

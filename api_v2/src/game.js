@@ -67,8 +67,11 @@ module.exports = ({
     await this.pickQuestion();
     await this.setQuestionMaster(qm);
 
-    for (let i = 0; i < this.players.length; ++i)
-      await this.dealCards(this.players[i]);
+    const players = await this.getPlayers();
+
+    for (let i = 0; i < players.length; ++i) {
+      await this.dealCards(players[i]);
+    }
 
     await this.update({ state: 'started' });
   }
