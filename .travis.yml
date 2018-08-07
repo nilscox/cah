@@ -18,7 +18,7 @@ env:
 
 before_install:
   - npm install -g yarn nyc codecov
-  - cd api_v2
+  - cd api
 
 before_script:
   - psql -U postgres -c 'CREATE ROLE cah LOGIN'

@@ -1,6 +1,6 @@
 {
-  "name": "api_v2",
-  "version": "1.0.0",
+  "name": "api",
+  "version": "0.1.0",
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
@@ -12,15 +12,15 @@
     "pg": "^7.4.3",
     "pg-hstore": "^2.3.2",
     "sequelize": "^4.38.0",
-    "sql-formatter": "^2.3.1",
-    "supertest-session": "^3.3.0"
+    "sql-formatter": "^2.3.1"
   },
   "devDependencies": {
     "chai": "^4.1.2",
     "mocha": "^5.2.0",
     "nodemon": "^1.18.2",
     "sequelize-cli": "^4.0.0",
-    "supertest": "^3.1.0"
+    "supertest": "^3.1.0",
+    "supertest-session": "^3.3.0"
   },
   "scripts": {
     "db:create": "CAH_DB_USER=\"$CAH_DB_ROOT_USER\" CAH_DB_PASSWORD=\"$CAH_DB_ROOT_PASSWORD\" yarn sequelize db:create --config src/config.js",
@@ -30,6 +30,7 @@
     "db:reset": "yarn db:drop; yarn db:create && yarn db:migrate && yarn db:seed",
     "db:truncate": "for t in answer gameturn game player question choice; do echo \"TRUNCATE TABLE $t CASCADE;\"; done | psql -U $CAH_DB_USER -h $CAH_DB_HOST $CAH_DB_NAME",
     "start": "nodemon index.js",
+    "start:debug": "nodemon --inspect index.js",
     "test": "NODE_ENV=test mocha --exit",
     "test:coverage": "nyc -x migrations yarn test"
   }
