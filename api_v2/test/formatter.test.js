@@ -1,5 +1,5 @@
 const expect = require('chai').expect;
-const { QuestionFormatter, GameFormatter } = require('../src/formatters');
+const { questionFormatter, gameFormatter } = require('../src/formatters');
 
 describe('formatter', () => {
 
@@ -15,7 +15,7 @@ describe('formatter', () => {
 
     it('should format a question', async function() {
       const question = await this.createQuestion({ lang: 'fr', text: 'coucou', blanks: null, available: true });
-      const data = await QuestionFormatter.full(question);
+      const data = await questionFormatter.full(question);
 
       expect(data).to.have.property('id').that.is.a('number');
       expect(data).to.have.property('text', 'coucou');
@@ -24,7 +24,7 @@ describe('formatter', () => {
 
     it('should format a question with blanks', async function() {
       const question = await this.createQuestion({ lang: 'fr', text: 'coucou', blanks: [1, 3], available: true });
-      const data = await QuestionFormatter.full(question);
+      const data = await questionFormatter.full(question);
 
       expect(data).to.have.property('id').that.is.a('number');
       expect(data).to.have.property('text', 'coucou');
@@ -36,7 +36,7 @@ describe('formatter', () => {
         await this.createQuestion({ lang: 'fr', text: 'q1', blanks: null, available: true }),
         await this.createQuestion({ lang: 'fr', text: 'q2', blanks: [1, 3], available: true }),
       ];
-      const data = await QuestionFormatter.full(questions, { many: true });
+      const data = await questionFormatter.full(questions, { many: true });
 
       expect(data).to.deep.eql([
         { id: questions[0].id, text: 'q1', blanks: null, nbChoices: questions[0].getNbChoices() },
@@ -51,7 +51,7 @@ describe('formatter', () => {
     it('should format an idle game', async function() {
       const owner = await this.createPlayer();
       const game = await this.createGame({ owner });
-      const data = await GameFormatter.full(game);
+      const data = await gameFormatter.full(game);
 
       expect(data).to.have.property('id').that.is.a('number');
       expect(data).to.have.property('state', 'idle');
@@ -62,7 +62,7 @@ describe('formatter', () => {
     it('should format an idle game with players', async function() {
       const owner = await this.createPlayer();
       const game = await this.createReadyGame({ owner });
-      const data = await GameFormatter.full(game);
+      const data = await gameFormatter.full(game);
 
       expect(data).to.have.property('id').that.is.a('number');
       expect(data).to.have.property('state', 'idle');
@@ -73,7 +73,7 @@ describe('formatter', () => {
     it('should format an started game', async function() {
       const owner = await this.createPlayer();
       const game = await this.createStartedGame({ owner });
-      const data = await GameFormatter.full(game);
+      const data = await gameFormatter.full(game);
 
       expect(data).to.have.property('id').that.is.a('number');
       expect(data).to.have.property('state', 'started');
