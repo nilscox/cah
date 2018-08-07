@@ -20,7 +20,7 @@ function games() { h ":4242/api/game" }
 function game() { h ":4242/api/game/$1" }
 
 function create_player() { h POST ":4242/api/player" nick="$1" }
-function create_game() { h POST ":4242/api/game" lang="$1" }
+function create_game() { h POST ":4242/api/game" lang="$1" nbQuestions:="$2" cardsPerPlayer:="$3" }
 
 function login() { h POST ":4242/api/player/login" nick="$1" }
 function logout() { h POST ":4242/api/player/logout" }

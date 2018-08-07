@@ -13,9 +13,9 @@ router.get('/:id/history', {
     req => isPlayer(req.player),
     req => isInGame(req.player, req.params.id),
   ],
-  format: gameTurnFormatter.full,
+  format: gt => gameTurnFormatter.full(gt, { many: true }),
 }, async (req, res, next) => {
   return await req.params.game.getTurns({
-    include: ['questionMaster', 'winner', 'question'],
+    include: ['questionMaster', 'winner', 'question', 'answers'],
   });
 });

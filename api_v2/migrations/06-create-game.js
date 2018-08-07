@@ -17,6 +17,14 @@ module.exports = {
         type: Sequelize.STRING,
         defaultValue: 'idle',
       },
+      nbQuestions: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+      },
+      cardsPerPlayer: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

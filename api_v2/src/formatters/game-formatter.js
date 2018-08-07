@@ -8,9 +8,18 @@ const id = game => game.get('id');
 
 const lang = game => game.get('lang');
 
+const nbQuestions = game => game.get('nbQuestions');
+
+const cardsPerPlayer = game => game.get('cardsPerPlayer');
+
 const state = game => game.get('state');
 
-const playState = game => game.getPlayState();
+const playState = async game => {
+  if (game.get('state') !== 'started')
+    return;
+
+  return await game.getPlayState();;
+}
 
 const owner = async game => {
   const owner = await game.getOwner();
@@ -68,6 +77,8 @@ module.exports = {
   full: formatter({
     id,
     lang,
+    nbQuestions,
+    cardsPerPlayer,
     state,
     playState,
     owner,

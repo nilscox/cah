@@ -21,17 +21,9 @@ router.post('/:id/start', {
         throw new BadRequestError('game has already started');
     },
   ],
-  validate: (data) => {
-    const { questions } = data;
-
-    if (questions && typeof questions !== 'number')
-      throw new InvalidFieldTypeError('questions', 'number');
-
-    return { questions };
-  },
   format: gameFormatter.full,
-}, async (req, res, data) => {
-  await req.params.game.start(data.questions);
+}, async (req, res) => {
+  await req.params.game.start();
   return req.params.game;
 });
 

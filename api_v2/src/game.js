@@ -1,4 +1,3 @@
-const NB_CARDS_PER_PLAYER = 2;
 const NB_QUESTIONS = 10;
 
 function shuffle(a) {
@@ -35,7 +34,7 @@ module.exports = ({
   async function dealCards(player) {
     const choices = await this.getChoices({
       where: { available: true },
-      limit: NB_CARDS_PER_PLAYER - await player.countCards(),
+      limit: this.cardsPerPlayer - await player.countCards(),
     });
 
     await Choice.update({ playerId: player.id, available: false }, {
@@ -51,20 +50,23 @@ module.exports = ({
       limit: 1,
     }))[0];
 
+    if (!question)
+      return false;
+
     await question.update({ available: false });
     await this.setCurrentQuestion(question);
+
+    return true;
   }
 
-  async function start(opts = {}) {
-    const questions = opts.questions || NB_QUESTIONS;
-
+  async function start() {
     const playersCount = await this.countPlayers();
     const qm = (await this.getPlayers({
       order: Sequelize.fn('RANDOM'),
       limit: 1,
     }))[0];
 
-    await this.createCards({ questions, choices: questions * playersCount });
+    await this.createCards();
     await this.pickQuestion();
     await this.setQuestionMaster(qm);
 
@@ -109,12 +111,30 @@ module.exports = ({
       winnerId: winner.id,
     });
 
-    await this.setSelectedAnswer(null);
-    await this.pickQuestion();
-    await this.setQuestionMaster(winner);
+    await Answer.update({
+      gameTurnId: turn.id,
+    }, {
+      where: { questionId: this.questionId },
+    });
 
-    for (let i = 0; i < players.length; ++i)
-      await this.dealCards(players[i]);
+    await this.setSelectedAnswer(null);
+    if (await this.pickQuestion()) {
+      await this.setQuestionMaster(winner);
+
+      for (let i = 0; i < players.length; ++i)
+        await this.dealCards(players[i]);
+    } else
+      await this.end();
+  }
+
+  async function end() {
+    await this.update({
+      state: 'finished',
+      playState: null,
+      questionMasterId: null,
+      selectedAnswerId: null,
+      questionId: null,
+    });
   }
 
   return {
@@ -126,6 +146,7 @@ module.exports = ({
     answer,
     select,
     nextTurn,
+    end,
   };
 
 };

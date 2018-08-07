@@ -6,6 +6,8 @@ module.exports = (sequelize, DataTypes) => {
   const Game = sequelize.define('Game', {
     lang: DataTypes.STRING,
     state: DataTypes.STRING,
+    nbQuestions: DataTypes.INTEGER,
+    cardsPerPlayer: DataTypes.INTEGER,
   }, {
     tableName: 'game',
   });
@@ -42,40 +44,67 @@ module.exports = (sequelize, DataTypes) => {
     return 'players_answer';
   }
 
-  /**
-   * Create the questions and choices from master data
-   * @param MasterQuesiton
-   * @param MasterChoice
-   * @param Question
-   * @param Choice
-   * @param opts.questions {number} - the number of questions
-   * @param opts.choices {number} - the number of choices
-   */
-  Game.prototype.createCards = async function(opts = {}) {
+  Game.prototype.createQuestions = async function(n) {
     const MasterQuestion = sequelize.model('masterquestion');
-    const MasterChoice = sequelize.model('masterchoice');
     const Question = sequelize.model('question');
+
+    const mquestions = await MasterQuestion.findAll({
+      where: { lang: this.lang },
+      order: Sequelize.fn('RANDOM'),
+      limit: n,
+    });
+
+    if (mquestions.length < n)
+      throw new Error('not enough questions');
+
+    return await Question.bulkCreate(mquestions.map(mq => {
+      const values = mq.get();
+
+      values.available = true;
+      values.gameId = this.id;
+      delete values.id;
+
+      return values;
+    }));
+  }
+
+  Game.prototype.createChoices = async function(n) {
+    const MasterChoice = sequelize.model('masterchoice');
     const Choice = sequelize.model('choice');
 
-    const getEntity = async (Model, limit) => {
-      let instances = await Model.findAll({
-        where: { lang: this.lang },
-        order: Sequelize.fn('RANDOM'),
-        limit,
-      });
+    let mchoices = await MasterChoice.findAll({
+      where: { lang: this.lang },
+      order: Sequelize.fn('RANDOM'),
+      limit: n,
+    });
 
-      return instances.map(i => {
-        const values = i.get();
+    if (mchoices.length < n)
+      throw new Error('not enough choices');
 
-        values.available = true;
-        values.gameId = this.id;
+    return await Choice.bulkCreate(mchoices.map(mc => {
+      const values = mc.get();
 
-        return values;
-      });
-    };
+      values.available = true;
+      values.gameId = this.id;
+      delete values.id;
 
-    await Question.bulkCreate(await getEntity(MasterQuestion, opts.questions));
-    await Choice.bulkCreate(await getEntity(MasterChoice, opts.choices));
+      return values;
+    }));
+  }
+
+  /**
+   * Create the questions and choices from master data
+   */
+  Game.prototype.createCards = async function() {
+    const questions = await this.createQuestions(this.nbQuestions);
+
+    const p = await this.countPlayers();
+    const b = questions.reduce((sum, q) => sum + q.getNbChoices(), 0);
+    const n = this.cardsPerPlayer;
+    const nbChoices = b * (p - 1) + n * p;
+
+    await this.createChoices(nbChoices);
+    console.log('nbChoices: ' + nbChoices);
   }
 
   Game.prototype.getPropositions = async function() {
