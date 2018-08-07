@@ -6,45 +6,61 @@ describe('game-controller', () => {
   it('should start a game', async function() {
     const game = await this.createReadyGame();
 
-    await game.start({
-      questions: 3,
+    await game.start();
+    await game.reload({
+      include: [
+        { association: 'players', include: 'cards' },
+        'questions',
+        'choices',
+        'questionMaster',
+        'currentQuestion',
+        'answers',
+        'selectedAnswer',
+        'turns',
+      ],
     });
 
-    const questions = await game.getQuestions({ where: { available: true } });
-    const choices = await game.getChoices({ where: { available: true } });
-    const questionMaster = await game.getQuestionMaster();
+    expect(game.questionMaster).to.not.be.null;
+    expect(game.currentQuestion).to.not.be.null;
+    expect(game.answers).to.be.an('array').that.is.empty;
+    expect(game.selectedAnswer).to.be.null;
+    expect(game.turns).to.be.an('array').that.is.empty;
 
-    expect(questions).to.be.an('array').of.length(2);
-    expect(choices).to.be.an('array').of.length(3);
-    expect(questionMaster).to.not.be.null;
-    expect(game).to.have.property('state', 'started');
+    expect(game.state).to.eql('started');
+
+    const p = game.players.length;
+    const b = game.questions.reduce((sum, q) => sum + q.getNbChoices(), 0);
+    const n = game.cardsPerPlayer;
+
+    expect(game.questions.length).to.eql(2);
+    expect(await game.countQuestions({ where: { available: true } })).to.eql(1);
+    expect(game.choices.length).to.eql(b * (p - 1) + n * p);
+    expect(await game.countChoices({ where: { available: true } })).to.eql(b * (p - 1));
 
     for (let i = 0; i < game.players.length; ++i)
-      expect(await game.players[i].countCards()).to.eql(2);
+      expect(game.players[i].cards.length).to.eql(4);
   });
 
   it('should answer a question', async function() {
-    const game = await this.createRunningGame();
+    const game = await this.createStartedGame();
+    const players = await this.getPlayersWithoutQM(game);
     const question = await game.getCurrentQuestion();
-    const player = (await this.getPlayersWithoutQM(game))[0];
-    const cards = await player.getCards({
-      order: Sequelize.fn('RANDOM'),
-      limit: question.getNbChoices(),
-    });
 
-    await game.answer(player, cards);
+    await this.answerRandomCards(game, players[0]);
 
-    const propositions = await game.getPropositions();
+    expect(await players[0].countCards()).to.eql(game.cardsPerPlayer - question.getNbChoices());
+    expect(await game.countAnswers()).to.eql(1);
 
-    expect(propositions).to.be.an('array').of.length(1);
+    await this.answerRandomCards(game, players[1]);
 
-    const choices = await propositions[0].getChoices();
+    expect(await players[1].countCards()).to.eql(game.cardsPerPlayer - question.getNbChoices());
+    expect(await game.countAnswers()).to.eql(2);
+    expect(await game.getPlayState()).to.eql('question_master_selection');
 
-    expect(choices).to.be.an('array').of.length(question.getNbChoices());
-    for (let choice of choices)
-      expect(choice).to.have.property('available', false);
+    const propositions = game.getPropositions();
 
-    expect(await player.countCards()).to.eql(2 - question.getNbChoices());
+    for (let i = 0; i < propositions.length; ++i)
+      expect(await propositions[i]).to.have.property('place').that.is.not.null;
   });
 
   it('should select an answer', async function() {

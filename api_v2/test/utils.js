@@ -2,10 +2,7 @@ const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 
 async function createPlayer(opts = {}) {
-  opts = {
-    nick: 'nils',
-    ...opts,
-  };
+  opts.nick = opts.nick || 'nils';
 
   const { Player } = this.models;
 
@@ -42,20 +39,13 @@ async function createGame(opts = {}) {
   return game;
 }
 
-async function joinGame(game, player) {
-  if (player instanceof Array)
-    return await Promise.all(player.map(async p => await game.appPlayer(p)));
-
-  return await game.join(player);
-}
-
 async function createReadyGame(opts = {}, nicks = ['toto', 'tata']) {
   const game = await this.createGame(opts);
 
   for (let i = 0; i < nicks.length; ++i)
-    await game.addPlayer(await this.createPlayer({ nick: nicks[i] }));
+    await game.join(await this.createPlayer({ nick: nicks[i] }));
 
-  return game.reload({ include: ['owner', 'players'] });
+  return game;
 }
 
 async function createStartedGame(opts, nicks) {
@@ -63,21 +53,14 @@ async function createStartedGame(opts, nicks) {
 
   await game.start();
 
-  return game.reload({ include: ['questionMaster'] });
+  return game;
 }
 
 async function createRunningGame(opts, nicks, turns = 1) {
   const game = await this.createStartedGame(opts, nicks);
 
-  for (let i = 0; i < turns; ++i) {
-    const players = await this.getPlayersWithoutQM(game);
-
-    for (let j = 0; j < players.length; ++j)
-      await this.answerRandomCards(game, players[j]);
-
-    await this.selectRandomAnswer(game);
-    await game.nextTurn();
-  }
+  for (let i = 0; i < turns; ++i)
+    this.playRandomTurn(game);
 
   return game;
 }
@@ -110,16 +93,26 @@ async function selectRandomAnswer(game) {
   await game.select(propositions[~~(Math.random() * propositions.length)]);
 }
 
+async function playRandomTurn(game) {
+  const players = await this.getPlayersWithoutQM(game);
+
+  for (let j = 0; j < players.length; ++j)
+    await this.answerRandomCards(game, players[j]);
+
+  await this.selectRandomAnswer(game);
+  await game.nextTurn();
+}
+
 module.exports = {
   createPlayer,
   loginPlayer,
   createLoginPlayer,
   createGame,
-  joinGame,
   createReadyGame,
   createStartedGame,
   createRunningGame,
   getPlayersWithoutQM,
   answerRandomCards,
   selectRandomAnswer,
+  playRandomTurn,
 }
