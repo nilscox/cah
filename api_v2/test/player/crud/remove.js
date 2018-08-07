@@ -21,7 +21,7 @@ async function removePlayerNotMe() {
 async function removePlayerInGame() {
   const owner = await this.createPlayer({ nick: 'toto' });
   const game = await this.createGame({ owner });
-  await this.joinGame(game, this.player);
+  await game.join(this.player);
 
   return this.app
     .delete('/api/player/' + this.player.nick)
