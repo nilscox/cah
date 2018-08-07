@@ -17,7 +17,7 @@ module.exports = {
         type: Sequelize.INTEGER,
         references: { model: 'player', key: 'id' },
       }),
-      queryInterface.addColumn('answer', 'gameturnId', {
+      queryInterface.addColumn('answer', 'gameTurnId', {
         allowNull: true,
         type: Sequelize.INTEGER,
         references: { model: 'gameturn', key: 'id' },
@@ -30,7 +30,7 @@ module.exports = {
       queryInterface.removeColumn('answer', 'gameId'),
       queryInterface.removeColumn('answer', 'questionId'),
       queryInterface.removeColumn('answer', 'playerId'),
-      queryInterface.removeColumn('answer', 'gameturnId'),
+      queryInterface.removeColumn('answer', 'gameTurnId'),
     ]);
   },
 
