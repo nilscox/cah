@@ -48,14 +48,18 @@ describe('game-controller', () => {
 
     await this.answerRandomCards(game, players[0]);
 
+    expect(await game.getPlayState()).to.eql('players_answer');
     expect(await players[0].countCards()).to.eql(game.cardsPerPlayer - question.getNbChoices());
     expect(await game.countAnswers()).to.eql(1);
 
     await this.answerRandomCards(game, players[1]);
 
+    expect(await game.getPlayState()).to.eql('question_master_selection');
     expect(await players[1].countCards()).to.eql(game.cardsPerPlayer - question.getNbChoices());
     expect(await game.countAnswers()).to.eql(2);
-    expect(await game.getPlayState()).to.eql('question_master_selection');
+
+    await game.reload({ include: ['questionMaster'] });
+    expect(await game.questionMaster.countCards()).to.eql(game.cardsPerPlayer);
 
     const propositions = game.getPropositions();
 
@@ -64,7 +68,17 @@ describe('game-controller', () => {
   });
 
   it('should select an answer', async function() {
+    const game = await this.createStartedGame();
+    const players = await this.getPlayersWithoutQM(game);
 
+    for (let i = 0; i < players.length; ++i)
+      await this.answerRandomCards(game, players[i]);
+
+    const propositions = await game.getPropositions();
+
+    await game.select(propositions[~~(Math.random() * propositions.length)]);
+
+    expect(await game.getPlayState()).to.eql('end_of_turn');
   });
 
 });
