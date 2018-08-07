@@ -27,7 +27,7 @@ router.get('/:nick', {
 
 router.post('/', {
   authorize: req => isNotPlayer(req.player),
-  validate: req => PlayerValidator.validate(req.body),
+  validate: playerValidator.body(),
   format: playerFormatter.full,
 }, async (req, res, data) => {
   const player = await Player.create(data);
@@ -40,7 +40,7 @@ router.post('/', {
 
 router.put('/:nick', {
   authorize: req => isPlayer(req.player, req.params.nick),
-  validate: req => PlayerValidator.validate(req.body, {
+  validate: playerValidator.body({
     partial: true,
     nick: { readOnly: true },
   }),

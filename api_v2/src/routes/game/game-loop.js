@@ -17,7 +17,7 @@ router.post('/:id/start', {
     req => isPlayer(req.player),
     req => isGameOwner(req.player, req.params.id),
     req => {
-      if (req.game.state !== 'idle')
+      if (req.params.game.state !== 'idle')
         throw new BadRequestError('game has already started');
     },
   ],
@@ -26,34 +26,42 @@ router.post('/:id/start', {
 
     if (questions && typeof questions !== 'number')
       throw new InvalidFieldTypeError('questions', 'number');
+
+    return { questions };
   },
   format: gameFormatter.full,
 }, async (req, res, data) => {
-  await req.game.start(data.questions);
-  return req.game;
+  await req.params.game.start(data.questions);
+  return req.params.game;
 });
 
 router.post('/:id/answer', {
   authorize: [
     req => isPlayer(req.player),
     req => isInGame(req.player, req.params.id),
-    req => isGameState(req.game, 'started', 'players_answer'),
+    req => isGameState(req.params.game, 'started', 'players_answer'),
     req => isNotQuestionMaster(req.player),
   ],
   validate: req => {
-    const ids = req.body.ids || req.body.id && [req.body.id];
+    let ids = req.body.ids || req.body.id;
 
     if (!ids)
       throw new MissingFieldError('id | ids');
 
-    if (!(ids instanceof Array) || ids.map(id => typeof id !== 'number').indexOf(true) >= 0)
+    if (typeof ids === 'number')
+      ids = [ids];
+
+    if (!(ids instanceof Array))
+      throw new InvalidFieldTypeError('id | ids', 'number | number[]');
+
+    if (ids.map(id => typeof id !== 'number').indexOf(true) >= 0)
       throw new InvalidFieldTypeError('id | ids', 'number | number[]');
 
     return { ids };
   },
   format: gameFormatter.full,
-}, async (req, res, data) => {
-  const { game } = req;
+}, async (req, res, { ids }) => {
+  const { game } = req.params;
 
   const choices = await req.player.getCards({
     where: {
@@ -67,7 +75,7 @@ router.post('/:id/answer', {
   const question = await game.getCurrentQuestion();
 
   if (choices.length !== question.getNbChoices())
-    throw new BadRequestError('invalid number of answers');
+    throw new BadRequestError('invalid number of choices');
 
   await game.answer(req.player, choices);
 
@@ -78,7 +86,7 @@ router.post('/:id/select', {
   authorize: [
     req => isPlayer(req.player),
     req => isInGame(req.player, req.params.id),
-    req => isGameState(req.game, 'started', 'question_master_selection'),
+    req => isGameState(req.params.game, 'started', 'question_master_selection'),
     req => isQuestionMaster(req.player),
   ],
   validate: req => {
@@ -89,10 +97,12 @@ router.post('/:id/select', {
 
     if (typeof answerId !== 'number')
       throw new InvalidFieldTypeError('id', 'number');
+
+    return { answerId };
   },
   format: gameFormatter.full,
-}, async (req, res, next) => {
-  const { game } = req;
+}, async (req, res, { answerId }) => {
+  const { game } = req.params;
 
   const propositions = await game.getPropositions();
   const answer = propositions.filter(p => p.id === answerId)[0];
@@ -108,11 +118,12 @@ router.post('/:id/select', {
 router.post('/:id/next', {
   authorize: [
     req => isPlayer(req.player),
-    req => isInGame(req.player, req.params.game),
-    req => isGameState(req.game, 'started', 'end_of_turn'),
+    req => isInGame(req.player, req.params.id),
+    req => isGameState(req.params.game, 'started', 'end_of_turn'),
     req => isQuestionMaster(req.player),
   ],
+  format: gameFormatter.full,
 }, async (req, res, next) => {
-  await req.game.nextTurn();
-  return req.game;
+  await req.params.game.nextTurn();
+  return req.params.game;
 });

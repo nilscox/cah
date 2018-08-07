@@ -101,7 +101,9 @@ module.exports = ({
     const players = await this.getPlayers();
     const answer = await this.getSelectedAnswer({ include: ['player'] });
     const winner = answer.player;
+
     const turn = await this.createTurn({
+      number: await this.countTurns() + 1,
       questionId: this.questionId,
       questionMasterId: this.questionMasterId,
       winnerId: winner.id,

@@ -9,26 +9,24 @@ const {
 const lang = (value, opts = {}) => {
   const readOnly = opts.readOnly || false;
 
-  if (!lang)
+  if (!value)
     throw new MissingFieldError('lang');
 
   if (readOnly)
     throw new ReadOnlyField('lang');
 
-  if (typeof lang !== 'string')
+  if (typeof value !== 'string')
     throw new InvalidFieldTypeError('lang', 'string');
 
-  if (['en', 'fr'].indexOf(lang) < 0)
+  if (['en', 'fr'].indexOf(value) < 0)
     throw new ValidationError('lang', 'this field must be one of "en", "fr"');
 
-  return lang;
+  return value;
 };
 
 const state = (value, opts) => {
-  if (state)
+  if (value)
     throw new ReadOnlyField('state');
-
-  return state;
 };
 
 module.exports = validator({

@@ -39,7 +39,7 @@ const nick = (value, opts = {}) => {
   if (!unique)
     return value;
 
-  return Player.count({ where: { value } })
+  return Player.count({ where: { nick: value } })
     .then(count => {
       if (count > 0)
         throw new ValidationError('nick', 'this nick is already taken');

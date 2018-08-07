@@ -12,7 +12,7 @@ const answeredBy = async a => {
 const choices = async a => {
   const choices = await a.getChoices();
 
-  return await choiceFormatter.full({ many: true })(choices);
+  return await choiceFormatter.full(choices, { many: true });
 }
 
 module.exports = {

@@ -33,14 +33,6 @@ const isNotInGame = async player => {
     throw new AuthenticationError('you must not be in game');
 };
 
-const isGameState = async (game, state, playState) => {
-  if (game.state !== starte)
-    throw new BadRequestError('game is not ' + state);
-
-  if (playState && await game.getPlayState() !== playState)
-    throw new BadRequestError('game is not in playState ' + playState);
-};
-
 const isGameOwner = async (player, gameId) => {
   await isInGame(player, gameId);
 
@@ -54,14 +46,22 @@ const isQuestionMaster = async (player) => {
   const game = await player.getGame();
 
   if (game.questionMasterId !== player.id)
-    throw new BadRequestError('you must be the question master');
+    throw new AuthenticationError('you must be the question master');
 };
 
 const isNotQuestionMaster = async (player) => {
   const game = await player.getGame();
 
   if (game.questionMasterId === player.id)
-    throw new BadRequestError('you must not be the question master');
+    throw new AuthenticationError('you must not be the question master');
+};
+
+const isGameState = async (game, state, playState) => {
+  if (game.state !== state)
+    throw new AuthenticationError('game is not ' + state);
+
+  if (playState && await game.getPlayState() !== playState)
+    throw new AuthenticationError('game is not in playState ' + playState);
 };
 
 module.exports = {
@@ -71,4 +71,7 @@ module.exports = {
   isInGame,
   isNotInGame,
   isGameOwner,
+  isQuestionMaster,
+  isNotQuestionMaster,
+  isGameState,
 };
