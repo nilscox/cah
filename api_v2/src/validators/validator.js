@@ -1,51 +1,44 @@
 const { ValidationErrors, ValidationError } = require('../errors');
 
-class Validator {
+module.exports = fields => {
 
-  constructor(fields) {
-    this.fields = fields;
+  const keys = Object.keys(fields);
 
-    this.fields.forEach(field => {
-      if (typeof this[`validate_${field}`] !== 'function')
-        throw new Error(`Validator: missing validation method for field ${field}`);
-    });
-  }
-
-  validate(values, opts) {
-    opts = opts || {};
-
+  const validate = async (data, opts = {}) => {
     const partial = !!opts.partial;
 
     const errors = [];
     const validated = {};
-    let promise = Promise.resolve();
 
-    if (!values)
-      values = {};
+    if (!data)
+      data = {};
 
-    this.fields.forEach(field => {
-      if (!values[field] && partial)
-        return;
+    for (let i = 0; i < keys.length; ++i) {
+      const field = keys[i];
+      const validator = fields[field];
 
-      promise = promise
-        .then(() => this[`validate_${field}`](values[field], opts[field]))
-        .then(value => validated[field] = value)
-        .catch(e => {
-          if (!(e instanceof ValidationError))
-            throw e;
+      if (partial && !data[field])
+        continue;
 
-          errors.push(e);
-        });
-    });
+      try {
+        validated[field] = await validator(data[field], opts[field]);
+      } catch (e) {
+        if (!(e instanceof ValidationError))
+          throw e;
 
-    return promise
-      .then(() => {
-        if (errors.length > 0)
-          throw new ValidationErrors(errors);
+        errors.push(e);
+      }
+    }
 
-        return validated;
-      });
+    if (errors.length > 0)
+      throw new ValidationErrors(errors);
+
+    return validated;
   }
-};
 
-module.exports = Validator;
+  return {
+    validate,
+    query: opts => req => validate(req.query, opts),
+    body: opts => req => validate(req.body, opts),
+  };
+};

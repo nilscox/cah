@@ -1,5 +1,5 @@
 const formatter = require('./formatter');
-const ChoiceFormatter = require('./choice-formatter');
+const choiceFormatter = require('./choice-formatter');
 
 const id = a => a.get('id');
 
@@ -12,7 +12,7 @@ const answeredBy = async a => {
 const choices = async a => {
   const choices = await a.getChoices();
 
-  return await ChoiceFormatter.full(choices, { many: true });
+  return await choiceFormatter.full({ many: true })(choices);
 }
 
 module.exports = {

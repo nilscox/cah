@@ -1,8 +1,8 @@
 const formatter = require('./formatter');
-const PlayerFormatter = require('./player-formatter');
-const QuestionFormatter = require('./question-formatter');
-const ChoiceFormatter = require('./choice-formatter');
-const AnswerFormatter = require('./answer-formatter');
+const playerFormatter = require('./player-formatter');
+const questionFormatter = require('./question-formatter');
+const choiceFormatter = require('./choice-formatter');
+const answerFormatter = require('./answer-formatter');
 
 const id = game => game.get('id');
 
@@ -22,7 +22,7 @@ const owner = async game => {
 };
 
 const players = game => {
-  return Promise.all(game.getPlayers().map(p => PlayerFormatter.light(p)));
+  return Promise.all(game.getPlayers().map(p => playerFormatter.light(p)));
 };
 
 const question = async game => {
@@ -31,7 +31,7 @@ const question = async game => {
   if (!question)
     return;
 
-  return await QuestionFormatter.full(question);
+  return await questionFormatter.full(question);
 };
 
 const questionMaster = async game => {
@@ -52,7 +52,7 @@ const propositions = async game => {
   if (await game.getPlayState() === 'players_answer')
     return null;
 
-  return await AnswerFormatter.anonymous(propositions, { many: true });
+  return await answerFormatter.anonymous(propositions, { many: true });
 };
 
 const selectedAnswer = async game => {
@@ -61,7 +61,7 @@ const selectedAnswer = async game => {
   if (!answer)
     return;
 
-  return await AnswerFormatter.full(answer);
+  return await answerFormatter.full(answer);
 };
 
 module.exports = {

@@ -1,7 +1,7 @@
 const { NotFoundError, MissingFieldError } = require('../../errors');
 const { Player } = require('../../models');
 const { isNotPlayer, isPlayer } = require('../../permissions');
-const { PlayerFormatter } = require('../../formatters');
+const { playerFormatter } = require('../../formatters');
 const findPlayer = require('./find-player');
 
 const router = require('../createRouter')();
@@ -11,7 +11,7 @@ router.param('nick', findPlayer);
 
 router.post('/login', {
   authorize: req => isNotPlayer(req.player),
-  validator: req => {
+  validate: req => {
     const { nick } = req.body;
 
     if (!nick)
@@ -19,7 +19,7 @@ router.post('/login', {
 
     return { nick };
   },
-  formatter: PlayerFormatter.full,
+  format: playerFormatter.full,
 }, async (req, res, data) => {
   const player = await Player.findOne({ where: { nick: data.nick } })
 

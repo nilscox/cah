@@ -1,6 +1,6 @@
 const { Player } = require('../../models');
-const { PlayerValidator } = require('../../validators');
-const { PlayerFormatter } = require('../../formatters');
+const { playerValidator } = require('../../validators');
+const { playerFormatter } = require('../../formatters');
 const { ValidationError, NotFoundError } = require('../../errors');
 const { allow, isNotPlayer, isPlayer, isNotInGame } = require('../../permissions');
 const findPlayer = require('./find-player');
@@ -12,23 +12,23 @@ router.param('nick', findPlayer);
 
 router.get('/', {
   authorize: allow,
-  formatter: PlayerFormatter.full,
+  format: players => playerFormatter.full(players, { many: true }),
 }, async () => await Player.findAll());
 
 router.get('/me', {
   authorize: req => isPlayer(req.player),
-  formatter: PlayerFormatter.full,
+  format: playerFormatter.full,
 }, req => req.player);
 
 router.get('/:nick', {
   authorize: allow,
-  formatter: PlayerFormatter.full,
+  format: playerFormatter.full,
 }, req => req.params.player);
 
 router.post('/', {
   authorize: req => isNotPlayer(req.player),
-  validator: req => PlayerValidator.validate(req.body),
-  formatter: PlayerFormatter.full,
+  validate: req => PlayerValidator.validate(req.body),
+  format: playerFormatter.full,
 }, async (req, res, data) => {
   const player = await Player.create(data);
 
@@ -40,11 +40,11 @@ router.post('/', {
 
 router.put('/:nick', {
   authorize: req => isPlayer(req.player, req.params.nick),
-  validator: req => PlayerValidator.validate(req.body, {
+  validate: req => PlayerValidator.validate(req.body, {
     partial: true,
     nick: { readOnly: true },
   }),
-  formatter: PlayerFormatter.full,
+  format: playerFormatter.full,
 }, async (req, res, data) => await req.player.update(data));
 
 router.delete('/:nick', {

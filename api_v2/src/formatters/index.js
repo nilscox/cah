@@ -1,7 +1,7 @@
 module.exports = {
-  PlayerFormatter: require('./player-formatter'),
-  GameFormatter: require('./game-formatter'),
-  GameTurnFormatter: require('./gameTurn-formatter'),
-  QuestionFormatter: require('./question-formatter'),
-  ChoiceFormatter: require('./choice-formatter'),
+  playerFormatter: require('./player-formatter'),
+  gameFormatter: require('./game-formatter'),
+  gameTurnFormatter: require('./gameTurn-formatter'),
+  questionFormatter: require('./question-formatter'),
+  choiceFormatter: require('./choice-formatter'),
 };

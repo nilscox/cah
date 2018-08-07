@@ -1,6 +1,6 @@
 const { Game } = require('../../models');
-const { GameValidator } = require('../../validators');
-const { GameFormatter } = require('../../formatters');
+const { gameValidator } = require('../../validators');
+const { gameFormatter } = require('../../formatters');
 const { isPlayer, isNotInGame, isInGame, isGameOwner } = require('../../permissions');
 const findGame = require('./find-game');
 
@@ -11,7 +11,7 @@ router.param('id', findGame);
 
 router.get('/', {
   authorize: req => isPlayer(req.player),
-  formatter: GameFormatter.full,
+  format: games => gameFormatter.full(games, { many: true }),
 }, async () => {
   return await Game.findAll({
     include: 'owner',
@@ -20,7 +20,7 @@ router.get('/', {
 
 router.get('/:id', {
   authorize: req => isPlayer(req.player),
-  formatter: GameFormatter.full,
+  format: gameFormatter.full,
 }, req => req.params.game);
 
 router.post('/', {
@@ -28,8 +28,8 @@ router.post('/', {
     req => isPlayer(req.player),
     req => isNotInGame(req.player),
   ],
-  validator: req => GameValidator.validate(req.body),
-  formatter: GameFormatter.full,
+  validate: gameValidator.body(),
+  format: gameFormatter.full,
 }, async (req, res, data) => {
   const game = await Game.create({ ...data, ownerId: req.player.id });
 
@@ -44,8 +44,8 @@ router.put('/:id', {
     req => isPlayer(req.player),
     req => isGameOwner(req.player),
   ],
-  validator: req => GameValidator.validate(req.body, { partial: true, lang: { readOnly: true } }),
-  formatter: GameFormatter.full,
+  validate: gameValidator.body({ partial: true, lang: { readOnly: true } }),
+  format: gameFormatter.full,
 }, async (req, res, data) => {
   await req.params.game.update(data);
 

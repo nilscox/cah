@@ -1,5 +1,5 @@
 const { Player } = require('../models');
-const Validator = require('./validator');
+const validator = require('./validator');
 const {
   ValidationError,
   MissingFieldError,
@@ -14,55 +14,48 @@ const RESERVED_NICKS = [
   'avatar',
 ];
 
-class PlayerValidator extends Validator {
+const nick = (value, opts = {}) => {
+  const unique = opts.unique || true;
+  const readOnly = opts.readOnly || false;
 
-  constructor() {
-    super(['nick', 'avatar']);
-  }
+  if (!value)
+    throw new MissingFieldError('nick');
 
-  validate_nick(nick, opts) {
-    opts = opts || {};
+  if (readOnly)
+    throw new ReadOnlyField('nick');
 
-    const unique = opts.unique || true;
-    const readOnly = opts.readOnly || false;
+  if (typeof value !== 'string')
+    throw new InvalidFieldTypeError('nick', 'string');
 
-    if (!nick)
-      throw new MissingFieldError('nick');
+  if (value.length < 3)
+    throw new ValidationError('nick', 'this field must be at least 3 characters');
 
-    if (readOnly)
-      throw new ReadOnlyField('nick');
+  if (value.length > 64)
+    throw new ValidationError('nick', 'this field must be at most 64 characters');
 
-    if (typeof nick !== 'string')
-      throw new InvalidFieldTypeError('nick', 'string');
+  if (RESERVED_NICKS.indexOf(value) >= 0)
+    throw new ValidationError('nick', 'this nick is unauthorized');
 
-    if (nick.length < 3)
-      throw new ValidationError('nick', 'this field must be at least 3 characters');
+  if (!unique)
+    return value;
 
-    if (nick.length > 64)
-      throw new ValidationError('nick', 'this field must be at most 64 characters');
+  return Player.count({ where: { value } })
+    .then(count => {
+      if (count > 0)
+        throw new ValidationError('nick', 'this nick is already taken');
 
-    if (RESERVED_NICKS.indexOf(nick) >= 0)
-      throw new ValidationError('nick', 'this nick is unauthorized');
-
-    if (!unique)
-      return nick;
-
-    return Player.count({ where: { nick } })
-      .then(count => {
-        if (count > 0)
-          throw new ValidationError('nick', 'this nick is already taken');
-
-        return nick;
-      });
-  }
-
-  validate_avatar(avatar) {
-    if (avatar)
-      throw new ReadOnlyField('avatar');
-
-    return avatar;
-  }
+      return value;
+    });
 }
 
+const avatar = value => {
+  if (value)
+    throw new ReadOnlyField('avatar');
 
-module.exports = PlayerValidator;
+  return value;
+}
+
+module.exports = validator({
+  nick,
+  avatar,
+});

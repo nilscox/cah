@@ -1,7 +1,7 @@
 const { InvalidFieldTypeError, BadRequestError, MissingFieldError } = require('../../errors');
 const { Sequelize, Game } = require('../../models');
-const { GameValidator } = require('../../validators');
-const { GameFormatter } = require('../../formatters');
+const { gameValidator } = require('../../validators');
+const { gameFormatter } = require('../../formatters');
 const { isPlayer, isGameOwner, isInGame, isGameState, isQuestionMaster, isNotQuestionMaster } = require('../../permissions');
 const findGame = require('./find-game');
 
@@ -21,13 +21,13 @@ router.post('/:id/start', {
         throw new BadRequestError('game has already started');
     },
   ],
-  validator: (data) => {
+  validate: (data) => {
     const { questions } = data;
 
     if (questions && typeof questions !== 'number')
       throw new InvalidFieldTypeError('questions', 'number');
   },
-  formatter: GameFormatter.full,
+  format: gameFormatter.full,
 }, async (req, res, data) => {
   await req.game.start(data.questions);
   return req.game;
@@ -40,7 +40,7 @@ router.post('/:id/answer', {
     req => isGameState(req.game, 'started', 'players_answer'),
     req => isNotQuestionMaster(req.player),
   ],
-  validator: req => {
+  validate: req => {
     const ids = req.body.ids || req.body.id && [req.body.id];
 
     if (!ids)
@@ -51,7 +51,7 @@ router.post('/:id/answer', {
 
     return { ids };
   },
-  formatter: GameFormatter.full,
+  format: gameFormatter.full,
 }, async (req, res, data) => {
   const { game } = req;
 
@@ -81,7 +81,7 @@ router.post('/:id/select', {
     req => isGameState(req.game, 'started', 'question_master_selection'),
     req => isQuestionMaster(req.player),
   ],
-  validator: req => {
+  validate: req => {
     const answerId = req.body.id;
 
     if (!answerId)
@@ -90,7 +90,7 @@ router.post('/:id/select', {
     if (typeof answerId !== 'number')
       throw new InvalidFieldTypeError('id', 'number');
   },
-  formatter: GameFormatter.full,
+  format: gameFormatter.full,
 }, async (req, res, next) => {
   const { game } = req;
 

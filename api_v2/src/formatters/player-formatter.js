@@ -1,5 +1,5 @@
 const formatter = require('./formatter');
-const ChoiceFormatter = require('./choice-formatter');
+const choiceFormatter = require('./choice-formatter');
 
 const nick = player => player.get('nick');
 
@@ -13,7 +13,7 @@ const cards = async player => {
 
   const cards = await player.getCards();
 
-  return await ChoiceFormatter.full(cards, { many: true });
+  return await choiceFormatter.full(cards, { many: true });
 };
 
 module.exports = {

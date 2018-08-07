@@ -1,4 +1,4 @@
-module.exports = fields => (inst, opts = {}) => {
+module.exports = fields => async (inst, opts = {}) => {
   const keys = Object.keys(fields);
 
   const formatInstance = async inst => {
@@ -18,6 +18,6 @@ module.exports = fields => (inst, opts = {}) => {
   };
 
   return opts.many
-    ? Promise.all(inst.map(i => formatInstance(i)))
-    : formatInstance(inst);
-}
+    ? await Promise.map(inst, formatInstance)
+    : await formatInstance(inst);
+};

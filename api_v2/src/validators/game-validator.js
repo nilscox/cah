@@ -1,4 +1,4 @@
-const Validator = require('./validator');
+const validator = require('./validator');
 const {
   ValidationError,
   MissingFieldError,
@@ -6,39 +6,32 @@ const {
   InvalidFieldTypeError,
 } = require('../errors');
 
-class GameValidator extends Validator {
+const lang = (value, opts = {}) => {
+  const readOnly = opts.readOnly || false;
 
-  constructor() {
-    super(['lang', 'state']);
-  }
+  if (!lang)
+    throw new MissingFieldError('lang');
 
-  validate_lang(lang, opts) {
-    opts = opts || {};
+  if (readOnly)
+    throw new ReadOnlyField('lang');
 
-    const readOnly = opts.readOnly || false;
+  if (typeof lang !== 'string')
+    throw new InvalidFieldTypeError('lang', 'string');
 
-    if (!lang)
-      throw new MissingFieldError('lang');
+  if (['en', 'fr'].indexOf(lang) < 0)
+    throw new ValidationError('lang', 'this field must be one of "en", "fr"');
 
-    if (readOnly)
-      throw new ReadOnlyField('lang');
+  return lang;
+};
 
-    if (typeof lang !== 'string')
-      throw new InvalidFieldTypeError('lang', 'string');
+const state = (value, opts) => {
+  if (state)
+    throw new ReadOnlyField('state');
 
-    if (['en', 'fr'].indexOf(lang) < 0)
-      throw new ValidationError('lang', 'this field must be one of "en", "fr"');
+  return state;
+};
 
-    return lang;
-  }
-
-  validate_state(state) {
-    if (state)
-      throw new ReadOnlyField('state');
-
-    return state;
-  }
-}
-
-
-module.exports = GameValidator;
+module.exports = validator({
+  lang,
+  state,
+});
