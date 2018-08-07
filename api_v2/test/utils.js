@@ -99,13 +99,14 @@ async function getPlayersWithoutQM(game) {
 
 async function answerRandomCards(game, player) {
   const question = await game.getCurrentQuestion();
+  const nbChoices = question.getNbChoices()
   const cards = await player.getCards({
     order: Sequelize.fn('RANDOM'),
-    limit: question.getNbChoices(),
+    limit: nbChoices,
   });
 
-  if (!cards)
-    throw new Error('player has no cards');
+  if (!cards || cards.length < nbChoices)
+    throw new Error('player has not enough cards');
 
   await game.answer(player, cards);
 }
