@@ -3,6 +3,8 @@ const choiceFormatter = require('./choice-formatter');
 
 const id = a => a.get('id');
 
+const place = a => a.get('place');
+
 const answeredBy = async a => {
   const player = await a.getPlayer();
 
@@ -16,6 +18,6 @@ const choices = async a => {
 }
 
 module.exports = {
-  full: formatter({ id, answeredBy, choices }),
-  anonymous: formatter({ id, choices }),
+  full: formatter({ id, place, answeredBy, choices }),
+  anonymous: formatter({ id, place, choices }),
 };

@@ -115,7 +115,7 @@ module.exports = (sequelize, DataTypes) => {
       where: {
         questionId: { [Op.eq]: this.questionId },
       },
-      orderBy: ['place'],
+      orderBy: ['place', 'id'],
       include: ['choices'],
     });
   }

@@ -1,5 +1,3 @@
-const NB_QUESTIONS = 10;
-
 function shuffle(a) {
     var j, x, i;
     for (i = a.length - 1; i > 0; i--) {
@@ -60,7 +58,6 @@ module.exports = ({
   }
 
   async function start() {
-    const playersCount = await this.countPlayers();
     const qm = (await this.getPlayers({
       order: Sequelize.fn('RANDOM'),
       limit: 1,
@@ -78,21 +75,23 @@ module.exports = ({
 
   async function answer(player, choices) {
     const propositions = await this.getPropositions();
-    const answer = new Answer({
-      gameId: this.id,
+    const answer = await this.createAnswer({
       playerId: player.id,
       questionId: this.questionId,
-      place: propositions.length,
     });
 
-    await answer.save();
     await Choice.update({ answerId: answer.id, playerId: null }, {
       where: {
         id: { [Op.in]: choices.map(c => c.id) },
       },
     });
 
-    await this.addAnswer(answer);
+    if (await this.getPlayState() === 'question_master_selection') {
+      const propositions = shuffle(await this.getPropositions());
+
+      for (let i = 0; i < propositions.length; ++i)
+        await propositions[i].update({ place: i + 1 });
+    }
   }
 
   async function select(answer) {
@@ -130,7 +129,6 @@ module.exports = ({
   async function end() {
     await this.update({
       state: 'finished',
-      playState: null,
       questionMasterId: null,
       selectedAnswerId: null,
       questionId: null,
