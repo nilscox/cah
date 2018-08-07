@@ -8,8 +8,7 @@ describe('formatter', () => {
     beforeEach(async function() {
       const { Game, Player, Question } = this.models;
 
-      this.player = await new Player({ nick: 'nils' }).save();
-      this.game = await new Game({ lang: 'fr', ownerId: this.player.id }).save();
+      this.game = await this.createGame();
       this.createQuestion = async data => await new Question({ ...data, gameId: this.game.id }).save();
     });
 

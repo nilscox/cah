@@ -28,15 +28,11 @@ async function createLoginPlayer(opts, app) {
 }
 
 async function createGame(opts = {}) {
-  opts = {
-    lang: 'fr',
-    ...opts,
-  };
-
-  if (!opts.owner)
-    opts.owner = await this.createPlayer();
-
+  opts.lang = opts.lang || 'fr';
+  opts.owner = opts.owner || await this.createPlayer();
   opts.ownerId = opts.owner.id;
+  opts.nbQuestions = opts.nbQuestions || 2;
+  opts.cardsPerPlayer = opts.cardsPerPlayer || 4;
 
   const { Game } = this.models;
   const game = await new Game(opts).save();
@@ -54,9 +50,6 @@ async function joinGame(game, player) {
 }
 
 async function createReadyGame(opts = {}, nicks = ['toto', 'tata']) {
-  if (!opts.owner)
-    opts.owner = await this.createLoginPlayer();
-
   const game = await this.createGame(opts);
 
   for (let i = 0; i < nicks.length; ++i)

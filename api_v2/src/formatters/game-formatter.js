@@ -58,10 +58,14 @@ const propositions = async game => {
   if (!propositions)
     return;
 
-  if (await game.getPlayState() === 'players_answer')
-    return null;
+  const playState = await game.getPlayState();
 
-  return await answerFormatter.anonymous(propositions, { many: true });
+  if (playState === 'players_answer')
+    return null;
+  else if (playState === 'question_master_selection')
+    return await answerFormatter.anonymous(propositions, { many: true });
+  else
+    return await answerFormatter.full(propositions, { many: true });
 };
 
 const selectedAnswer = async game => {
