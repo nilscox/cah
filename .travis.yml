@@ -14,6 +14,7 @@ env:
     - CAH_DB_PORT="5432"
     - CAH_DB_ROOT_USER="postgres"
     - CAH_DB_ROOT_PASSWORD=""
+    - CAH_DATA_PATH="$TRAVIS_BUILD_DIR/data"
 
 before_install:
   - npm install -g yarn nyc codecov
