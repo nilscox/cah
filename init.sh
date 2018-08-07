@@ -1,8 +1,6 @@
 #!/bin/sh
 
 source ./.env
-
-source "$VENV_DIR/bin/activate"
 source "$NVM_DIR/nvm.sh"
 
 API_URL="http://$CAH_API_IP:$CAH_API_PORT"
@@ -19,10 +17,6 @@ export CAH_DB_PORT
 export CAH_DB_ROOT_USER
 export CAH_DB_ROOT_PASSWORD
 
-export CAH_DATA_PATH
-export CAH_MEDIA_PATH
-export CAH_AVATARS_PATH
-
 export CAH_API_IP
 export CAH_API_PORT
 
@@ -34,8 +28,9 @@ export CAH_ADMIN_PORT
 
 export CAH_API_ADMIN_TOKEN
 
-export CAH_API_ALLOWED_HOSTS="localhost;127.0.0.1;$API_URL;$CAH_API_IP"
-export CAH_API_CORS_ORIGIN_WHITELIST="$WEB_URL;$ADMIN_URL"
+export CAH_DATA_PATH
+export CAH_MEDIA_PATH
+export CAH_AVATARS_PATH
 
 export REACT_APP_CAH_API_URL=$API_URL
 export REACT_APP_CAH_WEBSOCKET_URL=$API_WS_URL
@@ -44,3 +39,32 @@ export REACT_APP_CAH_API_ADMIN_TOKEN=$CAH_API_ADMIN_TOKEN
 mkdir -p "$CAH_MEDIA_PATH"
 mkdir -p "/tmp/avatars"
 ln -sf "/tmp/avatars" "$CAH_AVATARS_PATH"
+
+export HTTP_SESSION="default"
+
+function session {
+  if [ -z "$1" ]; then
+    echo "usage: $0 <name>"
+    return 1
+  fi
+
+  export HTTP_SESSION="$1"
+  login "$1"
+}
+
+function h() { http --session "/tmp/httpie.${HTTP_SESSION}.session" -v $@ }
+
+function player() { h ":4242/api/player/$1" }
+function game() { h ":4242/api/game/$1" }
+
+function create_player() { h POST ":4242/api/player" nick="$1" }
+function login() { h POST ":4242/api/player/login" nick="$1" }
+function logout() { h POST ":4242/api/player/logout" }
+function me() { h ":4242/api/player/me" }
+
+function g_create() { h POST ":4242/api/game" lang="$1" nbQuestions:="$2" cardsPerPlayer:="$3" }
+function g_join() { h POST ":4242/api/game/$1/join" }
+function g_start() { h POST ":4242/api/game/$1/start" }
+function g_answer() { h POST ":4242/api/game/$1/answer" ids:="$2" }
+function g_select() { h POST ":4242/api/game/$1/select" id:="$2" }
+function g_next() { h POST ":4242/api/game/$1/next" }
