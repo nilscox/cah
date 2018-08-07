@@ -26,7 +26,7 @@ async function updateGamePlayerNotOwner() {
   const owner = await this.createPlayer({ nick: 'toto' });
   const game = await this.createGame({ owner });
   await this.loginPlayer(this.player, app);
-  await this.joinGame(game, this.player);
+  await game.join(this.player);
 
   return app
     .put('/api/game/' + this.game.id)
