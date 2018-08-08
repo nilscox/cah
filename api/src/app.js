@@ -32,8 +32,10 @@ app.use((req, res, next) => {
 });
 
 app.use((req, res, next) => {
-  if (req.get('Authorization') === ADMIN_TOKEN)
+  if (req.get('Authorization') === ADMIN_TOKEN) {
     req.admin = true;
+    return next();
+  }
 
   if (!req.session.player)
     return next();

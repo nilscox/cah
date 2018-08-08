@@ -2,7 +2,7 @@ const { Player } = require('../../models');
 const { playerValidator } = require('../../validators');
 const { playerFormatter } = require('../../formatters');
 const { ValidationError, NotFoundError } = require('../../errors');
-const { allow, isNotPlayer, isPlayer, isNotInGame } = require('../../permissions');
+const { allow, isAdmin, isNotPlayer, isPlayer, isNotInGame } = require('../../permissions');
 const findPlayer = require('./find-player');
 
 const router = require('../createRouter')();
@@ -26,8 +26,13 @@ router.get('/:nick', {
 }, req => req.params.player);
 
 router.post('/', {
-  authorize: req => isNotPlayer(req.player),
-  validate: playerValidator.body(),
+  authorize: [{
+    or: [
+      req => isAdmin(req.admin),
+      req => isNotPlayer(req.player),
+    ],
+  }],
+  validate: playerValidator.body({ avatar: { required: false } }),
   format: playerFormatter.full,
 }, async (req, res, data) => {
   const player = await Player.create(data);

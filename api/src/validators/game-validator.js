@@ -16,6 +16,13 @@ const lang = value => {
 
 const state = value => value;
 
+const ownerId = value => {
+  if (typeof value !== 'number')
+    throw new InvalidFieldTypeError('ownerId', 'number');
+
+  return value;
+};
+
 const nbQuestions = (value, opts) => {
   if (typeof value !== 'number')
     throw new InvalidFieldTypeError('nbQuestions', 'number');
@@ -39,6 +46,7 @@ const cardsPerPlayer = (value, opts) => {
 module.exports = validator({
   lang,
   state,
+  ownerId,
   nbQuestions,
   cardsPerPlayer,
 });
