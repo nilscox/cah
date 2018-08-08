@@ -27,7 +27,7 @@ async function readOnlyField() {
   }
 }
 
-async function validateFailure() {
+async function failure() {
   const err = new ValidationError('a', 'a is not valid');
   const validatorThrow = createValidator({
     a: a => { throw err },
@@ -41,7 +41,7 @@ async function validateFailure() {
   }
 }
 
-async function validateSuccess() {
+async function success() {
   let validated = await validator.validate({ a: 69, b: 42 });
   expect(validated).to.deep.eql({ a: 69, b: 42 });
 
@@ -55,6 +55,6 @@ async function validateSuccess() {
 module.exports = {
   missingField,
   readOnlyField,
-  validateFailure,
-  validateSuccess,
+  failure,
+  success,
 };

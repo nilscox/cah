@@ -1,5 +1,5 @@
 const expect = require('chai').expect;
-const { questionFormatter, gameFormatter } = require('../src/formatters');
+const { questionFormatter, gameFormatter } = require('../../src/formatters');
 
 describe('formatter', () => {
 

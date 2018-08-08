@@ -31,7 +31,7 @@
     "db:truncate": "for t in answer gameturn game player question choice; do echo \"TRUNCATE TABLE $t CASCADE;\"; done | psql -U $CAH_DB_USER -h $CAH_DB_HOST $CAH_DB_NAME",
     "start": "nodemon index.js",
     "start:debug": "nodemon --inspect index.js",
-    "test": "NODE_ENV=test mocha --exit",
+    "test": "NODE_ENV=test mocha --exit --recursive",
     "test:coverage": "nyc -x migrations yarn test"
   }
 }
