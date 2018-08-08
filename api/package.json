@@ -32,6 +32,7 @@
     "start": "nodemon index.js",
     "start:debug": "nodemon --inspect index.js",
     "test": "NODE_ENV=test mocha --exit --recursive",
+    "test:debug": "yarn test --inspect --watch",
     "test:coverage": "nyc -x migrations yarn test"
   }
 }
