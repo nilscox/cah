@@ -29,6 +29,9 @@ module.exports = fields => {
       const fopts = { ...DEFAULT_OPTS, ...(opts[field] || {}) };
       const isset = data[field] !== undefined;
 
+      if (fopts.readOnly)
+        fopts.required = false;
+
       if (partial && !isset)
         continue;
 
@@ -39,10 +42,12 @@ module.exports = fields => {
         if (fopts.readOnly && isset)
           throw new ReadOnlyFieldError(field);
 
-        const value = await validator(data[field], opts[field]);
+        if (isset) {
+          const value = await validator(data[field], fopts);
 
-        if (value !== undefined)
-          validated[field] = value;
+          if (value !== undefined)
+            validated[field] = value;
+        }
       } catch (e) {
         if (!(e instanceof ValidationError))
           throw e;
