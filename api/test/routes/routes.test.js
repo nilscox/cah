@@ -39,23 +39,31 @@ describe('routes', () => {
 
   describe('game', () => {
 
+    beforeEach(async function() {
+      this.player = await this.createLoginPlayer();
+    });
+
     describe('crud', () => {
 
-      it('should not retrieve a non-existing game');
+      const { crud } = game;
 
-      it('should list all the games 0');
-      it('should list all the games 1');
-      it('should retrieve a game');
-      it('should create a game');
-      it('should update an existing game');
-      it('should remove an existing game');
+      it('should not retrieve a non-existing game', crud.retrieveDontExist);
+
+      it('should list all the games 0', crud.list0);
+      it('should list all the games 1', crud.list1);
+      it('should retrieve a game', crud.retrieve);
+      it('should create a game', crud.create);
+      it('should update an existing game', crud.update);
+      it('should remove an existing game', crud.remove);
 
     });
 
     describe('history', () => {
 
-      it('should fetch an empty game history');
-      it('should fetch a game history');
+      const { history } = game;
+
+      it('should fetch an empty game history', history.retrieve0);
+      it('should fetch a game history', history.retrieve2);
 
     });
 

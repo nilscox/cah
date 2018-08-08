@@ -1,31 +1,6 @@
 const expect = require('chai').expect;
 
-async function beforeEach() {
-  const owner = await this.createLoginPlayer();
-  this.game = await this.createGame({ owner });
-}
-
-function gameHistoryGameDontExist() {
-  expect.fail();
-}
-
-function gameHistoryNotPlayer() {
-  expect.fail();
-}
-
-function gameHistoryNotInGame() {
-  expect.fail();
-}
-
-function gameHistoryNotInThisGame() {
-  expect.fail();
-}
-
-function gameHistoryGameNotStarted() {
-  expect.fail();
-}
-
-function gameHistoryEmpty() {
+module.exports.retrieve0 = function() {
   return this.app
     .get('/api/game/' + this.game.id + '/history')
     .expect(200)
@@ -34,17 +9,6 @@ function gameHistoryEmpty() {
     });
 }
 
-function gameHistory() {
+module.exports.retrieve2 = function() {
   expect.fail();
 }
-
-module.exports = {
-  beforeEach,
-  gameHistoryGameDontExist,
-  gameHistoryNotPlayer,
-  gameHistoryNotInGame,
-  gameHistoryNotInThisGame,
-  gameHistoryGameNotStarted,
-  gameHistoryEmpty,
-  gameHistory,
-};
