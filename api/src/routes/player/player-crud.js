@@ -37,27 +37,41 @@ router.post('/', {
 }, async (req, res, data) => {
   const player = await Player.create(data);
 
-  req.session.player = player.nick;
+  if (!req.admin)
+    req.session.player = player.nick;
+
   res.status(201);
 
   return player;
 });
 
 router.put('/:nick', {
-  authorize: req => isPlayer(req.player, req.params.nick),
+  authorize: {
+    or: [
+      req => isAdmin(req.admin),
+      req => isPlayer(req.player, req.params.nick),
+    ],
+  },
   validate: playerValidator.body({
     partial: true,
     nick: { readOnly: true },
   }),
   format: playerFormatter.full,
-}, async (req, res, data) => await req.player.update(data));
+}, async (req, res, data) => await req.params.player.update(data));
 
 router.delete('/:nick', {
   authorize: [
-    req => isPlayer(req.player, req.params.nick),
-    req => isNotInGame(req.player),
+    {
+      or: [
+        req => isAdmin(req.admin),
+        req => isPlayer(req.player, req.params.nick),
+      ],
+    },
+    req => isNotInGame(req.params.player),
   ],
 }, async (req, res, next) => {
-  await req.player.destroy();
-  delete req.session.player;
+  await req.params.player.destroy();
+
+  if (!req.admin)
+    delete req.session.player;
 });
