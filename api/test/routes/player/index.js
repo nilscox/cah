@@ -1,4 +1,4 @@
 module.exports = {
-  crud: require('./crud'),
-  auth: require('./auth'),
+  crud: require('./player-crud.test'),
+  auth: require('./player-auth.test'),
 };

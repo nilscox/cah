@@ -9,19 +9,6 @@ async function createPlayerNotLogin() {
     .expect(401);
 }
 
-function createPlayer() {
-  return this.app
-    .post('/api/player')
-    .send({ nick: 'nils' })
-    .expect(201)
-    .then(res => {
-      expect(res.body).to.deep.eql({
-        nick: 'nils',
-        avatar: null,
-      });
-    });
-}
-
 function createPlayerNoNick() {
   return this.app
     .post('/api/player')
@@ -114,7 +101,6 @@ function createPlayerWithAvatar() {
 
 module.exports = {
   createPlayerNotLogin,
-  createPlayer,
   createPlayerNoNick,
   createPlayerNickNull,
   createPlayerNickNumber,
