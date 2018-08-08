@@ -1,5 +1,4 @@
 const express = require('express');
-const authorize = require('../authorize');
 const { AuthenticationError } = require('../errors');
 
 const authorizeRequest = async (req, authorize) => {
