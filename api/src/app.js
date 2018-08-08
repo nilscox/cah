@@ -11,6 +11,8 @@ const routes = require('./routes');
 const { APIError } = require('./errors');
 const authorize = require('./authorize');
 
+const ADMIN_TOKEN = process.env.CAH_API_ADMIN_TOKEN;
+
 const app = express();
 
 app.set('x-powered-by', false);
@@ -31,6 +33,9 @@ app.use((req, res, next) => {
 });
 
 app.use((req, res, next) => {
+  if (req.get('Authorization') === ADMIN_TOKEN)
+    req.admin = true;
+
   if (!req.session.player)
     return next();
 
