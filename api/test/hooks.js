@@ -100,7 +100,21 @@ beforeEach(function() {
   const app = require('../src/app');
   const models = require('../src/models');
 
-  this.createSession = () => request.agent(app);
+  this.createSession = () => {
+    const session = request.agent(app);
+
+    ['head', 'get', 'post', 'patch', 'put', 'delete'].forEach(m => {
+      const f = session[m].bind(session);
+
+      session[m] = (...args) => f(...args)
+        .on('error', (e) => {
+          if (e.response)
+            console.log(e.response.body);
+        });
+    });
+
+    return session;
+  };
 
   this.app = this.createSession();
   this.models = models;
