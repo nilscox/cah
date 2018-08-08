@@ -53,8 +53,8 @@ describe('routes', () => {
       it('should list all the games 1', crud.list1);
       it('should retrieve a game', crud.retrieve);
       it('should create a game', crud.create);
-      it('should update an existing game', crud.update);
-      it('should remove an existing game', crud.remove);
+      it('should update a game', crud.update);
+      it('should remove a game', crud.remove);
 
     });
 
