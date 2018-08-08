@@ -1,4 +1,14 @@
-const { ValidationErrors, ValidationError } = require('../errors');
+const {
+  ValidationErrors,
+  ValidationError,
+  MissingFieldError,
+  ReadOnlyFieldError,
+} = require('../../src/errors');;
+
+const DEFAULT_OPTS = {
+  required: true,
+  readOnly: false,
+};
 
 module.exports = fields => {
 
@@ -16,12 +26,23 @@ module.exports = fields => {
     for (let i = 0; i < keys.length; ++i) {
       const field = keys[i];
       const validator = fields[field];
+      const fopts = { ...DEFAULT_OPTS, ...(opts[field] || {}) };
+      const isset = data[field] !== undefined;
 
-      if (partial && !data[field])
+      if (partial && !isset)
         continue;
 
       try {
-        validated[field] = await validator(data[field], opts[field]);
+        if (fopts.required && !isset)
+          throw new MissingFieldError(field);
+
+        if (fopts.readOnly && isset)
+          throw new ReadOnlyFieldError(field);
+
+        const value = await validator(data[field], opts[field]);
+
+        if (value !== undefined)
+          validated[field] = value;
       } catch (e) {
         if (!(e instanceof ValidationError))
           throw e;
@@ -29,6 +50,9 @@ module.exports = fields => {
         errors.push(e);
       }
     }
+
+    if (errors.length === 1)
+      throw errors[0];
 
     if (errors.length > 0)
       throw new ValidationErrors(errors);
