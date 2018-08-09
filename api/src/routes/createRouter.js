@@ -1,35 +1,67 @@
 const express = require('express');
-const authorize = require('../authorize');
+const { AuthenticationError } = require('../errors');
 
 const authorizeRequest = async (req, authorize) => {
   if (!authorize)
     return;
 
   const authorize_function = (req, f) => Promise.resolve(f(req));
-  const authorize_array = (req, arr) => Promise.mapSeries(arr, a => authorizeRequest(req, a));
+  const authorize_and = (req, arr) => Promise.mapSeries(arr, a => authorizeRequest(req, a));
+  const authorize_or = async (req, arr) => {
+    let error = null;
+
+    for (let i = 0; i < arr.length; ++i) {
+      try {
+        return await authorizeRequest(req, arr[i]);
+      } catch (e) {
+        if (!(e instanceof AuthenticationError))
+          throw e;
+
+        error = e;
+      }
+    }
+
+    if (error)
+      throw error;
+  };
+
+  const authorize_object = (req, obj) => {
+    const keys = Object.keys(obj);
+
+    for (let i = 0; i < keys.length; ++i) {
+      const op = keys[i];
+
+      switch (op) {
+      case 'or':
+        return authorize_or(req, obj[op]);
+
+      case 'and':
+        return authorize_and(req, obj[op]);
+
+      default:
+        throw new Error('invalid operator ' + op);
+      }
+    }
+  };
 
   if (typeof authorize === 'function')
     await authorize_function(req, authorize);
   else if (authorize instanceof Array)
-    await authorize_array(req, authorize);
+    await authorize_and(req, authorize);
+  else if (typeof authorize === 'object')
+    await authorize_object(req, authorize);
   else
     throw new Error('invalid authorizer ' + typeof authorize);
 }
 
-const handleRoute = (authorize, validate, format, handler) => async (req, res, next) => {
-  try {
-    await authorizeRequest(req, authorize);
+const validateRequest = (req, validate) => {
+  if (typeof validate === 'function')
+    validate = [validate];
 
-    const data = await validate(req);
-    const result = await handler(req, res, data);
-
-    if (result)
-      res.json(await format(result));
-    else
-      res.status(204).end();
-  } catch (e) {
-    next(e);
-  }
+  return Promise.reduce(validate, async (validated, f) => ({
+    ...validated,
+    ...(await f(req)),
+  }), {});
 };
 
 /**
@@ -58,25 +90,45 @@ const handleRoute = (authorize, validate, format, handler) => async (req, res, n
  * rejects, the router will call next with the error
  */
 module.exports = () => {
-  const router = express.Router();
+  const expressRouter = express.Router();
 
-  return ['head', 'get', 'post', 'put', 'patch', 'delete'].reduce((obj, method) => {
-    obj[method] = (route, opts = {}, handler) => {
+  const handle = (method, route, opts, handler) => {
+    expressRouter[method](route, async (req, res, next) => {
+      try {
+        if (opts.authorize)
+          await authorizeRequest(req, opts.authorize);
 
-      router[method](route, handleRoute(
-        opts.authorize || [],
-        opts.validate || (() => {}),
-        opts.format || null,
-        handler,
-      ));
-    };
+        const data = opts.validate
+          ? await validateRequest(req, opts.validate)
+          : null;
 
-    return obj;
-  }, {
-    router,
-    all: router.all.bind(router),
-    param: router.param.bind(router),
-    route: router.route.bind(router),
-    use: router.use.bind(router),
-  });
+        const result = await handler(req, res, data);
+
+        if (result) {
+          if (opts.format)
+            res.json(await opts.format(req, result));
+          else
+            res.json(result);
+        }
+        else
+          res.status(204).end();
+      } catch (e) {
+        next(e);
+      }
+    });
+  };
+
+  return {
+    head: handle.bind(null, 'head'),
+    get: handle.bind(null, 'get'),
+    post: handle.bind(null, 'post'),
+    put: handle.bind(null, 'put'),
+    patch: handle.bind(null, 'patch'),
+    delete: handle.bind(null, 'delete'),
+    all: expressRouter.all.bind(expressRouter),
+    param: expressRouter.param.bind(expressRouter),
+    route: expressRouter.route.bind(expressRouter),
+    use: expressRouter.use.bind(expressRouter),
+    router: expressRouter,
+  };
 };

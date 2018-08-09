@@ -21,3 +21,11 @@ module.exports = fields => async (inst, opts = {}) => {
     ? await Promise.map(inst, formatInstance)
     : await formatInstance(inst);
 };
+
+module.exports.createdAt = inst => {
+  return new Date(inst.createdAt);
+};
+
+module.exports.updatedAt = inst => {
+  return new Date(inst.updatedAt);
+};

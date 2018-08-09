@@ -1,20 +1,10 @@
 const validator = require('./validator');
 const {
   ValidationError,
-  MissingFieldError,
-  ReadOnlyField,
   InvalidFieldTypeError,
 } = require('../errors');
 
-const lang = (value, opts = {}) => {
-  const readOnly = opts.readOnly || false;
-
-  if (!value)
-    throw new MissingFieldError('lang');
-
-  if (readOnly)
-    throw new ReadOnlyField('lang');
-
+const lang = value => {
   if (typeof value !== 'string')
     throw new InvalidFieldTypeError('lang', 'string');
 
@@ -24,15 +14,9 @@ const lang = (value, opts = {}) => {
   return value;
 };
 
-const state = (value, opts) => {
-  if (value)
-    throw new ReadOnlyField('state');
-};
+const state = value => value;
 
 const nbQuestions = (value, opts) => {
-  if (!value)
-    throw new MissingFieldError('nbQuestions');
-
   if (typeof value !== 'number')
     throw new InvalidFieldTypeError('nbQuestions', 'number');
 
@@ -43,9 +27,6 @@ const nbQuestions = (value, opts) => {
 };
 
 const cardsPerPlayer = (value, opts) => {
-  if (!value)
-    throw new MissingFieldError('cardsPerPlayer');
-
   if (typeof value !== 'number')
     throw new InvalidFieldTypeError('cardsPerPlayer', 'number');
 

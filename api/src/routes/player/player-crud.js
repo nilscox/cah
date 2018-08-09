@@ -2,57 +2,86 @@ const { Player } = require('../../models');
 const { playerValidator } = require('../../validators');
 const { playerFormatter } = require('../../formatters');
 const { ValidationError, NotFoundError } = require('../../errors');
-const { allow, isNotPlayer, isPlayer, isNotInGame } = require('../../permissions');
+const { allow, isAdmin, isNotPlayer, isPlayer, isNotInGame } = require('../../permissions');
 const findPlayer = require('./find-player');
 
 const router = require('../createRouter')();
 module.exports = router.router;
 
+const format = opts => (req, value) => {
+  if (req.admin)
+    return playerFormatter.admin(value, opts);
+
+  if (req.player && req.params.player && req.player.equals(req.params.player))
+    return playerFormatter.full(value, opts);
+
+  return playerFormatter.light(value, opts);
+};
+
 router.param('nick', findPlayer);
 
 router.get('/', {
   authorize: allow,
-  format: players => playerFormatter.full(players, { many: true }),
+  format: format({ many: true }),
 }, async () => await Player.findAll());
 
 router.get('/me', {
   authorize: req => isPlayer(req.player),
-  format: playerFormatter.full,
+  format: (req, value) => playerFormatter.full(value),
 }, req => req.player);
 
 router.get('/:nick', {
   authorize: allow,
-  format: playerFormatter.full,
+  format: format(),
 }, req => req.params.player);
 
 router.post('/', {
-  authorize: req => isNotPlayer(req.player),
-  validate: playerValidator.body(),
-  format: playerFormatter.full,
+  authorize: [{
+    or: [
+      req => isAdmin(req.admin),
+      req => isNotPlayer(req.player),
+    ],
+  }],
+  validate: playerValidator.body({ avatar: { required: false } }),
+  format: format(),
 }, async (req, res, data) => {
   const player = await Player.create(data);
 
-  req.session.player = player.nick;
+  if (!req.admin)
+    req.session.player = player.nick;
+
   res.status(201);
 
   return player;
 });
 
 router.put('/:nick', {
-  authorize: req => isPlayer(req.player, req.params.nick),
+  authorize: {
+    or: [
+      req => isAdmin(req.admin),
+      req => isPlayer(req.player, req.params.nick),
+    ],
+  },
   validate: playerValidator.body({
     partial: true,
     nick: { readOnly: true },
   }),
-  format: playerFormatter.full,
-}, async (req, res, data) => await req.player.update(data));
+  format: format(),
+}, async (req, res, data) => await req.params.player.update(data));
 
 router.delete('/:nick', {
   authorize: [
-    req => isPlayer(req.player, req.params.nick),
-    req => isNotInGame(req.player),
+    {
+      or: [
+        req => isAdmin(req.admin),
+        req => isPlayer(req.player, req.params.nick),
+      ],
+    },
+    req => isNotInGame(req.params.player),
   ],
 }, async (req, res, next) => {
-  await req.player.destroy();
-  delete req.session.player;
+  await req.params.player.destroy();
+
+  if (!req.admin)
+    delete req.session.player;
 });

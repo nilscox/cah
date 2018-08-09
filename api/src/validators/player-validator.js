@@ -2,8 +2,6 @@ const { Player } = require('../models');
 const validator = require('./validator');
 const {
   ValidationError,
-  MissingFieldError,
-  ReadOnlyField,
   InvalidFieldTypeError,
 } = require('../errors');
 
@@ -14,15 +12,8 @@ const RESERVED_NICKS = [
   'avatar',
 ];
 
-const nick = (value, opts = {}) => {
+const nick = (value, opts) => {
   const unique = opts.unique || true;
-  const readOnly = opts.readOnly || false;
-
-  if (!value)
-    throw new MissingFieldError('nick');
-
-  if (readOnly)
-    throw new ReadOnlyField('nick');
 
   if (typeof value !== 'string')
     throw new InvalidFieldTypeError('nick', 'string');
@@ -49,8 +40,8 @@ const nick = (value, opts = {}) => {
 }
 
 const avatar = value => {
-  if (value)
-    throw new ReadOnlyField('avatar');
+  if (typeof value !== 'string')
+    throw new InvalidFieldTypeError('avatar');
 
   return value;
 }

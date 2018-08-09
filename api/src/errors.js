@@ -79,7 +79,7 @@ class InvalidFieldTypeError extends ValidationError {
 
 }
 
-class ReadOnlyField extends ValidationError {
+class ReadOnlyFieldError extends ValidationError {
 
   constructor(field) {
     super(field, 'this field is read only');
@@ -102,7 +102,7 @@ module.exports = {
   ValidationError,
   MissingFieldError,
   InvalidFieldTypeError,
-  ReadOnlyField,
+  ReadOnlyFieldError,
   NotFoundError,
   AuthenticationError,
 };

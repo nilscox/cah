@@ -9,7 +9,13 @@ const session = require('express-session');
 const { Player } = require('./models');
 const routes = require('./routes');
 const { APIError } = require('./errors');
-const authorize = require('./authorize');
+
+const ADMIN_TOKEN = process.env.CAH_API_ADMIN_TOKEN;
+
+if (!ADMIN_TOKEN) {
+  console.log('missing env: CAH_API_ADMIN_TOKEN');
+  process.exit(1);
+}
 
 const app = express();
 
@@ -30,21 +36,21 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use((req, res, next) => {
-  if (!req.session.player)
-    return next();
+app.use(async (req, res, next) => {
+  try {
+    if (req.get('Authorization') === ADMIN_TOKEN) {
+      req.admin = true;
 
-  Player.find({ where: { nick: req.session.player }})
-    .then(player => {
-      if (!player) {
-        delete req.session.player;
-        next();
-      }
+      if (req.body.playerId)
+        req.player = await Player.findOne({ where: { id: req.body.playerId } });
+    } else if (req.session.player) {
+      req.player = await Player.findOne({ where: { nick: req.session.player } });
+    }
 
-      req.player = player;
-      next();
-    })
-    .catch(next);
+    next();
+  } catch (e) {
+    next(e);
+  }
 });
 
 app.use('/api', routes);

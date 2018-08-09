@@ -19,7 +19,7 @@ router.post('/login', {
 
     return { nick };
   },
-  format: playerFormatter.full,
+  format: (req, value) => playerFormatter.full(value),
 }, async (req, res, data) => {
   const player = await Player.findOne({ where: { nick: data.nick } })
 

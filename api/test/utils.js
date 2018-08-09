@@ -60,13 +60,13 @@ async function createRunningGame(opts, nicks, turns = 1) {
   const game = await this.createStartedGame(opts, nicks);
 
   for (let i = 0; i < turns; ++i)
-    this.playRandomTurn(game);
+    await this.playRandomTurn(game);
 
   return game;
 }
 
 async function getPlayersWithoutQM(game) {
-  return await this.models.Player.findAll({
+  return await game.getPlayers({
     where: {
       id: { [Op.not]: game.questionMasterId },
     },
@@ -115,4 +115,4 @@ module.exports = {
   answerRandomCards,
   selectRandomAnswer,
   playRandomTurn,
-}
+};

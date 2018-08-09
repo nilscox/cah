@@ -5,7 +5,7 @@ const path = require('path');
 const { Client } = require('pg');
 const Sequelize = require('sequelize');
 const Umzug = require('umzug');
-const session = require('supertest-session');
+const request = require('supertest');
 
 const config = require('../src/config');
 const utils = require('./utils');
@@ -100,7 +100,7 @@ beforeEach(function() {
   const app = require('../src/app');
   const models = require('../src/models');
 
-  this.createSession = () => session(app);
+  this.createSession = () => request.agent(app);
 
   this.app = this.createSession();
   this.models = models;

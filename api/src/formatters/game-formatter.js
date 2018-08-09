@@ -52,6 +52,15 @@ const questionMaster = async game => {
   return qm.get('nick');
 };
 
+const fullPropositions = async game => {
+  const propositions = await game.getPropositions();
+
+  if (!propositions)
+    return;
+
+  return await answerFormatter.full(propositions, { many: true });
+};
+
 const propositions = async game => {
   const propositions = await game.getPropositions();
 
@@ -77,19 +86,34 @@ const selectedAnswer = async game => {
   return await answerFormatter.full(answer);
 };
 
+const summary = {
+  id,
+  lang,
+  nbQuestions,
+  cardsPerPlayer,
+  state,
+  playState,
+  owner,
+};
+
+const full = {
+  ...summary,
+  players,
+  question,
+  questionMaster,
+  propositions,
+  selectedAnswer,
+};
+
+const admin = {
+  ...full,
+  propositions: fullPropositions,
+  createdAt: formatter.createdAt,
+  updatedAt: formatter.updatedAt,
+};
+
 module.exports = {
-  full: formatter({
-    id,
-    lang,
-    nbQuestions,
-    cardsPerPlayer,
-    state,
-    playState,
-    owner,
-    players,
-    question,
-    questionMaster,
-    propositions,
-    selectedAnswer,
-  }),
+  summary: formatter(summary),
+  full: formatter(full),
+  admin: formatter(admin),
 };

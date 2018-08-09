@@ -17,7 +17,25 @@ const choices = async a => {
   return await choiceFormatter.full(choices, { many: true });
 }
 
+const anonymous = {
+  id,
+  place,
+  choices,
+};
+
+const full = {
+  ...anonymous,
+  answeredBy,
+};
+
+const admin = {
+  ...full,
+  createdAt: formatter.createdAt,
+  updatedAt: formatter.updatedAt,
+};
+
 module.exports = {
-  full: formatter({ id, place, answeredBy, choices }),
-  anonymous: formatter({ id, place, choices }),
+  anonymous: formatter(anonymous),
+  full: formatter(full),
+  admin: formatter(admin),
 };
