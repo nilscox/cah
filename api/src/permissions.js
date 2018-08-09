@@ -38,11 +38,7 @@ const isNotInGame = async player => {
     throw new AuthenticationError('player must not be in game');
 };
 
-const isGameOwner = async (player, gameId) => {
-  await isInGame(player, gameId);
-
-  const game = await player.getGame();
-
+const isGameOwner = async (player, game) => {
   if (game.ownerId !== player.id)
     throw new AuthenticationError('player must be the game owner');
 };

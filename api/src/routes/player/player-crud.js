@@ -8,21 +8,31 @@ const findPlayer = require('./find-player');
 const router = require('../createRouter')();
 module.exports = router.router;
 
+const format = opts => (req, value) => {
+  if (req.admin)
+    return playerFormatter.admin(value, opts);
+
+  if (req.player && req.params.player && req.player.equals(req.params.player))
+    return playerFormatter.full(value, opts);
+
+  return playerFormatter.light(value, opts);
+};
+
 router.param('nick', findPlayer);
 
 router.get('/', {
   authorize: allow,
-  format: players => playerFormatter.full(players, { many: true }),
+  format: format({ many: true }),
 }, async () => await Player.findAll());
 
 router.get('/me', {
   authorize: req => isPlayer(req.player),
-  format: playerFormatter.full,
+  format: (req, value) => playerFormatter.full(value),
 }, req => req.player);
 
 router.get('/:nick', {
   authorize: allow,
-  format: playerFormatter.full,
+  format: format(),
 }, req => req.params.player);
 
 router.post('/', {
@@ -33,7 +43,7 @@ router.post('/', {
     ],
   }],
   validate: playerValidator.body({ avatar: { required: false } }),
-  format: playerFormatter.full,
+  format: format(),
 }, async (req, res, data) => {
   const player = await Player.create(data);
 
@@ -56,7 +66,7 @@ router.put('/:nick', {
     partial: true,
     nick: { readOnly: true },
   }),
-  format: playerFormatter.full,
+  format: format(),
 }, async (req, res, data) => await req.params.player.update(data));
 
 router.delete('/:nick', {

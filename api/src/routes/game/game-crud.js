@@ -1,22 +1,34 @@
 const { Game } = require('../../models');
 const { gameValidator } = require('../../validators');
 const { gameFormatter } = require('../../formatters');
-const { isPlayer, isAdmin, isNotInGame, isInGame, isGameOwner } = require('../../permissions');
+const {
+  isPlayer,
+  isAdmin,
+  isNotInGame,
+  isInGame,
+  isGameOwner,
+  isGameState
+} = require('../../permissions');
 const findGame = require('./find-game');
 
 const router = require('../createRouter')();
 module.exports = router.router;
 
+const format = opts => (req, value) => {
+  if (req.admin)
+    return gameFormatter.admin(value, opts);
+
+  return gameFormatter.full(value, opts);
+};
+
 router.param('id', findGame);
 
 router.get('/', {
-  authorize: {
-    or: [
-      req => isAdmin(req.admin),
-      req => isPlayer(req.player),
-    ],
-  },
-  format: games => gameFormatter.full(games, { many: true }),
+  authorize: { or: [
+    req => isAdmin(req.admin),
+    req => isPlayer(req.player),
+  ] },
+  format: format({ many: true }),
 }, async () => {
   return await Game.findAll({
     include: 'owner',
@@ -24,30 +36,22 @@ router.get('/', {
 });
 
 router.get('/:id', {
-  authorize: {
-    or: [
-      req => isAdmin(req.admin),
-      req => isPlayer(req.player),
-    ],
-  },
-  format: gameFormatter.full,
+  authorize: { or: [
+    req => isAdmin(req.admin),
+    req => isPlayer(req.player),
+  ] },
+  format: format(),
 }, req => req.params.game);
 
 router.post('/', {
-  authorize: [{
-    or: [
-      req => isAdmin(req.admin),
-      [
-        req => isPlayer(req.player),
-        req => isNotInGame(req.player),
-      ],
-    ],
-  }],
-  validate: req => gameValidator.validate(req.body, {
-    ownerId: { required: !!req.admin, readOnly: !req.admin },
+  authorize: [
+    req => isPlayer(req.player),
+    req => isNotInGame(req.player),
+  ],
+  validate: gameValidator.body({
     state: { readOnly: true },
   }),
-  format: gameFormatter.full,
+  format: format(),
 }, async (req, res, data) => {
   if (!data.ownerId)
     data.ownerId = req.player.id;
@@ -61,15 +65,10 @@ router.post('/', {
 });
 
 router.put('/:id', {
-  authorize: [{
-    or: [
-      req => isAdmin(req.admin),
-      [
-        req => isPlayer(req.player),
-        req => isGameOwner(req.player),
-      ],
-    ],
-  }],
+  authorize: [
+    req => isPlayer(req.player),
+    req => isGameOwner(req.player, req.params.game),
+  ],
   validate: req => {
     const { game } = req.params;
     const isStarted = game.state === 'started';
@@ -83,7 +82,7 @@ router.put('/:id', {
       cardsPerPlayer: { readOnly: !isStarted },
     });
   },
-  format: gameFormatter.full,
+  format: format(),
 }, async (req, res, data) => {
   await req.params.game.update(data);
 
@@ -91,13 +90,9 @@ router.put('/:id', {
 });
 
 router.delete('/:id', {
-  authorize: [{
-    or: [
-      req => isAdmin(req.admin),
-      [
-        req => isPlayer(req.player),
-        req => isGameOwner(req.player),
-      ],
-    ],
-  }],
+  authorize: [
+    req => isPlayer(req.player),
+    req => isGameOwner(req.player, req.params.game),
+    req => isGameState(req.params.game, 'idle'),
+  ],
 }, async req => { await req.params.game.destroy() });

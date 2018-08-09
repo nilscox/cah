@@ -54,20 +54,14 @@ const authorizeRequest = async (req, authorize) => {
     throw new Error('invalid authorizer ' + typeof authorize);
 }
 
-const handleRoute = (authorize, validate, format, handler) => async (req, res, next) => {
-  try {
-    await authorizeRequest(req, authorize);
+const validateRequest = (req, validate) => {
+  if (typeof validate === 'function')
+    validate = [validate];
 
-    const data = await validate(req);
-    const result = await handler(req, res, data);
-
-    if (result)
-      res.json(await format(result));
-    else
-      res.status(204).end();
-  } catch (e) {
-    next(e);
-  }
+  return Promise.reduce(validate, async (validated, f) => ({
+    ...validated,
+    ...(await f(req)),
+  }), {});
 };
 
 /**
@@ -96,25 +90,45 @@ const handleRoute = (authorize, validate, format, handler) => async (req, res, n
  * rejects, the router will call next with the error
  */
 module.exports = () => {
-  const router = express.Router();
+  const expressRouter = express.Router();
 
-  return ['head', 'get', 'post', 'put', 'patch', 'delete'].reduce((obj, method) => {
-    obj[method] = (route, opts = {}, handler) => {
+  const handle = (method, route, opts, handler) => {
+    expressRouter[method](route, async (req, res, next) => {
+      try {
+        if (opts.authorize)
+          await authorizeRequest(req, opts.authorize);
 
-      router[method](route, handleRoute(
-        opts.authorize || [],
-        opts.validate || (() => {}),
-        opts.format || null,
-        handler,
-      ));
-    };
+        const data = opts.validate
+          ? await validateRequest(req, opts.validate)
+          : null;
 
-    return obj;
-  }, {
-    router,
-    all: router.all.bind(router),
-    param: router.param.bind(router),
-    route: router.route.bind(router),
-    use: router.use.bind(router),
-  });
+        const result = await handler(req, res, data);
+
+        if (result) {
+          if (opts.format)
+            res.json(await opts.format(req, result));
+          else
+            res.json(result);
+        }
+        else
+          res.status(204).end();
+      } catch (e) {
+        next(e);
+      }
+    });
+  };
+
+  return {
+    head: handle.bind(null, 'head'),
+    get: handle.bind(null, 'get'),
+    post: handle.bind(null, 'post'),
+    put: handle.bind(null, 'put'),
+    patch: handle.bind(null, 'patch'),
+    delete: handle.bind(null, 'delete'),
+    all: expressRouter.all.bind(expressRouter),
+    param: expressRouter.param.bind(expressRouter),
+    route: expressRouter.route.bind(expressRouter),
+    use: expressRouter.use.bind(expressRouter),
+    router: expressRouter,
+  };
 };

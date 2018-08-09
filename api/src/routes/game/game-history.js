@@ -9,16 +9,14 @@ module.exports = router.router;
 router.param('id', findGame);
 
 router.get('/:id/history', {
-  authorize: {
-    or: [
-      req => isAdmin(req.admin),
-      [
-        req => isPlayer(req.player),
-        req => isInGame(req.player, req.params.id),
-      ],
+  authorize: { or: [
+    req => isAdmin(req.admin),
+    [
+      req => isPlayer(req.player),
+      req => isInGame(req.player, req.params.id),
     ],
-  },
-  format: gt => gameTurnFormatter.full(gt, { many: true }),
+  ]},
+  format: (req, gt) => gameTurnFormatter.full(gt, { many: true }),
 }, async (req, res, next) => {
   return await req.params.game.getTurns({
     include: ['questionMaster', 'winner', 'question', 'answers'],

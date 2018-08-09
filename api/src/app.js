@@ -36,26 +36,21 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use((req, res, next) => {
-  if (req.get('Authorization') === ADMIN_TOKEN) {
-    req.admin = true;
-    return next();
+app.use(async (req, res, next) => {
+  try {
+    if (req.get('Authorization') === ADMIN_TOKEN) {
+      req.admin = true;
+
+      if (req.body.playerId)
+        req.player = await Player.findOne({ where: { id: req.body.playerId } });
+    } else if (req.session.player) {
+      req.player = await Player.findOne({ where: { nick: req.session.player } });
+    }
+
+    next();
+  } catch (e) {
+    next(e);
   }
-
-  if (!req.session.player)
-    return next();
-
-  Player.find({ where: { nick: req.session.player }})
-    .then(player => {
-      if (!player) {
-        delete req.session.player;
-        next();
-      }
-
-      req.player = player;
-      next();
-    })
-    .catch(next);
 });
 
 app.use('/api', routes);

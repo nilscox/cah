@@ -10,18 +10,22 @@ module.exports = router.router;
 
 const Op = Sequelize.Op;
 
+const format = opts => (req, value) => {
+  if (req.admin)
+    return gameFormatter.admin(value, opts);
+
+  return gameFormatter.full(value, opts);
+};
+
 router.param('id', findGame);
 
 router.post('/:id/start', {
   authorize: [
     req => isPlayer(req.player),
-    req => isGameOwner(req.player, req.params.id),
-    req => {
-      if (req.params.game.state !== 'idle')
-        throw new BadRequestError('game has already started');
-    },
+    req => isGameOwner(req.player, req.params.game),
+    req => isGameState(req.params.game, 'idle'),
   ],
-  format: gameFormatter.full,
+  format: format(),
 }, async (req, res) => {
   await req.params.game.start();
   return req.params.game;
@@ -51,7 +55,7 @@ router.post('/:id/answer', {
 
     return { ids };
   },
-  format: gameFormatter.full,
+  format: format(),
 }, async (req, res, { ids }) => {
   const { game } = req.params;
 
@@ -92,7 +96,7 @@ router.post('/:id/select', {
 
     return { answerId };
   },
-  format: gameFormatter.full,
+  format: format(),
 }, async (req, res, { answerId }) => {
   const { game } = req.params;
 
@@ -114,7 +118,7 @@ router.post('/:id/next', {
     req => isGameState(req.params.game, 'started', 'end_of_turn'),
     req => isQuestionMaster(req.player),
   ],
-  format: gameFormatter.full,
+  format: format(),
 }, async (req, res, next) => {
   await req.params.game.nextTurn();
   return req.params.game;
