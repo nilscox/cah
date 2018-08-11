@@ -1,11 +1,11 @@
 const express = require('express');
 
 const pkg = require('../../package');
-
+const { getEnv } = require('../utils');
 const player = require('./player');
 const game = require('./game');
 
-const API_ADMIN_TOKEN = process.env.CAH_API_ADMIN_TOKEN;
+const API_ADMIN_TOKEN = getEnv('CAH_API_ADMIN_TOKEN');
 
 const router = express.Router();
 

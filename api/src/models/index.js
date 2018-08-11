@@ -1,7 +1,3 @@
-'use strict';
-
-const env = process.env.NODE_ENV || 'development';
-
 const path = require('path');
 const Sequelize = require('sequelize');
 const config = require('../config');

@@ -7,17 +7,11 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const sessionMiddleware = require('express-session');
 
+const { getEnv, log } = require('./utils');
+const { APIError } = require('./errors');
 const { Player } = require('./models');
 const routes = require('./routes');
-const { APIError } = require('./errors');
 const websockets = require('./websockets');
-
-const ADMIN_TOKEN = process.env.CAH_API_ADMIN_TOKEN;
-
-if (!ADMIN_TOKEN) {
-  console.log('missing env: CAH_API_ADMIN_TOKEN');
-  process.exit(1);
-}
 
 const app = express();
 const server = http.Server(app);
@@ -63,8 +57,8 @@ app.use(async (req, res, next) => {
 app.use('/api', routes);
 
 app.use((err, req, res, next) => {
-  if (process.env.NODE_ENV === 'development')
-    console.log(err);
+  if (getEnv('NODE_ENV') === 'development')
+    log('REQUEST', err);
 
   if (!(err instanceof APIError))
     throw err;
