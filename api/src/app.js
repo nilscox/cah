@@ -31,21 +31,21 @@ app.use(session({
 }));
 
 app.use((req, res, next) => {
-  res.append('Access-Control-Allow-Origin', '*');
-  res.append('Access-Control-Allow-Headers', 'Authorization');
+  // TODO: fix this evil trick
+  res.append('Access-Control-Allow-Origin', req.get('origin') || '*');
+  res.append('Access-Control-Allow-Headers', 'Content-Type,Authorization');
+  res.append('Access-Control-Allow-Credentials', 'true');
   next();
 });
 
 app.use(async (req, res, next) => {
   try {
-    if (req.get('Authorization') === ADMIN_TOKEN) {
-      req.admin = true;
+    req.admin = req.session.admin;
 
-      if (req.body.playerId)
-        req.player = await Player.findOne({ where: { id: req.body.playerId } });
-    } else if (req.session.player) {
-      req.player = await Player.findOne({ where: { nick: req.session.player } });
-    }
+    const playerId = req.admin ? req.body.playerId : req.session.playerId;
+
+    if (playerId)
+      req.player = await Player.findOne({ where: { id: playerId } });
 
     next();
   } catch (e) {
