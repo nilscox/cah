@@ -16,9 +16,12 @@ const cards = async player => {
   return await choiceFormatter.full(cards, { many: true });
 };
 
+const connected = player => !!player.socket;
+
 const light = {
   nick,
   avatar,
+  connected,
 };
 
 const full = {
