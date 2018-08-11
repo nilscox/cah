@@ -2,13 +2,15 @@ global.Promise = require('bluebird');
 
 const fs = require('fs');
 const path = require('path');
+const http = require('http');
 const express = require('express');
 const bodyParser = require('body-parser');
-const session = require('express-session');
+const sessionMiddleware = require('express-session');
 
 const { Player } = require('./models');
 const routes = require('./routes');
 const { APIError } = require('./errors');
+const websockets = require('./websockets');
 
 const ADMIN_TOKEN = process.env.CAH_API_ADMIN_TOKEN;
 
@@ -18,17 +20,22 @@ if (!ADMIN_TOKEN) {
 }
 
 const app = express();
-
-app.set('x-powered-by', false);
-
-app.use(bodyParser.json());
-
-app.use(session({
+const server = http.Server(app);
+const session = sessionMiddleware({
   secret: 'kernelpanic',
   cookie: {},
   resave: false,
   saveUninitialized: true,
-}));
+});
+
+module.exports = server;
+
+app.set('x-powered-by', false);
+
+app.use(bodyParser.json());
+app.use(session);
+
+websockets(server, session);
 
 app.use((req, res, next) => {
   // TODO: fix this evil trick
@@ -64,5 +71,3 @@ app.use((err, req, res, next) => {
 
   res.status(err.status).json(err.toJSON());
 });
-
-module.exports = app;
