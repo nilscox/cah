@@ -2,6 +2,8 @@ import { listGames, fetchGamesHistories } from './games';
 import { listPlayers } from './players';
 import { createWebsocket } from './websocket';
 
+const API_ADMIN_TOKEN = process.env.REACT_APP_API_ADMIN_TOKEN;
+
 export const INITIALIZATION_STARTED = 'INITIALIZATION_STARTED';
 const initializationStarted = () => ({
   type: INITIALIZATION_STARTED,
@@ -18,9 +20,18 @@ const initializationError = (error) => ({
   error,
 });
 
+export const LOGIN_ADMIN = 'LOGIN_ADMIN';
+const loginAdmin = (token) => ({
+  type: LOGIN_ADMIN,
+  method: 'POST',
+  route: '/api/admin',
+  body: { token },
+});
+
 export const INITIALIZATION = 'INITIALIZATION';
 export const initialization = () => (dispatch) => Promise.resolve()
   .then(() => dispatch(initializationStarted()))
+  .then(() => dispatch(loginAdmin(API_ADMIN_TOKEN)))
   .then(() => dispatch(listGames()))
   .then(({ payload: games }) => dispatch(fetchGamesHistories(games)))
   .then(() => dispatch(listPlayers()))
