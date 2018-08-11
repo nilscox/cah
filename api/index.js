@@ -1,7 +1,7 @@
 const app = require('./src/app');
-const { info } = require('./src/utils/logger');
+const { getEnv, info } = require('./src/utils');
 
-const PORT = process.env.CAH_API_PORT || 4242;
+const IP = getEnv('CAH_API_IP', 'localhost');
+const PORT = getEnv('CAH_API_PORT', 4242);
 
-info('SERVER', 'starting server on port', PORT);
-app.listen(PORT);
+app.listen(PORT, IP, () => info('SERVER', 'listening on ' + [IP, PORT].join(':')));

@@ -1,15 +1,5 @@
 const sql = require('sql-formatter');
-
-const getEnv = key => {
-  const value = process.env[key];
-
-  if (!key) {
-    console.log('missing env: ' + key);
-    process.exit(1);
-  }
-
-  return value;
-};
+const { getEnv, log } = require('./utils');
 
 const cfg = {
   username: getEnv('CAH_DB_USER'),
@@ -19,6 +9,7 @@ const cfg = {
   port: getEnv('CAH_DB_PORT'),
   dialect: 'postgres',
   operatorsAliases: false,
+  logging: sql => log('SQL', sql),
 };
 
 if (getEnv('NODE_ENV') === 'test') {
