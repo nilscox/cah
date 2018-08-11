@@ -3,6 +3,8 @@ const { playerValidator } = require('../../validators');
 const { playerFormatter } = require('../../formatters');
 const { ValidationError, NotFoundError } = require('../../errors');
 const { allow, isAdmin, isNotPlayer, isPlayer, isNotInGame } = require('../../permissions');
+const { info } = require('../../utils');
+const websockets = require('../../websockets');
 const findPlayer = require('./find-player');
 
 const router = require('../createRouter')();
@@ -48,8 +50,10 @@ router.post('/', {
   const player = await Player.create(data);
 
   if (!req.admin)
-    req.session.player = player.nick;
+    req.session.playerId = player.id;
 
+  info('PLAYER', 'created', '#' + player.id, '(' + player.nick + ')');
+  websockets.admin('PLAYER_CREATE', await playerFormatter.admin(player));
   res.status(201);
 
   return player;
@@ -67,7 +71,14 @@ router.put('/:nick', {
     nick: { readOnly: true },
   }),
   format: format(),
-}, async (req, res, data) => await req.params.player.update(data));
+}, async (req, res, data) => {
+  const player = await req.params.player.update(data);
+
+  info('PLAYER', 'updated', '#' + player.id, data);
+  websockets.admin('PLAYER_UPDATE', await playerFormatter.admin(player));
+
+  return player;
+});
 
 router.delete('/:nick', {
   authorize: [
@@ -80,8 +91,13 @@ router.delete('/:nick', {
     req => isNotInGame(req.params.player),
   ],
 }, async (req, res, next) => {
-  await req.params.player.destroy();
+  const { player } = req.params;
+
+  await player.destroy();
 
   if (!req.admin)
-    delete req.session.player;
+    delete req.session.playerId;
+
+  info('PLAYER', 'delete', '#' + player.id);
+  websockets.admin('PLAYER_DELETE', await playerFormatter.admin(player));
 });
