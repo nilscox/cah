@@ -20,6 +20,11 @@ const isAdmin = async admin => {
     throw new AuthenticationError('you must be an admin');
 };
 
+const isNotAdmin = async admin => {
+  if (admin)
+    throw new AuthenticationError('you must not be an admin');
+};
+
 const isInGame = async (player, gameId) => {
   const game = await player.getGame();
 
@@ -70,6 +75,7 @@ module.exports = {
   isPlayer,
   isNotPlayer,
   isAdmin,
+  isNotAdmin,
   isInGame,
   isNotInGame,
   isGameOwner,
