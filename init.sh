@@ -3,6 +3,8 @@
 source ./.env
 source "$NVM_DIR/nvm.sh"
 
+export NODE_ENV=development
+
 API_URL="http://$CAH_API_IP:$CAH_API_PORT"
 API_WS_URL="ws://$CAH_API_IP:$CAH_API_PORT"
 WEB_URL="http://$CAH_WEB_IP:$CAH_WEB_PORT"
