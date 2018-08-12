@@ -26,7 +26,7 @@ router.post('/login', {
   },
   format: (req, value) => playerFormatter.full(value),
   after: async (req, player) => {
-    websockets.admin('PLAYER_LOGIN', await playerFormatter.admin(player));
+    websockets.admin('PLAYER_LOGIN', { player: await playerFormatter.admin(player) });
     info('PLAYER', 'login', '#' + player.id, '(' + player.nick + ')');
   },
 }, async (req, res, data) => {
@@ -48,7 +48,7 @@ router.post('/logout', {
   after: async (req) => {
     const { player } = req;
 
-    websockets.admin('PLAYER_LOGOUT', await playerFormatter.admin(player));
+    websockets.admin('PLAYER_LOGOUT', { player: await playerFormatter.admin(player) });
     info('PLAYER', 'logout', '#' + player.id, '(' + player.nick + ')');
   },
 }, async req => {

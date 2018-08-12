@@ -26,9 +26,16 @@ router.post('/:id/start', {
     req => isGameState(req.params.game, 'idle'),
   ],
   format: format(),
+  after: async (req, game) => {
+    websockets.admin('GAME_START', { game: await gameFormatter.admin(game) });
+    info('GAME', 'start', '#' + game.id);
+  },
 }, async (req, res) => {
-  await req.params.game.start();
-  return req.params.game;
+  const { game } = req.params;
+
+  await game.start();
+
+  return game;
 });
 
 router.post('/:id/answer', {
@@ -56,6 +63,10 @@ router.post('/:id/answer', {
     return { ids };
   },
   format: format(),
+  after: async (req, game) => {
+    websockets.admin('GAME_ANSWER', { game: await gameFormatter.admin(game) });
+    info('GAME', 'answer', '#' + game.id);
+  },
 }, async (req, res, { ids }) => {
   const { game } = req.params;
 
@@ -97,6 +108,10 @@ router.post('/:id/select', {
     return { answerId };
   },
   format: format(),
+  after: async (req, game) => {
+    websockets.admin('GAME_SELECT', { game: await gameFormatter.admin(game) });
+    info('GAME', 'select', '#' + game.id);
+  },
 }, async (req, res, { answerId }) => {
   const { game } = req.params;
 
@@ -119,7 +134,19 @@ router.post('/:id/next', {
     req => isQuestionMaster(req.player),
   ],
   format: format(),
+  after: async (req, game) => {
+    if (game.state === 'started') {
+      websockets.admin('GAME_NEXT', { game: await gameFormatter.admin(game) });
+      info('GAME', 'next', '#' + game.id);
+    } else {
+      websockets.admin('GAME_END', { game: await gameFormatter.admin(game) });
+      info('GAME', 'end', '#' + game.id);
+    }
+  },
 }, async (req, res, next) => {
-  await req.params.game.nextTurn();
-  return req.params.game;
+  const { game } = req.params;
+
+  await game.nextTurn();
+
+  return game;
 });
