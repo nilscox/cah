@@ -77,11 +77,15 @@ const validateRequest = (req, validate) => {
  *
  * @param route (string): the route
  * @param opts (object): an options object
+ * @param opts.before: hook invoked before the request is processed
+ * @param opts.after: hook invoked after the request has been processed successfully
  * @param opts.authorize (function | function[]): an authorizer function
  * @param opts.validate (function): a validator function
  * @param opts.format (function): a formatter function
  * @param handler (function): the express handler
  *
+ * before function: req => any
+ * after function: (req, result) => any
  * authorizer function: req => any | Promise<any>
  * validator function: data => object | Promise<object>
  * format function: instance => object | Promise<object>
@@ -93,25 +97,33 @@ module.exports = () => {
   const expressRouter = express.Router();
 
   const handle = (method, route, opts, handler) => {
+    const { before, after, authorize, validate, format } = opts;
+
     expressRouter[method](route, async (req, res, next) => {
       try {
-        if (opts.authorize)
-          await authorizeRequest(req, opts.authorize);
+        if (before)
+          await before(req);
 
-        const data = opts.validate
-          ? await validateRequest(req, opts.validate)
+        if (authorize)
+          await authorizeRequest(req, authorize);
+
+        const data = validate
+          ? await validateRequest(req, validate)
           : null;
 
         const result = await handler(req, res, data);
 
         if (result) {
-          if (opts.format)
-            res.json(await opts.format(req, result));
+          if (format)
+            res.json(await format(req, result));
           else
             res.json(result);
-        }
-        else
+        } else {
           res.status(204).end();
+        }
+
+        if (after)
+          after(req, result);
       } catch (e) {
         next(e);
       }

@@ -25,6 +25,10 @@ router.post('/login', {
     return { nick };
   },
   format: (req, value) => playerFormatter.full(value),
+  after: async (req, player) => {
+    websockets.admin('PLAYER_LOGIN', await playerFormatter.admin(player));
+    info('PLAYER', 'login', '#' + player.id, '(' + player.nick + ')');
+  },
 }, async (req, res, data) => {
   const player = await Player.findOne({ where: { nick: data.nick } })
 
@@ -32,8 +36,6 @@ router.post('/login', {
     throw new NotFoundError('player');
 
   req.session.playerId = player.id;
-  info('PLAYER', 'login', '#' + player.id, '(' + player.nick + ')');
-  websockets.admin('PLAYER_LOGIN', await playerFormatter.admin(player));
 
   return player;
 });
@@ -43,10 +45,12 @@ router.post('/logout', {
     req => isNotAdmin(req.admin),
     req => isPlayer(req.player),
   ],
-}, async req => {
-  const { player } = req;
+  after: async (req) => {
+    const { player } = req;
 
+    websockets.admin('PLAYER_LOGOUT', await playerFormatter.admin(player));
+    info('PLAYER', 'logout', '#' + player.id, '(' + player.nick + ')');
+  },
+}, async req => {
   delete req.session.playerId;
-  info('PLAYER', 'logout', '#' + player.id, '(' + player.nick + ')');
-  websockets.admin('PLAYER_LOGOUT', await playerFormatter.admin(player));
 });
