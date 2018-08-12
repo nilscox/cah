@@ -46,14 +46,16 @@ router.post('/', {
   }],
   validate: playerValidator.body({ avatar: { required: false } }),
   format: format(),
+  after: async (req, player) => {
+    websockets.admin('PLAYER_CREATE', await playerFormatter.admin(player));
+    info('PLAYER', 'created', '#' + player.id, '(' + player.nick + ')');
+  },
 }, async (req, res, data) => {
   const player = await Player.create(data);
 
   if (!req.admin)
     req.session.playerId = player.id;
 
-  info('PLAYER', 'created', '#' + player.id, '(' + player.nick + ')');
-  websockets.admin('PLAYER_CREATE', await playerFormatter.admin(player));
   res.status(201);
 
   return player;
@@ -71,13 +73,12 @@ router.put('/:nick', {
     nick: { readOnly: true },
   }),
   format: format(),
+  after: async (req, player) => {
+    websockets.admin('PLAYER_UPDATE', await playerFormatter.admin(player));
+    info('PLAYER', 'updated', '#' + player.id, data);
+  },
 }, async (req, res, data) => {
-  const player = await req.params.player.update(data);
-
-  info('PLAYER', 'updated', '#' + player.id, data);
-  websockets.admin('PLAYER_UPDATE', await playerFormatter.admin(player));
-
-  return player;
+  return await req.params.player.update(data);
 });
 
 router.delete('/:nick', {
@@ -90,6 +91,12 @@ router.delete('/:nick', {
     },
     req => isNotInGame(req.params.player),
   ],
+  after: async (req) => {
+    const { player } = req.params;
+
+    websockets.admin('PLAYER_DELETE', await playerFormatter.admin(player));
+    info('PLAYER', 'delete', '#' + player.id);
+  },
 }, async (req, res, next) => {
   const { player } = req.params;
 
@@ -97,7 +104,4 @@ router.delete('/:nick', {
 
   if (!req.admin)
     delete req.session.playerId;
-
-  info('PLAYER', 'delete', '#' + player.id);
-  websockets.admin('PLAYER_DELETE', await playerFormatter.admin(player));
 });
