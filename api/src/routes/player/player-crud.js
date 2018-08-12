@@ -47,7 +47,7 @@ router.post('/', {
   validate: playerValidator.body({ avatar: { required: false } }),
   format: format(),
   after: async (req, player) => {
-    websockets.admin('PLAYER_CREATE', await playerFormatter.admin(player));
+    websockets.admin('PLAYER_CREATE', { player: await playerFormatter.admin(player) });
     info('PLAYER', 'created', '#' + player.id, '(' + player.nick + ')');
   },
 }, async (req, res, data) => {
@@ -74,7 +74,7 @@ router.put('/:nick', {
   }),
   format: format(),
   after: async (req, player) => {
-    websockets.admin('PLAYER_UPDATE', await playerFormatter.admin(player));
+    websockets.admin('PLAYER_UPDATE', { player: await playerFormatter.admin(player) });
     info('PLAYER', 'updated', '#' + player.id, data);
   },
 }, async (req, res, data) => {
@@ -94,7 +94,7 @@ router.delete('/:nick', {
   after: async (req) => {
     const { player } = req.params;
 
-    websockets.admin('PLAYER_DELETE', await playerFormatter.admin(player));
+    websockets.admin('PLAYER_DELETE', { player: await playerFormatter.admin(player) });
     info('PLAYER', 'delete', '#' + player.id);
   },
 }, async (req, res, next) => {

@@ -21,6 +21,10 @@ router.post('/:id/join', {
     req => isNotInGame(req.player),
   ],
   format: format(),
+  after: async (req, game) => {
+    websockets.admin('GAME_JOIN', { game: await gameFormatter.admin(game) });
+    info('GAME', 'join', '#' + game.id, '(' + req.params.player.nick + ')');
+  },
 }, async (req, res, next) => {
   await req.params.game.join(req.player);
   return req.params.game;
@@ -31,4 +35,10 @@ router.post('/:id/leave', {
     req => isPlayer(req.player),
     req => isInGame(req.player, req.params.id),
   ],
-}, async req => { await req.params.game.leave(req.player) });
+  after: async (req, game) => {
+    websockets.admin('GAME_LEAVE', { game: await gameFormatter.admin(game) });
+    info('GAME', 'leave', '#' + game.id, '(' + req.params.player.nick + ')');
+  },
+}, async req => {
+  await req.params.game.leave(req.player);
+});
