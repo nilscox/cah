@@ -3,6 +3,7 @@ const { Sequelize, Game } = require('../../models');
 const { gameValidator } = require('../../validators');
 const { gameFormatter } = require('../../formatters');
 const { isPlayer, isGameOwner, isInGame, isGameState, isQuestionMaster, isNotQuestionMaster } = require('../../permissions');
+const websockets = require('../../websockets');
 const findGame = require('./find-game');
 
 const router = require('../createRouter')();

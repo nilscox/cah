@@ -1,6 +1,7 @@
 const { BadRequestError } = require('../../errors');
 const { gameFormatter } = require('../../formatters');
 const { isPlayer, isInGame, isNotInGame } = require('../../permissions');
+const websockets = require('../../websockets');
 const findGame = require('./find-game');
 
 const router = require('../createRouter')();
