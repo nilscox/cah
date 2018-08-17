@@ -54,17 +54,17 @@ router.post('/', {
     state: { readOnly: true },
   }),
   format: format(),
-  after: async (req, game) => {
+  after: async ({ validated }, game) => {
     websockets.admin('GAME_CREATE', { game: await gameFormatter.admin(game) });
-    info('GAME', 'create', '#' + game.id);
+    info('GAME', 'create', '#' + game.id, validated);
   },
-}, async (req, res, data) => {
-  if (!data.ownerId)
-    data.ownerId = req.player.id;
+}, async ({ validated, player }, res) => {
+  if (!validated.ownerId)
+    validated.ownerId = player.id;
 
-  const game = await Game.create(data);
+  const game = await Game.create(validated);
 
-  await game.join(req.player);
+  await game.join(player);
 
   res.status(201);
   return game;
@@ -89,14 +89,14 @@ router.put('/:id', {
     });
   },
   format: format(),
-  after: async (req, game) => {
+  after: async ({ validated }, game) => {
     websockets.admin('GAME_UPDATE', { game: await gameFormatter.admin(game) });
-    info('GAME', 'update', '#' + game.id);
+    info('GAME', 'update', '#' + game.id, validated);
   },
-}, async (req, res, data) => {
-  await req.params.game.update(data);
+}, async ({ validated }, res, { game }) => {
+  await game.update(validated);
 
-  return req.params.game;
+  return game;
 });
 
 router.delete('/:id', {
@@ -105,8 +105,12 @@ router.delete('/:id', {
     req => isGameOwner(req.player, req.params.game),
     req => isGameState(req.params.game, 'idle'),
   ],
-  after: async (req, game) => {
+  after: async ({ params }) => {
+    const { game } = params;
+
     websockets.admin('GAME_DELETE', { game: await gameFormatter.admin(game) });
     info('GAME', 'delete', '#' + game.id);
   },
-}, async req => { await req.params.game.destroy() });
+}, async ({ params }) => {
+  await params.game.destroy();
+});

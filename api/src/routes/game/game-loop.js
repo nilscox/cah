@@ -31,11 +31,8 @@ router.post('/:id/start', {
     websockets.admin('GAME_START', { game: await gameFormatter.admin(game) });
     info('GAME', 'start', '#' + game.id);
   },
-}, async (req, res) => {
-  const { game } = req.params;
-
+}, async (req, res, { game }) => {
   await game.start();
-
   return game;
 });
 
@@ -68,10 +65,10 @@ router.post('/:id/answer', {
     websockets.admin('GAME_ANSWER', { game: await gameFormatter.admin(game) });
     info('GAME', 'answer', '#' + game.id);
   },
-}, async (req, res, { ids }) => {
-  const { game } = req.params;
+}, async ({ validated, player }, res, { game }) => {
+  const { ids } = validated;
 
-  const choices = await req.player.getCards({
+  const choices = await player.getCards({
     where: {
       id: { [Op.in]: ids },
     },
@@ -85,7 +82,7 @@ router.post('/:id/answer', {
   if (choices.length !== question.getNbChoices())
     throw new BadRequestError('invalid number of choices');
 
-  await game.answer(req.player, choices);
+  await game.answer(player, choices);
 
   return game;
 });
@@ -113,8 +110,8 @@ router.post('/:id/select', {
     websockets.admin('GAME_SELECT', { game: await gameFormatter.admin(game) });
     info('GAME', 'select', '#' + game.id);
   },
-}, async (req, res, { answerId }) => {
-  const { game } = req.params;
+}, async ({ validated, player }, res, { game }) => {
+  const { answerId } = validated;
 
   const propositions = await game.getPropositions();
   const answer = propositions.filter(p => p.id === answerId)[0];
@@ -144,10 +141,7 @@ router.post('/:id/next', {
       info('GAME', 'end', '#' + game.id);
     }
   },
-}, async (req, res, next) => {
-  const { game } = req.params;
-
+}, async (req, res, { game }) => {
   await game.nextTurn();
-
   return game;
 });

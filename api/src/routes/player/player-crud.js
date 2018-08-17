@@ -46,15 +46,15 @@ router.post('/', {
   }],
   validate: playerValidator.body({ avatar: { required: false } }),
   format: format(),
-  after: async (req, player) => {
+  after: async ({ validated }, player) => {
     websockets.admin('PLAYER_CREATE', { player: await playerFormatter.admin(player) });
-    info('PLAYER', 'created', '#' + player.id, '(' + player.nick + ')');
+    info('PLAYER', 'created', '#' + player.id, validated);
   },
-}, async (req, res, data) => {
-  const player = await Player.create(data);
+}, async ({ session, admin, validated }, res) => {
+  const player = await Player.create(validated);
 
-  if (!req.admin)
-    req.session.playerId = player.id;
+  if (!admin)
+    session.playerId = player.id;
 
   res.status(201);
 
@@ -62,46 +62,36 @@ router.post('/', {
 });
 
 router.put('/:nick', {
-  authorize: {
-    or: [
-      req => isAdmin(req.admin),
-      req => isPlayer(req.player, req.params.nick),
-    ],
-  },
+  authorize: [
+    req => isPlayer(req.player, req.params.nick),
+  ],
   validate: playerValidator.body({
     partial: true,
     nick: { readOnly: true },
   }),
   format: format(),
-  after: async (req, player) => {
+  after: async ({ validated }, player) => {
     websockets.admin('PLAYER_UPDATE', { player: await playerFormatter.admin(player) });
-    info('PLAYER', 'updated', '#' + player.id, data);
+    info('PLAYER', 'updated', '#' + player.id, validated);
   },
-}, async (req, res, data) => {
-  return await req.params.player.update(data);
+}, async ({ validated }, res, { player }) => {
+  return await player.update(validated);
 });
 
 router.delete('/:nick', {
   authorize: [
-    {
-      or: [
-        req => isAdmin(req.admin),
-        req => isPlayer(req.player, req.params.nick),
-      ],
-    },
-    req => isNotInGame(req.params.player),
+    req => isPlayer(req.player, req.params.nick),
+    req => isNotInGame(req.player),
   ],
-  after: async (req) => {
-    const { player } = req.params;
+  after: async ({ params }) => {
+    const { player } = params;
 
     websockets.admin('PLAYER_DELETE', { player: await playerFormatter.admin(player) });
     info('PLAYER', 'delete', '#' + player.id);
   },
-}, async (req, res, next) => {
-  const { player } = req.params;
-
+}, async ({ session, admin }, res, { player }) => {
   await player.destroy();
 
-  if (!req.admin)
-    delete req.session.playerId;
+  if (!admin)
+    delete session.playerId;
 });

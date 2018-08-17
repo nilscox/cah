@@ -21,7 +21,7 @@ const log = (level, tag, ...message) => {
 
   if (getEnv('NODE_ENV', null) === 'production')
     console.log.call(console, `[${now}][${level}][${tag}]`, ...message);
-  else
+  else if (getEnv('NODE_ENV', null) === 'development')
     console.log.call(console, `[${level}][${tag}]`, ...message);
 };
 
