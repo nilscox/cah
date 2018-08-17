@@ -49,6 +49,7 @@ module.exports.create = function() {
       expect(res.body).to.deep.eql({
         nick: 'nils',
         avatar: null,
+        connected: false,
       });
     });
 }
@@ -65,6 +66,7 @@ module.exports.update = async function() {
       expect(res.body).to.deep.eql({
         nick: player.nick,
         avatar: player.avatar,
+        connected: false,
       });
     });
 }
@@ -89,6 +91,7 @@ module.exports.fetchMeCreated = function() {
       expect(res.body).to.deep.eql({
         nick: 'nils',
         avatar: null,
+        connected: false,
       });
     });
 }
@@ -107,6 +110,7 @@ module.exports.fetchMeLogin = async function() {
       expect(res.body).to.deep.eql({
         nick: 'nils',
         avatar: null,
+        connected: false,
       });
     });
 }

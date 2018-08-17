@@ -107,11 +107,11 @@ module.exports = () => {
         if (authorize)
           await authorizeRequest(req, authorize);
 
-        const data = validate
+        req.validated = validate
           ? await validateRequest(req, validate)
           : null;
 
-        const result = await handler(req, res, data);
+        const result = await handler(req, res, req.params);
 
         if (result) {
           if (format)
