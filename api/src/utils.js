@@ -23,6 +23,8 @@ const log = (level, tag, ...message) => {
     console.log.call(console, `[${now}][${level}][${tag}]`, ...message);
   else if (getEnv('NODE_ENV', null) === 'development')
     console.log.call(console, `[${level}][${tag}]`, ...message);
+  else if (false)
+    console.log.call(console, `[${level}][${tag}]`, ...message);
 };
 
 module.exports = {
