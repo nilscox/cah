@@ -10,6 +10,7 @@ const {
   isGameState
 } = require('../../permissions');
 const websockets = require('../../websockets');
+const { info } = require('../../utils');
 const findGame = require('./find-game');
 
 const router = require('../createRouter')();
@@ -78,13 +79,13 @@ router.put('/:id', {
     const { game } = req.params;
     const isStarted = game.state === 'started';
 
-    return gameValidator.validate(req, {
+    return gameValidator.validate(req.body, {
       partial: true,
       ownerId: { readOnly: true },
       state: { readOnly: true },
-      lang: { readOnly: !isStarted },
-      nbQuestions: { readOnly: !isStarted },
-      cardsPerPlayer: { readOnly: !isStarted },
+      lang: { readOnly: isStarted },
+      nbQuestions: { readOnly: isStarted },
+      cardsPerPlayer: { readOnly: isStarted },
     });
   },
   format: format(),
