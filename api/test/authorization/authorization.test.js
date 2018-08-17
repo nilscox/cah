@@ -1,3 +1,5 @@
+const it = () => {};
+
 describe('authorization', () => {
 
   describe('players', () => {
