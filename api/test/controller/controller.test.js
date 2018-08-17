@@ -2,6 +2,10 @@ const expect = require('chai').expect;
 
 describe('controller', () => {
 
+  beforeEach(function() {
+    return this.setupDatabase();
+  });
+
   describe('game', () => {
 
     it('should start a game', async function() {

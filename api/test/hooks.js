@@ -27,7 +27,7 @@ const pgClient = () => {
     .tap(pg => pg.connect());
 }
 
-const setup = () => {
+const setupTemplateDatabase = () => {
   return pgClient()
     .tap(pg => pg.query(`CREATE DATABASE ${DB_TEMPLATE_NAME}`))
     .tap(pg => pg.query(`GRANT ALL ON DATABASE ${DB_TEMPLATE_NAME} TO ${config.username}`))
@@ -60,20 +60,20 @@ const setup = () => {
     .tap(pg => pg.end());
 };
 
-const cleanup = () => {
+const cleanupTemplateDatabase = () => {
   return pgClient()
     .tap(pg => pg.query(`DROP DATABASE ${DB_TEMPLATE_NAME}`))
     .tap(pg => pg.end());
 }
 
-const setupTest = dbName => {
+const setupTestDatabase = dbName => {
   return pgClient()
     .tap(pg => pg.query(`CREATE DATABASE ${dbName} WITH TEMPLATE ${DB_TEMPLATE_NAME}`))
     .tap(pg => pg.query(`GRANT ALL ON DATABASE ${dbName} TO ${config.username}`))
     .tap(pg => pg.end());
 };
 
-const cleanupTest = dbName => {
+const cleanupTestDatabase = dbName => {
   return pgClient()
     .tap(pg => pg.query(`
       SELECT pg_terminate_backend(pg_stat_activity.pid)
@@ -84,32 +84,35 @@ const cleanupTest = dbName => {
     .tap(pg => pg.end());
 };
 
-before(setup);
-after(cleanup);
+before(setupTemplateDatabase);
+after(cleanupTemplateDatabase);
 
 beforeEach(function() {
-  this.dbName = 'cah_test__' + Math.random().toString(16).slice(7);
-
-  process.env.CAH_DB_NAME = this.dbName;
-
   Object.keys(require.cache).forEach(k => {
     if (!/node_modules/.exec(k))
       delete require.cache[k];
   });
 
-  const app = require('../src/app');
-  const models = require('../src/models');
+  this.setupDatabase = () => {
+    this.dbName = 'cah_test__' + Math.random().toString(16).slice(7);
+    process.env.CAH_DB_NAME = this.dbName;
 
-  this.createSession = () => request.agent(app);
+    const app = require('../src/app');
+    const models = require('../src/models');
 
-  this.app = this.createSession();
-  this.models = models;
+    this.createSession = () => request.agent(app);
 
-  Object.keys(utils).forEach(func => this[func] = utils[func].bind(this));
+    this.app = this.createSession();
+    this.models = models;
 
-  return setupTest(this.dbName);
+    Object.keys(utils).forEach(func => this[func] = utils[func].bind(this));
+
+    return setupTestDatabase(this.dbName);
+  };
 });
 
 afterEach(function() {
-  return cleanupTest(this.dbName);
+  if (this.setupDatabase) {
+    return cleanupTestDatabase(this.dbName);
+  };
 });

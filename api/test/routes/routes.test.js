@@ -3,6 +3,10 @@ const game = require('./game');
 
 describe('routes', () => {
 
+  beforeEach(function() {
+    return this.setupDatabase();
+  });
+
   describe('player', () => {
 
     describe('crud', () => {

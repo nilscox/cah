@@ -3,6 +3,10 @@ const { questionFormatter, gameFormatter } = require('../../src/formatters');
 
 describe('formatter', () => {
 
+  beforeEach(function() {
+    return this.setupDatabase();
+  });
+
   describe('question', () => {
 
     beforeEach(async function() {
