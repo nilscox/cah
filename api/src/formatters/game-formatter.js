@@ -34,6 +34,10 @@ const players = game => {
   return Promise.all(game.getPlayers().map(p => playerFormatter.light(p)));
 };
 
+const playersAdmin = game => {
+  return Promise.all(game.getPlayers().map(p => playerFormatter.admin(p)));
+};
+
 const question = async game => {
   const question = await game.getCurrentQuestion();
 
@@ -107,6 +111,7 @@ const full = {
 
 const admin = {
   ...full,
+  players: playersAdmin,
   propositions: fullPropositions,
   createdAt: formatter.createdAt,
   updatedAt: formatter.updatedAt,
