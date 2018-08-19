@@ -66,6 +66,7 @@ function me() { h ":4242/api/player/me" }
 
 function g_create() { h POST ":4242/api/game" lang="$1" nbQuestions:="$2" cardsPerPlayer:="$3" }
 function g_join() { h POST ":4242/api/game/$1/join" }
+function g_leave() { h POST ":4242/api/game/$1/leave" }
 function g_start() { h POST ":4242/api/game/$1/start" }
 function g_answer() { h POST ":4242/api/game/$1/answer" ids:="$2" }
 function g_select() { h POST ":4242/api/game/$1/select" id:="$2" }
