@@ -3,7 +3,7 @@ const { Sequelize, Game } = require('../../models');
 const { gameValidator } = require('../../validators');
 const { gameFormatter } = require('../../formatters');
 const { isPlayer, isGameOwner, isInGame, isGameState, isQuestionMaster, isNotQuestionMaster } = require('../../permissions');
-const websockets = require('../../websockets');
+const events = require('../../events');
 const findGame = require('./find-game');
 
 const router = require('../createRouter')();
@@ -27,10 +27,7 @@ router.post('/:id/start', {
     req => isGameState(req.params.game, 'idle'),
   ],
   format: format(),
-  after: async (req, game) => {
-    websockets.admin('GAME_START', { game: await gameFormatter.admin(game) });
-    info('GAME', 'start', '#' + game.id);
-  },
+  after: (req, game) => events.emit('game start', game),
 }, async (req, res, { game }) => {
   await game.start();
   return game;
@@ -61,10 +58,7 @@ router.post('/:id/answer', {
     return { ids };
   },
   format: format(),
-  after: async (req, game) => {
-    websockets.admin('GAME_ANSWER', { game: await gameFormatter.admin(game) });
-    info('GAME', 'answer', '#' + game.id);
-  },
+  after: (req, game) => events.emit('game answer', game, req.validated),
 }, async ({ validated, player }, res, { game }) => {
   const { ids } = validated;
 
@@ -106,10 +100,7 @@ router.post('/:id/select', {
     return { answerId };
   },
   format: format(),
-  after: async (req, game) => {
-    websockets.admin('GAME_SELECT', { game: await gameFormatter.admin(game) });
-    info('GAME', 'select', '#' + game.id);
-  },
+  after: (req, game) => events.emit('game select', game, req.validated),
 }, async ({ validated, player }, res, { game }) => {
   const { answerId } = validated;
 
@@ -132,14 +123,11 @@ router.post('/:id/next', {
     req => isQuestionMaster(req.player),
   ],
   format: format(),
-  after: async (req, game) => {
-    if (game.state === 'started') {
-      websockets.admin('GAME_NEXT', { game: await gameFormatter.admin(game) });
-      info('GAME', 'next', '#' + game.id);
-    } else {
-      websockets.admin('GAME_END', { game: await gameFormatter.admin(game) });
-      info('GAME', 'end', '#' + game.id);
-    }
+  after: (req, game) => {
+    if (game.state === 'started')
+      events.emit('game next', game);
+    else
+      events.emit('game end', game);
   },
 }, async (req, res, { game }) => {
   await game.nextTurn();

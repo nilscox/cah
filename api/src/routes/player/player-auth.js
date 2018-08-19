@@ -2,8 +2,7 @@ const { NotFoundError, MissingFieldError } = require('../../errors');
 const { Player } = require('../../models');
 const { isNotAdmin, isNotPlayer, isPlayer } = require('../../permissions');
 const { playerFormatter } = require('../../formatters');
-const { info } = require('../../utils');
-const websockets = require('../../websockets');
+const events = require('../../events');
 const findPlayer = require('./find-player');
 
 const router = require('../createRouter')();
@@ -25,10 +24,7 @@ router.post('/login', {
     return { nick };
   },
   format: (req, value) => playerFormatter.full(value),
-  after: async (req, player) => {
-    websockets.admin('PLAYER_LOGIN', { player: await playerFormatter.admin(player) });
-    info('PLAYER', 'login', '#' + player.id, '(' + player.nick + ')');
-  },
+  after: (req, player) => events.emit('player login', player),
 }, async ({ session, validated }) => {
   const player = await Player.findOne({ where: { nick: validated.nick } })
 
@@ -45,10 +41,7 @@ router.post('/logout', {
     req => isNotAdmin(req.admin),
     req => isPlayer(req.player),
   ],
-  after: async ({ player }) => {
-    websockets.admin('PLAYER_LOGOUT', { player: await playerFormatter.admin(player) });
-    info('PLAYER', 'logout', '#' + player.id, '(' + player.nick + ')');
-  },
+  after: (req) => events.emit('player logout', req.player),
 }, async ({ session }) => {
   delete session.playerId;
 });
