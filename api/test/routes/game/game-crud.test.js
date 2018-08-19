@@ -1,6 +1,6 @@
 const expect = require('chai').expect;
 
-module.exports.retrieveGameDontExist = function() {
+module.exports.retrieveDontExist = function() {
   return this.app
     .get('/api/game/6')
     .expect(404);

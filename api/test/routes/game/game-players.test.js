@@ -1,4 +1,9 @@
 const expect = require('chai').expect;
 
-it('should join a game');
-it('should leave a game');
+module.exports.join = async function() {
+
+};
+
+module.exports.leave = async function() {
+
+};

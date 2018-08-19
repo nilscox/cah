@@ -73,17 +73,22 @@ describe('routes', () => {
 
     describe('players', () => {
 
-      it('should join a game');
-      it('should leave a game');
+      const { players } = game;
+
+      it('should join a game', players.join);
+      it('should leave a game', players.leave);
 
     });
 
     describe('loop', () => {
 
-      it('should start game');
-      it('should submit an answer');
-      it('should select an answer');
-      it('should go next');
+      const { loop } = game;
+
+      it('should start a game', loop.start);
+      it('should submit an answer', loop.submit);
+      it('should select an answer', loop.select);
+      it('should go next', loop.next);
+      it('should end a game', loop.end);
 
     });
 
