@@ -3,8 +3,7 @@ const { playerValidator } = require('../../validators');
 const { playerFormatter } = require('../../formatters');
 const { ValidationError, NotFoundError } = require('../../errors');
 const { allow, isAdmin, isNotPlayer, isPlayer, isNotInGame } = require('../../permissions');
-const { info } = require('../../utils');
-const websockets = require('../../websockets');
+const events = require('../../events');
 const findPlayer = require('./find-player');
 
 const router = require('../createRouter')();
@@ -46,10 +45,7 @@ router.post('/', {
   }],
   validate: playerValidator.body({ avatar: { required: false } }),
   format: format(),
-  after: async ({ validated }, player) => {
-    websockets.admin('PLAYER_CREATE', { player: await playerFormatter.admin(player) });
-    info('PLAYER', 'created', '#' + player.id, validated);
-  },
+  after: (req, player) => events.emit('player create', player, req.validated),
 }, async ({ session, admin, validated }, res) => {
   const player = await Player.create(validated);
 
@@ -70,10 +66,7 @@ router.put('/:nick', {
     nick: { readOnly: true },
   }),
   format: format(),
-  after: async ({ validated }, player) => {
-    websockets.admin('PLAYER_UPDATE', { player: await playerFormatter.admin(player) });
-    info('PLAYER', 'updated', '#' + player.id, validated);
-  },
+  after: (req, player) => events.emit('player update', player, req.validated),
 }, async ({ validated }, res, { player }) => {
   return await player.update(validated);
 });
@@ -83,12 +76,7 @@ router.delete('/:nick', {
     req => isPlayer(req.player, req.params.nick),
     req => isNotInGame(req.player),
   ],
-  after: async ({ params }) => {
-    const { player } = params;
-
-    websockets.admin('PLAYER_DELETE', { player: await playerFormatter.admin(player) });
-    info('PLAYER', 'delete', '#' + player.id);
-  },
+  after: (req, player) => events.emit('player delete', player),
 }, async ({ session, admin }, res, { player }) => {
   await player.destroy();
 
