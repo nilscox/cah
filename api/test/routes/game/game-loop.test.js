@@ -1,6 +1,21 @@
 const expect = require('chai').expect;
 
-it('should start game');
-it('should submit an answer');
-it('should select an answer');
-it('should go next');
+module.exports.start = async function() {
+
+};
+
+module.exports.submit = async function() {
+
+};
+
+module.exports.select = async function() {
+
+};
+
+module.exports.next = async function() {
+
+};
+
+module.exports.end = async function() {
+
+};
