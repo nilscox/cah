@@ -4,7 +4,7 @@ const path = require('path');
 const getEnv = (key, defaultValue) => {
   const value = process.env[key];
 
-  if (value)
+  if (value !== undefined)
     return value;
 
   if (defaultValue !== undefined)
@@ -22,6 +22,8 @@ const log = (level, tag, ...message) => {
   if (getEnv('NODE_ENV', null) === 'production')
     console.log.call(console, `[${now}][${level}][${tag}]`, ...message);
   else if (getEnv('NODE_ENV', null) === 'development')
+    console.log.call(console, `[${level}][${tag}]`, ...message);
+  else if (getEnv('NODE_ENV', null) === 'test' && level === 'FATAL')
     console.log.call(console, `[${level}][${tag}]`, ...message);
   else if (false)
     console.log.call(console, `[${level}][${tag}]`, ...message);
