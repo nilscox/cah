@@ -70,6 +70,14 @@ const isGameState = async (game, state, playState) => {
     throw new AuthenticationError('game is not in playState ' + playState);
 };
 
+const isNotGameState = async (game, state, playState) => {
+  if (game.state === state)
+    throw new AuthenticationError('game must not be ' + state);
+
+  if (playState && await game.getPlayState() === playState)
+    throw new AuthenticationError('game must not be in playState ' + playState);
+};
+
 module.exports = {
   allow,
   isPlayer,
@@ -82,4 +90,5 @@ module.exports = {
   isQuestionMaster,
   isNotQuestionMaster,
   isGameState,
+  isNotGameState,
 };

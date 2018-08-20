@@ -1,6 +1,13 @@
 const { BadRequestError } = require('../../errors');
 const { gameFormatter } = require('../../formatters');
-const { isPlayer, isInGame, isNotInGame } = require('../../permissions');
+const {
+  isPlayer,
+  isInGame,
+  isNotInGame,
+  isGameState,
+  isNotQuestionMaster,
+  isNotGameState,
+} = require('../../permissions');
 const events = require('../../events');
 const findGame = require('./find-game');
 
@@ -20,6 +27,7 @@ router.post('/:id/join', {
   authorize: [
     req => isPlayer(req.player),
     req => isNotInGame(req.player),
+    req => isGameState(req.params.game, 'idle'),
   ],
   format: format(),
   after: (req, game) => events.emit('game join', game, req.player),
@@ -32,8 +40,15 @@ router.post('/:id/leave', {
   authorize: [
     req => isPlayer(req.player),
     req => isInGame(req.player, req.params.id),
+    { or: [
+      req => isNotGameState(req.params.game, 'started'),
+      { and: [
+        req => isGameState(req.params.game, 'started', 'end_of_turn'),
+        req => isNotQuestionMaster(req.player),
+      ] },
+    ] },
   ],
-  after: (req, game) => events.emit('game leave', game, req.player),
+  after: (req) => events.emit('game leave', req.params.game, req.player),
 }, async ({ player }, res, { game }) => {
   await game.leave(player);
 });
