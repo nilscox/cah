@@ -1,54 +1,35 @@
 import crio from 'crio';
 import { handle } from 'redux-pack';
 
-import { PLAYERS_LIST , PLAYER_CREATE, WS_MESSAGE } from '../actions';
+import { PLAYERS_LIST } from '../actions';
 
-const PLAYER_CONNECTED = 'PLAYER_CONNECTED';
-const PLAYER_DISCONNECTED = 'PLAYER_DISCONNECTED';
-const PLAYER_AVATAR_CHANGED = 'PLAYER_AVATAR_CHANGED';
-const CARDS_DEALT = 'CARDS_DEALT';
-
-const findPlayerIdx = (players, nick) => players.findIndex(player => player.nick === nick);
-
-const websocket = (state, message) => {
-  const playerIdx = findPlayerIdx(state, message.nick);
-
-  switch (message.type) {
-  case PLAYER_CONNECTED:
-    return state.set([playerIdx, 'connected'], true);
-
-  case PLAYER_DISCONNECTED:
-    return state.set([playerIdx, 'connected'], false);
-
-  case PLAYER_AVATAR_CHANGED:
-    return state.set([playerIdx, 'avatar'], message.avatar);
-
-  case CARDS_DEALT:
-    return state.merge([playerIdx, 'cards'], message.cards);
-
-  default:
-    return state;
-  }
-};
-
-export default (state = crio([]), action) => {
-  const { type, payload } = action;
-
-  if (type === WS_MESSAGE)
-    return websocket(state, action.message);
+export default (state = crio({}), action) => {
+  const { type, payload, player: wsPlayer } = action;
 
   const handlers = {
     [PLAYERS_LIST]: {
-      start   : () => [],
-      success : () => crio(payload),
-      failure : () => [],
-    },
-    [PLAYER_CREATE]: {
-      success : (prevState) => prevState.push(crio(payload)),
+      success : () => crio(payload.reduce((o, player) => {
+        o[player.nick] = player;
+        return o;
+      }, {})),
     },
   };
 
-  return handlers[type]
-    ? handle(state, action, handlers[type])
-    : state;
+  switch (type) {
+  case 'WS_PLAYER_CREATE':
+    return state.set(wsPlayer.nick, crio(wsPlayer));
+
+  case 'WS_PLAYER_DELETE':
+    return state.delete(wsPlayer.nick);
+
+  case 'WS_PLAYER_UPDATE':
+  case 'WS_PLAYER_CONNECT':
+  case 'WS_PLAYER_DISCONNECT':
+    return state.set(wsPlayer.nick, crio(wsPlayer));
+
+  default:
+    return handlers[type]
+      ? handle(state, action, handlers[type])
+      : state;
+  }
 };

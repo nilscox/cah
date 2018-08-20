@@ -19,12 +19,14 @@ export const fetchGameHistory = (game) => ({
 });
 
 export const GAME_CREATE = 'GAME_CREATE';
-export const createGame = (owner, lang) => ({
+export const createGame = (owner, lang, nbQuestions, cardsPerPlayer) => ({
   type: GAME_CREATE,
   route: `/api/game`,
   method: `POST`,
   body: {
-    owner: owner,
-    lang: lang,
+    playerId: owner.id,
+    lang,
+    nbQuestions,
+    cardsPerPlayer,
   },
 });

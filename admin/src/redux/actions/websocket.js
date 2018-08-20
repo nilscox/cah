@@ -21,7 +21,7 @@ export const createWebsocket = () => (dispatch) => {
   );
 
   socket.addEventListener('message',
-    (event) => dispatch({ type: 'WS_' + event.type, event })
+    (event) => dispatch({ ...event, type: 'WS_' + event.type })
   );
 
   socket.addEventListener('error',
