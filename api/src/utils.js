@@ -4,7 +4,7 @@ const path = require('path');
 const getEnv = (key, defaultValue) => {
   const value = process.env[key];
 
-  if (value)
+  if (value !== undefined)
     return value;
 
   if (defaultValue !== undefined)
