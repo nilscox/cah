@@ -26,4 +26,6 @@ before_script:
 
 install: yarn
 script:
-  - node ./node_modules/.bin/mocha --exit --recursive
+  - yarn test:coverage
+  - nyc report --reporter=text-lcov > coverage.lcov
+  - codecov
