@@ -11,6 +11,7 @@ const { getEnv, log } = require('./utils');
 const { APIError } = require('./errors');
 const { Player } = require('./models');
 const routes = require('./routes');
+const events = require('./events');
 const websockets = require('./websockets');
 
 const app = express();
@@ -29,7 +30,7 @@ app.set('x-powered-by', false);
 app.use(bodyParser.json());
 app.use(session);
 
-websockets(server, session);
+websockets(server, session, events);
 
 app.use((req, res, next) => {
   // TODO: fix this evil trick

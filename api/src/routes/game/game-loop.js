@@ -123,12 +123,7 @@ router.post('/:id/next', {
     req => isQuestionMaster(req.player),
   ],
   format: format(),
-  after: (req, game) => {
-    if (game.state === 'started')
-      events.emit('game next', game);
-    else
-      events.emit('game end', game);
-  },
+  after: (req, game) => events.emit('game next', game),
 }, async (req, res, { game }) => {
   await game.nextTurn();
   return game;

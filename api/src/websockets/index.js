@@ -2,10 +2,11 @@ const WSServer = require('socket.io');
 const sharedSession = require('express-socket.io-session');
 
 const { error } = require('../utils');
+const { Player } = require('../models');
 
 let io = null;
 
-module.exports = (http, session) => {
+module.exports = (http, session, events) => {
   io = new WSServer(http);
 
   io.use(sharedSession(session, {
@@ -21,11 +22,16 @@ module.exports = (http, session) => {
       else if (session.playerId) {
         const player = await Player.findOne({ where: { id: session.playerId } });
 
-        if (player && player.gameId)
-          player.join('game-' + player.gameId);
+        if (player) {
+          events.emit('player connect', player, socket);
+
+          socket.on('disconnect', () => {
+            events.emit('player disconnect', player, socket);
+          });
+        }
       }
     } catch (e) {
-      error(e);
+      error('WS_CONNECT', e);
     }
   });
 };
@@ -42,10 +48,16 @@ module.exports.admin = (type, message) => {
   io.to('admin').send({ type, ...message });
 };
 
-module.exports.join = (player, game) => {
-  io.to(player.socket).join('game-' + game.id);
+module.exports.join = (game, player) => {
+  const socket = io.sockets.connected[player.socket];
+
+  if (socket)
+    socket.join('game-' + game.id);
 };
 
-module.exports.leave = (player, game) => {
-  io.to(player.socket).leave('game-' + game.id);
+module.exports.leave = (game, player) => {
+  const socket = io.sockets.connected[player.socket];
+
+  if (socket)
+    socket.leave('game-' + game.id);
 };
