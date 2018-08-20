@@ -93,6 +93,8 @@ beforeEach(function() {
       delete require.cache[k];
   });
 
+  this.dbName = null;
+
   this.setupDatabase = () => {
     this.dbName = 'cah_test__' + Math.random().toString(16).slice(7);
     process.env.CAH_DB_NAME = this.dbName;
@@ -112,7 +114,7 @@ beforeEach(function() {
 });
 
 afterEach(function() {
-  if (this.setupDatabase) {
+  if (this.dbName) {
     return cleanupTestDatabase(this.dbName);
   };
 });
