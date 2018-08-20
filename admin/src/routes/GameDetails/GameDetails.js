@@ -3,22 +3,26 @@ import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 
 const mapStateToProps = (state) => ({
-  games: state.games,
+  getGame: id => state.games[id],
+  getHistory: id => state.histories[id],
 });
 
 const mapDispatchToProps = (dispatch) => ({});
 
-const GameDetails = ({ match, games }: GameDetailsProps) => {
-  // eslint-disable-next-line eqeqeq
-  const game = games.find(g => g.id == match.params.id);
+const GameDetails = ({ match, getGame, getHistory }: GameDetailsProps) => {
+  const id = parseInt(match.params.id);
+  const game = getGame(id);
+  const history = getHistory(id);
 
-  if (!game)
+  if (!game || !history)
     return <Redirect to="/games" />;
 
   return (
     <div>
       <h2>Game #{ game.id }</h2>
       <pre>{ JSON.stringify(game, 2, 2) }</pre>
+      <h3>History</h3>
+      <pre>{ JSON.stringify(history, 2, 2) }</pre>
     </div>
   );
 };

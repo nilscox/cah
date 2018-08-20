@@ -18,7 +18,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    handleSubmit: (owner, lang) => dispatch(createGame(owner, lang)),
+    handleSubmit: (owner, lang, nbQuestions, cardsPerPlayer) => dispatch(createGame(owner, lang, nbQuestions, cardsPerPlayer)),
   }
 };
 
