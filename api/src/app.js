@@ -7,7 +7,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const sessionMiddleware = require('express-session');
 
-const { getEnv, log } = require('./utils');
+const { getEnv, log, error } = require('./utils');
 const { APIError } = require('./errors');
 const { Player } = require('./models');
 const routes = require('./routes');
@@ -58,10 +58,12 @@ app.use(async (req, res, next) => {
 app.use('/api', routes);
 
 app.use((err, req, res, next) => {
-  log('REQUEST', err);
-
-  if (!(err instanceof APIError))
+  if (!(err instanceof APIError)) {
+    error('REQUEST', err);
     throw err;
+  }
+
+  log('REQUEST', err.message);
 
   res.status(err.status).json(err.toJSON());
 });
