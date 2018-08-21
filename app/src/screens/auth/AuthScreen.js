@@ -11,10 +11,12 @@ export default class AuthScreen extends React.Component {
   };
 
   async componentDidMount() {
-    const { res, json: player } = await login('nils');
+    const { res, json } = await login('nils');
 
     if (res.status === 200)
-      this.setState({ player });
+      this.setState({ player: json });
+    else
+      console.log(json);
   }
 
   render() {

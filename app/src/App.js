@@ -1,43 +1,51 @@
 import * as React from 'react';
-import { Text } from 'react-native';
+import { Alert, Text } from 'react-native';
 import { NativeRouter, Switch, Route, Redirect } from 'react-router-native';
 
-import LoadingScreen from './screens/loading/LoadingScreen';
+import { fetchMe } from './services/player-service';
+
 import AuthScreen from './screens/auth/AuthScreen';
 import LobbyScreen from './screens/lobby/LobbyScreen';
 
+import Loading from './components/Loading';
+
+
 export default class App extends React.Component {
 
-  setGames(games) {
-    this.setState({ games });
-  }
+  state = {
+    loading: true,
+    player: null,
+  };
 
-  setPlayer(player) {
-    this.setState({ player });
+  async componentDidMount() {
+    await new Promise(r => setTimeout(r, 0));
+
+    const { res, json } = await fetchMe();
+
+    if (res.status === 200)
+      this.setState({ player: json });
+    else
+      console.log(json);
+
+    this.setState({ loading: false });
   }
 
   render() {
+    const { loading, player } = this.state;
+
+    if (loading)
+      return <Loading />;
+
     return (
       <NativeRouter>
         <Switch>
-
-          <Route path="/" exact render={() => <Redirect to="/loading" />} />
-
-          <Route path="/loading" render={() => (
-            <LoadingScreen
-              setGames={this.setGames.bind(this)}
-              setPlayer={this.setPlayer.bind(this)}
-            />
-          )} />
-
-          <Route path="/auth" component={AuthScreen} />
-
+          <Route path="/" exact render={() => <Redirect to={player ? '/lobby' : '/auth'} />} />
+          <Route path="/auth" render={() => <AuthScreen setPlayer={p => this.setState(p)} />} />
           <Route path="/lobby" component={LobbyScreen} />
-
           <Route render={() => <Text>404.</Text>} />
-
         </Switch>
       </NativeRouter>
     );
   }
+
 }

@@ -9,6 +9,8 @@ export default async (route, opts = {}) => {
     opts.headers.set('Content-Type', 'application/json');
   }
 
+  opts.credentials = 'include';
+
   const result = await request(route, opts);
   const { res, text, json } = result;
 
@@ -19,7 +21,6 @@ export default async (route, opts = {}) => {
 
 const request = async (route, opts = {}) => {
   try {
-
     const res = await fetch(API_URL + route, opts);
     const contentType = res.headers.get('Content-Type');
 
