@@ -5,6 +5,8 @@ const id = player => player.get('id');
 const nick = player => player.get('nick');
 const avatar = player => player.get('avatar');
 
+const gameId = player => player.get('gameId');
+
 const cards = async player => {
   const game = await player.getGame();
 
@@ -26,6 +28,7 @@ const light = {
 
 const full = {
   ...light,
+  gameId,
   cards,
 };
 
