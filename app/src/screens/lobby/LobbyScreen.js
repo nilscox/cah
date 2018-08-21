@@ -2,9 +2,10 @@ import * as React from 'react';
 import { StyleSheet, FlatList, Text, View, TouchableOpacity } from 'react-native';
 import { Redirect } from 'react-router-native';
 
+import { listGames, joinGame } from '../../services/game-service';
+
 import Loading from '../../components/Loading';
 
-import { listGames } from '../../services/game-service';
 
 const styles = StyleSheet.create({
   view: {
@@ -28,6 +29,7 @@ export default class LobbyScreen extends React.Component {
 
   state = {
     games: null,
+    currentGame: null,
   };
 
   async componentDidMount() {
@@ -40,10 +42,13 @@ export default class LobbyScreen extends React.Component {
   }
 
   render() {
-    const { games } = this.state;
+    const { games, currentGame } = this.state;
 
     if (!games)
       return <Loading />
+
+    if (currentGame)
+      return <Redirect to={`/game/${currentGame.id}`} />
 
     return (
       <View style={styles.view}>
@@ -69,7 +74,12 @@ export default class LobbyScreen extends React.Component {
   }
 
   async joinGame(game) {
+    const { res, json } = await joinGame(game.id);
 
+    if (res.status === 200)
+      this.setState({ currentGame: json });
+    else
+      console.log(json);
   }
 
 }

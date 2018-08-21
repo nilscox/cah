@@ -6,6 +6,7 @@ import { fetchMe } from './services/player-service';
 
 import AuthScreen from './screens/auth/AuthScreen';
 import LobbyScreen from './screens/lobby/LobbyScreen';
+import GameScreen from './screens/game/GameScreen';
 
 import Loading from './components/Loading';
 
@@ -32,6 +33,14 @@ export default class App extends React.Component {
 
   render() {
     const { loading, player } = this.state;
+    const getRouteAfterLoading = () => {
+      if (!player)
+        return '/auth';
+      if (!player.gameId)
+        return '/lobby';
+      else
+        return '/game/' + player.gameId;
+    }
 
     if (loading)
       return <Loading />;
@@ -39,9 +48,10 @@ export default class App extends React.Component {
     return (
       <NativeRouter>
         <Switch>
-          <Route path="/" exact render={() => <Redirect to={player ? '/lobby' : '/auth'} />} />
+          <Route path="/" exact render={() => <Redirect to={getRouteAfterLoading()} />} />
           <Route path="/auth" render={() => <AuthScreen setPlayer={p => this.setState(p)} />} />
           <Route path="/lobby" component={LobbyScreen} />
+          <Route path="/game/:id" component={GameScreen} />
           <Route render={() => <Text>404.</Text>} />
         </Switch>
       </NativeRouter>

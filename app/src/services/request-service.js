@@ -1,5 +1,6 @@
 const API_URL = process.env.REACT_APP_API_URL;
 
+
 export default async (route, opts = {}) => {
   if (!(opts.headers instanceof Headers))
     opts.headers = new Headers(opts.headers);

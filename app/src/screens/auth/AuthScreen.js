@@ -4,6 +4,7 @@ import { Redirect } from 'react-router-native';
 
 import { login } from '../../services/auth-service';
 
+
 export default class AuthScreen extends React.Component {
 
   state = {
@@ -23,7 +24,7 @@ export default class AuthScreen extends React.Component {
     const { player } = this.state;
 
     if (player)
-      return <Redirect to="/lobby" />;
+      return <Redirect to={ player.gameId ? '/game/' + player.gameId : '/lobby' } />;
 
     return (
       <View>

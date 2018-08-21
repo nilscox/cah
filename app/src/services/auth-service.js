@@ -1,5 +1,6 @@
 import request from './request-service';
 
+
 export const login = (nick) => {
   return request('/api/player/login', {
     method: 'POST',
