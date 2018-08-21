@@ -6,6 +6,12 @@ import { fetchGame } from '../../services/game-service';
 
 import Loading from '../../components/Loading';
 
+import GameIdle from './GameIdle/GameIdle';
+import GameFinished from './GameFinished/GameFinished';
+import PlayersAnswer from './PlayersAnswer/PlayersAnswer';
+import QuestionMasterSelection from './QuestionMasterSelection/QuestionMasterSelection';
+import EndOfTurn from './EndOfTurn/EndOfTurn';
+
 
 export default class GameScreen extends React.Component {
 
@@ -24,12 +30,34 @@ export default class GameScreen extends React.Component {
   }
 
   render() {
-    return (
-      <View>
-        <Text>game</Text>
-        <Text>{ JSON.stringify(this.state.game) }</Text>
-      </View>
-    );
+    const getComponent = game => {
+      if (game.state === 'idle')
+        return GameIdle;
+
+      if (game.state === 'finished')
+        return GameFinished;
+
+      if (game.playState === 'players_answer')
+        return PlayersAnswer;
+
+      if (game.playState === 'question_master_selection')
+        return QuestionMasterSelection;
+
+      if (game.playState === 'end_of_turn')
+        return EndOfTurn;
+    };
+
+    const { game } = this.state;
+
+    if (!game)
+      return <Loading />;
+
+    const Component = getComponent(game);
+
+    if (!Component)
+      throw new Error('should not happen');
+
+    return <Component game={game} />;
   }
 
 }
