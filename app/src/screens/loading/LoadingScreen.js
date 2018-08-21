@@ -3,6 +3,9 @@ import { StyleSheet, View, Text } from 'react-native';
 import { Redirect } from 'react-router-native';
 
 import { fetchMe } from '../../services/player-service';
+import { listGames } from '../../services/game-service';
+
+const delay = ms => new Promise(r => setTimeout(r, ms));
 
 const styles = StyleSheet.create({
   view: {
@@ -21,14 +24,33 @@ export default class LoadingScreen extends React.Component {
     player: null,
   };
 
-  async componentDidMount() {
-    const { res, json: player } = await fetchMe();
+  async fetchGames() {
+    const { res, json: games } = await listGames();
 
     if (res.status === 200)
+      this.props.setGames(games);
+  }
+
+  async fetchPlayer() {
+    const { res, json: player } = await fetchMe();
+
+    if (res.status === 200) {
+      this.props.setPlayer(player);
       this.setState({ player });
+    }
+  }
+
+  async componentDidMount() {
+    // the first request is not logged in the debugger without this
+    await delay(0);
+
+    await this.fetchGames();
+    await this.fetchPlayer();
 
     // like a shit load of stuff are loading... lol
-    setTimeout(() => this.setState({ loading: false }), 4000);
+    await delay(4000);
+
+    this.setState({ loading: false });
   }
 
   render() {

@@ -7,15 +7,35 @@ import AuthScreen from './screens/auth/AuthScreen';
 import LobbyScreen from './screens/lobby/LobbyScreen';
 
 export default class App extends React.Component {
+
+  setGames(games) {
+    this.setState({ games });
+  }
+
+  setPlayer(player) {
+    this.setState({ player });
+  }
+
   render() {
     return (
       <NativeRouter>
         <Switch>
+
           <Route path="/" exact render={() => <Redirect to="/loading" />} />
-          <Route path="/loading" component={LoadingScreen} />
+
+          <Route path="/loading" render={() => (
+            <LoadingScreen
+              setGames={this.setGames.bind(this)}
+              setPlayer={this.setPlayer.bind(this)}
+            />
+          )} />
+
           <Route path="/auth" component={AuthScreen} />
+
           <Route path="/lobby" component={LobbyScreen} />
+
           <Route render={() => <Text>404.</Text>} />
+
         </Switch>
       </NativeRouter>
     );
