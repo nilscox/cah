@@ -6,7 +6,7 @@ import QuestionCard from './QuestionCard';
 
 const styles = StyleSheet.create({
   item: {
-    height: 40,
+    height: 60,
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -22,8 +22,41 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderColor: '#999',
     borderBottomWidth: 1,
+    justifyContent: 'center',
+    backgroundColor: '#333',
+  },
+  answerText: {
+    color: '#EEE',
+    fontWeight: 'bold',
+    marginHorizontal: 10,
   },
 });
+
+const Answer = ({ question, answer }) => {
+  if (question.type === 'question') {
+    return (
+      <View style={styles.answer}>
+        { answer.choices.map(c => (
+          <Text
+            key={c.id}
+            style={styles.answerText}
+          >
+            { c.text }
+          </Text>
+        )) }
+      </View>
+    );
+  }
+
+  return (
+    <QuestionCard
+      style={styles.answer}
+      question={question}
+      choices={answer.choices}
+      textAlign="left"
+    />
+  );
+}
 
 const AnswerItem = ({ question, answer, isWinner, onPress }) => (
   <View style={styles.item}>
@@ -37,12 +70,7 @@ const AnswerItem = ({ question, answer, isWinner, onPress }) => (
     )}
 
     <TouchableOpacity style={{ flex: 1 }} onPress={() => onPress(answer)}>
-      <QuestionCard
-        style={styles.answer}
-        question={question}
-        choices={answer.choices}
-        textAlign="left"
-      />
+      <Answer question={question} answer={answer} />
     </TouchableOpacity>
   </View>
 );
