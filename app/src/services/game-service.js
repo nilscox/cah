@@ -32,3 +32,7 @@ export const selectAnswer = (id, answer) => {
     body: { id: answer.id },
   });
 };
+
+export const nextTurn = (id) => {
+  return request(`/api/game/${id}/next`, { method: 'POST' });
+};

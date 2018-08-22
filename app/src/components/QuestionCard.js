@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
 const CSS = ({ textAlign }) => `
 .wrapper {
   width: 100%;
-  color: #CCC;
+  color: #EEE;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -28,7 +28,7 @@ const CSS = ({ textAlign }) => `
   min-height: 15px;
   position: relative;
   top: 2px;
-  border-bottom: 1px solid #CCC;
+  border-bottom: 1px solid #EEE;
   display: inline-block;
 }
 

@@ -3,17 +3,11 @@ import { StyleSheet, View, FlatList, TouchableOpacity } from 'react-native';
 
 import { selectAnswer } from '../../../services/game-service';
 
-import QuestionCard from '../../../components/QuestionCard';
+import AnswersList from '../../../components/AnswersList';
 
 const styles = StyleSheet.create({
   view: {
     flex: 1,
-  },
-  question: {
-    height: 40,
-    paddingHorizontal: 10,
-    borderColor: '#999',
-    borderBottomWidth: 1,
   },
 });
 
@@ -41,19 +35,10 @@ export default class QuestionMasterSelection extends React.Component {
 
     return (
       <View style={styles.view}>
-        <FlatList
-          data={game.propositions}
-          keyExtractor={p => '' + p.id}
-          renderItem={({ item }) => (
-            <TouchableOpacity onPress={() => canSelect && this.selectAnswer(item)}>
-              <QuestionCard
-                style={styles.question}
-                question={game.question}
-                choices={item.choices}
-                textAlign="left"
-              />
-            </TouchableOpacity>
-          )}
+        <AnswersList
+          question={game.question}
+          answers={game.propositions}
+          onAnswerPress={(answer) => canSelect && this.selectAnswer(answer)}
         />
       </View>
     );

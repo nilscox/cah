@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
-import { Redirect } from 'react-router-native';
 
 import { submitAnswer } from '../../../services/game-service';
 
