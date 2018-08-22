@@ -51,7 +51,7 @@ export default class App extends React.Component {
           <Route path="/" exact render={() => <Redirect to={getRouteAfterLoading()} />} />
           <Route path="/auth" render={() => <AuthScreen setPlayer={p => this.setState(p)} />} />
           <Route path="/lobby" component={LobbyScreen} />
-          <Route path="/game/:id" component={GameScreen} />
+          <Route path="/game/:id" render={props => <GameScreen player={player} {...props} />} />
           <Route render={() => <Text>404.</Text>} />
         </Switch>
       </NativeRouter>

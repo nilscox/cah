@@ -57,7 +57,7 @@ export default class GameScreen extends React.Component {
     if (!Component)
       throw new Error('should not happen');
 
-    return <Component game={game} />;
+    return <Component player={this.props.player} game={game} />;
   }
 
 }
