@@ -16,6 +16,14 @@ export const createWebSocket = () => {
 
   socket.on('message', (e) => {
     switch (e.type) {
+    case 'PLAYER_UPDATE':
+    case 'CARDS_DEALT':
+      emitter.emit('player:update', e.player);
+
+    case 'GAME_UPDATE':
+    case 'GAME_JOIN':
+    case 'GAME_LEAVE':
+    case 'GAME_START':
     case 'GAME_ANSWER':
     case 'GAME_SELECT':
     case 'GAME_NEXT':
