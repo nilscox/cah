@@ -12,3 +12,13 @@ export const fetchGame = (id) => {
 export const joinGame = (id) => {
   return request(`/api/game/${id}/join`, { method: 'POST' });
 };
+
+export const submitAnswer = (id, choices) => {
+  return request(`/api/game/${id}/answer`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: { ids: choices.map(c => c.id) },
+  });
+};
