@@ -22,3 +22,13 @@ export const submitAnswer = (id, choices) => {
     body: { ids: choices.map(c => c.id) },
   });
 };
+
+export const selectAnswer = (id, answer) => {
+  return request(`/api/game/${id}/select`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: { id: answer.id },
+  });
+};

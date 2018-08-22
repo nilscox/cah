@@ -85,7 +85,7 @@ export default class PlayersAnswer extends React.Component {
         >
           <QuestionCard
             style={[styles.question, submitted && styles.questionSubmitted]}
-            size="big"
+            size="full"
             question={game.question}
             choices={selection}
           />

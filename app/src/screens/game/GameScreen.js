@@ -5,6 +5,7 @@ import { Redirect } from 'react-router-native';
 import { fetchGame } from '../../services/game-service';
 
 import Loading from '../../components/Loading';
+import QuestionCard from '../../components/QuestionCard';
 
 import GameIdle from './GameIdle/GameIdle';
 import GameFinished from './GameFinished/GameFinished';

@@ -3,16 +3,15 @@ import { StyleSheet, View, WebView } from 'react-native';
 
 const styles = StyleSheet.create({
   view: {
-    flex: 1,
     backgroundColor: '#333',
-    paddingHorizontal: 30,
   },
   webview: {
+    flex: 1,
     backgroundColor: 'transparent',
   },
 });
 
-const CSS = `
+const CSS = ({ textAlign }) => `
 .wrapper {
   width: 100%;
   color: #CCC;
@@ -21,7 +20,7 @@ const CSS = `
   left: 50%;
   transform: translate(-50%, -50%);
   line-height: 25px;
-  text-align: center;
+  text-align: ${textAlign || 'center'};
 }
 
 .blank {
@@ -43,7 +42,7 @@ const CSS = `
 }
 `;
 
-const renderHtml = ({ size, question, choices }) => {
+const renderHtml = ({ question, choices }) => {
   let html = '';
   let cidx = 0;
   let start = 0;
@@ -92,18 +91,18 @@ export default class QuestionCard extends React.Component {
   }
 
   render() {
-    const { style, size, question, choices } = this.props;
+    const { style, question, choices, textAlign } = this.props;
 
     const html = `
-      <style type="text/css">${CSS}</style>
+      <style type="text/css">${CSS({ textAlign })}</style>
       <div class="wrapper">
-        ${renderHtml({ size, question, choices })}
+        ${renderHtml({ question, choices })}
       </div>
     `;
 
-    // console.log(html);
+    console.log(html);
     return (
-      <View style={[styles.view, styles]}>
+      <View style={[styles.view, style]}>
         <WebView
           ref={ref => view = this.viewRef}
           style={styles.webview}
