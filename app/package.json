@@ -10,9 +10,11 @@
     "ios": "react-native run-ios"
   },
   "dependencies": {
+    "events": "^3.0.0",
     "react": "16.4.1",
     "react-native": "0.56.0",
-    "react-router-native": "^4.3.0"
+    "react-router-native": "^4.3.0",
+    "socket.io-client": "^2.1.1"
   },
   "devDependencies": {
     "@babel/plugin-proposal-export-default-from": "^7.0.0-rc.1",

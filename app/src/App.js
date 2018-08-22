@@ -3,6 +3,7 @@ import { Alert, Text } from 'react-native';
 import { NativeRouter, Switch, Route, Redirect } from 'react-router-native';
 
 import { fetchMe } from './services/player-service';
+import { createWebSocket } from './services/websocket-service';
 
 import AuthScreen from './screens/auth/AuthScreen';
 import LobbyScreen from './screens/lobby/LobbyScreen';
@@ -36,6 +37,9 @@ export default class App extends React.Component {
     const getRouteAfterLoading = () => {
       if (!player)
         return '/auth';
+
+      createWebSocket();
+
       if (!player.gameId)
         return '/lobby';
       else

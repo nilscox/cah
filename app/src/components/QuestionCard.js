@@ -100,7 +100,7 @@ export default class QuestionCard extends React.Component {
       </div>
     `;
 
-    console.log(html);
+    // console.log(html);
     return (
       <View style={[styles.view, style]}>
         <WebView

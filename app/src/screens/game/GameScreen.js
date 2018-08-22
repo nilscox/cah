@@ -3,6 +3,7 @@ import { View, Text } from 'react-native';
 import { Redirect } from 'react-router-native';
 
 import { fetchGame } from '../../services/game-service';
+import { emitter as websocket } from '../../services/websocket-service';
 
 import Loading from '../../components/Loading';
 import QuestionCard from '../../components/QuestionCard';
@@ -19,6 +20,12 @@ export default class GameScreen extends React.Component {
   state = {
     game: null,
   };
+
+  constructor() {
+    super();
+
+    websocket.on('game:update', (game) => this.setState({ game }))
+  }
 
   async componentDidMount() {
     const { params } = this.props.match;
