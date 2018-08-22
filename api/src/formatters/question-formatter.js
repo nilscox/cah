@@ -6,5 +6,6 @@ module.exports = {
     text: q => q.get('text'),
     blanks: q => q.get('blanks'),
     nbChoices: q => q.getNbChoices(),
+    type: q => q.get('blanks') === null ? 'question' : 'fill',
   }),
 };
