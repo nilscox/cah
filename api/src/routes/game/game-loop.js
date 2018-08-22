@@ -2,7 +2,15 @@ const { InvalidFieldTypeError, BadRequestError, MissingFieldError } = require('.
 const { Sequelize, Game } = require('../../models');
 const { gameValidator } = require('../../validators');
 const { gameFormatter } = require('../../formatters');
-const { isPlayer, isGameOwner, isInGame, isGameState, isQuestionMaster, isNotQuestionMaster } = require('../../permissions');
+const {
+  isPlayer,
+  isGameOwner,
+  isInGame,
+  isGameState,
+  isQuestionMaster,
+  isNotQuestionMaster,
+  didNotAnswer,
+} = require('../../permissions');
 const events = require('../../events');
 const findGame = require('./find-game');
 
@@ -39,6 +47,7 @@ router.post('/:id/answer', {
     req => isInGame(req.player, req.params.id),
     req => isGameState(req.params.game, 'started', 'players_answer'),
     req => isNotQuestionMaster(req.player),
+    req => didNotAnswer(req.params.game, req.player),
   ],
   validate: req => {
     let ids = req.body.ids || req.body.id;

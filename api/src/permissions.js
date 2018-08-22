@@ -78,6 +78,13 @@ const isNotGameState = async (game, state, playState) => {
     throw new AuthenticationError('game must not be in playState ' + playState);
 };
 
+const didNotAnswer = async (game, player) => {
+  const propositions = await game.getPropositions();
+
+  if (propositions.filter(p => p.playerId === player.id).length > 0)
+    throw new AuthenticationError('player has already submitted an answer');
+};
+
 module.exports = {
   allow,
   isPlayer,
@@ -91,4 +98,5 @@ module.exports = {
   isNotQuestionMaster,
   isGameState,
   isNotGameState,
+  didNotAnswer,
 };
