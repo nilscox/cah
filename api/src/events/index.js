@@ -17,6 +17,8 @@ events.on('player logout', player.on_logout);
 events.on('player connect', player.on_connect);
 events.on('player disconnect', player.on_disconnect);
 
+events.on('cards dealt', player.on_cardsDealt);
+
 events.on('game create', game.on_create);
 events.on('game update', game.on_update);
 events.on('game delete', game.on_delete);

@@ -12,6 +12,7 @@ const {
   didNotAnswer,
 } = require('../../permissions');
 const events = require('../../events');
+const gameController = require('../../game');
 const findGame = require('./find-game');
 
 const router = require('../createRouter')();
@@ -37,7 +38,7 @@ router.post('/:id/start', {
   format: format(),
   after: (req, game) => events.emit('game start', game),
 }, async (req, res, { game }) => {
-  await game.start();
+  await gameController.start(game);
   return game;
 });
 
@@ -85,7 +86,7 @@ router.post('/:id/answer', {
   if (choices.length !== question.getNbChoices())
     throw new BadRequestError('invalid number of choices');
 
-  await game.answer(player, choices);
+  await gameController.answer(game, player, choices);
 
   return game;
 });
@@ -119,7 +120,7 @@ router.post('/:id/select', {
   if (!answer)
     throw new BadRequestError('invalid answer id');
 
-  await game.select(answer);
+  await gameController.select(game, answer);
 
   return game;
 });
@@ -134,6 +135,6 @@ router.post('/:id/next', {
   format: format(),
   after: (req, game) => events.emit('game next', game),
 }, async (req, res, { game }) => {
-  await game.nextTurn();
+  await gameController.nextTurn(game);
   return game;
 });

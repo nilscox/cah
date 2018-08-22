@@ -10,6 +10,7 @@ const {
   isGameState
 } = require('../../permissions');
 const events = require('../../events');
+const gameController = require('../../game');
 const findGame = require('./find-game');
 
 const router = require('../createRouter')();
@@ -60,7 +61,7 @@ router.post('/', {
 
   const game = await Game.create(validated);
 
-  await game.join(player);
+  await gameController.join(game, player);
 
   res.status(201);
   return game;

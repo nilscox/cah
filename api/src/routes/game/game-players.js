@@ -9,6 +9,7 @@ const {
   isNotGameState,
 } = require('../../permissions');
 const events = require('../../events');
+const gameController = require('../../game');
 const findGame = require('./find-game');
 
 const router = require('../createRouter')();
@@ -32,7 +33,7 @@ router.post('/:id/join', {
   format: format(),
   after: (req, game) => events.emit('game join', game, req.player),
 }, async ({ player }, res, { game }) => {
-  await game.join(player);
+  await gameController.join(game, player);
   return game;
 });
 
@@ -50,5 +51,5 @@ router.post('/:id/leave', {
   ],
   after: (req) => events.emit('game leave', req.params.game, req.player),
 }, async ({ player }, res, { game }) => {
-  await game.leave(player);
+  await gameController.leave(game, player);
 });
