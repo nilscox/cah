@@ -35,7 +35,7 @@ websockets(server, session, events);
 app.use((req, res, next) => {
   // TODO: fix this evil trick
   res.append('Access-Control-Allow-Origin', req.get('origin') || '*');
-  res.append('Access-Control-Allow-Headers', 'Content-Type,Authorization');
+  res.append('Access-Control-Allow-Headers', 'Content-Type');
   res.append('Access-Control-Allow-Credentials', 'true');
   next();
 });
