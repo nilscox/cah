@@ -72,7 +72,7 @@ module.exports = (sequelize, DataTypes) => {
     const MasterChoice = sequelize.model('masterchoice');
     const Choice = sequelize.model('choice');
 
-    let mchoices = await MasterChoice.findAll({
+    const mchoices = await MasterChoice.findAll({
       where: { lang: this.lang },
       order: Sequelize.fn('RANDOM'),
       limit: n,
