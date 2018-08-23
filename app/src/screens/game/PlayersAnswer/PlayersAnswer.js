@@ -64,8 +64,9 @@ export default class PlayersAnswer extends React.Component {
 
     const { res, json } = await submitAnswer(game.id, selection);
 
+    // the component is unmounted when recieving a ws event
     if (res.status === 200)
-      this.setState({ submitted: true });
+      ; // this.setState({ submitted: true });
     else
       console.log(json);
   }
