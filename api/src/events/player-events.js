@@ -56,7 +56,8 @@ module.exports.on_connect = async (player, socket) => {
 };
 
 module.exports.on_disconnect = async (player) => {
-  await player.update({ socket: null });
+  // keep the socket id on disconnection because socket.io-client fails
+  // await player.update({ socket: null });
 
   return on_event('PLAYER_DISCONNECT', player, {
     msgAdmin: async () => ({ player: await playerFormatter.admin(player) }),

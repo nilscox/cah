@@ -8,12 +8,10 @@ const avatar = player => player.get('avatar');
 const gameId = player => player.get('gameId');
 
 const cards = async player => {
-  const game = await player.getGame();
-
-  if (!game || game.state !== 'started')
-    return;
-
   const cards = await player.getCards();
+
+  if (cards.length === 0)
+    return;
 
   return await choiceFormatter.full(cards, { many: true });
 };
