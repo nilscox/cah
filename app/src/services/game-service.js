@@ -13,6 +13,10 @@ export const joinGame = (id) => {
   return request(`/api/game/${id}/join`, { method: 'POST' });
 };
 
+export const leaveGame = (id) => {
+  return request(`/api/game/${id}/leave`, { method: 'POST' });
+};
+
 export const createGame = (lang, nbQuestions, cardsPerPlayer) => {
   return request(`/api/game`, {
     method: 'POST',
