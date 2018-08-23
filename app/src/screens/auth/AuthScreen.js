@@ -6,6 +6,14 @@ import { login } from '../../services/auth-service';
 
 
 const styles = StyleSheet.create({
+  view: {
+    paddingHorizontal: 30,
+  },
+  title: {
+    textAlign: 'center',
+    fontSize: 25,
+    marginVertical: 30,
+  },
   input: {
      height: 40,
      borderColor: 'gray',
@@ -38,10 +46,12 @@ export default class AuthScreen extends React.Component {
       return <Redirect to={ player.gameId ? '/game/' + player.gameId : '/lobby' } />;
 
     return (
-      <View>
+      <View style={styles.view}>
+        <Text style={styles.title}>Log in</Text>
         <TextInput
           style={styles.input}
           value={nick}
+          placeholder="nick"
           onChangeText={nick => this.setState({ nick })}
           onSubmitEditing={() => this.login(nick)}
         />

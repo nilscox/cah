@@ -2,14 +2,20 @@ import * as React from 'react';
 import { StyleSheet, FlatList, Text, View, TouchableOpacity } from 'react-native';
 import { Redirect } from 'react-router-native';
 
-import { listGames, joinGame } from '../../services/game-service';
+import { listGames, joinGame, createGame } from '../../services/game-service';
 
 import Loading from '../../components/Loading';
+import CreateGameModal from './CreateGameModal';
 
 
 const styles = StyleSheet.create({
   view: {
-    flexGrow: 1,
+    paddingHorizontal: 30,
+  },
+  title: {
+    textAlign: 'center',
+    fontSize: 25,
+    marginVertical: 30,
   },
   gameItem: {
     flexDirection: 'row',
@@ -23,6 +29,9 @@ const styles = StyleSheet.create({
   joinBtn: {
     marginLeft: 'auto',
   },
+  createGameBtn: {
+    marginLeft: 'auto',
+  },
 });
 
 export default class LobbyScreen extends React.Component {
@@ -30,6 +39,7 @@ export default class LobbyScreen extends React.Component {
   state = {
     games: null,
     currentGame: null,
+    createGameModal: false,
   };
 
   async componentDidMount() {
@@ -41,8 +51,28 @@ export default class LobbyScreen extends React.Component {
       console.log(json);
   }
 
+  async joinGame(game) {
+    const { res, json } = await joinGame(game.id);
+
+    if (res.status === 200)
+      this.setState({ currentGame: json });
+    else
+      console.log(json);
+  }
+
+  async createGame(lang, nbQuestions, cardsPerPlayer) {
+    const { res, json } = await createGame(lang, nbQuestions, cardsPerPlayer);
+
+    if (res.status === 201)
+      this.setState({ currentGame: json });
+    else
+      console.log(json);
+
+    this.setState({ createGameModal: false });
+  }
+
   render() {
-    const { games, currentGame } = this.state;
+    const { games, currentGame, createGameModal } = this.state;
 
     if (!games)
       return <Loading />
@@ -52,17 +82,25 @@ export default class LobbyScreen extends React.Component {
 
     return (
       <View style={styles.view}>
-        <Text>lobby</Text>
+        <Text style={styles.title}>Join a game</Text>
         <FlatList
-          data={games}
-          keyExtractor={g => "" + g.id}
+          data={[...games, null]}
+          keyExtractor={g => g ? '' + g.id : 'create'}
           renderItem={({ item }) => this.renderGameItem(item)}
+        />
+        <CreateGameModal
+          visible={createGameModal}
+          createGame={this.createGame.bind(this)}
+          cancel={() => this.setState({ createGameModal: false })}
         />
       </View>
     );
   }
 
   renderGameItem(game) {
+    if (!game)
+      return this.renderCreateGameItem();
+
     return (
       <View style={styles.gameItem}>
         <Text>Game #{ game.id }</Text>
@@ -73,13 +111,15 @@ export default class LobbyScreen extends React.Component {
     );
   }
 
-  async joinGame(game) {
-    const { res, json } = await joinGame(game.id);
-
-    if (res.status === 200)
-      this.setState({ currentGame: json });
-    else
-      console.log(json);
+  renderCreateGameItem() {
+    return (
+      <View style={styles.gameItem}>
+        <Text>New game...</Text>
+        <TouchableOpacity style={styles.joinBtn} onPress={() => this.setState({ createGameModal: true })}>
+          <Text>CREATE</Text>
+        </TouchableOpacity>
+      </View>
+    );
   }
 
 }
