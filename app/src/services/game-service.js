@@ -27,6 +27,10 @@ export const createGame = (lang, nbQuestions, cardsPerPlayer) => {
   });
 };
 
+export const startGame = (id) => {
+  return request(`/api/game/${id}/start`, { method: 'POST' });
+};
+
 export const submitAnswer = (id, choices) => {
   return request(`/api/game/${id}/answer`, {
     method: 'POST',
