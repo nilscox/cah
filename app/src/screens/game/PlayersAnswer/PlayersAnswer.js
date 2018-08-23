@@ -3,12 +3,14 @@ import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 
 import { submitAnswer } from '../../../services/game-service';
 
+import screen from '../../screen.styles.js';
 import QuestionCard from '../../../components/QuestionCard';
 import ChoicesList from '../../../components/ChoicesList';
 
 const styles = StyleSheet.create({
-  view: {
-    flex: 1
+  questionMaster: {
+    textAlign: 'center',
+    marginBottom: 15,
   },
   question: {
     flex: 1,
@@ -76,7 +78,10 @@ export default class PlayersAnswer extends React.Component {
     const canSubmit = !submitted && selection.filter(s => !s).length === 0;
 
     return (
-      <View style={styles.view}>
+      <View style={screen.viewFull}>
+
+        <Text style={screen.title}>Players answer</Text>
+        <Text style={styles.questionMaster}>Question Master : { game.questionMaster }</Text>
 
         <TouchableOpacity
           style={{ flex: 1 }}

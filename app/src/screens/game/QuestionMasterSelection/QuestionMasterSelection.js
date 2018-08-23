@@ -1,14 +1,12 @@
 import * as React from 'react';
-import { StyleSheet, View, FlatList, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, FlatList, TouchableOpacity } from 'react-native';
 
 import { selectAnswer } from '../../../services/game-service';
 
+import screen from '../../screen.styles.js';
 import AnswersList from '../../../components/AnswersList';
 
 const styles = StyleSheet.create({
-  view: {
-    flex: 1,
-  },
 });
 
 export default class QuestionMasterSelection extends React.Component {
@@ -34,7 +32,8 @@ export default class QuestionMasterSelection extends React.Component {
     const canSelect = !selected && game.questionMaster === player.nick;
 
     return (
-      <View style={styles.view}>
+      <View style={screen.viewFull}>
+        <Text style={screen.title}>Question master selection</Text>
         <AnswersList
           question={game.question}
           answers={game.propositions}

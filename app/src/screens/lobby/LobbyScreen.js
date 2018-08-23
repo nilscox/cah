@@ -4,19 +4,12 @@ import { Redirect } from 'react-router-native';
 
 import { listGames, joinGame, createGame } from '../../services/game-service';
 
+import screen from '../screen.styles.js';
 import Loading from '../../components/Loading';
 import CreateGameModal from './CreateGameModal';
 
 
 const styles = StyleSheet.create({
-  view: {
-    paddingHorizontal: 30,
-  },
-  title: {
-    textAlign: 'center',
-    fontSize: 25,
-    marginVertical: 30,
-  },
   gameItem: {
     flexDirection: 'row',
     justifyContent: 'flex-start',
@@ -64,11 +57,9 @@ export default class LobbyScreen extends React.Component {
     const { res, json } = await createGame(lang, nbQuestions, cardsPerPlayer);
 
     if (res.status === 201)
-      this.setState({ currentGame: json });
+      this.setState({ currentGame: json, createGameModal: false });
     else
       console.log(json);
-
-    this.setState({ createGameModal: false });
   }
 
   render() {
@@ -81,8 +72,8 @@ export default class LobbyScreen extends React.Component {
       return <Redirect to={`/game/${currentGame.id}`} />
 
     return (
-      <View style={styles.view}>
-        <Text style={styles.title}>Join a game</Text>
+      <View style={screen.view}>
+        <Text style={screen.title}>Join a game</Text>
         <FlatList
           data={[...games, null]}
           keyExtractor={g => g ? '' + g.id : 'create'}

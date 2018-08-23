@@ -4,15 +4,9 @@ import { Redirect } from 'react-router-native';
 
 import { startGame } from '../../../services/game-service';
 
+import screen from '../../screen.styles.js';
+
 const styles = StyleSheet.create({
-  view: {
-    paddingHorizontal: 30,
-  },
-  title: {
-    textAlign: 'center',
-    fontSize: 25,
-    marginVertical: 30,
-  },
   waitMessage: {
     marginVertical: 30,
     textAlign: 'center',
@@ -45,8 +39,8 @@ export default class GameIdle extends React.Component {
     const { player, game } = this.props;
 
     return (
-      <View style={styles.view}>
-        <Text style={styles.title}>Game #{game.id}</Text>
+      <View style={screen.view}>
+        <Text style={screen.title}>Game #{game.id}</Text>
         { player.nick === game.owner
           ? this.renderStartButton()
           : <Text style={styles.waitMessage}>Waiting for the game to start...</Text>

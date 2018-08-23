@@ -3,12 +3,10 @@ import { StyleSheet, View, Text, FlatList, TouchableOpacity } from 'react-native
 
 import { nextTurn } from '../../../services/game-service';
 
+import screen from '../../screen.styles.js';
 import AnswersList from '../../../components/AnswersList';
 
 const styles = StyleSheet.create({
-  view: {
-    flex: 1,
-  },
   question: {
     height: 40,
     paddingHorizontal: 10,
@@ -41,12 +39,15 @@ export default class EndOfTurn extends React.Component {
     const canGoNext = game.questionMaster === player.nick;
 
     return (
-      <View style={styles.view}>
+      <View style={screen.viewFull}>
+
+        <Text style={screen.title}>End of turn</Text>
+
         <AnswersList
           question={game.question}
           answers={game.propositions}
           winner={game.selectedAnswer.answeredBy}
-          onAnswerPress={() => canSelect && this.selectAnswer()}
+          onAnswerPress={() => {}}
         />
 
         { canGoNext && (

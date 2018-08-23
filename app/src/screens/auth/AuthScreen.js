@@ -4,25 +4,14 @@ import { Redirect } from 'react-router-native';
 
 import { createPlayer, login } from '../../services/auth-service';
 
+import screen from '../screen.styles';
+
 
 const styles = StyleSheet.create({
-  view: {
-    paddingHorizontal: 30,
-  },
-  title: {
-    textAlign: 'center',
-    fontSize: 25,
-    marginVertical: 30,
-  },
   input: {
      height: 40,
      borderColor: 'gray',
      borderBottomWidth: 1,
-  },
-  actions: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 30,
   },
   loginBtnText: {
     fontWeight: 'bold',
@@ -65,8 +54,9 @@ export default class AuthScreen extends React.Component {
       return <Redirect to={ player.gameId ? '/game/' + player.gameId : '/lobby' } />;
 
     return (
-      <View style={styles.view}>
-        <Text style={styles.title}>Log in</Text>
+      <View style={screen.view}>
+        <Text style={screen.title}>Log in</Text>
+
         <TextInput
           style={styles.input}
           value={nick}
@@ -75,9 +65,9 @@ export default class AuthScreen extends React.Component {
           onSubmitEditing={() => this.login(nick)}
         />
 
-        <View style={styles.actions}>
+        <View style={screen.actions}>
           <TouchableOpacity onPress={() => this.createPlayer(nick)}>
-            <Text>CRAETE ACCOUNT</Text>
+            <Text>CREATE ACCOUNT</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => this.login(nick)}>
             <Text style={styles.loginBtnText}>LOG IN</Text>

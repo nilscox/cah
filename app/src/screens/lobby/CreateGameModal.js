@@ -9,16 +9,10 @@ import {
   TextInput
 } from 'react-native';
 
+import screen from '../screen.styles.js';
+
 
 const styles = StyleSheet.create({
-  view: {
-    paddingHorizontal: 30,
-  },
-  title: {
-    textAlign: 'center',
-    fontSize: 25,
-    marginVertical: 30,
-  },
   field: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -37,11 +31,6 @@ const styles = StyleSheet.create({
   },
   langPicker: {
     flex: 1,
-  },
-  actions: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 50,
   },
   createBtnText: {
     fontWeight: 'bold',
@@ -67,9 +56,9 @@ export default class CreateGameModale extends React.Component {
         onRequestClose={() => {
           alert('Modal has been closed.');
         }}>
-        <View style={styles.view}>
+        <View style={screen.view}>
 
-          <Text style={styles.title}>Create a game</Text>
+          <Text style={screen.title}>Create a game</Text>
 
           {this.renderLangPicker()}
           {this.renderNbQuestionsInput()}
@@ -142,7 +131,7 @@ export default class CreateGameModale extends React.Component {
     const { lang, nbQuestions, cardsPerPlayer } = this.state;
 
     return (
-      <View style={styles.actions}>
+      <View style={screen.actions}>
         <TouchableOpacity onPress={() => this.props.cancel()}>
           <Text>CANCEL</Text>
         </TouchableOpacity>
