@@ -14,7 +14,7 @@ export default StyleSheet.create({
   },
   actions: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'space-evenly',
     marginTop: 30,
   },
 });
