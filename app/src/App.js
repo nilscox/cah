@@ -36,7 +36,7 @@ export default class App extends React.Component {
     const { res, json } = await fetchMe();
 
     if (res.status === 200)
-      this.setState({ player: json });
+      this.setPlayer(json);
     else
       console.log(json);
 
