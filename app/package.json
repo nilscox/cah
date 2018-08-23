@@ -7,6 +7,7 @@
     "start:nocache": "yarn start --reset-cache",
     "test": "jest",
     "android": "react-native run-android",
+    "forward": "adb reverse tcp:8081 tcp:8081",
     "ios": "react-native run-ios"
   },
   "dependencies": {
