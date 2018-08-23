@@ -1,4 +1,4 @@
-const { Game } = require('../../models');
+const { Sequelize, Game } = require('../../models');
 const { gameValidator } = require('../../validators');
 const { gameFormatter } = require('../../formatters');
 const {
@@ -12,6 +12,8 @@ const {
 const events = require('../../events');
 const gameController = require('../../game');
 const findGame = require('./find-game');
+
+const Op = Sequelize.Op;
 
 const router = require('../createRouter')();
 module.exports = router.router;
@@ -33,6 +35,11 @@ router.get('/', {
   format: format({ many: true }),
 }, async () => {
   return await Game.findAll({
+    where: {
+      state: {
+        [Op.not]: 'finished',
+      },
+    },
     include: 'owner',
   });
 });
