@@ -64,10 +64,10 @@ async function start(game) {
   const players = await game.getPlayers();
 
   for (let i = 0; i < players.length; ++i) {
-      const player = players[i];
-      const choices = await dealCards(game, player);
+    const player = players[i];
+    const choices = await dealCards(game, player);
 
-      events.emit('cards dealt', player, choices);
+    events.emit('cards dealt', player, choices);
   }
 
   await game.update({ state: 'started' });
