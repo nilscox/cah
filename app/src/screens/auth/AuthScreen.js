@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { StyleSheet, View, Text, TextInput } from 'react-native';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { Redirect } from 'react-router-native';
 
-import { login } from '../../services/auth-service';
+import { createPlayer, login } from '../../services/auth-service';
 
 
 const styles = StyleSheet.create({
@@ -19,6 +19,14 @@ const styles = StyleSheet.create({
      borderColor: 'gray',
      borderBottomWidth: 1,
   },
+  actions: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 30,
+  },
+  loginBtnText: {
+    fontWeight: 'bold',
+  },
 });
 
 export default class AuthScreen extends React.Component {
@@ -29,9 +37,20 @@ export default class AuthScreen extends React.Component {
   };
 
   async login(nick) {
-    const { res, json } = await login(nick);
+    const { res, json } = await login(nick.trim());
 
     if (res.status === 200) {
+      this.props.setPlayer(json);
+      this.setState({ player: json });
+    }
+    else
+      console.log(json);
+  }
+
+  async createPlayer(nick) {
+    const { res, json } = await createPlayer(nick.trim());
+
+    if (res.status === 201) {
       this.props.setPlayer(json);
       this.setState({ player: json });
     }
@@ -55,6 +74,16 @@ export default class AuthScreen extends React.Component {
           onChangeText={nick => this.setState({ nick })}
           onSubmitEditing={() => this.login(nick)}
         />
+
+        <View style={styles.actions}>
+          <TouchableOpacity onPress={() => this.createPlayer(nick)}>
+            <Text>CRAETE ACCOUNT</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => this.login(nick)}>
+            <Text style={styles.loginBtnText}>LOG IN</Text>
+          </TouchableOpacity>
+        </View>
+
       </View>
     );
   }
