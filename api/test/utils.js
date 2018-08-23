@@ -1,4 +1,7 @@
 const Sequelize = require('sequelize');
+
+const ctrl = require('../src/game');
+
 const Op = Sequelize.Op;
 
 async function createPlayer(opts = {}) {
@@ -34,7 +37,7 @@ async function createGame(opts = {}) {
   const { Game } = this.models;
   const game = await new Game(opts).save();
 
-  await game.join(opts.owner);
+  await ctrl.join(game, opts.owner);
 
   return game;
 }
@@ -43,7 +46,7 @@ async function createReadyGame(opts = {}, nicks = ['toto', 'tata']) {
   const game = await this.createGame(opts);
 
   for (let i = 0; i < nicks.length; ++i)
-    await game.join(await this.createPlayer({ nick: nicks[i] }));
+    await ctrl.join(game, await this.createPlayer({ nick: nicks[i] }));
 
   return game;
 }
@@ -51,7 +54,7 @@ async function createReadyGame(opts = {}, nicks = ['toto', 'tata']) {
 async function createStartedGame(opts, nicks) {
   const game = await this.createReadyGame(opts, nicks);
 
-  await game.start();
+  await ctrl.start(game);
 
   return game;
 }
@@ -84,13 +87,13 @@ async function answerRandomCards(game, player) {
   if (!cards || cards.length < nbChoices)
     throw new Error('player has not enough cards');
 
-  await game.answer(player, cards);
+  await ctrl.answer(game, player, cards);
 }
 
 async function selectRandomAnswer(game) {
   const propositions = await game.getPropositions();
 
-  await game.select(propositions[~~(Math.random() * propositions.length)]);
+  await ctrl.select(game, propositions[~~(Math.random() * propositions.length)]);
 }
 
 async function playRandomTurn(game) {
@@ -100,7 +103,7 @@ async function playRandomTurn(game) {
     await this.answerRandomCards(game, players[j]);
 
   await this.selectRandomAnswer(game);
-  await game.nextTurn();
+  await ctrl.nextTurn(game);
 }
 
 module.exports = {
