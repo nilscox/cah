@@ -9,8 +9,9 @@
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "forward": "adb reverse tcp:8081 tcp:8081",
+    "genkey": "keytool -genkey -v -keystore android/app/cah-release-key.keystore -alias cah-key -keyalg RSA -keysize 2048 -validity 10000",
     "build": "cd android && ./gradlew assembleRelease",
-    "genkey": "keytool -genkey -v -keystore android/app/cah-release-key.keystore -alias cah-key -keyalg RSA -keysize 2048 -validity 10000"
+    "install:android": "adb install android/app/build/outputs/apk/app-release.apk"
   },
   "dependencies": {
     "events": "^3.0.0",
