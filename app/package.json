@@ -7,8 +7,10 @@
     "start:nocache": "yarn start --reset-cache",
     "test": "jest",
     "android": "react-native run-android",
+    "ios": "react-native run-ios",
     "forward": "adb reverse tcp:8081 tcp:8081",
-    "ios": "react-native run-ios"
+    "build": "cd android && ./gradlew assembleRelease",
+    "genkey": "keytool -genkey -v -keystore android/app/cah-release-key.keystore -alias cah-key -keyalg RSA -keysize 2048 -validity 10000"
   },
   "dependencies": {
     "events": "^3.0.0",
