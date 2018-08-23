@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, TextInput } from 'react-native';
 import { Redirect } from 'react-router-native';
 
 import { login } from '../../services/auth-service';
@@ -43,10 +43,8 @@ export default class AuthScreen extends React.Component {
           style={styles.input}
           value={nick}
           onChangeText={nick => this.setState({ nick })}
+          onSubmitEditing={() => this.login(nick)}
         />
-        <TouchableOpacity onPress={() => this.login(nick)}>
-          <Text>LOG IN</Text>
-        </TouchableOpacity>
       </View>
     );
   }
