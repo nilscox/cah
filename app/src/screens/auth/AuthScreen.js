@@ -26,6 +26,10 @@ export default class AuthScreen extends React.Component {
   };
 
   async login(nick) {
+    // pas l'temps d'niaiser
+    if (nick.length === 0)
+      nick = 'nils';
+
     const { res, json } = await login(nick.trim());
 
     if (res.status === 200) {
@@ -37,6 +41,9 @@ export default class AuthScreen extends React.Component {
   }
 
   async createPlayer(nick) {
+    if (nick.length === 0)
+      nick = 'nils';
+
     const { res, json } = await createPlayer(nick.trim());
 
     if (res.status === 201) {

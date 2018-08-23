@@ -9,12 +9,13 @@ export const emitter = new WSEmitter();
 
 export const createWebSocket = () => {
   const socket = io(WS_URL);
-  console.log(WS_URL);
 
   socket.on('connect', () => console.log('ws:connect'));
-  socket.on('disconnect', () => console.log('ws:connect'));
+  socket.on('disconnect', () => console.log('ws:disconnect'));
 
   socket.on('message', (e) => {
+    console.log('ws:message', e);
+
     switch (e.type) {
     case 'PLAYER_UPDATE':
     case 'CARDS_DEALT':

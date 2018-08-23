@@ -41,8 +41,8 @@ export default class CreateGameModale extends React.Component {
 
   state = {
     lang: 'fr',
-    nbQuestions: 32,
-    cardsPerPlayer: 11,
+    nbQuestions: 3,
+    cardsPerPlayer: 4,
   };
 
   render() {

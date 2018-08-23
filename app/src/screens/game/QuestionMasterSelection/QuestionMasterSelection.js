@@ -19,8 +19,9 @@ export default class QuestionMasterSelection extends React.Component {
     const { game } = this.props;
     const { res, json } = await selectAnswer(game.id, answer);
 
+    // the component is unmounted when recieving a ws event
     if (res.status === 200)
-      this.setState({ selected: true });
+      ; // this.setState({ selected: true });
     else
       console.log(json);
   }
