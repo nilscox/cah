@@ -16,10 +16,14 @@ const on_event = async (type, game, { msgAdmin, msgPlayers, ...args }) => {
   }
 };
 
-module.exports.on_create = (game, data) => on_event('GAME_CREATE', game, {
-  msgAdmin: async () => ({ game: await gameFormatter.admin(game) }),
-  data,
-});
+module.exports.on_create = async (game, data) => {
+  websockets.join(game, await game.getOwner());
+
+  return on_event('GAME_CREATE', game, {
+    msgAdmin: async () => ({ game: await gameFormatter.admin(game) }),
+    data,
+  });
+};
 
 module.exports.on_update = (game, data) => on_event('GAME_UPDATE', game, {
   msgAdmin: async () => ({ game: await gameFormatter.admin(game) }),
