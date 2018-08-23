@@ -9,11 +9,11 @@ const findPlayer = require('./find-player');
 const router = require('../createRouter')();
 module.exports = router.router;
 
-const format = opts => (req, value) => {
+const format = (full = false, opts) => (req, value) => {
   if (req.admin)
     return playerFormatter.admin(value, opts);
 
-  if (req.player && req.params.player && req.player.equals(req.params.player))
+  if (full)
     return playerFormatter.full(value, opts);
 
   return playerFormatter.light(value, opts);
@@ -23,7 +23,7 @@ router.param('nick', findPlayer);
 
 router.get('/', {
   authorize: allow,
-  format: format({ many: true }),
+  format: format(false, { many: true }),
 }, async () => await Player.findAll());
 
 router.get('/me', {
@@ -44,7 +44,7 @@ router.post('/', {
     ],
   }],
   validate: playerValidator.body({ avatar: { required: false } }),
-  format: format(),
+  format: format(true),
   after: (req, player) => events.emit('player create', player, req.validated),
 }, async ({ session, admin, validated }, res) => {
   const player = await Player.create(validated);
@@ -65,7 +65,7 @@ router.put('/:nick', {
     partial: true,
     nick: { readOnly: true },
   }),
-  format: format(),
+  format: format(true),
   after: (req, player) => events.emit('player update', player, req.validated),
 }, async ({ validated }, res, { player }) => {
   return await player.update(validated);
