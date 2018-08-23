@@ -1,5 +1,5 @@
 const expect = require('chai').expect;
-const ctrl = require('../../src/game');
+const { gameFormatter, playerFormatter } = require('../../src/formatters');
 
 describe('controller', () => {
 
@@ -12,7 +12,7 @@ describe('controller', () => {
     it('should start a game', async function() {
       const game = await this.createReadyGame();
 
-      await ctrl.start(game);
+      await this.ctrl.start(game);
       await game.reload({
         include: [
           { association: 'players', include: 'cards' },
@@ -82,7 +82,7 @@ describe('controller', () => {
 
       const propositions = await game.getPropositions();
 
-      await ctrl.select(game, propositions[~~(Math.random() * propositions.length)]);
+      await this.ctrl.select(game, propositions[~~(Math.random() * propositions.length)]);
 
       expect(await game.getPlayState()).to.eql('end_of_turn');
     });

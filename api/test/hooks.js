@@ -100,12 +100,12 @@ beforeEach(function() {
     process.env.CAH_DB_NAME = this.dbName;
 
     const app = require('../src/app');
-    const models = require('../src/models');
 
     this.createSession = () => request.agent(app);
 
     this.app = this.createSession();
-    this.models = models;
+    this.models = require('../src/models');
+    this.ctrl = require('../src/game');
 
     Object.keys(utils).forEach(func => this[func] = utils[func].bind(this));
 
