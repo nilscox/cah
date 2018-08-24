@@ -21,12 +21,6 @@ export default class GameScreen extends React.Component {
     game: null,
   };
 
-  constructor() {
-    super();
-
-    websocket.on('game:update', (game) => this.setState({ game }))
-  }
-
   async componentDidMount() {
     const { params } = this.props.match;
     const { res, json } = await fetchGame(params.id);
@@ -35,7 +29,17 @@ export default class GameScreen extends React.Component {
       this.setState({ game: json });
     else
       console.log(json);
+
+    websocket.on('game:update', this.handleGameChange);
   }
+
+  componentWillUnmount() {
+    websocket.off('game:update', this.handleGameChange);
+  }
+
+  handleGameChange = (game) => {
+    this.setState({ game });
+  };
 
   render() {
     const getComponent = game => {

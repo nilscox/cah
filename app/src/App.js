@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert, Text } from 'react-native';
+import { AppState, Alert, Text } from 'react-native';
 import { NativeRouter, Switch, Route, Redirect } from 'react-router-native';
 
 import { fetchMe } from './services/player-service';
@@ -22,16 +22,37 @@ export default class App extends React.Component {
   constructor(props) {
     super(props);
 
-    websocket.on('player:update', (p) => {
-      const { player } = this.state;
-
-      if (player && player.id === p.id)
-        this.setState({ player: p });
-    });
+    this.socket = null;
   }
 
-  async componentDidMount() {
-    await new Promise(r => setTimeout(r, 0));
+  componentDidMount() {
+    AppState.addEventListener('change', this.handleAppStateChange.bind(this));
+    websocket.on('player:update', this.handlePlayerChange);
+  }
+
+  componentWillUnmount() {
+    AppState.removeEventListener('change', this.handleAppStateChange.bind(this));
+    websocket.off('player:update', this.handlePlayerChange);
+  }
+
+  handleAppStateChange(nextAppState) {
+    if (nextAppState === 'active')
+      this.init();
+    else {
+      if (this.socket)
+        this.socket.disconnect();
+    }
+  }
+
+  handlePlayerChange = (p) => {
+    const { player } = this.state;
+
+    if (player && player.nick === p.nick)
+      this.setState({ player: p });
+  };
+
+  async init() {
+    this.setState({ loading: true });
 
     const { res, json } = await fetchMe();
 
@@ -45,7 +66,7 @@ export default class App extends React.Component {
 
   setPlayer(player) {
     this.setState({ player });
-    createWebSocket();
+    this.socket = createWebSocket();
   }
 
   render() {

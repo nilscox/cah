@@ -20,6 +20,7 @@ export const createWebSocket = () => {
     case 'PLAYER_UPDATE':
     case 'CARDS_DEALT':
       emitter.emit('player:update', e.player);
+      break;
 
     case 'GAME_UPDATE':
     case 'GAME_JOIN':
@@ -36,4 +37,6 @@ export const createWebSocket = () => {
       break;
     }
   });
+
+  return socket;
 };
