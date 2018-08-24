@@ -38,11 +38,13 @@ export REACT_APP_API_URL="$API_URL"
 export REACT_APP_WEBSOCKET_URL="$API_WS_URL"
 export REACT_APP_API_ADMIN_TOKEN="$CAH_API_ADMIN_TOKEN"
 
-mkdir -p "$CAH_MEDIA_PATH"
-mkdir -p "/tmp/avatars"
-ln -sf "/tmp/avatars" "$CAH_AVATARS_PATH"
+if [ -n "$CAH_MEDIA_PATH" ]; then
+  mkdir -p "$CAH_MEDIA_PATH"
+  mkdir -p "/tmp/avatars"
+  ln -sf "/tmp/avatars" "$CAH_AVATARS_PATH"
+fi
 
-export HTTP_SESSION="default"
+export CAH_SESSION="default"
 
 function session {
   if [ -z "$1" ]; then
@@ -50,24 +52,5 @@ function session {
     return 1
   fi
 
-  export HTTP_SESSION="$1"
-  login "$1"
+  export CAH_SESSION="$1"
 }
-
-function h() { http --session "/tmp/httpie.${HTTP_SESSION}.session" -v $@ }
-
-function player() { h ":4242/api/player/$1" }
-function game() { h ":4242/api/game/$1" }
-
-function create_player() { h POST ":4242/api/player" nick="$1" }
-function login() { h POST ":4242/api/player/login" nick="$1" }
-function logout() { h POST ":4242/api/player/logout" }
-function me() { h ":4242/api/player/me" }
-
-function g_create() { h POST ":4242/api/game" lang="$1" nbQuestions:="$2" cardsPerPlayer:="$3" }
-function g_join() { h POST ":4242/api/game/$1/join" }
-function g_leave() { h POST ":4242/api/game/$1/leave" }
-function g_start() { h POST ":4242/api/game/$1/start" }
-function g_answer() { h POST ":4242/api/game/$1/answer" ids:="$2" }
-function g_select() { h POST ":4242/api/game/$1/select" id:="$2" }
-function g_next() { h POST ":4242/api/game/$1/next" }
