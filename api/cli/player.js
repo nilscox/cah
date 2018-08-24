@@ -113,7 +113,7 @@ module.exports.me = {
   desc: 'retrieve me',
   usage: '[--game | -g]',
   options: [
-    { name: '--game', alias: '-g', desc: 'include the player\'s game' },
+    { name: '--game', alias: ['-g'], desc: 'include the player\'s game' },
   ],
   handle: async (args) => {
     const player = await getPlayer();
