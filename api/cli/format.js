@@ -92,7 +92,9 @@ module.exports.game = g => {
       res += line()
       res += line('propositions:')
       res += line(enumerate(g.propositions, p => {
-        return question(g.question, p) + (isWinner(p) ? ' (winner)' : '');
+        return question(g.question, p)
+          + (p.answeredBy ? ' (by ' + p.answeredBy + ')' : '')
+          + (isWinner(p) ? ' (winner)' : '');
       }));
     }
   }
