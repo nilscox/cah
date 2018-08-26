@@ -1,5 +1,5 @@
-const request = require('./request');
-const format = require('./format');
+const request = require('../request');
+const format = require('../format');
 
 const getPlayer = async () => {
   const { body } = await request('/api/player/me', { expect: [200] });

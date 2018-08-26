@@ -1,4 +1,5 @@
 const fs = require('fs-extra');
+const args = require('node-args');
 const request = require('request-promise');
 const tough = require('tough-cookie');
 const { CLIRequestError } = require('./error');
@@ -61,6 +62,9 @@ module.exports = (route, opts = {}) => {
         body = JSON.parse(r.body);
       else if (ct && ct.startsWith('text/'))
         body = r.body;
+
+      if (args.request)
+        console.log(opts.method || 'GET', route, '->', r.statusCode, JSON.stringify(body, 2, 2));
 
       if (opts.expect && opts.expect.indexOf(r.statusCode) < 0)
         throw new CLIRequestError(opts.method || 'GET', route, r.statusCode, body);
