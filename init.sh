@@ -48,9 +48,14 @@ export CAH_SESSION="default"
 
 function session {
   if [ -z "$1" ]; then
-    echo "usage: $0 <name>"
-    return 1
+    echo "$CAH_SESSION"
+  else
+    export CAH_SESSION="$1"
   fi
-
-  export CAH_SESSION="$1"
 }
+
+function player() { cah "player:login" --game --nick "$1" || cah "player:create" --game --nick "$1" }
+function me() { cah "player:me" --game "$@" }
+function ans() { cah "game:answer" "$@" }
+function sel() { cah "game:select" "$@" }
+function nxt() { cah "game:next" "$@" }
