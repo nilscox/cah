@@ -8,10 +8,9 @@ import AnswersList from '../../../components/AnswersList';
 
 const styles = StyleSheet.create({
   question: {
-    height: 40,
     paddingHorizontal: 10,
-    borderColor: '#999',
-    borderBottomWidth: 1,
+    paddingBottom: 30,
+    fontSize: 18,
   },
   next: {
     marginTop: 40,
@@ -42,6 +41,10 @@ export default class EndOfTurn extends React.Component {
       <View style={screen.viewFull}>
 
         <Text style={screen.title}>End of turn</Text>
+
+        { game.question.type === 'question' && (
+          <Text style={styles.question}>{ game.question.text }</Text>
+        ) }
 
         <AnswersList
           question={game.question}

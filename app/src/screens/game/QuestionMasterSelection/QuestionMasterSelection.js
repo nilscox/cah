@@ -7,6 +7,11 @@ import screen from '../../screen.styles.js';
 import AnswersList from '../../../components/AnswersList';
 
 const styles = StyleSheet.create({
+  question: {
+    paddingHorizontal: 10,
+    paddingBottom: 30,
+    fontSize: 18,
+  },
 });
 
 export default class QuestionMasterSelection extends React.Component {
@@ -34,12 +39,19 @@ export default class QuestionMasterSelection extends React.Component {
 
     return (
       <View style={screen.viewFull}>
+
         <Text style={screen.title}>Question master selection</Text>
+
+        { game.question.type === 'question' && (
+          <Text style={styles.question}>{ game.question.text }</Text>
+        ) }
+
         <AnswersList
           question={game.question}
           answers={game.propositions}
           onAnswerPress={(answer) => canSelect && this.selectAnswer(answer)}
         />
+
       </View>
     );
   }
