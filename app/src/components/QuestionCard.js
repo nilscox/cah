@@ -4,6 +4,7 @@ import { StyleSheet, View, WebView } from 'react-native';
 const styles = StyleSheet.create({
   view: {
     backgroundColor: '#333',
+    paddingHorizontal: 30,
   },
   webview: {
     flex: 1,
@@ -11,7 +12,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const CSS = ({ textAlign }) => `
+const CSS = ({ lineHeight, fontSize, textAlign }) => `
 .wrapper {
   width: 100%;
   color: #EEE;
@@ -19,7 +20,8 @@ const CSS = ({ textAlign }) => `
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  line-height: 25px;
+  font-size: ${fontSize || 18};
+  line-height: ${lineHeight || 26}px;
   text-align: ${textAlign || 'center'};
 }
 
@@ -34,7 +36,7 @@ const CSS = ({ textAlign }) => `
 
 .choice {
   font-weight: bold;
-  display: inline-block;
+  display: inline;
 }
 
 .answers {
@@ -73,6 +75,8 @@ const renderHtml = ({ question, choices }) => {
 
   if (question.type === 'question')
     html += '</div>';
+  else if (start < question.text.length)
+    html += question.text.slice(start);
 
   return html;
 }
@@ -91,10 +95,10 @@ export default class QuestionCard extends React.Component {
   }
 
   render() {
-    const { style, question, choices, textAlign } = this.props;
+    const { style, question, choices, cssStyles } = this.props;
 
     const html = `
-      <style type="text/css">${CSS({ textAlign })}</style>
+      <style type="text/css">${CSS(cssStyles || {})}</style>
       <div class="wrapper">
         ${renderHtml({ question, choices })}
       </div>

@@ -1,12 +1,35 @@
 import * as React from 'react';
 import { StyleSheet, View, FlatList, Text, TouchableOpacity } from 'react-native';
 
+import { questionLength } from '../services/math-service';
 import QuestionCard from './QuestionCard';
 
 
+const answerCssStyles = (question, choices) => {
+  const fontSize = len => {
+    if (len < 45) return 18;
+    else if (len < 120) return 14;
+    else return 12;
+  }
+
+  const lineHeight = len => {
+    if (len < 45) return 16;
+    else if (len < 120) return 16;
+    else return 10;
+  }
+
+  const len = questionLength(question, choices);
+
+  return {
+    textAlign: 'left',
+    fontSize: fontSize(len),
+    lineHeight: lineHeight(len),
+  };
+};
+
 const styles = StyleSheet.create({
   item: {
-    height: 60,
+    height: 65,
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -53,7 +76,7 @@ const Answer = ({ question, answer }) => {
       style={styles.answer}
       question={question}
       choices={answer.choices}
-      textAlign="left"
+      cssStyles={answerCssStyles(question, answer.choices)}
     />
   );
 }
