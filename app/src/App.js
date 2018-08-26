@@ -54,6 +54,7 @@ export default class App extends React.Component {
   async init() {
     this.setState({ loading: true });
 
+    await new Promise(r => setTimeout(r, 0));
     const { res, json } = await fetchMe();
 
     if (res.status === 200)
