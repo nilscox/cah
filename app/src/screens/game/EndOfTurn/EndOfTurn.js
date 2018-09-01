@@ -6,6 +6,13 @@ import { nextTurn } from '../../../services/game-service';
 import screen from '../../screen.styles.js';
 import AnswersList from '../../../components/AnswersList';
 
+
+/** EndOfTurn
+props:
+  - player
+  - game
+*/
+
 const styles = StyleSheet.create({
   question: {
     paddingHorizontal: 10,

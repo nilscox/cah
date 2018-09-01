@@ -6,6 +6,13 @@ import { startGame } from '../../../services/game-service';
 
 import screen from '../../screen.styles.js';
 
+
+/** GameIdle
+props:
+  - player
+  - game
+*/
+
 const styles = StyleSheet.create({
   waitMessage: {
     marginVertical: 30,

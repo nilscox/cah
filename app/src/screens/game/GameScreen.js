@@ -2,7 +2,7 @@ import * as React from 'react';
 import { View, Text } from 'react-native';
 import { Redirect } from 'react-router-native';
 
-import { fetchGame } from '../../services/game-service';
+import { fetchGame, fetchGameHistory } from '../../services/game-service';
 import { emitter as websocket } from '../../services/websocket-service';
 
 import Loading from '../../components/Loading';
@@ -15,61 +15,76 @@ import QuestionMasterSelection from './QuestionMasterSelection/QuestionMasterSel
 import EndOfTurn from './EndOfTurn/EndOfTurn';
 
 
+/** GameScreen
+props:
+  - match
+
+state:
+  - game
+  - history
+*/
+
 export default class GameScreen extends React.Component {
 
   state = {
     game: null,
+    history: null,
   };
 
   async componentDidMount() {
     const { params } = this.props.match;
     const { res, json } = await fetchGame(params.id);
 
-    if (res.status === 200)
-      this.setState({ game: json });
-    else
+    if (res.status === 200) {
+      const history = await fetchGameHistory(params.id);
+
+      if (history.res === 200)
+        console.log(json);
+      else
+        this.setState({ game: json, history: history.json });
+    } else
       console.log(json);
 
+
     websocket.on('game:update', this.handleGameChange);
+    websocket.on('game:turn', this.handleGameTurn);
   }
 
   componentWillUnmount() {
     websocket.off('game:update', this.handleGameChange);
+    websocket.on('game:turn', this.handleGameTurn);
   }
 
   handleGameChange = (game) => {
     this.setState({ game });
   };
 
+  handleGameTurn = (turn) => {
+    this.setState({ turns: [...this.state.turns, turn] });
+  };
+
   render() {
-    const getComponent = game => {
-      if (game.state === 'idle')
-        return GameIdle;
-
-      if (game.state === 'finished')
-        return GameFinished;
-
-      if (game.playState === 'players_answer')
-        return PlayersAnswer;
-
-      if (game.playState === 'question_master_selection')
-        return QuestionMasterSelection;
-
-      if (game.playState === 'end_of_turn')
-        return EndOfTurn;
-    };
-
-    const { game } = this.state;
+    const { player } = this.props;
+    const { game, history } = this.state;
 
     if (!game)
       return <Loading />;
 
-    const Component = getComponent(game);
+    if (game.state === 'idle')
+      return <GameIdle player={player} game={game} />;
 
-    if (!Component)
-      throw new Error('should not happen');
+    if (game.state === 'finished')
+      return <GameFinished game={game} history={history} />;
 
-    return <Component player={this.props.player} game={game} />;
+    if (game.playState === 'players_answer')
+      return <PlayersAnswer player={player} game={game} />;
+
+    if (game.playState === 'question_master_selection')
+      return <QuestionMasterSelection player={player} game={game} />;
+
+    if (game.playState === 'end_of_turn')
+      return <EndOfTurn player={player} game={game} />;
+
+    return null;
   }
-
 }

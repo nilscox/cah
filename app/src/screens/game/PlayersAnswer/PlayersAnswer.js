@@ -7,6 +7,17 @@ import screen from '../../screen.styles.js';
 import QuestionCard from '../../../components/QuestionCard';
 import ChoicesList from '../../../components/ChoicesList';
 
+
+/** PlayersAnswer
+props:
+  - player
+  - game
+
+state:
+  - selection
+  - submitted
+*/
+
 const styles = StyleSheet.create({
   questionMaster: {
     textAlign: 'center',
@@ -64,10 +75,10 @@ export default class PlayersAnswer extends React.Component {
 
     const { res, json } = await submitAnswer(game.id, selection);
 
-    // the component is unmounted when recieving a ws event
-    if (res.status === 200)
-      ; // this.setState({ submitted: true });
-    else
+    if (res.status === 200) {
+      if (game.playState === 'players_answer')
+        this.setState({ submitted: true });
+    } else
       console.log(json);
   }
 

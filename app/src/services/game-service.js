@@ -9,6 +9,10 @@ export const fetchGame = (id) => {
   return request(`/api/game/${id}`);
 };
 
+export const fetchGameHistory = (id) => {
+  return request(`/api/game/${id}/history`);
+};
+
 export const joinGame = (id) => {
   return request(`/api/game/${id}/join`, { method: 'POST' });
 };

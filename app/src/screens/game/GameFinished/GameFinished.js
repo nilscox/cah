@@ -7,6 +7,15 @@ import { leaveGame } from '../../../services/game-service';
 import screen from '../../screen.styles';
 
 
+/** GameFinished
+props:
+  - game
+  - history
+
+state:
+  - back
+*/
+
 const styles = StyleSheet.create({
   thankYou: {
     textAlign: 'center',
@@ -35,7 +44,7 @@ export default class GameFinished extends React.Component {
   }
 
   render() {
-    const { game } = this.props;
+    const { game, history } = this.props;
 
     if (this.state.back)
       return <Redirect to="/lobby" />;

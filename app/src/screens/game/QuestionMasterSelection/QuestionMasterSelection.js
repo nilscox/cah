@@ -6,6 +6,16 @@ import { selectAnswer } from '../../../services/game-service';
 import screen from '../../screen.styles.js';
 import AnswersList from '../../../components/AnswersList';
 
+
+/** QuestionMasterSelection
+props:
+  - player
+  - game
+
+state:
+  - selected
+*/
+
 const styles = StyleSheet.create({
   question: {
     paddingHorizontal: 10,
@@ -24,9 +34,11 @@ export default class QuestionMasterSelection extends React.Component {
     const { game } = this.props;
     const { res, json } = await selectAnswer(game.id, answer);
 
-    // the component is unmounted when recieving a ws event
-    if (res.status === 200)
-      ; // this.setState({ selected: true });
+    if (res.status === 200) {
+      // that will never be true...
+      if (game.playState === 'question_master_selection')
+        this.setState({ selected: true });
+    }
     else
       console.log(json);
   }
