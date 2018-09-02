@@ -1,5 +1,5 @@
 const { error, info } = require('../utils');
-const { gameFormatter, playerFormatter } = require('../formatters');
+const { gameFormatter, playerFormatter, gameTurnFormatter } = require('../formatters');
 const websockets = require('../websockets');
 
 const on_event = async (type, game, { msgAdmin, msgPlayers, ...args }) => {
@@ -83,7 +83,17 @@ module.exports.on_select = (game, data) => on_event('GAME_SELECT', game, {
   data,
 });
 
-module.exports.on_next = (game) => on_event(game.state === 'started' ? 'GAME_NEXT' : 'GAME_END', game, {
-  msgAdmin: async () => ({ game: await gameFormatter.admin(game) }),
-  msgPlayers: async () => ({ game: await gameFormatter.full(game) }),
-});
+module.exports.on_next = async (game) => {
+  const turn = (await game.getTurns({ orderBy: 'createdAt', limit: 1 }))[0];
+
+  on_event('GAME_TURN', game, {
+    msgAdmin: async () => ({ gameId: game.id, turn: await gameTurnFormatter.admin(turn) }),
+    msgPlayers: async () => ({ turn: await gameTurnFormatter.full(turn) }),
+    number: turn.number,
+  });
+
+  on_event(game.state === 'started' ? 'GAME_NEXT' : 'GAME_END', game, {
+    msgAdmin: async () => ({ game: await gameFormatter.admin(game) }),
+    msgPlayers: async () => ({ game: await gameFormatter.full(game) }),
+  });
+};

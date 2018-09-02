@@ -20,12 +20,21 @@ const answers = async gt => {
   return answerFormatter.full(await gt.getAnswers(), { many: true });
 };
 
+const full = formatter({
+  number,
+  questionMaster,
+  winner,
+  question,
+  answers,
+});
+
+const admin = formatter({
+  ...full,
+  createdAt: formatter.createdAt,
+  updatedAt: formatter.updatedAt,
+});
+
 module.exports = {
-  full: formatter({
-    number,
-    questionMaster,
-    winner,
-    question,
-    answers,
-  }),
+  full,
+  admin,
 };
