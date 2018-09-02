@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { StyleSheet, View, Text, Image } from 'react-native';
 
-import { fetchPlayer } from '../../services/player-service';
+import { fetchPlayer, playerAvatarUri } from '../../services/player-service';
 import Loading from '../../components/Loading';
 import Form, { FormField } from '../../components/Form';
 import { ButtonPosition } from '../../components/Button';
@@ -31,16 +31,13 @@ const styles = StyleSheet.create({
 
 export default PlayerProfileScreen = ({ player: me, location, history }) => {
   const { player } = location.state;
-  const avatar = player.avatar
-    ? { uri: API_URL + player.avatar }
-    : require('./default-avatar.png');
 
   return (
     <View style={[screen.view, screen.viewPadding, styles.view]}>
 
       <Text style={screen.title}>{ player.nick }</Text>
 
-      <Image style={styles.avatar} source={avatar} />
+      <Image style={styles.avatar} source={playerAvatarUri(player)} />
 
       <Form>
         <FormField label="Online">

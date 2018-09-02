@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const GameActions = ({ player, go }) => (
+const GameActions = ({ player, game, history, go }) => (
   <View style={styles.actions}>
 
     <View style={styles.actionsLeft}>
@@ -196,7 +196,12 @@ export default class GameScreen extends React.Component {
 
         { view }
 
-        <GameActions player={this.props.player} go={this.props.history.push} />
+        <GameActions
+          player={player}
+          game={game}
+          history={history}
+          go={this.props.history.push}
+        />
 
         { displayTurnNumber && (
           <View style={styles.turnNumber}>

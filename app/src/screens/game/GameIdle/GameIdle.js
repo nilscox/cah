@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, ScrollView, Text } from 'react-native';
 import { Redirect } from 'react-router-native';
 
-import { ButtonPosition } from '../../../components/Button';
+import Button from '../../../components/Button';
+import Player from '../../../components/Player';
 import { startGame } from '../../../services/game-service';
 
 import screen from '../../screen.styles.js';
@@ -21,6 +22,17 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#999',
   },
+  players: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-around',
+  },
+  playerItem: {
+    margin: 15,
+  },
+  startBtn: {
+    alignItems: 'center',
+  },
 });
 
 export default class GameIdle extends React.Component {
@@ -37,7 +49,7 @@ export default class GameIdle extends React.Component {
 
     return (
       <View style={[screen.view, screen.viewPadding]}>
-        <Text>Players: { game.players.map(p => p.nick).join(', ') }</Text>
+        { this.renderPlayersList() }
         { player.nick === game.owner
           ? this.renderStartButton()
           : <Text style={styles.waitMessage}>Waiting for the game to start...</Text>
@@ -46,10 +58,26 @@ export default class GameIdle extends React.Component {
     );
   }
 
+  renderPlayersList() {
+    const { players } = this.props.game;
+
+    return (
+      <ScrollView contentContainerStyle={styles.players}>
+        { players.map(player => (
+          <Player
+            key={player.nick}
+            style={styles.playerItem}
+            player={player}
+          />
+        )) }
+      </ScrollView>
+    );
+  }
+
   renderStartButton() {
     return (
-      <ButtonPosition
-        position="top"
+      <Button
+        style={styles.startBtn}
         background
         primary
         title="start"

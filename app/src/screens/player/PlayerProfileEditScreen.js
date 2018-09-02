@@ -1,14 +1,12 @@
 import * as React from 'react';
 import { StyleSheet, View, Text, TextInput, Image } from 'react-native';
 
-import { fetchPlayer, updatePlayer } from '../../services/player-service';
+import { fetchPlayer, updatePlayer, playerAvatarUri } from '../../services/player-service';
 import Loading from '../../components/Loading';
 import Form, { FormField } from '../../components/Form';
 import Button, { ButtonsGroup } from '../../components/Button';
 import screen from '../screen.styles';
 
-
-const API_URL = process.env.REACT_APP_API_URL;
 
 const styles = StyleSheet.create({
   avatar: {
@@ -62,16 +60,12 @@ export default class PlayerProfileEditScreen extends React.Component {
   render() {
     const { player } = this.props.location.state;
 
-    const avatar = player.avatar
-      ? { uri: API_URL + player.avatar }
-      : require('./default-avatar.png');
-
     return (
       <View style={[screen.view, screen.viewPadding, styles.view]}>
 
         <Text style={screen.title}>{ player.nick }</Text>
 
-        <Image style={styles.avatar} source={avatar} />
+        <Image style={styles.avatar} source={playerAvatarUri(player)} />
 
         <Form>
           <FormField label="Online">
