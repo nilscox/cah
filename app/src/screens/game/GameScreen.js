@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, Text } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
 import { Redirect } from 'react-router-native';
 
 import { fetchGame, fetchGameHistory } from '../../services/game-service';
@@ -8,6 +8,7 @@ import { emitter as websocket } from '../../services/websocket-service';
 import Loading from '../../components/Loading';
 import QuestionCard from '../../components/QuestionCard';
 
+import screen from '../screen.styles.js';
 import GameIdle from './GameIdle/GameIdle';
 import GameFinished from './GameFinished/GameFinished';
 import PlayersAnswer from './PlayersAnswer/PlayersAnswer';
@@ -23,6 +24,13 @@ state:
   - game
   - history
 */
+
+const styles = StyleSheet.create({
+  questionMaster: {
+    textAlign: 'center',
+    marginBottom: 15,
+  },
+});
 
 export default class GameScreen extends React.Component {
 
@@ -66,25 +74,54 @@ export default class GameScreen extends React.Component {
   render() {
     const { player } = this.props;
     const { game, history } = this.state;
+    let title = null;
+    let view = null;
 
     if (!game)
       return <Loading />;
 
-    if (game.state === 'idle')
-      return <GameIdle player={player} game={game} />;
+    if (game.state === 'idle') {
+      title = 'Game idle';
+      view = <GameIdle player={player} game={game} />;
+    }
 
-    if (game.state === 'finished')
-      return <GameFinished game={game} history={history} />;
+    if (game.state === 'finished') {
+      title = 'Game finished';
+      view = <GameFinished game={game} history={history} />;
+    }
 
-    if (game.playState === 'players_answer')
-      return <PlayersAnswer player={player} game={game} />;
+    if (game.playState === 'players_answer') {
+      title = 'Players answer';
+      view = <PlayersAnswer player={player} game={game} />;
+    }
 
-    if (game.playState === 'question_master_selection')
-      return <QuestionMasterSelection player={player} game={game} />;
+    if (game.playState === 'question_master_selection') {
+      title = 'Question Master selection';
+      view = <QuestionMasterSelection player={player} game={game} />;
+    }
 
-    if (game.playState === 'end_of_turn')
-      return <EndOfTurn player={player} game={game} />;
+    if (game.playState === 'end_of_turn') {
+      title = 'End of turn';
+      view = <EndOfTurn player={player} game={game} />;
+    }
 
-    return null;
+    return (
+      <View style={screen.view}>
+        { this.renderHeader(title, game.questionMaster) }
+        { view }
+      </View>
+    );
   }
+
+  renderHeader(title, questionMaster) {
+    return (
+      <View style={styles.header}>
+        <Text style={screen.title}>{ title }</Text>
+        { questionMaster && (
+          <Text style={styles.questionMaster}>Question Master : { questionMaster }</Text>
+        ) }
+      </View>
+    );
+  }
+
 }

@@ -20,10 +20,6 @@ state:
 */
 
 const styles = StyleSheet.create({
-  questionMaster: {
-    textAlign: 'center',
-    marginBottom: 15,
-  },
   question: {
     flex: 1,
   },
@@ -94,9 +90,6 @@ export default class PlayersAnswer extends React.Component {
 
     return (
       <View style={screen.view}>
-
-        <Text style={screen.title}>Players answer</Text>
-        <Text style={styles.questionMaster}>Question Master : { game.questionMaster }</Text>
 
         <TouchableOpacity
           style={{ flex: 1 }}

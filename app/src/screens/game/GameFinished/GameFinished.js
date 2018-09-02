@@ -60,13 +60,12 @@ export default class GameFinished extends React.Component {
     return (
       <View style={[screen.view, screen.viewPadding]}>
 
-        <Text style={screen.title}>Game #{game.id} finished</Text>
-        <Text style={styles.thankYou}>Thank you for playing!</Text>
-
         { /* -> game info */}
         { /* <AnswersList answers={history.map(turn => Object.assign({}, getTurnAnswer(turn)))} /> */ }
 
         <ScoreBoard scores={getScoresFromHistory(game, history)} />
+
+        <Text style={styles.thankYou}>Thank you for playing!</Text>
 
         <ButtonPosition
           position="bottom"
