@@ -38,7 +38,7 @@ const playersAdmin = game => {
   return Promise.all(game.getPlayers().map(p => playerFormatter.admin(p)));
 };
 
-const currentTurn = game => game.countTurns();
+const currentTurn = async game => await game.countTurns() + 1;
 
 const question = async game => {
   const question = await game.getCurrentQuestion();
