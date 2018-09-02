@@ -15,6 +15,10 @@ props:
 */
 
 const styles = StyleSheet.create({
+  questionMaster: {
+    textAlign: 'center',
+    marginBottom: 15,
+  },
   question: {
     paddingHorizontal: 10,
     paddingBottom: 30,
@@ -43,6 +47,7 @@ export default class EndOfTurn extends React.Component {
       <View style={screen.view}>
 
         <Text style={screen.title}>End of turn</Text>
+        <Text style={styles.questionMaster}>Question Master : { game.questionMaster }</Text>
 
         { game.question.type === 'question' && (
           <Text style={styles.question}>{ game.question.text }</Text>

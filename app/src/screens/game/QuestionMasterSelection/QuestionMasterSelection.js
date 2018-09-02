@@ -17,6 +17,10 @@ state:
 */
 
 const styles = StyleSheet.create({
+  questionMaster: {
+    textAlign: 'center',
+    marginBottom: 15,
+  },
   question: {
     paddingHorizontal: 10,
     paddingBottom: 30,
@@ -53,6 +57,7 @@ export default class QuestionMasterSelection extends React.Component {
       <View style={screen.view}>
 
         <Text style={screen.title}>Question master selection</Text>
+        <Text style={styles.questionMaster}>Question Master : { game.questionMaster }</Text>
 
         { game.question.type === 'question' && (
           <Text style={styles.question}>{ game.question.text }</Text>
