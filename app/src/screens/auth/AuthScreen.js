@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, TextInput } from 'react-native';
 import { Redirect } from 'react-router-native';
 
 import { createPlayer, login } from '../../services/auth-service';
 
+import Button, { ButtonsGroup } from '../../components/Button';
 import screen from '../screen.styles';
 
 
@@ -72,14 +73,10 @@ export default class AuthScreen extends React.Component {
           onSubmitEditing={() => this.login(nick)}
         />
 
-        <View style={screen.actions}>
-          <TouchableOpacity onPress={() => this.createPlayer(nick)}>
-            <Text>CREATE ACCOUNT</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => this.login(nick)}>
-            <Text style={styles.loginBtnText}>LOG IN</Text>
-          </TouchableOpacity>
-        </View>
+        <ButtonsGroup>
+          <Button title="create account" onPress={() => this.createPlayer(nick) } />
+          <Button primary title="log in" onPress={() => this.login(nick) } />
+        </ButtonsGroup>
 
       </View>
     );

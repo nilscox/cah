@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { StyleSheet, FlatList, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, FlatList, Text, View } from 'react-native';
 import { Redirect } from 'react-router-native';
 
 import { listGames, joinGame, createGame } from '../../services/game-service';
 
 import screen from '../screen.styles.js';
 import Loading from '../../components/Loading';
+import Button, { ButtonPosition } from '../../components/Button';
 import CreateGameModal from './CreateGameModal';
 
 
@@ -13,17 +14,12 @@ const styles = StyleSheet.create({
   gameItem: {
     flexDirection: 'row',
     justifyContent: 'flex-start',
+    alignItems: 'flex-end',
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderBottomWidth: 1,
     borderStyle: 'solid',
     borderColor: '#CCC',
-  },
-  joinBtn: {
-    marginLeft: 'auto',
-  },
-  createGameBtn: {
-    marginLeft: 'auto',
   },
 });
 
@@ -95,9 +91,13 @@ export default class LobbyScreen extends React.Component {
     return (
       <View style={styles.gameItem}>
         <Text>Game #{ game.id }</Text>
-        <TouchableOpacity style={styles.joinBtn} onPress={() => this.joinGame(game)}>
-          <Text>JOIN</Text>
-        </TouchableOpacity>
+        <ButtonPosition
+          primary
+          position="end"
+          title="join"
+          size="small"
+          onPress={() => this.joinGame(game)}
+        />
       </View>
     );
   }
@@ -106,9 +106,13 @@ export default class LobbyScreen extends React.Component {
     return (
       <View style={styles.gameItem}>
         <Text>New game...</Text>
-        <TouchableOpacity style={styles.joinBtn} onPress={() => this.setState({ createGameModal: true })}>
-          <Text>CREATE</Text>
-        </TouchableOpacity>
+        <ButtonPosition
+          primary
+          position="end"
+          title="create"
+          size="small"
+          onPress={() => this.setState({ createGameModal: true })}
+        />
       </View>
     );
   }

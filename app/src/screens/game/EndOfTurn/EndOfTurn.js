@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { StyleSheet, View, Text, FlatList, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, FlatList } from 'react-native';
 
 import { nextTurn } from '../../../services/game-service';
 
 import screen from '../../screen.styles.js';
 import AnswersList from '../../../components/AnswersList';
+import { ButtonPosition } from '../../../components/Button';
 
 
 /** EndOfTurn
@@ -18,12 +19,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingBottom: 30,
     fontSize: 18,
-  },
-  next: {
-    marginVertical: 20,
-  },
-  nextText: {
-    textAlign: 'center',
   },
 });
 
@@ -61,9 +56,13 @@ export default class EndOfTurn extends React.Component {
         />
 
         { canGoNext && (
-          <TouchableOpacity style={styles.next} onPress={() => this.nextTurn()}>
-            <Text style={styles.nextText}>NEXT</Text>
-          </TouchableOpacity>
+          <ButtonPosition
+            position="bottom"
+            background
+            primary
+            title="next"
+            onPress={() => this.nextTurn()}
+          />
         ) }
 
       </View>

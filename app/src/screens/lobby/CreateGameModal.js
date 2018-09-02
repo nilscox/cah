@@ -4,11 +4,11 @@ import {
   View,
   Modal,
   Text,
-  TouchableOpacity,
   Picker,
   TextInput
 } from 'react-native';
 
+import Button, { ButtonsGroup } from '../../components/Button';
 import screen from '../screen.styles.js';
 
 
@@ -31,9 +31,6 @@ const styles = StyleSheet.create({
   },
   langPicker: {
     flex: 1,
-  },
-  createBtnText: {
-    fontWeight: 'bold',
   },
 });
 
@@ -131,17 +128,14 @@ export default class CreateGameModale extends React.Component {
     const { lang, nbQuestions, cardsPerPlayer } = this.state;
 
     return (
-      <View style={screen.actions}>
-        <TouchableOpacity onPress={() => this.props.cancel()}>
-          <Text>CANCEL</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
+      <ButtonsGroup>
+        <Button title="cancel" onPress={() => this.props.cancel()} />
+        <Button
+          primary
+          title="create game"
           onPress={() => this.props.createGame(lang, ~~nbQuestions, ~~cardsPerPlayer)}
-        >
-          <Text style={styles.createBtnText}>CREATE GAME</Text>
-        </TouchableOpacity>
-      </View>
+        />
+      </ButtonsGroup>
     );
   }
 

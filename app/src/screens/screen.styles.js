@@ -12,9 +12,4 @@ export default StyleSheet.create({
     fontSize: 25,
     marginVertical: 30,
   },
-  actions: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    marginTop: 30,
-  },
 });
