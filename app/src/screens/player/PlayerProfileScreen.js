@@ -12,12 +12,12 @@ const API_URL = process.env.REACT_APP_API_URL;
 
 const styles = StyleSheet.create({
   avatar: {
-    width: 90,
+    width: 160,
     height: 90,
-    borderRadius: 45,
     borderWidth: 1,
     borderColor: '#CCC',
     alignSelf: 'center',
+    resizeMode: 'contain',
   },
   extra: {
     backgroundColor: '#EEE',

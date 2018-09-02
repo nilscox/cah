@@ -10,12 +10,12 @@ import screen from '../screen.styles';
 
 const styles = StyleSheet.create({
   avatar: {
-    width: 90,
+    width: 160,
     height: 90,
-    borderRadius: 45,
     borderWidth: 1,
     borderColor: '#CCC',
     alignSelf: 'center',
+    resizeMode: 'contain',
   },
   extraInput: {
     backgroundColor: '#EEE',
