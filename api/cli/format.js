@@ -50,6 +50,9 @@ module.exports.player = (p, opts) => {
   res += line(padded('avatar', p.avatar));
   res += line(padded('connected', p.connected));
 
+  if (p.extra)
+    res += line(padded('extra', p.extra));
+
   if (p.cards) {
     res += line();
     res += line('cards:');
@@ -87,6 +90,7 @@ module.exports.game = g => {
     res += line();
     res += line(padded('QM', g.questionMaster));
     res += line(padded('question', question(g.question)));
+    res += line(padded('current turn', g.playState));
 
     if (g.propositions) {
       res += line()

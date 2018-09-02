@@ -41,7 +41,14 @@ const nick = (value, opts) => {
 
 const avatar = value => {
   if (typeof value !== 'string')
-    throw new InvalidFieldTypeError('avatar');
+    throw new InvalidFieldTypeError('avatar', 'string');
+
+  return value;
+}
+
+const extra = value => {
+  if (value !== null && typeof value !== 'string')
+    throw new InvalidFieldTypeError('extra', 'string');
 
   return value;
 }
@@ -49,4 +56,5 @@ const avatar = value => {
 module.exports = validator({
   nick,
   avatar,
+  extra,
 });

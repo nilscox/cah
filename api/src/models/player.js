@@ -4,6 +4,7 @@ module.exports = (sequelize, DataTypes) => {
     nick: DataTypes.STRING,
     socket: DataTypes.STRING,
     avatar: DataTypes.STRING,
+    extra: DataTypes.STRING,
   }, {
     tableName: 'player',
   });

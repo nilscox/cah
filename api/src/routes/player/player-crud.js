@@ -43,7 +43,7 @@ router.post('/', {
       req => isNotPlayer(req.player),
     ],
   }],
-  validate: playerValidator.body({ avatar: { required: false } }),
+  validate: playerValidator.body({ avatar: { required: false }, extra: { required: false } }),
   format: format(true),
   after: (req, player) => events.emit('player create', player, req.validated),
 }, async ({ session, admin, validated }, res) => {

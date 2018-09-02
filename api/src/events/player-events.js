@@ -10,8 +10,12 @@ const on_event = async (type, player, { msgAdmin, msgPlayer, msgPlayers, ...args
     if (msgPlayer)
       websockets.send(player, type, await msgPlayer());
 
-    if (msgPlayers)
-      websockets.broadcast(await player.getGame(), type, await msgPlayers());
+    if (msgPlayers) {
+      const game = await player.getGame();
+
+      if (game)
+        websockets.broadcast(game, type, await msgPlayers());
+    }
 
     info(type, '#' + player.id + ' (' + player.nick + ')', args);
   } catch (e) {

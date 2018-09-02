@@ -4,6 +4,7 @@ const choiceFormatter = require('./choice-formatter');
 const id = player => player.get('id');
 const nick = player => player.get('nick');
 const avatar = player => player.get('avatar');
+const extra = player => player.get('extra');
 
 const gameId = player => player.get('gameId');
 
@@ -21,6 +22,7 @@ const connected = player => !!player.socket;
 const light = {
   nick,
   avatar,
+  extra,
   connected,
 };
 
