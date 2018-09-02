@@ -3,7 +3,9 @@ import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { Redirect } from 'react-router-native';
 
 import { leaveGame } from '../../../services/game-service';
+import { getScoresFromHistory } from '../../../services/math-service';
 
+import ScoreBoard from '../../../components/ScoreBoard';
 import screen from '../../screen.styles';
 
 
@@ -64,7 +66,10 @@ export default class GameFinished extends React.Component {
         <Text style={screen.title}>Game #{game.id} finished</Text>
         <Text style={styles.thankYou}>Thank you for playing!</Text>
 
-        <AnswersList answers={history.map(turn => Object.assign({}, getTurnAnswer(turn)))} />
+        { /* -> game info */}
+        { /* <AnswersList answers={history.map(turn => Object.assign({}, getTurnAnswer(turn)))} /> */ }
+
+        <ScoreBoard scores={getScoresFromHistory(game, history)} />
 
         <TouchableOpacity style={styles.backBtn} onPress={() => this.leaveGame()}>
           <Text>BACK</Text>

@@ -33,6 +33,10 @@ export const createWebSocket = () => {
       emitter.emit('game:update', e.game);
       break;
 
+    case 'GAME_TURN':
+      emitter.emit('game:turn', e.turn);
+      break;
+
     default:
       break;
     }
