@@ -59,14 +59,34 @@ export default class GameScreen extends React.Component {
       console.log(json);
 
 
+    websocket.on('player:update', this.handlePlayerChange);
     websocket.on('game:update', this.handleGameChange);
     websocket.on('game:turn', this.handleGameTurn);
   }
 
   componentWillUnmount() {
+    websocket.off('player:update', this.handlePlayerChange);
     websocket.off('game:update', this.handleGameChange);
     websocket.off('game:turn', this.handleGameTurn);
   }
+
+  handlePlayerChange = (player) => {
+    const { game } = this.state;
+    const players = game.players.slice();
+    const idx = players.findIndex(p => p.nick === player.nick);
+
+    if (idx < 0)
+      return;
+
+    players.splice(idx, 1, player);
+
+    this.setState({
+      game: {
+        ...game,
+        players,
+      },
+    });
+  };
 
   handleGameChange = (game) => {
     this.setState({ game });
@@ -79,11 +99,13 @@ export default class GameScreen extends React.Component {
   render() {
     const { player } = this.props;
     const { game, history } = this.state;
-    let title = null;
-    let view = null;
 
     if (!game)
       return <Loading />;
+
+    const displayTurnNumber = game.state === 'started';
+    let title = null;
+    let view = null;
 
     if (game.state === 'idle') {
       title = 'Game idle';
@@ -114,9 +136,11 @@ export default class GameScreen extends React.Component {
       <View style={screen.view}>
         { this.renderHeader(title, game.questionMaster) }
         { view }
-        <View style={styles.turnNumber}>
-          <Text>#{ game.currentTurn }</Text>
-        </View>
+        { displayTurnNumber && (
+          <View style={styles.turnNumber}>
+            <Text>#{ game.currentTurn }</Text>
+          </View>
+        ) }
       </View>
     );
   }
