@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { StyleSheet, View, FlatList, Text, TouchableOpacity } from 'react-native';
 
+import ChoiceCard from './ChoiceCard';
+
 
 const styles = StyleSheet.create({
   view: {
@@ -21,7 +23,7 @@ const styles = StyleSheet.create({
 const ChoiceItem = ({ choice, onPress }) => (
   <View style={styles.item}>
     <TouchableOpacity onPress={() => onPress(choice)}>
-      <Text style={[choice.selected && styles.selected]}>{ choice.text }</Text>
+      <ChoiceCard style={[choice.selected && styles.selected]} choice={choice} />
     </TouchableOpacity>
   </View>
 );

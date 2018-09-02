@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { View } from 'react-native';
+import { Text } from 'react-native';
 
 export default ChoiceCard = ({ style, choice }) => (
-  <View />
+  <Text style={style}>{ choice.text }</Text>
 );

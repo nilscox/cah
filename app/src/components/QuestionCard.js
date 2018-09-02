@@ -4,7 +4,7 @@ import { StyleSheet, View, WebView } from 'react-native';
 const styles = StyleSheet.create({
   view: {
     backgroundColor: '#333',
-    paddingHorizontal: 30,
+    paddingHorizontal: 20,
   },
   webview: {
     flex: 1,

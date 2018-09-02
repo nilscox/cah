@@ -1,105 +1,87 @@
 import * as React from 'react';
-import { StyleSheet, View, FlatList, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, FlatList, Text, TouchableWithoutFeedback } from 'react-native';
 
 import { questionLength } from '../services/math-service';
 import QuestionCard from './QuestionCard';
 
 
-const answerCssStyles = (question, choices) => {
-  const fontSize = len => {
-    if (len < 45) return 18;
-    else if (len < 120) return 14;
-    else return 12;
-  }
-
-  const lineHeight = len => {
-    if (len < 45) return 16;
-    else if (len < 120) return 16;
-    else return 10;
-  }
-
-  const len = questionLength(question, choices);
-
-  return {
-    textAlign: 'left',
-    fontSize: fontSize(len),
-    lineHeight: lineHeight(len),
-  };
-};
-
 const styles = StyleSheet.create({
-  item: {
-    height: 65,
-    flexDirection: 'row',
-    alignItems: 'center',
+  view: {
+    flex: 1,
+  },
+  answer: {
+    backgroundColor: '#333',
+    borderColor: '#666',
+    borderBottomWidth: 1,
+  },
+  answerWinner: {
+    borderWidth: 1,
+    borderColor: '#6C6',
   },
   answeredBy: {
-    width: 80,
     textAlign: 'center',
+    color: '#EEE',
   },
   answeredByWinner: {
     fontWeight: 'bold',
   },
-  answer: {
-    flex: 1,
-    paddingHorizontal: 10,
-    borderColor: '#999',
-    borderBottomWidth: 1,
-    justifyContent: 'center',
-    backgroundColor: '#333',
-  },
   answerText: {
     color: '#EEE',
     fontWeight: 'bold',
-    marginHorizontal: 10,
+    marginHorizontal: 20,
+    marginVertical: 10,
   },
 });
 
 const Answer = ({ question, answer }) => {
   if (question.type === 'question') {
-    return (
-      <View style={styles.answer}>
-        { answer.choices.map(c => (
-          <Text
-            key={c.id}
-            style={styles.answerText}
-          >
-            { c.text }
-          </Text>
-        )) }
-      </View>
-    );
+    return answer.choices.map(c => (
+      <Text
+        key={c.id}
+        style={styles.answerText}
+      >
+        { c.text }
+      </Text>
+    ));
   }
+
+  const ql = questionLength(question, answer.choices);
+  const questionStyles = {
+    height: ql > 160 ? 100 : 75,
+  };
+
+  const questionCssStyles = {
+    textAlign: 'left',
+    fontSize: ql < 60 ? 16 : 14,
+    lineHeight: ql < 60 ? 18 : 16,
+  };
 
   return (
     <QuestionCard
-      style={styles.answer}
+      style={questionStyles}
       question={question}
       choices={answer.choices}
-      cssStyles={answerCssStyles(question, answer.choices)}
+      cssStyles={questionCssStyles}
     />
   );
 }
 
 const AnswerItem = ({ question, answer, isWinner, onPress }) => (
-  <View style={styles.item}>
+  <TouchableWithoutFeedback onPress={() => onPress(answer)}>
+    <View style={[styles.answer, isWinner && styles.answerWinner]}>
 
-    { answer.answeredBy && (
-      <Text
-        style={[styles.answeredBy, isWinner && styles.answeredByWinner]}
-      >
-        { answer.answeredBy }
-      </Text>
-    )}
+    <Text style={[styles.answeredBy, isWinner && styles.answeredByWinner]}>
+      { answer.answeredBy || ' ' }
+    </Text>
 
-    <TouchableOpacity style={{ flex: 1 }} onPress={() => onPress(answer)}>
       <Answer question={question} answer={answer} />
-    </TouchableOpacity>
-  </View>
+
+    </View>
+  </TouchableWithoutFeedback>
 );
 
-export default AnswersList = ({ style, question, answers, winner, onAnswerPress }) => (
-  <View style={style}>
+export default AnswersList = ({ question, answers, winner, onAnswerPress }) => (
+  <View style={styles.view}>
     <FlatList
       data={answers}
       keyExtractor={c => '' + c.id}
@@ -107,7 +89,7 @@ export default AnswersList = ({ style, question, answers, winner, onAnswerPress 
         <AnswerItem
           question={question}
           answer={item}
-          isWinner={winner === item.answeredBy}
+          isWinner={winner && winner === item.answeredBy}
           onPress={onAnswerPress}
         />
       )}

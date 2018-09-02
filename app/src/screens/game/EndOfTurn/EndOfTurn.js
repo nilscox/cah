@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   next: {
-    marginTop: 40,
+    marginVertical: 20,
   },
   nextText: {
     textAlign: 'center',

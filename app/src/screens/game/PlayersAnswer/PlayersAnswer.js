@@ -2,6 +2,7 @@ import * as React from 'react';
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 
 import { submitAnswer } from '../../../services/game-service';
+import { questionLength } from '../../../services/math-service';
 
 import screen from '../../screen.styles.js';
 import QuestionCard from '../../../components/QuestionCard';
@@ -89,6 +90,8 @@ export default class PlayersAnswer extends React.Component {
     const canSelect = !submitted && game.questionMaster !== player.nick;
     const canSubmit = !submitted && selection.filter(s => !s).length === 0;
 
+    const ql = questionLength(game.question, selection);
+
     return (
       <View style={screen.viewFull}>
 
@@ -104,6 +107,10 @@ export default class PlayersAnswer extends React.Component {
             size="full"
             question={game.question}
             choices={selection}
+            cssStyles={{
+              fontSize: ql < 140 ? 18 : 16,
+              lineHeight: ql < 140 ? 26 : 18,
+            }}
           />
         </TouchableOpacity>
 
