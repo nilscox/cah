@@ -10,6 +10,7 @@ import LobbyScreen from './screens/lobby/LobbyScreen';
 import GameScreen from './screens/game/GameScreen';
 import CreateGameScreen from './screens/game/CreateGameScreen';
 import PlayerProfileScreen from './screens/player/PlayerProfileScreen';
+import PlayerProfileEditScreen from './screens/player/PlayerProfileEditScreen';
 
 import Loading from './components/Loading';
 
@@ -110,7 +111,8 @@ export default class App extends React.Component {
             <Route path="/lobby" component={LobbyScreen} />
             <Route path="/game/new" component={CreateGameScreen} />
             <Route path="/game/:id" render={props => <GameScreen player={player} {...props} />} />
-            <Route path="/player/:nick" component={PlayerProfileScreen} />
+            <Route path="/player" exact render={props => <PlayerProfileScreen player={player} {...props} />} />
+            <Route path="/player/edit" component={PlayerProfileEditScreen} />
             <Route render={() => <Text>404.</Text>} />
           </Switch>
         </BackButton>

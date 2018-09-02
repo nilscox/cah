@@ -8,3 +8,10 @@ export const fetchPlayer = (nick) => {
 export const fetchMe = () => {
   return request('/api/player/me');
 };
+
+export const updatePlayer = (nick, fields) => {
+  return request(`/api/player/${nick}`, {
+    method: 'PUT',
+    body: fields,
+  });
+};

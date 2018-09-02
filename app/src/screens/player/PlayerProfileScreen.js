@@ -4,6 +4,7 @@ import { StyleSheet, View, Text, Image } from 'react-native';
 import { fetchPlayer } from '../../services/player-service';
 import Loading from '../../components/Loading';
 import Form, { FormField } from '../../components/Form';
+import { ButtonPosition } from '../../components/Button';
 import screen from '../screen.styles';
 
 
@@ -23,61 +24,49 @@ const styles = StyleSheet.create({
     borderColor: '#CCC',
     borderWidth: 1,
     marginVertical: 15,
-    padding: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
   },
 });
 
-export default class PlayerProfileScreen extends React.Component {
+export default PlayerProfileScreen = ({ player: me, location, history }) => {
+  const { player } = location.state;
+  const avatar = player.avatar
+    ? { uri: API_URL + player.avatar }
+    : require('./default-avatar.png');
 
-  state = {
-    player: null,
-  };
+  return (
+    <View style={[screen.view, screen.viewPadding, styles.view]}>
 
-  async componentDidMount() {
-    const { match } = this.props;
-    const { res, json } = await fetchPlayer(match.params.nick);
+      <Text style={screen.title}>{ player.nick }</Text>
 
-    if (res.status === 200)
-      this.setState({ player: json });
-    else
-      console.log(json);
-  }
+      <Image style={styles.avatar} source={avatar} />
 
-  render() {
-    const { player } = this.state;
+      <Form>
+        <FormField label="Online">
+          <Text>{ player.connected ? 'yes' : 'no' }</Text>
+        </FormField>
 
-    if (!player)
-      return <Loading />;
+        <FormField label="In-game">
+          <Text>{ player.gameId ? 'yes' : 'no' }</Text>
+        </FormField>
+      </Form>
 
-    const avatar = player.avatar
-      ? { uri: API_URL + player.avatar }
-      : require('./default-avatar.png');
+      { player.extra !== null && (
+        <View style={styles.extra}>
+          <Text>{ player.extra }</Text>
+        </View>
+      ) }
 
-    return (
-      <View style={[screen.view, screen.viewPadding, styles.view]}>
+      { player.nick === me.nick && (
+        <ButtonPosition
+          position="bottom"
+          primary
+          title="edit"
+          onPress={() => history.push('/player/edit', { player })}
+        />
+      ) }
 
-        <Text style={screen.title}>{ player.nick }</Text>
-
-        <Image style={styles.avatar} source={avatar} />
-
-        <Form>
-          <FormField label="Online">
-            <Text>{ player.connected ? 'yes' : 'no' }</Text>
-          </FormField>
-
-          <FormField label="In-game">
-            <Text>{ player.gameId ? 'yes' : 'no' }</Text>
-          </FormField>
-        </Form>
-
-        { player.extra && (
-          <View style={styles.extra}>
-            <Text>{ player.extra }</Text>
-          </View>
-        ) }
-
-      </View>
-    );
-  }
-
-}
+    </View>
+  );
+};

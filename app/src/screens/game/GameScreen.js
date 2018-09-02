@@ -73,7 +73,7 @@ const GameActions = ({ player, go }) => (
 
       <View style={styles.action}>
         <IconButton
-          onPress={() => go(`/player/${player.nick}`)}
+          onPress={() => go('/player', { player })}
           type="profile"
           size="medium"
           style={styles.profileIcon}
