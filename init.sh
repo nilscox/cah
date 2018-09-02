@@ -32,17 +32,11 @@ export CAH_API_ADMIN_TOKEN
 
 export CAH_DATA_PATH
 export CAH_MEDIA_PATH
-export CAH_AVATARS_PATH
+export CAH_MEDIA_ROOT
 
 export REACT_APP_API_URL="$API_URL"
 export REACT_APP_WEBSOCKET_URL="$API_WS_URL"
 export REACT_APP_API_ADMIN_TOKEN="$CAH_API_ADMIN_TOKEN"
-
-if [ -n "$CAH_MEDIA_PATH" ]; then
-  mkdir -p "$CAH_MEDIA_PATH"
-  mkdir -p "/tmp/avatars"
-  ln -sf "/tmp/avatars" "$CAH_AVATARS_PATH"
-fi
 
 export CAH_SESSION="default"
 

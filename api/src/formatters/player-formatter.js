@@ -1,9 +1,11 @@
+const { mediaPath } = require('../utils');
 const formatter = require('./formatter');
 const choiceFormatter = require('./choice-formatter');
 
+
 const id = player => player.get('id');
 const nick = player => player.get('nick');
-const avatar = player => player.get('avatar');
+const avatar = player => player.get('avatar') ? mediaPath(player.get('avatar')) : null;
 const extra = player => player.get('extra');
 
 const gameId = player => player.get('gameId');

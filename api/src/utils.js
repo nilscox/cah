@@ -15,6 +15,12 @@ const getEnv = (key, defaultValue) => {
   finally { process.exit(1) }
 };
 
+const mediaPath = (file) => {
+  const MEDIA_ROOT = getEnv('CAH_MEDIA_ROOT');
+
+  return path.join(MEDIA_ROOT, file);
+}
+
 const log = (level, tag, ...message) => {
   const match = new Date().toISOString().match(/^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2}).\d+Z$/);
   const now = `${match[1]} ${match[2]}`
@@ -31,6 +37,7 @@ const log = (level, tag, ...message) => {
 
 module.exports = {
   getEnv,
+  mediaPath,
   log: log.bind(null, 'LOG'),
   info: log.bind(null, 'INF'),
   error: log.bind(null, 'ERR'),

@@ -14,6 +14,9 @@ const routes = require('./routes');
 const events = require('./events');
 const websockets = require('./websockets');
 
+const MEDIA_PATH = getEnv('CAH_MEDIA_PATH');
+const MEDIA_ROOT = getEnv('CAH_MEDIA_ROOT');
+
 const app = express();
 const server = http.Server(app);
 const session = sessionMiddleware({
@@ -31,6 +34,8 @@ app.use(bodyParser.json());
 app.use(session);
 
 websockets(server, session, events);
+
+app.use(MEDIA_ROOT, express.static(MEDIA_PATH))
 
 app.use((req, res, next) => {
   // TODO: fix this evil trick
