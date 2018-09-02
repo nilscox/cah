@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
 import { Redirect } from 'react-router-native';
 
 import { leaveGame } from '../../../services/game-service';
 import { getScoresFromHistory } from '../../../services/math-service';
 
+import Button from '../../../components/Button';
 import ScoreBoard from '../../../components/ScoreBoard';
 import screen from '../../screen.styles';
 
@@ -24,8 +25,12 @@ const styles = StyleSheet.create({
     color: '#999',
     marginVertical: 30,
   },
+  backBtnContainer: {
+    flex: 1,
+    marginVertical: 15,
+    justifyContent: 'flex-end',
+  },
   backBtn: {
-    marginVertical: 10,
     alignItems: 'center',
   },
 });
@@ -71,9 +76,9 @@ export default class GameFinished extends React.Component {
 
         <ScoreBoard scores={getScoresFromHistory(game, history)} />
 
-        <TouchableOpacity style={styles.backBtn} onPress={() => this.leaveGame()}>
-          <Text>BACK</Text>
-        </TouchableOpacity>
+        <View style={styles.backBtnContainer}>
+          <Button style={styles.backBtn} onPress={() => this.leaveGame()}>back</Button>
+        </View>
 
       </View>
     );
