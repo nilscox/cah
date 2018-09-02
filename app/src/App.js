@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { AppState, Alert, Text } from 'react-native';
-import { NativeRouter, Switch, Route, Redirect } from 'react-router-native';
+import { AppState, BackHandler, Alert, Text } from 'react-native';
+import { NativeRouter, Switch, Route, Redirect, BackButton } from 'react-router-native';
 
 import { fetchMe } from './services/player-service';
 import { createWebSocket, emitter as websocket } from './services/websocket-service';
@@ -28,23 +28,29 @@ export default class App extends React.Component {
   }
 
   componentDidMount() {
-    AppState.addEventListener('change', this.handleAppStateChange.bind(this));
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
+    AppState.addEventListener('change', this.handleAppStateChange);
     websocket.on('player:update', this.handlePlayerChange);
   }
 
   componentWillUnmount() {
-    AppState.removeEventListener('change', this.handleAppStateChange.bind(this));
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackPress);
+    AppState.removeEventListener('change', this.handleAppStateChange);
     websocket.off('player:update', this.handlePlayerChange);
   }
 
-  handleAppStateChange(nextAppState) {
+  handleBackPress() {
+    // TODO: press twice to quit
+  }
+
+  handleAppStateChange = (nextAppState) => {
     if (nextAppState === 'active')
       this.init();
     else {
       if (this.socket)
         this.socket.disconnect();
     }
-  }
+  };
 
   handlePlayerChange = (p) => {
     const { player } = this.state;
@@ -52,6 +58,11 @@ export default class App extends React.Component {
     if (player && player.nick === p.nick)
       this.setState({ player: p });
   };
+
+  setState() {
+    console.log('setState', arguments);
+    super.setState(...arguments);
+  }
 
   async init() {
     this.setState({ loading: true });
@@ -92,15 +103,17 @@ export default class App extends React.Component {
 
     return (
       <NativeRouter>
-        <Switch>
-          <Route path="/" exact render={() => <Redirect to={getRouteAfterLoading()} />} />
-          <Route path="/auth" render={(props) => <AuthScreen setPlayer={this.setPlayer.bind(this)} {...props} />} />
-          <Route path="/lobby" component={LobbyScreen} />
-          <Route path="/game/new" component={CreateGameScreen} />
-          <Route path="/game/:id" render={props => <GameScreen player={player} {...props} />} />
-          <Route path="/player/:nick" component={PlayerProfileScreen} />
-          <Route render={() => <Text>404.</Text>} />
-        </Switch>
+        <BackButton>
+          <Switch>
+            <Route path="/" exact render={() => <Redirect to={getRouteAfterLoading()} />} />
+            <Route path="/auth" render={(props) => <AuthScreen setPlayer={this.setPlayer.bind(this)} {...props} />} />
+            <Route path="/lobby" component={LobbyScreen} />
+            <Route path="/game/new" component={CreateGameScreen} />
+            <Route path="/game/:id" render={props => <GameScreen player={player} {...props} />} />
+            <Route path="/player/:nick" component={PlayerProfileScreen} />
+            <Route render={() => <Text>404.</Text>} />
+          </Switch>
+        </BackButton>
       </NativeRouter>
     );
   }
