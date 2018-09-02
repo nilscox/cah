@@ -52,7 +52,7 @@ export default class GameScreen extends React.Component {
 
   componentWillUnmount() {
     websocket.off('game:update', this.handleGameChange);
-    websocket.on('game:turn', this.handleGameTurn);
+    websocket.off('game:turn', this.handleGameTurn);
   }
 
   handleGameChange = (game) => {
@@ -60,7 +60,7 @@ export default class GameScreen extends React.Component {
   };
 
   handleGameTurn = (turn) => {
-    this.setState({ turns: [...this.state.turns, turn] });
+    this.setState({ history: [...this.state.history, turn] });
   };
 
   render() {
