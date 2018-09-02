@@ -18,6 +18,8 @@ async function join(game, player) {
 }
 
 async function leave(game, player) {
+  await player.removeCards(await player.getCards());
+
   return await game.removePlayer(player);
 }
 
