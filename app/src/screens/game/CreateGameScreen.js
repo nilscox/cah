@@ -8,6 +8,8 @@ import {
   TextInput
 } from 'react-native';
 
+import { createGame } from '../../services/game-service';
+
 import Button, { ButtonsGroup } from '../../components/Button';
 import screen from '../screen.styles.js';
 
@@ -34,7 +36,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default class CreateGameModale extends React.Component {
+export default class CreateGameScreen extends React.Component {
 
   state = {
     lang: 'fr',
@@ -42,28 +44,27 @@ export default class CreateGameModale extends React.Component {
     cardsPerPlayer: 4,
   };
 
+  async createGame(lang, nbQuestions, cardsPerPlayer) {
+    const { res, json } = await createGame(lang, nbQuestions, cardsPerPlayer);
+
+    if (res.status === 201)
+      this.props.history.replace(`/game/${json.id}`);
+    else
+      console.log(json);
+  }
+
   render() {
-    const { visible, createGame, cancel } = this.props;
-
     return (
-      <Modal
-        animationType="fade"
-        transparent={false}
-        visible={visible}
-        onRequestClose={() => {
-          alert('Modal has been closed.');
-        }}>
-        <View style={[screen.view, screen.viewPadding]}>
+      <View style={[screen.view, screen.viewPadding]}>
 
-          <Text style={screen.title}>Create a game</Text>
+        <Text style={screen.title}>Create a game</Text>
 
-          {this.renderLangPicker()}
-          {this.renderNbQuestionsInput()}
-          {this.renderCardsPerPlayerInput()}
-          {this.renderActions()}
+        {this.renderLangPicker()}
+        {this.renderNbQuestionsInput()}
+        {this.renderCardsPerPlayerInput()}
+        {this.renderActions()}
 
-        </View>
-      </Modal>
+      </View>
     );
   }
 
@@ -129,11 +130,11 @@ export default class CreateGameModale extends React.Component {
 
     return (
       <ButtonsGroup>
-        <Button title="cancel" onPress={() => this.props.cancel()} />
+        <Button title="cancel" onPress={() => this.props.history.goBack()} />
         <Button
           primary
           title="create game"
-          onPress={() => this.props.createGame(lang, ~~nbQuestions, ~~cardsPerPlayer)}
+          onPress={() => this.createGame(lang, ~~nbQuestions, ~~cardsPerPlayer)}
         />
       </ButtonsGroup>
     );

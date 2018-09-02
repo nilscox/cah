@@ -7,7 +7,7 @@ import { emitter as websocket } from '../../services/websocket-service';
 
 import Loading from '../../components/Loading';
 import QuestionCard from '../../components/QuestionCard';
-import Icon from '../../components/Icon';
+import { IconButton } from '../../components/Icon';
 
 import screen from '../screen.styles.js';
 import GameIdle from './GameIdle/GameIdle';
@@ -55,23 +55,38 @@ const styles = StyleSheet.create({
   },
 });
 
-const Actions = ({  }) => (
+const GameActions = ({ player, go }) => (
   <View style={styles.actions}>
 
     <View style={styles.actionsLeft}>
       <View style={styles.action}>
-        <Icon type="info" size="medium" style={styles.settingsIcon} />
+        <IconButton
+          onPress={() => {}}
+          type="info"
+          size="medium"
+          style={styles.settingsIcon}
+        />
       </View>
     </View>
 
     <View style={styles.actionsRight}>
 
       <View style={styles.action}>
-        <Icon type="profile" size="medium" style={styles.profileIcon} />
+        <IconButton
+          onPress={() => go(`/player/${player.nick}`)}
+          type="profile"
+          size="medium"
+          style={styles.profileIcon}
+        />
       </View>
 
       <View style={styles.action}>
-        <Icon type="settings" size="medium" style={styles.settingsIcon} />
+        <IconButton
+          onPress={() => {}}
+          type="settings"
+          size="medium"
+          style={styles.settingsIcon}
+        />
       </View>
 
     </View>
@@ -176,14 +191,19 @@ export default class GameScreen extends React.Component {
 
     return (
       <View style={screen.view}>
+
         { this.renderTop(title, game.questionMaster) }
+
         { view }
-        <Actions />
+
+        <GameActions player={this.props.player} go={this.props.history.push} />
+
         { displayTurnNumber && (
           <View style={styles.turnNumber}>
             <Text>#{ game.currentTurn }</Text>
           </View>
         ) }
+
       </View>
     );
   }

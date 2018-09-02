@@ -22,7 +22,6 @@ const styles = StyleSheet.create({
 export default class AuthScreen extends React.Component {
 
   state = {
-    player: null,
     nick: '',
   };
 
@@ -33,10 +32,8 @@ export default class AuthScreen extends React.Component {
 
     const { res, json } = await login(nick.trim());
 
-    if (res.status === 200) {
-      this.props.setPlayer(json);
-      this.setState({ player: json });
-    }
+    if (res.status === 200)
+      this.props.setPlayer(json, () => this.redirect(json));
     else
       console.log(json);
   }
@@ -47,19 +44,22 @@ export default class AuthScreen extends React.Component {
 
     const { res, json } = await createPlayer(nick.trim());
 
-    if (res.status === 201) {
-      this.props.setPlayer(json);
-      this.setState({ player: json });
-    }
+    if (res.status === 201)
+      this.props.setPlayer(json, () => this.redirect(json));
     else
       console.log(json);
   }
 
-  render() {
-    const { player, nick } = this.state;
+  redirect(player) {
+    const { history } = this.props;
+    const location = player.gameId ? '/game/' + player.gameId : '/lobby';
+    console.log('redirect', location);
 
-    if (player)
-      return <Redirect to={ player.gameId ? '/game/' + player.gameId : '/lobby' } />;
+    history.replace(location);
+  }
+
+  render() {
+    const { nick } = this.state;
 
     return (
       <View style={[screen.view, screen.viewPadding]}>

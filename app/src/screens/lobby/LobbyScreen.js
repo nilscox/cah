@@ -1,13 +1,11 @@
 import * as React from 'react';
 import { StyleSheet, FlatList, Text, View } from 'react-native';
-import { Redirect } from 'react-router-native';
 
-import { listGames, joinGame, createGame } from '../../services/game-service';
+import { listGames, joinGame } from '../../services/game-service';
 
 import screen from '../screen.styles.js';
 import Loading from '../../components/Loading';
 import Button, { ButtonPosition } from '../../components/Button';
-import CreateGameModal from './CreateGameModal';
 
 
 const styles = StyleSheet.create({
@@ -28,7 +26,7 @@ export default class LobbyScreen extends React.Component {
   state = {
     games: null,
     currentGame: null,
-    createGameModal: false,
+    createGame: false,
   };
 
   async componentDidMount() {
@@ -41,31 +39,20 @@ export default class LobbyScreen extends React.Component {
   }
 
   async joinGame(game) {
+    const { history } = this.props;
     const { res, json } = await joinGame(game.id);
 
     if (res.status === 200)
-      this.setState({ currentGame: json });
-    else
-      console.log(json);
-  }
-
-  async createGame(lang, nbQuestions, cardsPerPlayer) {
-    const { res, json } = await createGame(lang, nbQuestions, cardsPerPlayer);
-
-    if (res.status === 201)
-      this.setState({ currentGame: json, createGameModal: false });
+      history.push(`/game/${json.id}`);
     else
       console.log(json);
   }
 
   render() {
-    const { games, currentGame, createGameModal } = this.state;
+    const { games } = this.state;
 
     if (!games)
       return <Loading />
-
-    if (currentGame)
-      return <Redirect to={`/game/${currentGame.id}`} />
 
     return (
       <View style={[screen.view, screen.viewPadding]}>
@@ -74,11 +61,6 @@ export default class LobbyScreen extends React.Component {
           data={[...games, null]}
           keyExtractor={g => g ? '' + g.id : 'create'}
           renderItem={({ item }) => this.renderGameItem(item)}
-        />
-        <CreateGameModal
-          visible={createGameModal}
-          createGame={this.createGame.bind(this)}
-          cancel={() => this.setState({ createGameModal: false })}
         />
       </View>
     );
@@ -103,6 +85,8 @@ export default class LobbyScreen extends React.Component {
   }
 
   renderCreateGameItem() {
+    const { history } = this.props;
+
     return (
       <View style={styles.gameItem}>
         <Text>New game...</Text>
@@ -111,7 +95,7 @@ export default class LobbyScreen extends React.Component {
           position="end"
           title="create"
           size="small"
-          onPress={() => this.setState({ createGameModal: true })}
+          onPress={() => history.push('/game/new')}
         />
       </View>
     );

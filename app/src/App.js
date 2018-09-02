@@ -8,6 +8,8 @@ import { createWebSocket, emitter as websocket } from './services/websocket-serv
 import AuthScreen from './screens/auth/AuthScreen';
 import LobbyScreen from './screens/lobby/LobbyScreen';
 import GameScreen from './screens/game/GameScreen';
+import CreateGameScreen from './screens/game/CreateGameScreen';
+import PlayerProfileScreen from './screens/player/PlayerProfileScreen';
 
 import Loading from './components/Loading';
 
@@ -65,9 +67,12 @@ export default class App extends React.Component {
     this.setState({ loading: false });
   }
 
-  setPlayer(player) {
-    this.setState({ player });
-    this.socket = createWebSocket();
+  setPlayer(player, cb) {
+    this.setState({ player }, () => {
+      this.socket = createWebSocket();
+      console.log(cb);
+      cb && cb();
+    });
   }
 
   render() {
@@ -89,9 +94,11 @@ export default class App extends React.Component {
       <NativeRouter>
         <Switch>
           <Route path="/" exact render={() => <Redirect to={getRouteAfterLoading()} />} />
-          <Route path="/auth" render={() => <AuthScreen setPlayer={player => this.setPlayer(player)} />} />
+          <Route path="/auth" render={(props) => <AuthScreen setPlayer={this.setPlayer.bind(this)} {...props} />} />
           <Route path="/lobby" component={LobbyScreen} />
+          <Route path="/game/new" component={CreateGameScreen} />
           <Route path="/game/:id" render={props => <GameScreen player={player} {...props} />} />
+          <Route path="/player/:nick" component={PlayerProfileScreen} />
           <Route render={() => <Text>404.</Text>} />
         </Switch>
       </NativeRouter>
