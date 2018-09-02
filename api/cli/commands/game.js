@@ -158,7 +158,9 @@ module.exports.select = {
   handle: async (args) => {
     const game = await getGame();
 
-    const answer = game.propositions[~~args.additional[0] - 1];
+    const answer = game.propositions
+      ? game.propositions[~~args.additional[0] - 1]
+      : null;
 
     const data = {};
 
