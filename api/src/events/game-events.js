@@ -84,7 +84,7 @@ module.exports.on_select = (game, data) => on_event('GAME_SELECT', game, {
 });
 
 module.exports.on_next = async (game) => {
-  const turn = (await game.getTurns({ orderBy: 'createdAt', limit: 1 }))[0];
+  const turn = (await game.getTurns({ orderBy: ['createdAt', 'DESC'], limit: 1 }))[0];
 
   on_event('GAME_TURN', game, {
     msgAdmin: async () => ({ gameId: game.id, turn: await gameTurnFormatter.admin(turn) }),
