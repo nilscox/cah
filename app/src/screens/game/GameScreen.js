@@ -7,6 +7,7 @@ import { emitter as websocket } from '../../services/websocket-service';
 
 import Loading from '../../components/Loading';
 import QuestionCard from '../../components/QuestionCard';
+import Icon from '../../components/Icon';
 
 import screen from '../screen.styles.js';
 import GameIdle from './GameIdle/GameIdle';
@@ -35,7 +36,48 @@ const styles = StyleSheet.create({
     top: 5,
     left: 5,
   },
+  actions: {
+    flexDirection: 'row',
+    padding: 10,
+  },
+  actionsLeft: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+  },
+  actionsRight: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+  },
+  action: {
+    marginHorizontal: 10,
+  },
 });
+
+const Actions = ({  }) => (
+  <View style={styles.actions}>
+
+    <View style={styles.actionsLeft}>
+      <View style={styles.action}>
+        <Icon type="info" size="medium" style={styles.settingsIcon} />
+      </View>
+    </View>
+
+    <View style={styles.actionsRight}>
+
+      <View style={styles.action}>
+        <Icon type="profile" size="medium" style={styles.profileIcon} />
+      </View>
+
+      <View style={styles.action}>
+        <Icon type="settings" size="medium" style={styles.settingsIcon} />
+      </View>
+
+    </View>
+
+  </View>
+);
 
 export default class GameScreen extends React.Component {
 
@@ -134,8 +176,9 @@ export default class GameScreen extends React.Component {
 
     return (
       <View style={screen.view}>
-        { this.renderHeader(title, game.questionMaster) }
+        { this.renderTop(title, game.questionMaster) }
         { view }
+        <Actions />
         { displayTurnNumber && (
           <View style={styles.turnNumber}>
             <Text>#{ game.currentTurn }</Text>
@@ -145,13 +188,16 @@ export default class GameScreen extends React.Component {
     );
   }
 
-  renderHeader(title, questionMaster) {
+  renderTop(title, questionMaster) {
     return (
-      <View style={styles.header}>
+      <View style={styles.top}>
+
         <Text style={screen.title}>{ title }</Text>
+
         { questionMaster && (
           <Text style={styles.questionMaster}>Question Master : { questionMaster }</Text>
         ) }
+
       </View>
     );
   }
