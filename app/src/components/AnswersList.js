@@ -5,6 +5,14 @@ import { questionLength } from '../services/math-service';
 import QuestionCard from './QuestionCard';
 
 
+/** AnswersList
+props:
+  - question
+  - answers
+  - winner
+  - onAnswerPress
+*/
+
 const styles = StyleSheet.create({
   view: {
     flex: 1,
@@ -84,10 +92,10 @@ export default AnswersList = ({ question, answers, winner, onAnswerPress }) => (
   <View style={styles.view}>
     <FlatList
       data={answers}
-      keyExtractor={c => '' + c.id}
+      keyExtractor={a => '' + a.id}
       renderItem={({ item }) => (
         <AnswerItem
-          question={question}
+          question={item.question || question}
           answer={item}
           isWinner={winner && winner === item.answeredBy}
           onPress={onAnswerPress}

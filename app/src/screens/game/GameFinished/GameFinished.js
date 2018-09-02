@@ -23,6 +23,7 @@ const styles = StyleSheet.create({
     marginVertical: 30,
   },
   backBtn: {
+    marginVertical: 10,
     alignItems: 'center',
   },
 });
@@ -46,14 +47,24 @@ export default class GameFinished extends React.Component {
   render() {
     const { game, history } = this.props;
 
+    const getTurnAnswer = turn => {
+      const answer = turn.answers.find(a => a.answeredBy === turn.winner);
+
+      answer.question = turn.question;
+
+      return answer;
+    };
+
     if (this.state.back)
       return <Redirect to="/lobby" />;
 
     return (
-      <View style={screen.view}>
+      <View style={screen.viewFull}>
 
         <Text style={screen.title}>Game #{game.id} finished</Text>
         <Text style={styles.thankYou}>Thank you for playing!</Text>
+
+        <AnswersList answers={history.map(turn => Object.assign({}, getTurnAnswer(turn)))} />
 
         <TouchableOpacity style={styles.backBtn} onPress={() => this.leaveGame()}>
           <Text>BACK</Text>
