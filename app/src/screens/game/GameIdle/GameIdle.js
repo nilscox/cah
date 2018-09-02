@@ -37,7 +37,6 @@ export default class GameIdle extends React.Component {
 
     return (
       <View style={[screen.view, screen.viewPadding]}>
-        <Text style={screen.title}>Game #{game.id}</Text>
         <Text>Players: { game.players.map(p => p.nick).join(', ') }</Text>
         { player.nick === game.owner
           ? this.renderStartButton()

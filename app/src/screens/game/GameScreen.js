@@ -30,6 +30,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 15,
   },
+  turnNumber: {
+    position: 'absolute',
+    top: 5,
+    left: 5,
+  },
 });
 
 export default class GameScreen extends React.Component {
@@ -109,6 +114,9 @@ export default class GameScreen extends React.Component {
       <View style={screen.view}>
         { this.renderHeader(title, game.questionMaster) }
         { view }
+        <View style={styles.turnNumber}>
+          <Text>#{ game.currentTurn }</Text>
+        </View>
       </View>
     );
   }
