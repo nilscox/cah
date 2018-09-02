@@ -62,7 +62,7 @@ export default class AuthScreen extends React.Component {
       return <Redirect to={ player.gameId ? '/game/' + player.gameId : '/lobby' } />;
 
     return (
-      <View style={screen.view}>
+      <View style={[screen.view, screen.viewPadding]}>
         <Text style={screen.title}>Log in</Text>
 
         <TextInput

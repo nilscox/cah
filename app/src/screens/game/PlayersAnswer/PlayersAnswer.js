@@ -93,7 +93,7 @@ export default class PlayersAnswer extends React.Component {
     const ql = questionLength(game.question, selection);
 
     return (
-      <View style={screen.viewFull}>
+      <View style={screen.view}>
 
         <Text style={screen.title}>Players answer</Text>
         <Text style={styles.questionMaster}>Question Master : { game.questionMaster }</Text>

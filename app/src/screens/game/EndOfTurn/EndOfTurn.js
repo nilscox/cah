@@ -40,7 +40,7 @@ export default class EndOfTurn extends React.Component {
     const canGoNext = game.questionMaster === player.nick;
 
     return (
-      <View style={screen.viewFull}>
+      <View style={screen.view}>
 
         <Text style={screen.title}>End of turn</Text>
 

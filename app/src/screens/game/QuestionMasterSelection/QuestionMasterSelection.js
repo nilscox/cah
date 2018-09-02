@@ -50,7 +50,7 @@ export default class QuestionMasterSelection extends React.Component {
     const canSelect = !selected && game.questionMaster === player.nick;
 
     return (
-      <View style={screen.viewFull}>
+      <View style={screen.view}>
 
         <Text style={screen.title}>Question master selection</Text>
 

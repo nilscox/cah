@@ -58,7 +58,7 @@ export default class GameFinished extends React.Component {
       return <Redirect to="/lobby" />;
 
     return (
-      <View style={screen.viewFull}>
+      <View style={[screen.view, screen.viewPadding]}>
 
         <Text style={screen.title}>Game #{game.id} finished</Text>
         <Text style={styles.thankYou}>Thank you for playing!</Text>

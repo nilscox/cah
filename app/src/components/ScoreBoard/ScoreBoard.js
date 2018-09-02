@@ -8,9 +8,7 @@ props:
 */
 
 const styles = StyleSheet.create({
-  scoreBoard: {
-    paddingHorizontal: 10,
-  },
+  scoreBoard: {},
   boardItem: {
     flexDirection: 'row',
     marginVertical: 5,

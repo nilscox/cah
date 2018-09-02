@@ -53,7 +53,7 @@ export default class CreateGameModale extends React.Component {
         onRequestClose={() => {
           alert('Modal has been closed.');
         }}>
-        <View style={screen.view}>
+        <View style={[screen.view, screen.viewPadding]}>
 
           <Text style={screen.title}>Create a game</Text>
 

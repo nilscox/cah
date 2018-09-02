@@ -68,7 +68,7 @@ export default class LobbyScreen extends React.Component {
       return <Redirect to={`/game/${currentGame.id}`} />
 
     return (
-      <View style={screen.view}>
+      <View style={[screen.view, screen.viewPadding]}>
         <Text style={screen.title}>Join a game</Text>
         <FlatList
           data={[...games, null]}

@@ -36,7 +36,7 @@ export default class GameIdle extends React.Component {
     const { player, game } = this.props;
 
     return (
-      <View style={[screen.view, screen.viewFull]}>
+      <View style={[screen.view, screen.viewPadding]}>
         <Text style={screen.title}>Game #{game.id}</Text>
         <Text>Players: { game.players.map(p => p.nick).join(', ') }</Text>
         { player.nick === game.owner
@@ -50,7 +50,7 @@ export default class GameIdle extends React.Component {
   renderStartButton() {
     return (
       <ButtonPosition
-        position="bottom"
+        position="top"
         background
         primary
         title="start"

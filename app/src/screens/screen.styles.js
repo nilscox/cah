@@ -2,10 +2,10 @@ import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
   view: {
-    paddingHorizontal: 30,
-  },
-  viewFull: {
     flex: 1,
+  },
+  viewPadding: {
+    paddingHorizontal: 30,
   },
   title: {
     textAlign: 'center',
