@@ -23,12 +23,16 @@ const connected = player => !!player.socket;
 
 const submitted = async player => {
   const game = await player.getGame();
-  const answer = (await game.getPropositions({ playerId: player.id }))[0];
 
-  if (!answer)
+  if (!game)
     return;
 
-  return await answerFormatter.full(answer);
+  const answers = await game.getPropositions({ playerId: player.id });
+
+  if (!answers || !answers.length)
+    return;
+
+  return await answerFormatter.full(answers[0]);
 }
 
 const light = {
