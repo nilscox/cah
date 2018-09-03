@@ -127,6 +127,9 @@ module.exports.answer = {
     const player = await getPlayer();
     const game = await getGame();
 
+    if (!player.cards)
+      player.cards = [];
+
     const cards = args.additional
       .map(i => player.cards[~~i - 1])
       .filter(c => !!c);
