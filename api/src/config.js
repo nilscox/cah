@@ -30,9 +30,9 @@ const config = {
   listenPort: parseInt(getEnv('CAH_API_PORT', '4242')),
   adminToken: getEnv('CAH_API_ADMIN_TOKEN'),
   log: {
-    request: getEnv('CAH_API_LOG_REQUEST'),
-    database: getEnv('CAH_API_LOG_DATABASE'),
-    server: getEnv('CAH_API_LOG_SERVER'),
+    request: getEnv('CAH_API_LOG_REQUEST', null),
+    database: getEnv('CAH_API_LOG_DATABASE', null),
+    server: getEnv('CAH_API_LOG_SERVER', null),
   },
 };
 

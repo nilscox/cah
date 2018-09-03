@@ -5,10 +5,6 @@ const config = require('./config');
 
 const { combine, timestamp, printf } = format;
 
-fs.ensureDirSync(path.dirname(config.log.server));
-fs.ensureDirSync(path.dirname(config.log.database));
-fs.ensureDirSync(path.dirname(config.log.request));
-
 const ignoreTestEnv = format((info) => {
   if (config.env === 'test')
     return false;
@@ -21,7 +17,6 @@ const server = module.exports = createLogger({
   level: 'debug',
   transports: [
     new transports.Console(),
-    new transports.File({ filename: config.log.server, level: 'info' }),
   ],
   format: combine(
     ignoreTestEnv(),
@@ -33,11 +28,13 @@ const server = module.exports = createLogger({
   ),
 });
 
+if (config.log.server) {
+  fs.ensureDirSync(path.dirname(config.log.server));
+  server.add(new transports.File({ filename: config.log.server, level: 'info' }));
+}
+
 // eslint-disable-next-line no-unused-vars
 const database = module.exports.database = createLogger({
-  transports: [
-    new transports.File({ filename: config.log.database }),
-  ],
   format: format.combine(
     ignoreTestEnv(),
     format.splat(),
@@ -45,16 +42,23 @@ const database = module.exports.database = createLogger({
   ),
 });
 
+if (config.log.database) {
+  fs.ensureDirSync(path.dirname(config.log.database));
+  database.add(new transports.File({ filename: config.log.database, level: 'info' }));
+}
+
 const request = module.exports.request = createLogger({
-  transports: [
-    new transports.File({ filename: config.log.request }),
-  ],
   format: format.combine(
     ignoreTestEnv(),
     format.splat(),
     format.simple()
   ),
 });
+
+if (config.log.request) {
+  fs.ensureDirSync(path.dirname(config.log.request));
+  request.add(new transports.File({ filename: config.log.request, level: 'info' }));
+}
 
 request.stream = {
   write: function(message){
