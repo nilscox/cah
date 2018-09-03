@@ -5,8 +5,9 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const sessionMiddleware = require('express-session');
 const morgan = require('morgan');
+const sqlFormatter = require('sql-formatter');
 
-const { getEnv } = require('./utils');
+const config = require('./config');
 const { verbose, error, request: requestLogger } = require('./log');
 const { APIError } = require('./errors');
 const { Player } = require('./models');
@@ -14,8 +15,6 @@ const routes = require('./routes');
 const events = require('./events');
 const websockets = require('./websockets');
 
-const MEDIA_PATH = getEnv('CAH_MEDIA_PATH');
-const MEDIA_ROOT = getEnv('CAH_MEDIA_ROOT');
 
 const app = express();
 const server = http.Server(app);
@@ -36,7 +35,7 @@ app.use(morgan('combined', { stream: requestLogger.stream }));
 
 websockets(server, session, events);
 
-app.use(MEDIA_ROOT, express.static(MEDIA_PATH));
+app.use(config.mediaRoot, express.static(config.mediaPath));
 
 app.use((req, res, next) => {
   // TODO: fix this evil trick
@@ -66,7 +65,11 @@ app.use('/api', routes);
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
   if (!(err instanceof APIError)) {
-    error('REQUEST', err);
+    if (err.name === 'SequelizeDatabaseError')
+      error('REQUEST', err.message, '\n' + sqlFormatter.format(err.sql));
+    else
+      error('REQUEST', err);
+
     throw err;
   }
 

@@ -97,7 +97,7 @@ async function answer(game, player, choices) {
   }
 }
 
-async function select(game, answer) {
+async function select(game, player, answer) {
   await game.setSelectedAnswer(answer);
 }
 

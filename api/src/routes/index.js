@@ -1,11 +1,9 @@
 const express = require('express');
 
 const pkg = require('../../package');
-const { getEnv } = require('../utils');
+const config = require('../config');
 const player = require('./player');
 const game = require('./game');
-
-const API_ADMIN_TOKEN = getEnv('CAH_API_ADMIN_TOKEN');
 
 const router = express.Router();
 
@@ -14,7 +12,7 @@ router.use('/player', player);
 router.use('/game', game);
 
 router.post('/admin', (req, res) => {
-  if (req.body.token !== API_ADMIN_TOKEN)
+  if (req.body.token !== config.adminToken)
     return res.status(401).end();
 
   req.session.admin = true;

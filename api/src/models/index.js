@@ -1,6 +1,11 @@
 const path = require('path');
 const Sequelize = require('sequelize');
-const config = require('../config');
+const config = require('../config').database;
+const { database } = require('../log');
+
+config.dialect = 'postgres';
+config.operatorsAliases = false;
+config.logging = sql => database.info(sql);
 
 const sequelize = new Sequelize(config.database, config.username, config.password, config);
 
