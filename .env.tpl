@@ -1,4 +1,3 @@
-VENV_DIR="$HOME/.venv"
 NVM_DIR="$HOME/.nvm"
 
 CAH_BASEDIR="$HOME/some/where"
@@ -17,13 +16,14 @@ CAH_DATA_PATH="$CAH_BASEDIR/data"
 CAH_MEDIA_PATH="$CAH_BASEDIR/media"
 CAH_MEDIA_ROOT="/media"
 
-CAH_API_IP="localhost"
+CAH_API_IP="0.0.0.0"
 CAH_API_PORT="4242"
 
 CAH_API_ADMIN_TOKEN="toquèn"
 
-CAH_WEB_IP="localhost"
-CAH_WEB_PORT="8080"
+CAH_API_LOG_REQUEST="./logs/request.log"
+CAH_API_LOG_DATABASE="./logs/database.log"
+CAH_API_LOG_SERVER="./logs/server.log"
 
 CAH_ADMIN_IP="localhost"
 CAH_ADMIN_PORT="7777"

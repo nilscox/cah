@@ -22,8 +22,9 @@ export CAH_DB_ROOT_PASSWORD
 export CAH_API_IP
 export CAH_API_PORT
 
-export CAH_WEB_IP
-export CAH_WEB_PORT
+export CAH_API_LOG_REQUEST
+export CAH_API_LOG_DATABASE
+export CAH_API_LOG_SERVER
 
 export CAH_ADMIN_IP
 export CAH_ADMIN_PORT
