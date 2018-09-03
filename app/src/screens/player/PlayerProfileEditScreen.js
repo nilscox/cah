@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { StyleSheet, TouchableOpacity, View, Text, TextInput, Image } from 'react-native';
+import ImagePicker from 'react-native-image-crop-picker';
 
 import { fetchPlayer, updatePlayer, playerAvatarUri, playerChangeAvatar } from '../../services/player-service';
 import Loading from '../../components/Loading';
@@ -11,7 +12,7 @@ import screen from '../screen.styles';
 const styles = StyleSheet.create({
   avatar: {
     width: 160,
-    height: 90,
+    height: 160,
     borderWidth: 1,
     borderColor: '#CCC',
     alignSelf: 'center',
@@ -109,8 +110,24 @@ export default class PlayerProfileEditScreen extends React.Component {
     );
   }
 
-  displayAvatarImagePicker() {
-    // this.setState({ avatar: response });
+  async displayAvatarImagePicker() {
+    try {
+      const image = await ImagePicker.openPicker({
+        width: 200,
+        height: 200,
+        cropping: true,
+      });
+
+      this.setState({
+        avatar: {
+          uri: image.path,
+          type: image.mime,
+          name: 'avatar-' + this.props.player.nick,
+        },
+      });
+    } catch (e) {
+      this.props.onError('ImagePicker.openPicker', e);
+    }
   }
 
 }

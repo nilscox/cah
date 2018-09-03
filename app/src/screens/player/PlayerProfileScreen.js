@@ -13,7 +13,7 @@ const API_URL = process.env.REACT_APP_API_URL;
 const styles = StyleSheet.create({
   avatar: {
     width: 160,
-    height: 90,
+    height: 160,
     borderWidth: 1,
     borderColor: '#CCC',
     alignSelf: 'center',

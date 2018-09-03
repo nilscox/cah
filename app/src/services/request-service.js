@@ -5,7 +5,7 @@ export default async (route, opts = {}) => {
   if (!(opts.headers instanceof Headers))
     opts.headers = new Headers(opts.headers);
 
-  if (opts.body && typeof opts.body !== 'string') {
+  if (opts.body && typeof opts.body !== 'string' && !(opts.body instanceof FormData)) {
     opts.body = JSON.stringify(opts.body);
     opts.headers.set('Content-Type', 'application/json');
   }
