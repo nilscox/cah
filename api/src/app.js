@@ -1,7 +1,5 @@
 global.Promise = require('bluebird');
 
-const fs = require('fs');
-const path = require('path');
 const http = require('http');
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -35,7 +33,7 @@ app.use(session);
 
 websockets(server, session, events);
 
-app.use(MEDIA_ROOT, express.static(MEDIA_PATH))
+app.use(MEDIA_ROOT, express.static(MEDIA_PATH));
 
 app.use((req, res, next) => {
   // TODO: fix this evil trick
@@ -62,6 +60,7 @@ app.use(async (req, res, next) => {
 
 app.use('/api', routes);
 
+// eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
   if (!(err instanceof APIError)) {
     error('REQUEST', err);

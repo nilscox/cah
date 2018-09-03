@@ -23,6 +23,7 @@
   },
   "devDependencies": {
     "chai": "^4.1.2",
+    "eslint": "^5.5.0",
     "mocha": "^5.2.0",
     "nodemon": "^1.18.2",
     "sequelize-cli": "^4.0.0",
@@ -39,7 +40,8 @@
     "start:debug": "NODE_ENV=development nodemon --inspect index.js",
     "test": "NODE_ENV=test mocha --exit --recursive --timeout 5000",
     "test:debug": "yarn test --inspect --watch",
-    "test:coverage": "nyc -x migrations yarn test"
+    "test:coverage": "nyc -x migrations yarn test",
+    "lint": "eslint index.js src"
   },
   "bin": {
     "cah": "./cli/index.js"

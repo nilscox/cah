@@ -15,7 +15,7 @@ const choices = async a => {
   const choices = await a.getChoices();
 
   return await choiceFormatter.full(choices, { many: true });
-}
+};
 
 const anonymous = {
   id,

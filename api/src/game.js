@@ -3,14 +3,16 @@ const events = require('./events');
 const Op = Sequelize.Op;
 
 function shuffle(a) {
-    var j, x, i;
-    for (i = a.length - 1; i > 0; i--) {
-        j = Math.floor(Math.random() * (i + 1));
-        x = a[i];
-        a[i] = a[j];
-        a[j] = x;
-    }
-    return a;
+  let j, x, i;
+
+  for (i = a.length - 1; i > 0; i--) {
+    j = Math.floor(Math.random() * (i + 1));
+    x = a[i];
+    a[i] = a[j];
+    a[j] = x;
+  }
+
+  return a;
 }
 
 async function join(game, player) {
@@ -76,7 +78,6 @@ async function start(game) {
 }
 
 async function answer(game, player, choices) {
-  const propositions = await game.getPropositions();
   const answer = await game.createAnswer({
     playerId: player.id,
     questionId: game.questionId,

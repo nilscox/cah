@@ -66,7 +66,7 @@ module.exports.on_disconnect = async (player) => {
 
   return on_event('PLAYER_DISCONNECT', player, {
     msgAdmin: async () => ({ player: await playerFormatter.admin(player) }),
-  })
+  });
 };
 
 module.exports.on_cardsDealt = (player, cards) => {

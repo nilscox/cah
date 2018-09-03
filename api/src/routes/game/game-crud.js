@@ -5,7 +5,6 @@ const {
   isPlayer,
   isAdmin,
   isNotInGame,
-  isInGame,
   isGameOwner,
   isGameState
 } = require('../../permissions');

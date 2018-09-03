@@ -16,6 +16,7 @@ const lang = value => {
 
 const state = value => value;
 
+// eslint-disable-next-line no-unused-vars
 const nbQuestions = (value, opts) => {
   if (typeof value !== 'number')
     throw new InvalidFieldTypeError('nbQuestions', 'number');
@@ -26,6 +27,7 @@ const nbQuestions = (value, opts) => {
   return value;
 };
 
+// eslint-disable-next-line no-unused-vars
 const cardsPerPlayer = (value, opts) => {
   if (typeof value !== 'number')
     throw new InvalidFieldTypeError('cardsPerPlayer', 'number');

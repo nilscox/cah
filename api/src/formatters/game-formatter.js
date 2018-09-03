@@ -1,7 +1,6 @@
 const formatter = require('./formatter');
 const playerFormatter = require('./player-formatter');
 const questionFormatter = require('./question-formatter');
-const choiceFormatter = require('./choice-formatter');
 const answerFormatter = require('./answer-formatter');
 
 const id = game => game.get('id');
@@ -18,8 +17,8 @@ const playState = async game => {
   if (game.get('state') !== 'started')
     return;
 
-  return await game.getPlayState();;
-}
+  return await game.getPlayState();
+};
 
 const owner = async game => {
   const owner = await game.getOwner();

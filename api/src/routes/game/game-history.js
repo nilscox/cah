@@ -1,4 +1,3 @@
-const { Game } = require('../../models');
 const { gameTurnFormatter } = require('../../formatters');
 const { isAdmin, isPlayer, isInGame } = require('../../permissions');
 const findGame = require('./find-game');
@@ -17,7 +16,7 @@ router.get('/:id/history', {
     ],
   ]},
   format: (req, gt) => gameTurnFormatter.full(gt, { many: true }),
-}, async (req, res, next) => {
+}, async (req) => {
   return await req.params.game.getTurns({
     include: ['questionMaster', 'winner', 'question', 'answers'],
   });

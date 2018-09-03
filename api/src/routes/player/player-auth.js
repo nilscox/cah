@@ -26,7 +26,7 @@ router.post('/login', {
   format: (req, value) => playerFormatter.full(value),
   after: (req, player) => events.emit('player login', player),
 }, async ({ session, validated }) => {
-  const player = await Player.findOne({ where: { nick: validated.nick } })
+  const player = await Player.findOne({ where: { nick: validated.nick } });
 
   if (!player)
     throw new NotFoundError('player');

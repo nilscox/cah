@@ -1,4 +1,4 @@
-const sql = require('sql-formatter');
+const sqlFormatter = require('sql-formatter');
 const { getEnv, log } = require('./utils');
 
 const cfg = {
@@ -9,7 +9,7 @@ const cfg = {
   port: getEnv('CAH_DB_PORT'),
   dialect: 'postgres',
   operatorsAliases: false,
-  logging: sql => log('SQL', sql),
+  logging: sql => log('SQL', sqlFormatter(sql)),
 };
 
 if (getEnv('NODE_ENV') === 'test') {

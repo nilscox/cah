@@ -1,4 +1,3 @@
-const { BadRequestError } = require('../../errors');
 const { gameFormatter } = require('../../formatters');
 const {
   isPlayer,

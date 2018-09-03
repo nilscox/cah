@@ -74,15 +74,7 @@ class MissingFieldError extends ValidationError {
 class InvalidFieldTypeError extends ValidationError {
 
   constructor(field, type) {
-    super(field, `this field must be of type ${type}`)
-  }
-
-}
-
-class InvalidMimeTypeError extends ValidationError {
-
-  constructor(field, types) {
-    super(field, `this field must have a mimetype in ${types.join(', ')}`)
+    super(field, `this field must be of type ${type}`);
   }
 
 }

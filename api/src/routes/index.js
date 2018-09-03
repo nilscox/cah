@@ -19,6 +19,6 @@ router.post('/admin', (req, res) => {
 
   req.session.admin = true;
   res.end();
-})
+});
 
 module.exports = router;

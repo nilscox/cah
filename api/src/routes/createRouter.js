@@ -52,7 +52,7 @@ const authorizeRequest = async (req, authorize) => {
     await authorize_object(req, authorize);
   else
     throw new Error('invalid authorizer ' + typeof authorize);
-}
+};
 
 const validateRequest = (req, validate) => {
   if (typeof validate === 'function')

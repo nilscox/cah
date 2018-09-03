@@ -1,11 +1,9 @@
-const multer  = require('multer')
-const path  = require('path')
+const multer  = require('multer');
 
-const { getEnv, mediaPath, mediaUrl } = require('../../utils');
+const { mediaPath, mediaUrl } = require('../../utils');
 const { Player } = require('../../models');
 const { playerValidator } = require('../../validators');
 const { playerFormatter } = require('../../formatters');
-const { ValidationError, NotFoundError } = require('../../errors');
 const { allow, isAdmin, isNotPlayer, isPlayer, isNotInGame } = require('../../permissions');
 const events = require('../../events');
 const findPlayer = require('./find-player');
@@ -78,7 +76,7 @@ const avatarStorage = multer.diskStorage({
       '.', ext[file.mimetype]
     ].join(''));
   },
-})
+});
 
 const avatarUpload = multer({ storage: avatarStorage });
 

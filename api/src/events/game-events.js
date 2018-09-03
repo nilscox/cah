@@ -87,7 +87,7 @@ module.exports.on_answer = async (game, player, data) => {
   }
 };
 
-module.exports.on_select = (game, data) => on_event('GAME_SELECT', game, {
+module.exports.on_select = (game, player, data) => on_event('GAME_SELECT', game, {
   msgAdmin: async () => ({ game: await gameFormatter.admin(game) }),
   msgPlayers: async () => ({ game: await gameFormatter.full(game) }),
   data,

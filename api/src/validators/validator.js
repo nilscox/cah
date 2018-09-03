@@ -3,7 +3,7 @@ const {
   ValidationError,
   MissingFieldError,
   ReadOnlyFieldError,
-} = require('../../src/errors');;
+} = require('../../src/errors');
 
 const DEFAULT_OPTS = {
   required: true,
@@ -63,7 +63,7 @@ module.exports = fields => {
       throw new ValidationErrors(errors);
 
     return validated;
-  }
+  };
 
   return {
     validate,

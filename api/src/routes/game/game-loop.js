@@ -1,6 +1,5 @@
 const { InvalidFieldTypeError, BadRequestError, MissingFieldError } = require('../../errors');
-const { Sequelize, Game } = require('../../models');
-const { gameValidator } = require('../../validators');
+const { Sequelize } = require('../../models');
 const { gameFormatter } = require('../../formatters');
 const {
   isPlayer,
@@ -120,7 +119,7 @@ router.post('/:id/select', {
   if (!answer)
     throw new BadRequestError('invalid answer id');
 
-  await gameController.select(game, answer);
+  await gameController.select(game, player, answer);
 
   return game;
 });

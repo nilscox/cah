@@ -42,7 +42,7 @@ module.exports = (sequelize, DataTypes) => {
       return 'question_master_selection';
 
     return 'players_answer';
-  }
+  };
 
   Game.prototype.createQuestions = async function(n) {
     const MasterQuestion = sequelize.model('masterquestion');
@@ -66,7 +66,7 @@ module.exports = (sequelize, DataTypes) => {
 
       return values;
     }));
-  }
+  };
 
   Game.prototype.createChoices = async function(n) {
     const MasterChoice = sequelize.model('masterchoice');
@@ -90,7 +90,7 @@ module.exports = (sequelize, DataTypes) => {
 
       return values;
     }));
-  }
+  };
 
   /**
    * Create the questions and choices from master data
@@ -105,7 +105,7 @@ module.exports = (sequelize, DataTypes) => {
 
     await this.createChoices(nbChoices);
     // console.log('nbChoices: ' + nbChoices);
-  }
+  };
 
   Game.prototype.getPropositions = async function(where) {
     if (!this.questionId)
@@ -119,7 +119,7 @@ module.exports = (sequelize, DataTypes) => {
       orderBy: ['place', 'id'],
       include: ['choices'],
     });
-  }
+  };
 
   return Game;
 };

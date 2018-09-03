@@ -33,7 +33,7 @@ const submitted = async player => {
     return;
 
   return await answerFormatter.full(answers[0]);
-}
+};
 
 const light = {
   nick,
