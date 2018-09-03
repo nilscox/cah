@@ -52,14 +52,18 @@ module.exports.create = {
 
 module.exports.update = {
   desc: 'update a player',
-  usage: '[--avatar=<avatar>]',
+  usage: '[--avatar=<avatar>] [--extra=<extra>]',
   options: [
     { name: '--avatar', desc: 'set the player\'s avatar' },
+    { extra: '--extra', desc: 'user-defined extra information' },
   ],
   handle: async (args) => {
-    const { body } = await request('/api/player', {
+    const { nick, extra } = args;
+    const player = await getPlayer();
+
+    const { body } = await request('/api/player/' + player.nick, {
       method: 'PUT',
-      body: { nick },
+      body: { nick, extra },
       expect: [200],
     });
 
