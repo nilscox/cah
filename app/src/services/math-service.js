@@ -20,3 +20,45 @@ export const getScoresFromHistory = (game, history) => {
       score: scores[nick],
     }));
 };
+
+export const getInstruction = (player, game) => {
+  if (game.state === 'idle') {
+    if (player.nick === game.owner)
+      return 'Press start when the game is ready';
+    else
+      return 'Wait for the game owner to start the game';
+  }
+
+  if (game.state === 'finished')
+    return 'The Game.';
+
+  const isQM = game.questionMaster === player.nick;
+
+  if (game.playState === 'players_answer') {
+    if (isQM)
+      return 'Wait for all players to submit their answer';
+    else {
+      console.log(player.submitted);
+      if (player.submitted)
+        return 'Wait for other players to submit their answer';
+      else
+        return 'Submit an answer';
+    }
+  }
+
+  if (game.playState === 'question_master_selection') {
+    if (isQM)
+      return 'Select an answer';
+    else
+      return 'Wait for the question master to select an answer';
+  }
+
+  if (game.playState === 'end_of_turn') {
+    if (isQM)
+      return 'Press next to continue';
+    else
+      return 'Wait for the question master to continue';
+  }
+
+  throw new Error('should never happen');
+};

@@ -112,8 +112,7 @@ export default class App extends React.Component {
     console.log('[ERROR]', error, data);
   }
 
-  // 7000ms seems like 1000ms... strange
-  toast(message, duration = 7000) {
+  toast(message, duration = 1500) {
     this.refs.toast.show(message, duration);
   }
 
@@ -160,7 +159,7 @@ export default class App extends React.Component {
         <Toast
           style={{ backgroundColor: '#CCC', paddingHorizontal: 20, margin: 20 }}
           textStyle={{ color: '#333' }}
-          opacity={0.7}
+          opacity={0.8}
           ref="toast"
         />
 

@@ -42,6 +42,13 @@ export default class PlayersAnswer extends React.Component {
     if (state.selection !== null)
       return null;
 
+    if (props.player.submitted) {
+      return {
+        selection: props.player.submitted.choices,
+        submitted: true,
+      };
+    }
+
     return {
       selection: Array(props.game.question.nbChoices).fill(null),
     };

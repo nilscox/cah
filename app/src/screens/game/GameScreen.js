@@ -2,6 +2,7 @@ import * as React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { Redirect } from 'react-router-native';
 
+import { getInstruction } from '../../services/math-service';
 import { fetchGame, fetchGameHistory } from '../../services/game-service';
 import { emitter as websocket } from '../../services/websocket-service';
 
@@ -55,13 +56,13 @@ const styles = StyleSheet.create({
   },
 });
 
-const GameActions = ({ player, game, history, go }) => (
+const GameActions = ({ player, game, history, toast, go }) => (
   <View style={styles.actions}>
 
     <View style={styles.actionsLeft}>
       <View style={styles.action}>
         <IconButton
-          onPress={() => {}}
+          onPress={() => toast(getInstruction(player, game))}
           type="info"
           size="medium"
           style={styles.settingsIcon}
@@ -132,9 +133,8 @@ export default class GameScreen extends React.Component {
 
   handlePlayerCards = (cards) => {
     const l = cards.length;
-    const text = cards.map(c => '- ' + c.text).join('\n');
 
-    this.props.toast(`${l} new card${l > 1 ? 's' : ''}!\n\n${text}`, 8000);
+    this.props.toast(`${l} new card${l > 1 ? 's' : ''}!`, 3000);
   };
 
   handlePlayerChange = (player) => {
@@ -156,7 +156,6 @@ export default class GameScreen extends React.Component {
   };
 
   handleGameAnswer = (player) => {
-    this.props.setPlayer(this.props.player);
     if (player !== this.props.player.nick)
       this.props.toast(player + ' answered');
   };
@@ -167,6 +166,10 @@ export default class GameScreen extends React.Component {
 
   handleGameTurn = (turn) => {
     this.setState({ history: [...this.state.history, turn] });
+    this.props.setPlayer({
+      ...this.props.player,
+      submitted: null,
+    });
   };
 
   handlePlayerAnswer = (cards) => {
@@ -174,6 +177,7 @@ export default class GameScreen extends React.Component {
 
     this.props.setPlayer({
       ...this.props.player,
+      submitted: { choices: cards },
       cards: this.props.player.cards.filter(keepCard),
     });
   };
@@ -225,6 +229,7 @@ export default class GameScreen extends React.Component {
           player={player}
           game={game}
           history={history}
+          toast={this.props.toast}
           go={this.props.history.push}
         />
 
