@@ -3,17 +3,20 @@ export const questionLength = (question, choices) => {
 };
 
 export const getScoresFromHistory = (game, history) => {
-  const scores = game.players.reduce((o, p) => {
-    o[p.nick] = 0;
-    return o;
-  }, {});
+  const scores = {};
 
-  history.forEach(turn => scores[turn.winner]++);
+  history.forEach(turn => {
+    if (!scores[turn.winner])
+      scores[turn.winner] = 0;
+
+    scores[turn.winner]++;
+  });
 
   return Object.keys(scores)
     .sort((a, b) => scores[b] - scores[a])
     .map(nick => ({
-      ...game.players.find(p =>  p.nick === nick),
+      nick,
+      ...(game.players.find(p => p.nick === nick) || {}),
       score: scores[nick],
     }));
 };
