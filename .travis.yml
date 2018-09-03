@@ -27,6 +27,9 @@ before_script:
 
 install: yarn
 script:
+  - cd ../api && yarn lint
+  - cd ../app && yarn lint
+  - cd ../admin && yarn lint
   - yarn test:coverage
   - nyc report --reporter=text-lcov > coverage.lcov
   - codecov
