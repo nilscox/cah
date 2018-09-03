@@ -21,9 +21,9 @@ CAH_API_PORT="4242"
 
 CAH_API_ADMIN_TOKEN="toquèn"
 
-CAH_API_LOG_REQUEST="./logs/request.log"
-CAH_API_LOG_DATABASE="./logs/database.log"
-CAH_API_LOG_SERVER="./logs/server.log"
+CAH_API_LOG_REQUEST="$CAH_BASEDIR/logs/request.log"
+CAH_API_LOG_DATABASE="$CAH_BASEDIR/logs/database.log"
+CAH_API_LOG_SERVER="$CAH_BASEDIR/logs/server.log"
 
 CAH_ADMIN_IP="localhost"
 CAH_ADMIN_PORT="7777"
