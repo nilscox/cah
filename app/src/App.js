@@ -35,6 +35,7 @@ export default class App extends React.Component {
     BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
     AppState.addEventListener('change', this.handleAppStateChange);
     websocket.on('player:update', this.handlePlayerChange);
+    websocket.on('player:cards', this.handlePlayerCards);
 
     this.init();
   }
@@ -43,6 +44,7 @@ export default class App extends React.Component {
     BackHandler.removeEventListener('hardwareBackPress', this.handleBackPress);
     AppState.removeEventListener('change', this.handleAppStateChange);
     websocket.off('player:update', this.handlePlayerChange);
+    websocket.off('player:cards', this.handlePlayerCards);
   }
 
   setState(state, cb) {
@@ -77,6 +79,12 @@ export default class App extends React.Component {
       this.setState({ player: { ...player, ...p } });
   };
 
+  handlePlayerCards = (cards) => {
+    const { player } = this.state;
+
+    this.setState({ player: { ...player, cards: [...player.cards, ...cards] } });
+  };
+
   async init() {
     this.setState({ loading: true });
 
@@ -93,7 +101,9 @@ export default class App extends React.Component {
 
   setPlayer(player, cb) {
     this.setState({ player }, () => {
-      this.socket = createWebSocket();
+      if (!this.socket)
+        this.socket = createWebSocket();
+
       cb && cb();
     });
   }
@@ -147,7 +157,12 @@ export default class App extends React.Component {
           </BackButton>
         </NativeRouter>
 
-        <Toast ref="toast"/>
+        <Toast
+          style={{ backgroundColor: '#CCC', paddingHorizontal: 10 }}
+          textStyle={{ color: '#333' }}
+          opacity={0.7}
+          ref="toast"
+        />
 
       </View>
     );

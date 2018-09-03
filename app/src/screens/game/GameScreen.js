@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { Redirect } from 'react-router-native';
-import Notification from 'react-native-in-app-notification';
 
 import { fetchGame, fetchGameHistory } from '../../services/game-service';
 import { emitter as websocket } from '../../services/websocket-service';
@@ -148,6 +147,7 @@ export default class GameScreen extends React.Component {
   };
 
   handleGameAnswer = (player) => {
+    this.props.setPlayer(this.props.player);
     if (player !== this.props.player.nick)
       this.props.toast(player + ' answered');
   };
@@ -158,6 +158,15 @@ export default class GameScreen extends React.Component {
 
   handleGameTurn = (turn) => {
     this.setState({ history: [...this.state.history, turn] });
+  };
+
+  handlePlayerAnswer = (cards) => {
+    const keepCard = ({ id }) => !cards.find(c => c.id === id);
+
+    this.props.setPlayer({
+      ...this.props.player,
+      cards: this.props.player.cards.filter(keepCard),
+    });
   };
 
   render() {
@@ -183,7 +192,7 @@ export default class GameScreen extends React.Component {
 
     if (game.playState === 'players_answer') {
       title = 'Players answer';
-      view = <PlayersAnswer player={player} game={game} />;
+      view = <PlayersAnswer player={player} game={game} onAnswer={this.handlePlayerAnswer} />;
     }
 
     if (game.playState === 'question_master_selection') {

@@ -35,6 +35,7 @@ export default class QuestionMasterSelection extends React.Component {
     const { res, json } = await selectAnswer(game.id, answer);
 
     if (res.status === 200) {
+      console.log(game.playState);
       // that will never be true...
       if (game.playState === 'question_master_selection')
         this.setState({ selected: true });

@@ -73,6 +73,8 @@ export default class PlayersAnswer extends React.Component {
     const { res, json } = await submitAnswer(game.id, selection);
 
     if (res.status === 200) {
+      this.props.onAnswer(selection);
+
       if (game.playState === 'players_answer')
         this.setState({ submitted: true });
     } else
