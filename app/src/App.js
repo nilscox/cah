@@ -82,7 +82,7 @@ export default class App extends React.Component {
   handlePlayerCards = (cards) => {
     const { player } = this.state;
 
-    this.setState({ player: { ...player, cards: [...player.cards, ...cards] } });
+    this.setState({ player: { ...player, cards: [...(player.cards || []), ...cards] } });
   };
 
   async init() {
