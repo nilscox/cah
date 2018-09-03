@@ -79,6 +79,7 @@ const validateRequest = (req, validate) => {
  * @param opts (object): an options object
  * @param opts.before: hook invoked before the request is processed
  * @param opts.after: hook invoked after the request has been processed successfully
+ * @param opts.middlewares: custom express middlewares
  * @param opts.authorize (function | function[]): an authorizer function
  * @param opts.validate (function): a validator function
  * @param opts.format (function): a formatter function
@@ -86,6 +87,7 @@ const validateRequest = (req, validate) => {
  *
  * before function: req => any
  * after function: (req, result) => any
+ * middlewares Array<function>
  * authorizer function: req => any | Promise<any>
  * validator function: data => object | Promise<object>
  * format function: instance => object | Promise<object>
@@ -97,9 +99,9 @@ module.exports = () => {
   const expressRouter = express.Router();
 
   const handle = (method, route, opts, handler) => {
-    const { before, after, authorize, validate, format } = opts;
+    const { before, after, middlewares, authorize, validate, format } = opts;
 
-    expressRouter[method](route, async (req, res, next) => {
+    expressRouter[method](route, middlewares || [], async (req, res, next) => {
       try {
         if (before)
           await before(req);

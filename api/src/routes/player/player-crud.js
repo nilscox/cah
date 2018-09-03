@@ -1,3 +1,7 @@
+const multer  = require('multer')
+const path  = require('path')
+
+const { getEnv, mediaPath, mediaUrl } = require('../../utils');
 const { Player } = require('../../models');
 const { playerValidator } = require('../../validators');
 const { playerFormatter } = require('../../formatters');
@@ -5,6 +9,7 @@ const { ValidationError, NotFoundError } = require('../../errors');
 const { allow, isAdmin, isNotPlayer, isPlayer, isNotInGame } = require('../../permissions');
 const events = require('../../events');
 const findPlayer = require('./find-player');
+
 
 const router = require('../createRouter')();
 module.exports = router.router;
@@ -57,6 +62,26 @@ router.post('/', {
   return player;
 });
 
+const avatarStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, mediaPath('avatars'));
+  },
+  filename: function (req, file, cb) {
+    const ext = {
+      'image/jpeg': 'jpg',
+      'image/png': 'png',
+    };
+
+    cb(null, [
+      'avatar-', req.player.nick,
+      '.', Math.random().toString(36).slice(-6),
+      '.', ext[file.mimetype]
+    ].join(''));
+  },
+})
+
+const avatarUpload = multer({ storage: avatarStorage });
+
 router.put('/:nick', {
   authorize: [
     req => isPlayer(req.player, req.params.nick),
@@ -67,7 +92,19 @@ router.put('/:nick', {
   }),
   format: format(true),
   after: (req, player) => events.emit('player update', player, req.validated),
+  middlewares: [
+    avatarUpload.single('avatar'),
+    (req, res, next) => {
+      if (req.file)
+        req.body.avatar = req.file;
+
+      next();
+    },
+  ],
 }, async ({ validated }, res, { player }) => {
+  if (validated.avatar)
+    validated.avatar = mediaUrl('avatars', validated.avatar);
+
   return await player.update(validated);
 });
 

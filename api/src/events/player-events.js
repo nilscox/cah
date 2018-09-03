@@ -60,7 +60,8 @@ module.exports.on_connect = async (player, socket) => {
 };
 
 module.exports.on_disconnect = async (player) => {
-  // keep the socket id on disconnection because socket.io-client fails
+  // keep the socket id on disconnection because socket.io-client fails but the
+  // socket is still valid
   // await player.update({ socket: null });
 
   return on_event('PLAYER_DISCONNECT', player, {

@@ -2,6 +2,8 @@ const { Player } = require('../models');
 const validator = require('./validator');
 const {
   ValidationError,
+  BadRequestError,
+  InvalidMimeTypeError,
   InvalidFieldTypeError,
 } = require('../errors');
 
@@ -40,10 +42,23 @@ const nick = (value, opts) => {
 }
 
 const avatar = value => {
-  if (typeof value !== 'string')
-    throw new InvalidFieldTypeError('avatar', 'string');
+  if (typeof value !== 'object')
+    throw new InvalidFieldTypeError('avatar', 'file');
 
-  return value;
+  const { mimetype, destination, filename, size } = value;
+
+  if (!mimetype || !destination || !filename || !size)
+    throw new BadRequestError('avatar', 'invalid file object');
+
+  const mimetypes = ['image/jpeg', 'image/png'];
+  if (mimetypes.indexOf(mimetype) < 0)
+    throw new InvalidMimeTypeError('avatar', mimetypes);
+
+  const maxSize = 1024 * 1024;
+  if (size > maxSize)
+    throw new BadRequestError('avatar', 'file size must be lower than ' + maxSize);
+
+  return filename;
 }
 
 const extra = value => {

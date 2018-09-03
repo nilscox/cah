@@ -79,6 +79,14 @@ class InvalidFieldTypeError extends ValidationError {
 
 }
 
+class InvalidMimeTypeError extends ValidationError {
+
+  constructor(field, types) {
+    super(field, `this field must have a mimetype in ${types.join(', ')}`)
+  }
+
+}
+
 class ReadOnlyFieldError extends ValidationError {
 
   constructor(field) {

@@ -15,10 +15,27 @@ const getEnv = (key, defaultValue) => {
   finally { process.exit(1) }
 };
 
-const mediaPath = (file) => {
-  const MEDIA_ROOT = getEnv('CAH_MEDIA_ROOT');
+const url = (...path) => {
+  if (typeof path === 'string')
+    path = path.split('/');
 
-  return path.join(MEDIA_ROOT, file);
+  return '/' + path.map(part => {
+    if (part.startsWith('/'))
+      part = part.slice(1);
+
+    if (part.endsWith('/'))
+      part = part.slice(0, -1);
+
+    return part;
+  }).join('/');
+}
+
+const mediaUrl = (...path) => {
+  return url(getEnv('CAH_MEDIA_ROOT'), ...path);
+}
+
+const mediaPath = (...dirs) => {
+  return path.join(getEnv('CAH_MEDIA_PATH'), ...dirs);
 }
 
 const log = (level, tag, ...message) => {
@@ -37,6 +54,7 @@ const log = (level, tag, ...message) => {
 
 module.exports = {
   getEnv,
+  mediaUrl,
   mediaPath,
   log: log.bind(null, 'LOG'),
   info: log.bind(null, 'INF'),
