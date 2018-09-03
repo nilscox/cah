@@ -71,9 +71,9 @@ module.exports.on_start = (game) => on_event('GAME_START', game, {
   msgPlayers: async () => ({ game: await gameFormatter.full(game) }),
 });
 
-module.exports.on_answer = (game, data) => on_event('GAME_ANSWER', game, {
+module.exports.on_answer = (game, player, data) => on_event('GAME_ANSWER', game, {
   msgAdmin: async () => ({ game: await gameFormatter.admin(game) }),
-  msgPlayers: async () => ({ game: await gameFormatter.full(game) }),
+  msgPlayers: () => ({ player: player.get('nick') }),
   data,
 });
 
