@@ -1,9 +1,15 @@
+const path = require('path');
+const fs = require('fs-extra');
 const { createLogger, format, transports } = require('winston');
 const { getEnv } = require('./utils');
 
 const { combine, timestamp, printf } = format;
 
 const NODE_ENV = getEnv('NODE_ENV');
+
+fs.ensureDirSync(path.dirname(getEnv('CAH_API_LOG_SERVER')));
+fs.ensureDirSync(path.dirname(getEnv('CAH_API_LOG_DATABASE')));
+fs.ensureDirSync(path.dirname(getEnv('CAH_API_LOG_REQUEST')));
 
 const ignoreTestEnv = format((info) => {
   if (NODE_ENV === 'test')
