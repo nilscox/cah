@@ -22,11 +22,13 @@ export const createWebSocket = () => {
       emitter.emit('player:update', e.player);
       break;
 
+    case 'GAME_ANSWER':
+      emitter.emit('game:answer', e.player);
+
     case 'GAME_UPDATE':
     case 'GAME_JOIN':
     case 'GAME_LEAVE':
     case 'GAME_START':
-    case 'GAME_ANSWER':
     case 'GAME_SELECT':
     case 'GAME_NEXT':
     case 'GAME_END':

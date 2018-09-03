@@ -115,14 +115,15 @@ export default class GameScreen extends React.Component {
     } else
       this.props.onError('fetchGame', json);
 
-
     websocket.on('player:update', this.handlePlayerChange);
+    websocket.on('game:answer', this.handleGameAnswer);
     websocket.on('game:update', this.handleGameChange);
     websocket.on('game:turn', this.handleGameTurn);
   }
 
   componentWillUnmount() {
     websocket.off('player:update', this.handlePlayerChange);
+    websocket.off('game:answer', this.handleGameAnswer);
     websocket.off('game:update', this.handleGameChange);
     websocket.off('game:turn', this.handleGameTurn);
   }
@@ -143,6 +144,10 @@ export default class GameScreen extends React.Component {
         players,
       },
     });
+  };
+
+  handleGameAnswer = (player) => {
+    console.log('player answer', player);
   };
 
   handleGameChange = (game) => {
