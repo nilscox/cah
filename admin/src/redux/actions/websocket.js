@@ -1,5 +1,6 @@
 import io from 'socket.io-client';
 
+// eslint-disable-next-line no-undef
 const WS_URL = process.env.REACT_APP_WEBSOCKET_URL;
 
 let socket = null;

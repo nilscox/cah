@@ -44,24 +44,24 @@ class CreateGame extends React.Component {
 
   handleChangeOwner(e) {
     this.setState({ owner: e.target.value });
-  };
+  }
 
   handleChangeLang(e) {
     this.setState({ lang: e.target.value });
-  };
+  }
 
   handleChangeNbQuestions(e) {
     this.setState({ nbQuestions: e.target.value });
-  };
+  }
 
   handleChangeCardsPerPlayer(e) {
     this.setState({ cardsPerPlayer: e.target.value });
-  };
+  }
 
   onSubmitGame(e) {
     e.preventDefault();
 
-    const { owner, lang, nbQuestions, cardsPerPlayer } = this.state
+    const { owner, lang, nbQuestions, cardsPerPlayer } = this.state;
 
     this.props.onSubmit(owner, lang, nbQuestions, cardsPerPlayer);
   }

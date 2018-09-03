@@ -1,7 +1,7 @@
 export const GAMES_LIST = 'GAMES_LIST';
 export const listGames = () => ({
   type: GAMES_LIST,
-  route: `/api/game`,
+  route: '/api/game',
 });
 
 export const GAMES_FETCH_HISTORIES = 'GAMES_FETCH_HISTORIES';
@@ -21,8 +21,8 @@ export const fetchGameHistory = (game) => ({
 export const GAME_CREATE = 'GAME_CREATE';
 export const createGame = (owner, lang, nbQuestions, cardsPerPlayer) => ({
   type: GAME_CREATE,
-  route: `/api/game`,
-  method: `POST`,
+  route: '/api/game',
+  method: 'POST',
   body: {
     playerId: owner.id,
     lang,

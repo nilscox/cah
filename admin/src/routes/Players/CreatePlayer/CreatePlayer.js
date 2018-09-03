@@ -8,13 +8,13 @@ class CreatePlayer extends React.Component {
 
   handleChange(e) {
     this.setState({ nick: e.target.value });
-  };
+  }
 
   onSubmitPlayer(e) {
     e.preventDefault();
     if(this.state.nick !== '') {
       this.props.onSubmit(this.state.nick);
-    };
+    }
   }
 
   render() {
@@ -22,7 +22,7 @@ class CreatePlayer extends React.Component {
       <form className="add-player-form" onSubmit={(e) => this.onSubmitPlayer(e)}>
         <FormGroup controlId="formBasicText">
 
-        <ControlLabel>Create player</ControlLabel>
+          <ControlLabel>Create player</ControlLabel>
           <FormControl
             type="text"
             value={this.state.value}
@@ -38,7 +38,8 @@ class CreatePlayer extends React.Component {
 
       </form>
     );
-  };
-} 
+  }
+
+}
 
 export default CreatePlayer;

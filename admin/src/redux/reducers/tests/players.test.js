@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import { LIFECYCLE } from 'redux-pack';
 
 import { packAction, wsAction, test } from './reducers.test.utils';

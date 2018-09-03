@@ -15,8 +15,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     handleOnBlur: (player, nick) => dispatch(updatePlayer(player, nick)),
-  }
-}; 
+  };
+};
 
 class Player extends React.Component {
   state = {
@@ -30,32 +30,34 @@ class Player extends React.Component {
 
   handleOnAvatarClick() {
     this.setState({ avatarEdition: true });
-  };
+  }
 
   handleChangeAvatar(e) {
     this.setState({ avatar: e.target.value });
-  };
+  }
 
   handleOnNickClick() {
     this.setState({ nickEdition: true });
-  };
+  }
 
   handleChangeNick(e) {
     this.setState({ nick: e.target.value });
-  };
+  }
 
   handleBlurNick(e) {
-        const { nick } = this.state
+    const { nick } = this.state;
+
     e.preventDefault();
+
     if(nick !== '') {
       this.props.handleOnBlur(nick);
-    };
+    }
   }
 
   render() {
     if (this.props.players.length < 1) {
       return null;
-    }    
+    }
 
     const player = this.props.players[0];
 
@@ -64,27 +66,27 @@ class Player extends React.Component {
     if (this.state.avatarEdition) {
       playerAvatar = (
         <FormControl
-            componentClass="input"
-            value={this.state.avatar}
-            onChange={(e) => this.handleChangeAvatar(e)}
+          componentClass="input"
+          value={this.state.avatar}
+          onChange={(e) => this.handleChangeAvatar(e)}
         >
         </FormControl>
-      )
-    };
+      );
+    }
 
     let playerNick = player.nick;
 
     if (this.state.nickEdition) {
       playerNick = (
         <FormControl
-            componentClass="input"
-            value={this.state.nick}
-            onChange={(e) => this.handleChangeNick(e)}
-            onBlur={(e) => this.handleBlurNick(e)}
+          componentClass="input"
+          value={this.state.nick}
+          onChange={(e) => this.handleChangeNick(e)}
+          onBlur={(e) => this.handleBlurNick(e)}
         >
         </FormControl>
-      )
-    };
+      );
+    }
 
     return(
       <form>
@@ -110,12 +112,12 @@ class Player extends React.Component {
 
           <ControlLabel>Connected: </ControlLabel>
 
-            {this.state.connected}
+          {this.state.connected}
 
         </FormGroup>
 
       </form>
-    )
+    );
   }
 }
 

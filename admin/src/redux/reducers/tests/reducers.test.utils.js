@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import { KEY } from 'redux-pack';
 import { expect } from 'chai';
 import crio from 'crio';

@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import { test } from './reducers.test.utils';
 import reducer from '../status';
 

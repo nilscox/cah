@@ -32,8 +32,10 @@ const store = createStore(rootReducer,
 store.dispatch(initialization());
 
 const App = ({ ready }) => {
-  if (!ready)
+  if (!ready) {
+    // eslint-disable-next-line no-undef
     return <img className="loading" src={require('./loading.gif')} alt="loading" />;
+  }
 
   return (
     <BrowserRouter>
@@ -63,6 +65,7 @@ const ConnectedApp = connect((state) => ({
   ready: state.status.ready,
 }))(App);
 
+// eslint-disable-next-line react/display-name
 export default () => (
   <Provider store={store}>
     <ConnectedApp />

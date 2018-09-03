@@ -7,9 +7,7 @@ const mapStateToProps = (state) => ({
   getHistory: id => state.histories[id],
 });
 
-const mapDispatchToProps = (dispatch) => ({});
-
-const GameDetails = ({ match, getGame, getHistory }: GameDetailsProps) => {
+const GameDetails = ({ match, getGame, getHistory }) => {
   const id = parseInt(match.params.id);
   const game = getGame(id);
   const history = getHistory(id);
@@ -29,5 +27,4 @@ const GameDetails = ({ match, getGame, getHistory }: GameDetailsProps) => {
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
 )(GameDetails);

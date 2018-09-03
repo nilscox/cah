@@ -1,5 +1,6 @@
 // import { checkApiStatus } from '../actions/status'
 
+// eslint-disable-next-line no-undef
 const API_URL = process.env.REACT_APP_API_URL;
 
 const apiMiddleware = store => next => action => {
@@ -60,12 +61,12 @@ const apiMiddleware = store => next => action => {
       .catch(handleError),
     meta,
   })
-  .then((result) => {
-    if (after)
-      return after({ result, dispatch, getState });
+    .then((result) => {
+      if (after)
+        return after({ result, dispatch, getState });
 
-    return result;
-  });
+      return result;
+    });
 };
 
 export default apiMiddleware;

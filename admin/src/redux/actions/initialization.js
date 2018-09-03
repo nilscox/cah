@@ -2,6 +2,7 @@ import { listGames, fetchGamesHistories } from './games';
 import { listPlayers } from './players';
 import { createWebsocket } from './websocket';
 
+// eslint-disable-next-line no-undef
 const API_ADMIN_TOKEN = process.env.REACT_APP_API_ADMIN_TOKEN;
 
 export const INITIALIZATION_STARTED = 'INITIALIZATION_STARTED';
