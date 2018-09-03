@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { StyleSheet, View, Text, TextInput } from 'react-native';
 
-import { createPlayer, login } from '../../services/auth-service';
+import { createPlayer, login } from 'Services/auth-service';
 
-import Button, { ButtonsGroup } from '../../components/Button';
-import screen from '../screen.styles';
+import screen from 'Screens/screen.styles';
+import Button, { ButtonsGroup } from 'Components/Button';
 
 
 const styles = StyleSheet.create({

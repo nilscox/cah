@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 
-import { selectAnswer } from '../../../services/game-service';
+import { selectAnswer } from 'Services/game-service';
 
-import screen from '../../screen.styles.js';
-import AnswersList from '../../../components/AnswersList';
+import screen from 'Screens/screen.styles.js';
+import AnswersList from 'Components/AnswersList';
 
 
 /** QuestionMasterSelection

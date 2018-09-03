@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 
-import { getInstruction } from '../../services/math-service';
-import { fetchGame, fetchGameHistory } from '../../services/game-service';
-import { emitter as websocket } from '../../services/websocket-service';
+import { getInstruction } from 'Services/math-service';
+import { fetchGame, fetchGameHistory } from 'Services/game-service';
+import { emitter as websocket } from 'Services/websocket-service';
 
-import Loading from '../../components/Loading';
-import { IconButton } from '../../components/Icon';
+import screen from 'Screens/screen.styles.js';
+import Loading from 'Components/Loading';
+import { IconButton } from 'Components/Icon';
 
-import screen from '../screen.styles.js';
 import GameIdle from './GameIdle/GameIdle';
 import GameFinished from './GameFinished/GameFinished';
 import PlayersAnswer from './PlayersAnswer/PlayersAnswer';

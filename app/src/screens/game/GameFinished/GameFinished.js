@@ -2,12 +2,13 @@ import * as React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { Redirect } from 'react-router-native';
 
-import { leaveGame } from '../../../services/game-service';
-import { getScoresFromHistory } from '../../../services/math-service';
+import { leaveGame } from 'Services/game-service';
+import { getScoresFromHistory } from 'Services/math-service';
 
-import { ButtonPosition } from '../../../components/Button';
-import ScoreBoard from '../../../components/ScoreBoard';
-import screen from '../../screen.styles';
+import screen from 'Screens/screen.styles';
+import { ButtonPosition } from 'Components/Button';
+import ScoreBoard from 'Components/ScoreBoard';
+
 
 
 /** GameFinished

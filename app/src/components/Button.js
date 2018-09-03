@@ -4,8 +4,24 @@ import { StyleSheet, TouchableOpacity, View, Text } from 'react-native';
 
 /** Button
 props:
-  - text
+  - style
+  - size
+  - title
+  - primary
+  - background
+  - disabled
   - onPress
+*/
+
+/** ButtonPosition
+props:
+  - position
+  - ... Button props
+*/
+
+/** ButtonsGroup
+props:
+  - children
 */
 
 const styles = StyleSheet.create({

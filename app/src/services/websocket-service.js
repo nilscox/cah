@@ -1,6 +1,7 @@
 import EventEmitter from 'events';
 import io from 'socket.io-client';
 
+
 const WS_URL = process.env.REACT_APP_WEBSOCKET_URL;
 
 class WSEmitter extends EventEmitter {}

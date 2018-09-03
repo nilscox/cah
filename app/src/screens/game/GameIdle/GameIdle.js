@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { StyleSheet, View, ScrollView, Text } from 'react-native';
 
-import Button from '../../../components/Button';
-import Player from '../../../components/Player';
-import { startGame } from '../../../services/game-service';
+import { startGame } from 'Services/game-service';
 
-import screen from '../../screen.styles.js';
+import screen from 'Screens/screen.styles.js';
+import Button from 'Components/Button';
+import Player from 'Components/Player';
 
 
 /** GameIdle

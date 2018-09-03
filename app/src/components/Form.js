@@ -2,6 +2,18 @@ import * as React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 
 
+/** Form
+props:
+  - style
+  - children
+*/
+
+/** FormField
+props:
+  - label
+  - children
+*/
+
 const styles = StyleSheet.create({
   form: {
     paddingVertical: 10,

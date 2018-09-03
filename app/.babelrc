@@ -2,6 +2,16 @@
   "presets": ["react-native"],
   "plugins": [
     "@babel/plugin-proposal-export-default-from",
-    "babel-plugin-transform-inline-environment-variables"
+    "babel-plugin-transform-inline-environment-variables",
+    ["module-resolver", {
+      "root": ["./src"],
+      "alias": {
+        "Components": "./src/components",
+        "Services": "./src/services",
+        "Screens": "./src/screens",
+        "Images": "./images",
+        "Icons": "./images/icons",
+      }
+    }]
   ]
 }

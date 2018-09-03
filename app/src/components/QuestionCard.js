@@ -2,6 +2,14 @@ import * as React from 'react';
 import { StyleSheet, View, WebView } from 'react-native';
 
 
+/** QuestionCard
+props:
+  - style
+  - question
+  - choices
+  - cssStyles
+*/
+
 const styles = StyleSheet.create({
   view: {
     backgroundColor: '#333',

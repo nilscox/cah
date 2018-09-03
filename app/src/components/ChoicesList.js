@@ -1,8 +1,16 @@
 import * as React from 'react';
 import { StyleSheet, View, FlatList, TouchableOpacity } from 'react-native';
 
-import ChoiceCard from './ChoiceCard';
+import ChoiceCard from 'Components/ChoiceCard';
 
+
+/** ChoicesList
+props:
+  - style
+  - choices
+  - selection
+  - onChoicePress
+*/
 
 const styles = StyleSheet.create({
   view: {

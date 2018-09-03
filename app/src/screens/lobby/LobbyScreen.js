@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { StyleSheet, FlatList, Text, View } from 'react-native';
 
-import { listGames, joinGame } from '../../services/game-service';
+import { listGames, joinGame } from 'Services/game-service';
 
-import screen from '../screen.styles.js';
-import Loading from '../../components/Loading';
-import { ButtonPosition } from '../../components/Button';
+import screen from 'Screens/screen.styles.js';
+import Loading from 'Components/Loading';
+import { ButtonPosition } from 'Components/Button';
 
 
 const styles = StyleSheet.create({

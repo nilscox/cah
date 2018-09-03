@@ -1,4 +1,4 @@
-import request from './request-service';
+import request from 'Services/request-service';
 
 
 const API_URL = process.env.REACT_APP_API_URL;

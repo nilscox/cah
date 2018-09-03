@@ -1,4 +1,4 @@
-import request from './request-service';
+import request from 'Services/request-service';
 
 
 export const listGames = () => {

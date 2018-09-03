@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { StyleSheet, View, FlatList, Text, TouchableWithoutFeedback } from 'react-native';
 
-import { questionLength } from '../services/math-service';
-import QuestionCard from './QuestionCard';
+import { questionLength } from 'Services/math-service';
+
+import QuestionCard from 'Components/QuestionCard';
 
 
 /** AnswersList

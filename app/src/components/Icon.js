@@ -2,6 +2,19 @@ import * as React from 'react';
 import { StyleSheet, Image, TouchableOpacity } from 'react-native';
 
 
+/** Icon
+props:
+  - style
+  - type
+  - size
+*/
+
+/** IconButton
+props:
+  - onPress
+  - ... Icon props
+*/
+
 /* eslint-disable react-native/no-unused-styles */
 const styles = StyleSheet.create({
   small: {
@@ -16,12 +29,12 @@ const styles = StyleSheet.create({
 /* eslint-enable react-native/no-unused-styles */
 
 const IMAGES = {
-  settings: require('../icons/settings.png'),
-  profile: require('../icons/profile.png'),
-  info: require('../icons/info.png'),
+  settings: require('Icons/settings.png'),
+  profile: require('Icons/profile.png'),
+  info: require('Icons/info.png'),
 };
 
-const Icon = ({ type, size, style }) => (
+const Icon = ({ style, type, size }) => (
   <Image source={IMAGES[type]} style={[styles[size], style]} />
 );
 

@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 
-import { nextTurn } from '../../../services/game-service';
+import { nextTurn } from 'Services/game-service';
 
-import screen from '../../screen.styles.js';
-import AnswersList from '../../../components/AnswersList';
-import Button from '../../../components/Button';
+import screen from 'Screens/screen.styles.js';
+import AnswersList from 'Components/AnswersList';
+import Button from 'Components/Button';
 
 
 /** EndOfTurn

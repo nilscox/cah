@@ -3,17 +3,17 @@ import { AppState, BackHandler, StyleSheet, View, Text } from 'react-native';
 import { NativeRouter, Switch, Route, Redirect, BackButton } from 'react-router-native';
 import Toast from 'react-native-easy-toast';
 
-import { fetchMe } from './services/player-service';
-import { createWebSocket, emitter as websocket } from './services/websocket-service';
+import { fetchMe } from 'Services/player-service';
+import { createWebSocket, emitter as websocket } from 'Services/websocket-service';
 
-import AuthScreen from './screens/auth/AuthScreen';
-import LobbyScreen from './screens/lobby/LobbyScreen';
-import GameScreen from './screens/game/GameScreen';
-import CreateGameScreen from './screens/game/CreateGameScreen';
-import PlayerProfileScreen from './screens/player/PlayerProfileScreen';
-import PlayerProfileEditScreen from './screens/player/PlayerProfileEditScreen';
+import AuthScreen from 'Screens/auth/AuthScreen';
+import LobbyScreen from 'Screens/lobby/LobbyScreen';
+import GameScreen from 'Screens/game/GameScreen';
+import CreateGameScreen from 'Screens/game/CreateGameScreen';
+import PlayerProfileScreen from 'Screens/player/PlayerProfileScreen';
+import PlayerProfileEditScreen from 'Screens/player/PlayerProfileEditScreen';
 
-import Loading from './components/Loading';
+import Loading from 'Components/Loading';
 
 
 const styles = StyleSheet.create({

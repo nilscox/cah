@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { StyleSheet, View, Text, Image } from 'react-native';
 
-import { playerAvatarUri } from '../../services/player-service';
-import Form, { FormField } from '../../components/Form';
-import { ButtonPosition } from '../../components/Button';
-import screen from '../screen.styles';
+import { playerAvatarUri } from 'Services/player-service';
+
+import screen from 'Screens/screen.styles';
+import Form, { FormField } from 'Components/Form';
+import { ButtonPosition } from 'Components/Button';
 
 
 const styles = StyleSheet.create({

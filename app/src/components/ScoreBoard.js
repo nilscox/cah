@@ -43,9 +43,9 @@ const styles = StyleSheet.create({
 });
 
 const cups = [
-  require('./cup-1.png'),
-  require('./cup-2.png'),
-  require('./cup-3.png'),
+  require('Images/cup-1.png'),
+  require('Images/cup-2.png'),
+  require('Images/cup-3.png'),
 ];
 
 const ScoreBoardHeader = () => (

@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { StyleSheet, View, TouchableOpacity } from 'react-native';
 
-import { submitAnswer } from '../../../services/game-service';
-import { questionLength } from '../../../services/math-service';
+import { submitAnswer } from 'Services/game-service';
+import { questionLength } from 'Services/math-service';
 
-import screen from '../../screen.styles.js';
-import QuestionCard from '../../../components/QuestionCard';
-import ChoicesList from '../../../components/ChoicesList';
+import screen from 'Screens/screen.styles.js';
+import QuestionCard from 'Components/QuestionCard';
+import ChoicesList from 'Components/ChoicesList';
 
 
 /** PlayersAnswer

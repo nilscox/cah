@@ -7,10 +7,10 @@ import {
   TextInput
 } from 'react-native';
 
-import { createGame } from '../../services/game-service';
+import { createGame } from 'Services/game-service';
 
-import Button, { ButtonsGroup } from '../../components/Button';
-import screen from '../screen.styles.js';
+import screen from 'Screens/screen.styles.js';
+import Button, { ButtonsGroup } from 'Components/Button';
 
 
 const styles = StyleSheet.create({

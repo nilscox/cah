@@ -2,10 +2,11 @@ import * as React from 'react';
 import { Alert, StyleSheet, TouchableOpacity, View, Text, TextInput, Image } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 
-import { updatePlayer, playerAvatarUri } from '../../services/player-service';
-import Form, { FormField } from '../../components/Form';
-import Button, { ButtonsGroup } from '../../components/Button';
-import screen from '../screen.styles';
+import { updatePlayer, playerAvatarUri } from 'Services/player-service';
+
+import screen from 'Screens/screen.styles';
+import Form, { FormField } from 'Components/Form';
+import Button, { ButtonsGroup } from 'Components/Button';
 
 
 const styles = StyleSheet.create({
