@@ -1,5 +1,6 @@
 const app = require('./src/app');
-const { getEnv, info } = require('./src/utils');
+const { getEnv } = require('./src/utils');
+const { info } = require('./src/log');
 
 const IP = getEnv('CAH_API_IP', 'localhost');
 const PORT = getEnv('CAH_API_PORT', 4242);
@@ -15,6 +16,6 @@ const config = {
   MEDIA_ROOT: getEnv('CAH_MEDIA_ROOT'),
 };
 
-info('SERVER', 'config', '\n' + Object.keys(config).map(k => k.padEnd(12, ' ') + ': ' + config[k]).join('\n'));
+info('SERVER', 'config', config);
 
 app.listen(PORT, IP, () => info('SERVER', 'listening on ' + [IP, PORT].join(':')));

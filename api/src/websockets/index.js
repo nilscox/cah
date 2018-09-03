@@ -1,7 +1,7 @@
 const WSServer = require('socket.io');
 const sharedSession = require('express-socket.io-session');
 
-const { error } = require('../utils');
+const { error } = require('../log');
 const { Player } = require('../models');
 
 let io = null;

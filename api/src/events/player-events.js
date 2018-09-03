@@ -1,4 +1,4 @@
-const { error, info } = require('../utils');
+const { error, info } = require('../log');
 const { playerFormatter, choiceFormatter } = require('../formatters');
 const websockets = require('../websockets');
 

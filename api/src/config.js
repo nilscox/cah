@@ -1,5 +1,5 @@
-const sqlFormatter = require('sql-formatter');
-const { getEnv, log } = require('./utils');
+const { getEnv } = require('./utils');
+const { database } = require('./log');
 
 const cfg = {
   username: getEnv('CAH_DB_USER'),
@@ -9,13 +9,12 @@ const cfg = {
   port: getEnv('CAH_DB_PORT'),
   dialect: 'postgres',
   operatorsAliases: false,
-  logging: sql => log('SQL', sqlFormatter.format(sql)),
+  logging: sql => database.info(sql),
 };
 
 if (getEnv('NODE_ENV') === 'test') {
   cfg.rootUsername = getEnv('CAH_DB_ROOT_USER');
   cfg.rootPassword = getEnv('CAH_DB_ROOT_PASSWORD');
-  cfg.logging = () => {};
 }
 
 module.exports = cfg;

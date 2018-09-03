@@ -4,8 +4,10 @@ const http = require('http');
 const express = require('express');
 const bodyParser = require('body-parser');
 const sessionMiddleware = require('express-session');
+const morgan = require('morgan');
 
-const { getEnv, log, error } = require('./utils');
+const { getEnv } = require('./utils');
+const { verbose, error, request: requestLogger } = require('./log');
 const { APIError } = require('./errors');
 const { Player } = require('./models');
 const routes = require('./routes');
@@ -30,6 +32,7 @@ app.set('x-powered-by', false);
 
 app.use(bodyParser.json());
 app.use(session);
+app.use(morgan('combined', { stream: requestLogger.stream }));
 
 websockets(server, session, events);
 
@@ -67,7 +70,7 @@ app.use((err, req, res, next) => {
     throw err;
   }
 
-  log('REQUEST', err.message);
+  verbose('REQUEST', err.message);
 
   res.status(err.status).json(err.toJSON());
 });
