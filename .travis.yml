@@ -16,6 +16,7 @@ env:
     - CAH_DB_ROOT_USER="postgres"
     - CAH_DB_ROOT_PASSWORD=""
     - CAH_DATA_PATH="$TRAVIS_BUILD_DIR/data"
+    - CAH_MEDIA_PATH="$TRAVIS_BUILD_DIR/media"
     - CAH_API_ADMIN_TOKEN="toquène"
 
 before_install:
