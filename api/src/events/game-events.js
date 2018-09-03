@@ -71,11 +71,21 @@ module.exports.on_start = (game) => on_event('GAME_START', game, {
   msgPlayers: async () => ({ game: await gameFormatter.full(game) }),
 });
 
-module.exports.on_answer = (game, player, data) => on_event('GAME_ANSWER', game, {
-  msgAdmin: async () => ({ game: await gameFormatter.admin(game) }),
-  msgPlayers: () => ({ player: player.get('nick') }),
-  data,
-});
+module.exports.on_answer = async (game, player, data) => {
+  on_event('GAME_ANSWER', game, {
+    msgAdmin: async () => ({ game: await gameFormatter.admin(game) }),
+    msgPlayers: () => ({ player: player.get('nick') }),
+    data,
+  });
+
+  if (await game.getPlayState() === 'question_master_selection') {
+    on_event('GAME_ALL_ANSWERS', game, {
+      msgAdmin: async () => ({ game: await gameFormatter.admin(game) }),
+      msgPlayers: async () => ({ game: await gameFormatter.full(game) }),
+      data,
+    });
+  }
+};
 
 module.exports.on_select = (game, data) => on_event('GAME_SELECT', game, {
   msgAdmin: async () => ({ game: await gameFormatter.admin(game) }),
