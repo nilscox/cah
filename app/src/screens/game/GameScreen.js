@@ -106,14 +106,14 @@ export default class GameScreen extends React.Component {
     const { res, json } = await fetchGame(params.id);
 
     if (res.status === 200) {
-      const history = await fetchGameHistory(params.id);
+      const { res: hres, json: hjson } = await fetchGameHistory(params.id);
 
-      if (history.res === 200)
-        console.log(json);
+      if (hres.status === 200)
+        this.setState({ game: json, history: hjson });
       else
-        this.setState({ game: json, history: history.json });
+        this.props.onError('fetchGameHistory', hjson);
     } else
-      console.log(json);
+      this.props.onError('fetchGame', json);
 
 
     websocket.on('player:update', this.handlePlayerChange);

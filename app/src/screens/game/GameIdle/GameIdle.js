@@ -41,7 +41,7 @@ export default class GameIdle extends React.Component {
     const { res, json } = await startGame(this.props.game.id);
 
     if (res.status !== 200)
-      console.log(json);
+      this.props.onError('startGame', json);
   }
 
   render() {

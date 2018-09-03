@@ -35,7 +35,7 @@ export default class LobbyScreen extends React.Component {
     if (res.status === 200)
       this.setState({ games: json })
     else
-      console.log(json);
+      this.props.onError('listGames', json);
   }
 
   async joinGame(game) {
@@ -45,7 +45,7 @@ export default class LobbyScreen extends React.Component {
     if (res.status === 200)
       history.push(`/game/${json.id}`);
     else
-      console.log(json);
+      this.props.onError('joinGame', json);
   }
 
   render() {

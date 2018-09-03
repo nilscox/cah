@@ -45,6 +45,8 @@ export default class App extends React.Component {
   }
 
   handleAppStateChange = (nextAppState) => {
+    console.log('[APP]', 'state change', nextAppState);
+
     if (nextAppState === 'active')
       this.init();
     else {
@@ -60,11 +62,6 @@ export default class App extends React.Component {
       this.setState({ player: p });
   };
 
-  setState() {
-    console.log('setState', arguments);
-    super.setState(...arguments);
-  }
-
   async init() {
     this.setState({ loading: true });
 
@@ -74,7 +71,7 @@ export default class App extends React.Component {
     if (res.status === 200)
       this.setPlayer(json);
     else
-      console.log(json);
+      this.handleError('fetchMe', json);
 
     this.setState({ loading: false });
   }
@@ -82,9 +79,12 @@ export default class App extends React.Component {
   setPlayer(player, cb) {
     this.setState({ player }, () => {
       this.socket = createWebSocket();
-      console.log(cb);
       cb && cb();
     });
+  }
+
+  handleError(error, data) {
+    console.log('[ERROR]', error, data);
   }
 
   render() {
@@ -102,17 +102,23 @@ export default class App extends React.Component {
     if (loading)
       return <Loading />;
 
+    const common = {
+      player,
+      setPlayer: this.setPlayer.bind(this),
+      onError: this.handleError.bind(this),
+    };
+
     return (
       <NativeRouter>
         <BackButton>
           <Switch>
             <Route path="/" exact render={() => <Redirect to={getRouteAfterLoading()} />} />
-            <Route path="/auth" render={(props) => <AuthScreen setPlayer={this.setPlayer.bind(this)} {...props} />} />
-            <Route path="/lobby" component={LobbyScreen} />
-            <Route path="/game/new" component={CreateGameScreen} />
-            <Route path="/game/:id" render={props => <GameScreen player={player} {...props} />} />
-            <Route path="/player" exact render={props => <PlayerProfileScreen player={player} {...props} />} />
-            <Route path="/player/edit" component={PlayerProfileEditScreen} />
+            <Route path="/auth" render={(props) => <AuthScreen {...common} {...props} />} />
+            <Route path="/lobby" render={(props) => <LobbyScreen {...common} {...props} />} />
+            <Route path="/game/new" render={(props) => <CreateGameScreen {...common} {...props} />} />
+            <Route path="/game/:id" render={(props) => <GameScreen {...common} {...props} />} />
+            <Route path="/player" exact render={(props) => <PlayerProfileScreen {...common} {...props} />} />
+            <Route path="/player/edit" render={(props) => <PlayerProfileEditScreen {...common} {...props} />} />
             <Route render={() => <Text>404.</Text>} />
           </Switch>
         </BackButton>

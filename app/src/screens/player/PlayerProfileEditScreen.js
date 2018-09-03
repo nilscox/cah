@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { StyleSheet, View, Text, TextInput, Image } from 'react-native';
+import { StyleSheet, TouchableOpacity, View, Text, TextInput, Image } from 'react-native';
 
-import { fetchPlayer, updatePlayer, playerAvatarUri } from '../../services/player-service';
+import { fetchPlayer, updatePlayer, playerAvatarUri, playerChangeAvatar } from '../../services/player-service';
 import Loading from '../../components/Loading';
 import Form, { FormField } from '../../components/Form';
 import Button, { ButtonsGroup } from '../../components/Button';
@@ -31,6 +31,7 @@ export default class PlayerProfileEditScreen extends React.Component {
 
   state = {
     extra: undefined,
+    avatar: null,
   };
 
   static getDerivedStateFromProps = (props, state) => {
@@ -44,28 +45,34 @@ export default class PlayerProfileEditScreen extends React.Component {
 
   async onSave() {
     const { player } = this.props.location.state;
-    let { extra } = this.state;
+    let { extra, avatar } = this.state;
 
     if (extra.length === 0)
       extra = null;
 
-    const { res, json } = await updatePlayer(player.nick, { extra });
+    const { res, json } = await updatePlayer(player.nick, { extra, avatar });
 
     if (res.status === 200)
       this.props.history.go(-2);
     else
-      console.log(json);
+      this.props.onError('updatePlayer', json);
   }
 
   render() {
     const { player } = this.props.location.state;
+    const { avatar: newAvatar } = this.state;
+    const avatarSource = newAvatar
+      ? { uri: newAvatar.uri }
+      : playerAvatarUri(player);
 
     return (
       <View style={[screen.view, screen.viewPadding, styles.view]}>
 
         <Text style={screen.title}>{ player.nick }</Text>
 
-        <Image style={styles.avatar} source={playerAvatarUri(player)} />
+        <TouchableOpacity onPress={() => this.displayAvatarImagePicker()}>
+          <Image style={styles.avatar} source={avatarSource} />
+        </TouchableOpacity>
 
         <Form>
           <FormField label="Online">
@@ -100,6 +107,10 @@ export default class PlayerProfileEditScreen extends React.Component {
 
       </View>
     );
+  }
+
+  displayAvatarImagePicker() {
+    // this.setState({ avatar: response });
   }
 
 }

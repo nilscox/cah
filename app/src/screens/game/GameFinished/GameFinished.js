@@ -40,7 +40,7 @@ export default class GameFinished extends React.Component {
     if (res.status === 204)
       this.setState({ back: true });
     else
-      console.log(json);
+      this.props.onError('leaveGame', json);
   }
 
   render() {

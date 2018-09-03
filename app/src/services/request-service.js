@@ -15,7 +15,7 @@ export default async (route, opts = {}) => {
   const result = await request(route, opts);
   const { res, text, json } = result;
 
-  console.log('[REQUEST]', route, '(' + res.status + ')', json || text || null);
+  console.log('[REQUEST]', res.status, route);
 
   return result;
 };

@@ -50,7 +50,7 @@ export default class CreateGameScreen extends React.Component {
     if (res.status === 201)
       this.props.history.replace(`/game/${json.id}`);
     else
-      console.log(json);
+      this.props.onError('createGame', json);
   }
 
   render() {

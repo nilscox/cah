@@ -35,7 +35,7 @@ export default class AuthScreen extends React.Component {
     if (res.status === 200)
       this.props.setPlayer(json, () => this.redirect(json));
     else
-      console.log(json);
+      this.props.onError('login', json);
   }
 
   async createPlayer(nick) {
@@ -47,13 +47,12 @@ export default class AuthScreen extends React.Component {
     if (res.status === 201)
       this.props.setPlayer(json, () => this.redirect(json));
     else
-      console.log(json);
+      this.props.onError('createPlayer', json);
   }
 
   redirect(player) {
     const { history } = this.props;
     const location = player.gameId ? '/game/' + player.gameId : '/lobby';
-    console.log('redirect', location);
 
     history.replace(location);
   }

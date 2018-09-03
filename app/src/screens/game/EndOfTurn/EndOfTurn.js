@@ -31,7 +31,7 @@ export default class EndOfTurn extends React.Component {
     if (res.status === 200)
       ;
     else
-      console.log(json);
+      this.props.onError('nextTurn', json);
   }
 
   render() {

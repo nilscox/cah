@@ -13,9 +13,25 @@ export const fetchMe = () => {
 };
 
 export const updatePlayer = (nick, fields) => {
+  const data = new FormData();
+
+  Object.keys(fields)
+    .filter(k => k !== 'avatar')
+    .forEach(k => data.append(k, fields[k]));
+
+  const { avatar } = fields;
+
+  if (avatar) {
+    data.append('avatar', {
+      uri: avatar.uri,
+      type: avatar.type,
+      name: avatar.name,
+    });
+  }
+
   return request(`/api/player/${nick}`, {
     method: 'PUT',
-    body: fields,
+    body: data,
   });
 };
 

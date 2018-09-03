@@ -40,7 +40,7 @@ export default class QuestionMasterSelection extends React.Component {
         this.setState({ selected: true });
     }
     else
-      console.log(json);
+      this.props.onError('selectAnswer', json);
   }
 
   render() {

@@ -76,7 +76,7 @@ export default class PlayersAnswer extends React.Component {
       if (game.playState === 'players_answer')
         this.setState({ submitted: true });
     } else
-      console.log(json);
+      this.props.onError('submitAnswer', json);
   }
 
   render() {
