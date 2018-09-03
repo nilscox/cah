@@ -29,6 +29,7 @@ export const createWebSocket = () => {
     case 'GAME_JOIN':
     case 'GAME_LEAVE':
     case 'GAME_START':
+    case 'GAME_ALL_ANSWERS':
     case 'GAME_SELECT':
     case 'GAME_NEXT':
     case 'GAME_END':
