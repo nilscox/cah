@@ -9,7 +9,7 @@ const cfg = {
   port: getEnv('CAH_DB_PORT'),
   dialect: 'postgres',
   operatorsAliases: false,
-  logging: sql => log('SQL', sqlFormatter(sql)),
+  logging: sql => log('SQL', sqlFormatter.format(sql)),
 };
 
 if (getEnv('NODE_ENV') === 'test') {
