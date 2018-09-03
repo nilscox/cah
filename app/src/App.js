@@ -158,7 +158,7 @@ export default class App extends React.Component {
         </NativeRouter>
 
         <Toast
-          style={{ backgroundColor: '#CCC', paddingHorizontal: 10 }}
+          style={{ backgroundColor: '#CCC', paddingHorizontal: 20, margin: 20 }}
           textStyle={{ color: '#333' }}
           opacity={0.7}
           ref="toast"

@@ -116,6 +116,7 @@ export default class GameScreen extends React.Component {
       this.props.onError('fetchGame', json);
 
     websocket.on('player:update', this.handlePlayerChange);
+    websocket.on('player:cards', this.handlePlayerCards);
     websocket.on('game:answer', this.handleGameAnswer);
     websocket.on('game:update', this.handleGameChange);
     websocket.on('game:turn', this.handleGameTurn);
@@ -123,10 +124,18 @@ export default class GameScreen extends React.Component {
 
   componentWillUnmount() {
     websocket.off('player:update', this.handlePlayerChange);
+    websocket.off('player:cards', this.handlePlayerCards);
     websocket.off('game:answer', this.handleGameAnswer);
     websocket.off('game:update', this.handleGameChange);
     websocket.off('game:turn', this.handleGameTurn);
   }
+
+  handlePlayerCards = (cards) => {
+    const l = cards.length;
+    const text = cards.map(c => '- ' + c.text).join('\n');
+
+    this.props.toast(`${l} new card${l > 1 ? 's' : ''}!\n\n${text}`, 8000);
+  };
 
   handlePlayerChange = (player) => {
     const { game } = this.state;
