@@ -35,6 +35,7 @@ export default class App extends React.Component {
     this.socket = null;
     this.active = false;
     this.stateAfterResume = {};
+    this.toastRef = null;
   }
 
   componentDidMount() {
@@ -119,7 +120,7 @@ export default class App extends React.Component {
   }
 
   toast(message, duration = 1500) {
-    this.toast.show(message, duration);
+    this.toastRef.show(message, duration);
   }
 
   render() {
@@ -166,7 +167,7 @@ export default class App extends React.Component {
           style={styles.toast}
           textStyle={styles.toastText}
           opacity={0.8}
-          ref={ref => this.toast = ref}
+          ref={ref => this.toastRef = ref}
         />
 
       </View>

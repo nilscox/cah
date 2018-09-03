@@ -82,40 +82,24 @@ const renderHtml = ({ question, choices }) => {
   return html;
 };
 
-export default class QuestionCard extends React.Component {
+const QuestionCard = ({ style, question, choices, cssStyles }) => {
+  const html = `
+    <style type="text/css">${CSS(cssStyles || {})}</style>
+    <div class="wrapper">
+      ${renderHtml({ question, choices })}
+    </div>
+  `;
 
-  constructor(props) {
-    super(props);
+  // console.log(html);
 
-    this.viewRef = null;
-  }
+  return (
+    <View style={[styles.view, style]}>
+      <WebView
+        style={styles.webview}
+        source={{ html, baseUrl: '/' }}
+      />
+    </View>
+  );
+};
 
-  componentDidUpdate() {
-    // TODO: is this really needed?
-    if (this.viewRef)
-      this.viewRef.reload();
-  }
-
-  render() {
-    const { style, question, choices, cssStyles } = this.props;
-
-    const html = `
-      <style type="text/css">${CSS(cssStyles || {})}</style>
-      <div class="wrapper">
-        ${renderHtml({ question, choices })}
-      </div>
-    `;
-
-    // console.log(html);
-    return (
-      <View style={[styles.view, style]}>
-        <WebView
-          ref={ref => this.viewRef = ref}
-          style={styles.webview}
-          source={{ html, baseUrl: '/' }}
-        />
-      </View>
-    );
-  }
-
-}
+export default QuestionCard;

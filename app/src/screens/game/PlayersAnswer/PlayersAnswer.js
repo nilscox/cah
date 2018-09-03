@@ -20,6 +20,9 @@ state:
 */
 
 const styles = StyleSheet.create({
+  full: {
+    flex: 1,
+  },
   question: {
     flex: 1,
   },
@@ -105,6 +108,7 @@ export default class PlayersAnswer extends React.Component {
       <View style={screen.view}>
 
         <TouchableOpacity
+          style={styles.full}
           onPress={() => canSubmit && this.submitAnswer()}
         >
           <QuestionCard

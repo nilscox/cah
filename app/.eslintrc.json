@@ -26,10 +26,8 @@
     ],
     "settings": {
         "react": {
-            "createClass": "createReactClass",
             "pragma": "React",
-            "version": "15.0",
-            "flowVersion": "0.53"
+            "version": "16.4"
         }
     },
     "rules": {
