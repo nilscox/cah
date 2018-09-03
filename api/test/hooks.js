@@ -7,12 +7,16 @@ const Sequelize = require('sequelize');
 const Umzug = require('umzug');
 const request = require('supertest');
 
-const config = require('../src/config');
+const config = require('../src/config').database;
 const utils = require('./utils');
 
 const API_URL = process.env.REACT_APP_CAH_API_URL;
 const API_TOKEN = process.env.CAH_API_ADMIN_TOKEN;
 const DB_TEMPLATE_NAME = 'cah_test';
+
+config.dialect = 'postgres';
+config.operatorsAliases = false;
+config.logging = () => {};
 
 const pgClient = () => {
   const pg = new Client({
@@ -25,7 +29,7 @@ const pgClient = () => {
 
   return Promise.resolve(pg)
     .tap(pg => pg.connect());
-}
+};
 
 const setupTemplateDatabase = () => {
   return pgClient()
