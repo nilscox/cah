@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet, TouchableOpacity, View, Text, TextInput, Image } from 'react-native';
+import { Alert, StyleSheet, TouchableOpacity, View, Text, TextInput, Image } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 
 import { fetchPlayer, updatePlayer, playerAvatarUri, playerChangeAvatar } from '../../services/player-service';
@@ -110,24 +110,36 @@ export default class PlayerProfileEditScreen extends React.Component {
     );
   }
 
-  async displayAvatarImagePicker() {
-    try {
-      const image = await ImagePicker.openPicker({
-        width: 200,
-        height: 200,
-        cropping: true,
-      });
+  displayAvatarImagePicker() {
+    const chooseFrom = (open) => async () => {
+      try {
+        const image = await open({
+          width: 200,
+          height: 200,
+          cropping: true,
+        });
 
-      this.setState({
-        avatar: {
-          uri: image.path,
-          type: image.mime,
-          name: 'avatar-' + this.props.player.nick,
-        },
-      });
-    } catch (e) {
-      this.props.onError('ImagePicker.openPicker', e);
-    }
+        this.setState({
+          avatar: {
+            uri: image.path,
+            type: image.mime,
+            name: 'avatar-' + this.props.player.nick,
+          },
+        });
+      } catch (e) {
+        this.props.onError('ImagePicker.open[Picker|Camera]', e);
+      }
+    };
+
+    Alert.alert(
+      'Change avatar',
+      'Choose from...',
+      [
+        { text: 'Library', onPress: chooseFrom(ImagePicker.openPicker) },
+        { text: 'Camera', onPress: chooseFrom(ImagePicker.openCamera) },
+      ],
+      { cancelable: true },
+    );
   }
 
 }
