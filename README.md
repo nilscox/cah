@@ -1,6 +1,8 @@
 # Cards Against Humanity
 
 [![Build Status](https://travis-ci.org/nilscox/cah.svg?branch=api_v2)](https://travis-ci.org/nilscox/cah)
+[![codecov](https://codecov.io/gh/nilscox/cah/branch/master/graph/badge.svg)](https://codecov.io/gh/nilscox/cah)
+
 
 Black cards, white cards, much fun.
 
