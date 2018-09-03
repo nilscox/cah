@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { Redirect } from 'react-router-native';
+import Notification from 'react-native-in-app-notification';
 
 import { fetchGame, fetchGameHistory } from '../../services/game-service';
 import { emitter as websocket } from '../../services/websocket-service';
@@ -147,7 +148,8 @@ export default class GameScreen extends React.Component {
   };
 
   handleGameAnswer = (player) => {
-    console.log('player answer', player);
+    if (player !== this.props.player.nick)
+      this.props.toast(player + ' answered');
   };
 
   handleGameChange = (game) => {

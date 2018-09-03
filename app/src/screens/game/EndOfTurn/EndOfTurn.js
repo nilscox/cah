@@ -20,6 +20,10 @@ const styles = StyleSheet.create({
     paddingBottom: 30,
     fontSize: 18,
   },
+  nextBtn: {
+    alignItems: 'center',
+    marginVertical: 10,
+  },
 });
 
 export default class EndOfTurn extends React.Component {
@@ -54,8 +58,8 @@ export default class EndOfTurn extends React.Component {
         />
 
         { canGoNext && (
-          <ButtonPosition
-            position="bottom"
+          <Button
+            style={styles.nextBtn}
             background
             primary
             title="next"

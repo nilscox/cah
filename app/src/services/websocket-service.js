@@ -24,6 +24,7 @@ export const createWebSocket = () => {
 
     case 'GAME_ANSWER':
       emitter.emit('game:answer', e.player);
+      break;
 
     case 'GAME_UPDATE':
     case 'GAME_JOIN':

@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { AppState, BackHandler, Alert, Text } from 'react-native';
+import { AppState, BackHandler, Alert, View, Text } from 'react-native';
 import { NativeRouter, Switch, Route, Redirect, BackButton } from 'react-router-native';
+import Toast from 'react-native-easy-toast';
 
 import { fetchMe } from './services/player-service';
 import { createWebSocket, emitter as websocket } from './services/websocket-service';
@@ -101,6 +102,11 @@ export default class App extends React.Component {
     console.log('[ERROR]', error, data);
   }
 
+  // 7000ms seems like 1000ms... strange
+  toast(message, duration = 7000) {
+    this.refs.toast.show(message, duration);
+  }
+
   render() {
     const { loading, player } = this.state;
     const getRouteAfterLoading = () => {
@@ -118,25 +124,32 @@ export default class App extends React.Component {
 
     const common = {
       player,
+      toast: this.toast.bind(this),
       setPlayer: this.setPlayer.bind(this),
       onError: this.handleError.bind(this),
     };
 
     return (
-      <NativeRouter>
-        <BackButton>
-          <Switch>
-            <Route path="/" exact render={() => <Redirect to={getRouteAfterLoading()} />} />
-            <Route path="/auth" render={(props) => <AuthScreen {...common} {...props} />} />
-            <Route path="/lobby" render={(props) => <LobbyScreen {...common} {...props} />} />
-            <Route path="/game/new" render={(props) => <CreateGameScreen {...common} {...props} />} />
-            <Route path="/game/:id" render={(props) => <GameScreen {...common} {...props} />} />
-            <Route path="/player" exact render={(props) => <PlayerProfileScreen {...common} {...props} />} />
-            <Route path="/player/edit" render={(props) => <PlayerProfileEditScreen {...common} {...props} />} />
-            <Route render={() => <Text>404.</Text>} />
-          </Switch>
-        </BackButton>
-      </NativeRouter>
+      <View style={{ flex: 1 }}>
+
+        <NativeRouter>
+          <BackButton>
+            <Switch>
+              <Route path="/" exact render={() => <Redirect to={getRouteAfterLoading()} />} />
+              <Route path="/auth" render={(props) => <AuthScreen {...common} {...props} />} />
+              <Route path="/lobby" render={(props) => <LobbyScreen {...common} {...props} />} />
+              <Route path="/game/new" render={(props) => <CreateGameScreen {...common} {...props} />} />
+              <Route path="/game/:id" render={(props) => <GameScreen {...common} {...props} />} />
+              <Route path="/player" exact render={(props) => <PlayerProfileScreen {...common} {...props} />} />
+              <Route path="/player/edit" render={(props) => <PlayerProfileEditScreen {...common} {...props} />} />
+              <Route render={() => <Text>404.</Text>} />
+            </Switch>
+          </BackButton>
+        </NativeRouter>
+
+        <Toast ref="toast"/>
+
+      </View>
     );
   }
 

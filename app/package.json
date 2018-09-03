@@ -17,6 +17,7 @@
     "events": "^3.0.0",
     "react": "16.4.1",
     "react-native": "0.56.0",
+    "react-native-easy-toast": "^1.1.0",
     "react-native-image-crop-picker": "^0.21.1",
     "react-router-native": "^4.3.0",
     "socket.io-client": "^2.1.1"
