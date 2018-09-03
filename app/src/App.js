@@ -26,18 +26,30 @@ export default class App extends React.Component {
     super(props);
 
     this.socket = null;
+    this.active = false;
+    this.stateAfterResume = {};
   }
 
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
     AppState.addEventListener('change', this.handleAppStateChange);
     websocket.on('player:update', this.handlePlayerChange);
+
+    this.init();
   }
 
   componentWillUnmount() {
     BackHandler.removeEventListener('hardwareBackPress', this.handleBackPress);
     AppState.removeEventListener('change', this.handleAppStateChange);
     websocket.off('player:update', this.handlePlayerChange);
+  }
+
+  setState(state, cb) {
+    if (!this.active) {
+      Object.assign(this.stateAfterResume, state);
+      cb && cb();
+    } else
+      return super.setState(state, cb);
   }
 
   handleBackPress() {
@@ -47,11 +59,13 @@ export default class App extends React.Component {
   handleAppStateChange = (nextAppState) => {
     console.log('[APP]', 'state change', nextAppState);
 
-    if (nextAppState === 'active')
-      this.init();
-    else {
-      if (this.socket)
-        this.socket.disconnect();
+    this.active = nextAppState === 'active';
+
+    if (this.active) {
+      if (Object.keys(this.stateAfterResume).length > 0) {
+        this.setState(this.stateAfterResume);
+        this.stateAfterResume = {};
+      }
     }
   };
 
@@ -59,7 +73,7 @@ export default class App extends React.Component {
     const { player } = this.state;
 
     if (player && player.nick === p.nick)
-      this.setState({ player: p });
+      this.setState({ player: { ...player, ...p } });
   };
 
   async init() {
