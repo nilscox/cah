@@ -1,5 +1,5 @@
 const { error, info } = require('../utils');
-const { playerFormatter } = require('../formatters');
+const { playerFormatter, choiceFormatter } = require('../formatters');
 const websockets = require('../websockets');
 
 const on_event = async (type, player, { msgAdmin, msgPlayer, msgPlayers, ...args }) => {
@@ -19,7 +19,7 @@ const on_event = async (type, player, { msgAdmin, msgPlayer, msgPlayers, ...args
 
     info(type, '#' + player.id + ' (' + player.nick + ')', args);
   } catch (e) {
-    error('EVENT', e);
+    error('EVENT', type, e);
   }
 };
 
@@ -69,7 +69,11 @@ module.exports.on_disconnect = async (player) => {
   })
 };
 
-module.exports.on_cardsDealt = (player, cards) => on_event('CARDS_DEALT', player, {
-  msgAdmin: async () => ({ player: await playerFormatter.admin(player) }),
-  msgPlayer: async () => ({ player: await playerFormatter.full(player) }),
-});
+module.exports.on_cardsDealt = (player, cards) => {
+  if (cards.length > 0) {
+    return on_event('CARDS_DEALT', player, {
+      msgAdmin: async () => ({ player: await playerFormatter.admin(player) }),
+      msgPlayer: async () => ({ cards: await choiceFormatter.full(cards, { many: true }) }),
+    });
+  }
+};
