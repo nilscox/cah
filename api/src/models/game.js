@@ -107,12 +107,13 @@ module.exports = (sequelize, DataTypes) => {
     // console.log('nbChoices: ' + nbChoices);
   }
 
-  Game.prototype.getPropositions = async function() {
+  Game.prototype.getPropositions = async function(where) {
     if (!this.questionId)
       return;
 
     return await this.getAnswers({
       where: {
+        ...where,
         questionId: { [Op.eq]: this.questionId },
       },
       orderBy: ['place', 'id'],
