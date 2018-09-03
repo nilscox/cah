@@ -22,9 +22,9 @@ before_install:
   - npm install -g yarn nyc codecov
 
 install:
-  - cd api && yarn
-  - cd app && yarn
-  - cd admin && yarn
+  - cd "$TRAVIS_BUILD_DIR/api" && yarn
+  - cd "$TRAVIS_BUILD_DIR/app" && yarn
+  - cd "$TRAVIS_BUILD_DIR/admin" && yarn
 
 before_script:
   - psql -U postgres -c 'CREATE ROLE cah LOGIN'
