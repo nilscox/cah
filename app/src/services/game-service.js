@@ -2,7 +2,7 @@ import request from './request-service';
 
 
 export const listGames = () => {
-  return request(`/api/game`);
+  return request('/api/game');
 };
 
 export const fetchGame = (id) => {
@@ -22,7 +22,7 @@ export const leaveGame = (id) => {
 };
 
 export const createGame = (lang, nbQuestions, cardsPerPlayer) => {
-  return request(`/api/game`, {
+  return request('/api/game', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

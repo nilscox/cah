@@ -5,9 +5,7 @@ import { playerAvatarUri } from '../services/player-service';
 
 
 const styles = StyleSheet.create({
-  player: {
-
-  },
+  player: {},
   avatar: {
     width: 50,
     height: 50,
@@ -20,9 +18,11 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Player = ({ style, player }) => (
+const Player = ({ style, player }) => (
   <View style={[styles.player, style]}>
     <Image style={styles.avatar} source={playerAvatarUri(player)} />
     <Text style={styles.nick}>{ player.nick }</Text>
   </View>
 );
+
+export default Player;

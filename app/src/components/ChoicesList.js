@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet, View, FlatList, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, FlatList, TouchableOpacity } from 'react-native';
 
 import ChoiceCard from './ChoiceCard';
 
@@ -28,7 +28,7 @@ const ChoiceItem = ({ choice, onPress }) => (
   </View>
 );
 
-export default ChoicesList = ({ style, choices, selection, onChoicePress }) => (
+const ChoicesList = ({ style, choices, selection, onChoicePress }) => (
   <View style={[styles.view, style]}>
     <FlatList
       data={choices.map(c => ({ ...c, selected: !!selection.find(s => s && s.id === c.id) }))}
@@ -42,3 +42,5 @@ export default ChoicesList = ({ style, choices, selection, onChoicePress }) => (
     />
   </View>
 );
+
+export default ChoicesList;

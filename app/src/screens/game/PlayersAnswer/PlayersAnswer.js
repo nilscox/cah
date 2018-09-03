@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, TouchableOpacity } from 'react-native';
 
 import { submitAnswer } from '../../../services/game-service';
 import { questionLength } from '../../../services/math-service';
@@ -96,12 +96,15 @@ export default class PlayersAnswer extends React.Component {
     const canSubmit = !submitted && selection.filter(s => !s).length === 0;
 
     const ql = questionLength(game.question, selection);
+    const questionCss = {
+      fontSize: ql < 140 ? 18 : 16,
+      lineHeight: ql < 140 ? 26 : 18,
+    };
 
     return (
       <View style={screen.view}>
 
         <TouchableOpacity
-          style={{ flex: 1 }}
           onPress={() => canSubmit && this.submitAnswer()}
         >
           <QuestionCard
@@ -109,10 +112,7 @@ export default class PlayersAnswer extends React.Component {
             size="full"
             question={game.question}
             choices={selection}
-            cssStyles={{
-              fontSize: ql < 140 ? 18 : 16,
-              lineHeight: ql < 140 ? 26 : 18,
-            }}
+            cssStyles={questionCss}
           />
         </TouchableOpacity>
 

@@ -1,13 +1,11 @@
 import * as React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
-import { Redirect } from 'react-router-native';
 
 import { getInstruction } from '../../services/math-service';
 import { fetchGame, fetchGameHistory } from '../../services/game-service';
 import { emitter as websocket } from '../../services/websocket-service';
 
 import Loading from '../../components/Loading';
-import QuestionCard from '../../components/QuestionCard';
 import { IconButton } from '../../components/Icon';
 
 import screen from '../screen.styles.js';
@@ -56,7 +54,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const GameActions = ({ player, game, history, toast, go }) => (
+const GameActions = ({ player, game, toast, go }) => (
   <View style={styles.actions}>
 
     <View style={styles.actionsLeft}>

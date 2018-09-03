@@ -5,7 +5,7 @@ import { listGames, joinGame } from '../../services/game-service';
 
 import screen from '../screen.styles.js';
 import Loading from '../../components/Loading';
-import Button, { ButtonPosition } from '../../components/Button';
+import { ButtonPosition } from '../../components/Button';
 
 
 const styles = StyleSheet.create({
@@ -33,7 +33,7 @@ export default class LobbyScreen extends React.Component {
     const { res, json } = await listGames();
 
     if (res.status === 200)
-      this.setState({ games: json })
+      this.setState({ games: json });
     else
       this.props.onError('listGames', json);
   }
@@ -52,7 +52,7 @@ export default class LobbyScreen extends React.Component {
     const { games } = this.state;
 
     if (!games)
-      return <Loading />
+      return <Loading />;
 
     return (
       <View style={[screen.view, screen.viewPadding]}>

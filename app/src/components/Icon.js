@@ -2,6 +2,7 @@ import * as React from 'react';
 import { StyleSheet, Image, TouchableOpacity } from 'react-native';
 
 
+/* eslint-disable react-native/no-unused-styles */
 const styles = StyleSheet.create({
   small: {
     width: 16,
@@ -12,6 +13,7 @@ const styles = StyleSheet.create({
     height: 24,
   },
 });
+/* eslint-enable react-native/no-unused-styles */
 
 const IMAGES = {
   settings: require('../icons/settings.png'),
@@ -19,9 +21,11 @@ const IMAGES = {
   info: require('../icons/info.png'),
 };
 
-export default Icon = ({ type, size, style }) => (
+const Icon = ({ type, size, style }) => (
   <Image source={IMAGES[type]} style={[styles[size], style]} />
 );
+
+export default Icon;
 
 export const IconButton = ({ onPress, ...props }) => (
   <TouchableOpacity onPress={onPress}>

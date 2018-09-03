@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { StyleSheet, View, ScrollView, Text } from 'react-native';
-import { Redirect } from 'react-router-native';
 
 import Button from '../../../components/Button';
 import Player from '../../../components/Player';

@@ -72,15 +72,15 @@ const Answer = ({ question, answer }) => {
       cssStyles={questionCssStyles}
     />
   );
-}
+};
 
 const AnswerItem = ({ question, answer, isWinner, onPress }) => (
   <TouchableWithoutFeedback onPress={() => onPress(answer)}>
     <View style={[styles.answer, isWinner && styles.answerWinner]}>
 
-    <Text style={[styles.answeredBy, isWinner && styles.answeredByWinner]}>
-      { answer.answeredBy || ' ' }
-    </Text>
+      <Text style={[styles.answeredBy, isWinner && styles.answeredByWinner]}>
+        { answer.answeredBy || ' ' }
+      </Text>
 
       <Answer question={question} answer={answer} />
 
@@ -88,7 +88,7 @@ const AnswerItem = ({ question, answer, isWinner, onPress }) => (
   </TouchableWithoutFeedback>
 );
 
-export default AnswersList = ({ question, answers, winner, onAnswerPress }) => (
+const AnswersList = ({ question, answers, winner, onAnswerPress }) => (
   <View style={styles.view}>
     <FlatList
       data={answers}
@@ -104,3 +104,5 @@ export default AnswersList = ({ question, answers, winner, onAnswerPress }) => (
     />
   </View>
 );
+
+export default AnswersList;

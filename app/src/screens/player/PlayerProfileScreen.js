@@ -1,14 +1,11 @@
 import * as React from 'react';
 import { StyleSheet, View, Text, Image } from 'react-native';
 
-import { fetchPlayer, playerAvatarUri } from '../../services/player-service';
-import Loading from '../../components/Loading';
+import { playerAvatarUri } from '../../services/player-service';
 import Form, { FormField } from '../../components/Form';
 import { ButtonPosition } from '../../components/Button';
 import screen from '../screen.styles';
 
-
-const API_URL = process.env.REACT_APP_API_URL;
 
 const styles = StyleSheet.create({
   avatar: {
@@ -29,7 +26,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PlayerProfileScreen = ({ player: me, location, history }) => {
+const PlayerProfileScreen = ({ player: me, location, history }) => {
   const { player } = location.state;
 
   return (
@@ -67,3 +64,5 @@ export default PlayerProfileScreen = ({ player: me, location, history }) => {
     </View>
   );
 };
+
+export default PlayerProfileScreen;

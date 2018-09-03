@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { StyleSheet, View, WebView } from 'react-native';
 
+
 const styles = StyleSheet.create({
   view: {
     backgroundColor: '#333',
@@ -79,7 +80,7 @@ const renderHtml = ({ question, choices }) => {
     html += question.text.slice(start);
 
   return html;
-}
+};
 
 export default class QuestionCard extends React.Component {
 
@@ -90,6 +91,7 @@ export default class QuestionCard extends React.Component {
   }
 
   componentDidUpdate() {
+    // TODO: is this really needed?
     if (this.viewRef)
       this.viewRef.reload();
   }
@@ -108,7 +110,7 @@ export default class QuestionCard extends React.Component {
     return (
       <View style={[styles.view, style]}>
         <WebView
-          ref={ref => view = this.viewRef}
+          ref={ref => this.viewRef = ref}
           style={styles.webview}
           source={{ html, baseUrl: '/' }}
         />

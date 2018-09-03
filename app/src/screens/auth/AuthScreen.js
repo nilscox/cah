@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { StyleSheet, View, Text, TextInput } from 'react-native';
-import { Redirect } from 'react-router-native';
 
 import { createPlayer, login } from '../../services/auth-service';
 
@@ -10,12 +9,9 @@ import screen from '../screen.styles';
 
 const styles = StyleSheet.create({
   input: {
-     height: 40,
-     borderColor: 'gray',
-     borderBottomWidth: 1,
-  },
-  loginBtnText: {
-    fontWeight: 'bold',
+    height: 40,
+    borderColor: 'gray',
+    borderBottomWidth: 1,
   },
 });
 

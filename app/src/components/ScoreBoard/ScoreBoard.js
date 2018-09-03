@@ -93,7 +93,7 @@ const ScoreBoardItem = ({ player, rank }) => (
   </View>
 );
 
-export default ScoreBoard = ({ scores }) => (
+const ScoreBoard = ({ scores }) => (
   <View style={styles.scoreBoard}>
     <FlatList
       data={scores}
@@ -103,3 +103,5 @@ export default ScoreBoard = ({ scores }) => (
     />
   </View>
 );
+
+export default ScoreBoard;

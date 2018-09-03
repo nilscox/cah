@@ -21,11 +21,13 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Form = ({ style, children }) => (
+const Form = ({ style, children }) => (
   <View style={[styles.form, style]}>
     { children }
   </View>
 );
+
+export default Form;
 
 export const FormField = ({ label, children }) => (
   <View style={styles.field}>

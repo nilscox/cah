@@ -9,6 +9,7 @@ props:
 */
 
 const styles = StyleSheet.create({
+  /* eslint-disable react-native/no-unused-styles */
   buttonMedium: {
     paddingVertical: 5,
     paddingHorizontal: 15,
@@ -16,6 +17,7 @@ const styles = StyleSheet.create({
   buttonSmall: {
     paddingHorizontal: 5,
   },
+  /* eslint-enable react-native/no-unused-styles */
   buttonBackground: {
     backgroundColor: '#EEE',
     borderColor: '#CCC',
@@ -41,6 +43,7 @@ const styles = StyleSheet.create({
   },
 });
 
+/* eslint-disable react-native/no-unused-styles */
 const stylesPosition = StyleSheet.create({
   top: {
     alignItems: 'center',
@@ -63,8 +66,9 @@ const stylesPosition = StyleSheet.create({
     alignItems: 'flex-end',
   },
 });
+/* eslint-enable react-native/no-unused-styles */
 
-export default Button = ({ style, size, title, primary, background, disabled, onPress }) => (
+const Button = ({ style, size, title, primary, background, disabled, onPress }) => (
   <TouchableOpacity onPress={!disabled && onPress || (() => {})}>
     <View style={style}>
       <View style={[
@@ -88,6 +92,8 @@ export default Button = ({ style, size, title, primary, background, disabled, on
 Button.defaultProps = {
   size: 'medium',
 };
+
+export default Button;
 
 export const ButtonPosition = ({ position, ...props }) => (
   <View style={[styles.buttonPositionContainer, stylesPosition[position]]}>

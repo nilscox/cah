@@ -46,22 +46,11 @@ export default class GameFinished extends React.Component {
   render() {
     const { game, history } = this.props;
 
-    const getTurnAnswer = turn => {
-      const answer = turn.answers.find(a => a.answeredBy === turn.winner);
-
-      answer.question = turn.question;
-
-      return answer;
-    };
-
     if (this.state.back)
       return <Redirect to="/lobby" />;
 
     return (
       <View style={[screen.view, screen.viewPadding]}>
-
-        { /* -> game info */}
-        { /* <AnswersList answers={history.map(turn => Object.assign({}, getTurnAnswer(turn)))} /> */ }
 
         <ScoreBoard scores={getScoresFromHistory(game, history)} />
 

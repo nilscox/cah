@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { AppState, BackHandler, Alert, View, Text } from 'react-native';
+import { AppState, BackHandler, StyleSheet, View, Text } from 'react-native';
 import { NativeRouter, Switch, Route, Redirect, BackButton } from 'react-router-native';
 import Toast from 'react-native-easy-toast';
 
@@ -15,6 +15,12 @@ import PlayerProfileEditScreen from './screens/player/PlayerProfileEditScreen';
 
 import Loading from './components/Loading';
 
+
+const styles = StyleSheet.create({
+  root: { flex: 1 },
+  toast: { backgroundColor: '#CCC', paddingHorizontal: 20, margin: 20 },
+  toastText: { color: '#333' },
+});
 
 export default class App extends React.Component {
 
@@ -113,7 +119,7 @@ export default class App extends React.Component {
   }
 
   toast(message, duration = 1500) {
-    this.refs.toast.show(message, duration);
+    this.toast.show(message, duration);
   }
 
   render() {
@@ -126,7 +132,7 @@ export default class App extends React.Component {
         return '/lobby';
       else
         return '/game/' + player.gameId;
-    }
+    };
 
     if (loading)
       return <Loading />;
@@ -139,7 +145,7 @@ export default class App extends React.Component {
     };
 
     return (
-      <View style={{ flex: 1 }}>
+      <View style={styles.root}>
 
         <NativeRouter>
           <BackButton>
@@ -157,10 +163,10 @@ export default class App extends React.Component {
         </NativeRouter>
 
         <Toast
-          style={{ backgroundColor: '#CCC', paddingHorizontal: 20, margin: 20 }}
-          textStyle={{ color: '#333' }}
+          style={styles.toast}
+          textStyle={styles.toastText}
           opacity={0.8}
-          ref="toast"
+          ref={ref => this.toast = ref}
         />
 
       </View>

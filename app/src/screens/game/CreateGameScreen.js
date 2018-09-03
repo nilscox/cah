@@ -2,7 +2,6 @@ import * as React from 'react';
 import {
   StyleSheet,
   View,
-  Modal,
   Text,
   Picker,
   TextInput

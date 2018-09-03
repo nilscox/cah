@@ -13,7 +13,7 @@ export default async (route, opts = {}) => {
   opts.credentials = 'include';
 
   const result = await request(route, opts);
-  const { res, text, json } = result;
+  const { res } = result;
 
   console.log('[REQUEST]', res.status, route);
 
