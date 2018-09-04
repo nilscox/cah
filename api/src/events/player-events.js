@@ -1,52 +1,42 @@
-const { error, info } = require('../log');
+const { Player } = require('../models');
 const { playerFormatter, choiceFormatter } = require('../formatters');
 const websockets = require('../websockets');
+const events = require('./index');
+const handle = require('./handle-event');
 
-const on_event = async (type, player, { msgAdmin, msgPlayer, msgPlayers, ...args }) => {
-  try {
-    if (msgAdmin)
-      websockets.admin(type, await msgAdmin());
 
-    if (msgPlayer)
-      websockets.send(player, type, await msgPlayer());
+events.on('player:create', async (player, data) => handle('PLAYER_CREATE')
+  .msgAdmin({ player: await playerFormatter.admin(player) })
+  .log(data)
+);
 
-    if (msgPlayers) {
-      const game = await player.getGame();
+events.on('player:update', async (player, data) => handle('PLAYER_UPDATE')
+  .admin({ player: await playerFormatter.admin(player) })
+  .broadcastGame({ player: await playerFormatter.light(player) })
+  .log(data)
+);
 
-      if (game)
-        websockets.broadcast(game, type, await msgPlayers());
-    }
+events.on('player:delete', async (player) => handle('PLAYER_DELETE')
+  .admin({ player: await playerFormatter.admin(player) })
+  .log(player)
+);
 
-    info(type, '#' + player.id + ' (' + player.nick + ')', args);
-  } catch (e) {
-    error('EVENT', type, e);
-  }
-};
+events.on('player:login', async (player) => handle('PLAYER_LOGIN')
+  .admin({ player: await playerFormatter.admin(player) })
+  .log(player)
+);
 
-module.exports.on_create = (player, data) => on_event('PLAYER_CREATE', player, {
-  msgAdmin: async () => ({ player: await playerFormatter.admin(player) }),
-  data,
-});
+events.on('player:logout', async (player) => handle('PLAYER_LOGOUT')
+  .admin({ player: await playerFormatter.admin(player) })
+  .log(player)
+);
 
-module.exports.on_update = (player, data) => on_event('PLAYER_UPDATE', player, {
-  msgAdmin: async () => ({ player: await playerFormatter.admin(player) }),
-  msgPlayers: async () => ({ player: await playerFormatter.light(player) }),
-  data,
-});
+events.on('player:connect', async (playerId, socket) => {
+  const player = await Player.findById(playerId);
 
-module.exports.on_delete = (player) => on_event('PLAYER_DELETE', player, {
-  msgAdmin: async () => ({ player: await playerFormatter.admin(player) }),
-});
+  if (!player)
+    return;
 
-module.exports.on_login = (player) => on_event('PLAYER_LOGIN', player, {
-  msgAdmin: async () => ({ player: await playerFormatter.admin(player) }),
-});
-
-module.exports.on_logout = (player) => on_event('PLAYER_LOGOUT', player, {
-  msgAdmin: async () => ({ player: await playerFormatter.admin(player) }),
-});
-
-module.exports.on_connect = async (player, socket) => {
   await player.update({ socket: socket.id });
 
   const game = await player.getGame();
@@ -54,26 +44,28 @@ module.exports.on_connect = async (player, socket) => {
   if (game)
     websockets.join(game, player);
 
-  return on_event('PLAYER_CONNECT', player, {
-    msgAdmin: async () => ({ player: await playerFormatter.admin(player) }),
-  });
-};
+  return handle('PLAYER_CONNECT')
+    .admin({ player: await playerFormatter.admin(player) })
+    .log(player);
+});
 
-module.exports.on_disconnect = async (player) => {
+events.on('player:disconnect', async (playerId) => {
+  const player = await Player.findById(playerId);
+
+  if (!player)
+    return;
+
   // keep the socket id on disconnection because socket.io-client fails but the
   // socket is still valid
   // await player.update({ socket: null });
 
-  return on_event('PLAYER_DISCONNECT', player, {
-    msgAdmin: async () => ({ player: await playerFormatter.admin(player) }),
-  });
-};
+  return handle('PLAYER_DISCONNECT')
+    .admin({ player: await playerFormatter.admin(player) })
+    .log(player);
+});
 
-module.exports.on_cardsDealt = (player, cards) => {
-  if (cards.length > 0) {
-    return on_event('CARDS_DEALT', player, {
-      msgAdmin: async () => ({ player: await playerFormatter.admin(player) }),
-      msgPlayer: async () => ({ cards: await choiceFormatter.full(cards, { many: true }) }),
-    });
-  }
-};
+events.on('player:cards', async (player, cards) => handle('CARDS_DEALT')
+  .admin({ player: await playerFormatter.admin(player) })
+  .player({ cards: await choiceFormatter.full(cards, { many: true }) })
+  .log(player, cards)
+);

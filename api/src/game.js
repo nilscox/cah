@@ -71,7 +71,8 @@ async function start(game) {
     const player = players[i];
     const choices = await dealCards(game, player);
 
-    events.emit('cards dealt', player, choices);
+    // TODO: set init in player ws event
+    events.emit('player:cards', player, choices, { init: true });
   }
 
   await game.update({ state: 'started' });
@@ -127,7 +128,8 @@ async function nextTurn(game) {
       const player = players[i];
       const choices = await dealCards(game, player);
 
-      events.emit('cards dealt', player, choices);
+      if (choices.length > 0)
+        events.emit('player:cards', player, choices);
     }
   } else
     await end(game);

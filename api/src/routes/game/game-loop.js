@@ -35,7 +35,7 @@ router.post('/:id/start', {
     req => isGameState(req.params.game, 'idle'),
   ],
   format: format(),
-  after: (req, game) => events.emit('game start', game),
+  after: (req, game) => events.emit('game:start', game),
 }, async (req, res, { game }) => {
   await gameController.start(game);
   return game;
@@ -67,7 +67,7 @@ router.post('/:id/answer', {
     return { ids };
   },
   format: format(),
-  after: (req, game) => events.emit('game answer', game, req.player, req.validated),
+  after: (req, game) => events.emit('game:answer', game, req.player, req.validated),
 }, async ({ validated, player }, res, { game }) => {
   const { ids } = validated;
 
@@ -109,7 +109,7 @@ router.post('/:id/select', {
     return { answerId };
   },
   format: format(),
-  after: (req, game) => events.emit('game select', game, req.player, req.validated),
+  after: (req, game) => events.emit('game:select', game, req.player, req.validated),
 }, async ({ validated, player }, res, { game }) => {
   const { answerId } = validated;
 
@@ -132,7 +132,7 @@ router.post('/:id/next', {
     req => isQuestionMaster(req.player),
   ],
   format: format(),
-  after: (req, game) => events.emit('game next', game),
+  after: (req, game) => events.emit('game:next', game),
 }, async (req, res, { game }) => {
   await gameController.nextTurn(game);
   return game;

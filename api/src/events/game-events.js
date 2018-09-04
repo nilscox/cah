@@ -1,109 +1,90 @@
-const { error, info } = require('../log');
 const { gameFormatter, playerFormatter, gameTurnFormatter } = require('../formatters');
 const websockets = require('../websockets');
+const events = require('./index');
+const handle = require('./handle-event');
 
-const on_event = async (type, game, { msgAdmin, msgPlayers, ...args }) => {
-  try {
-    if (msgAdmin)
-      websockets.admin(type, await msgAdmin());
 
-    if (msgPlayers)
-      websockets.broadcast(game, type, await msgPlayers());
-
-    info(type, '#' + game.id, args);
-  } catch (e) {
-    error('EVENT', e);
-  }
-};
-
-module.exports.on_create = async (game, data) => {
+events.on('game:create', async (game, data) => {
   websockets.join(game, await game.getOwner());
 
-  return on_event('GAME_CREATE', game, {
-    msgAdmin: async () => ({ game: await gameFormatter.admin(game) }),
-    data,
-  });
-};
-
-module.exports.on_update = (game, data) => on_event('GAME_UPDATE', game, {
-  msgAdmin: async () => ({ game: await gameFormatter.admin(game) }),
-  data,
+  return handle('GAME_CREATE')
+    .admin({ game: await gameFormatter.admin(game) })
+    .log(data);
 });
 
-module.exports.on_delete = (game) => on_event('GAME_DELETE', game, {
-  msgAdmin: async () => ({ game: await gameFormatter.admin(game) }),
-});
+events.on('game:update', async (game, data) => handle('GAME_UPDATE')
+  .admin({ game: await gameFormatter.admin(game) })
+  .log(data)
+);
 
-module.exports.on_join = (game, player) => {
+events.on('game:delete', async (game) => handle('GAME_DELETE')
+  .admin({ game: await gameFormatter.admin(game) })
+);
+
+events.on('game:join', async (game, player) => {
   websockets.join(game, player);
 
-  return on_event('GAME_JOIN', game, {
-    msgAdmin: async () => ({
+  return handle('GAME_JOIN')
+    .admin({
       game: await gameFormatter.admin(game),
       player: await playerFormatter.admin(player),
-    }),
-    msgPlayers: async () => ({
+    })
+    .broadcastGame({
       game: await gameFormatter.full(game),
       player: await playerFormatter.light(player),
-    }),
-    nick: player.nick,
-  });
-};
+    })
+    .log(game, player);
+});
 
-module.exports.on_leave = (game, player) => {
+events.on('game:leave', async (game, player) => {
   websockets.leave(game, player);
 
-  return on_event('GAME_LEAVE', game, {
-    msgAdmin: async () => ({
+  return handle('GAME_LEAVE')
+    .admin({
       game: await gameFormatter.admin(game),
       player: await playerFormatter.admin(player),
-    }),
-    msgPlayers: async () => ({
+    })
+    .broadcastGame({
       game: await gameFormatter.full(game),
       player: await playerFormatter.light(player),
-    }),
-    nick: player.nick,
-  });
-};
-
-module.exports.on_start = (game) => on_event('GAME_START', game, {
-  msgAdmin: async () => ({ game: await gameFormatter.admin(game) }),
-  msgPlayers: async () => ({ game: await gameFormatter.full(game) }),
+    })
+    .log(game, player);
 });
 
-module.exports.on_answer = async (game, player, data) => {
-  on_event('GAME_ANSWER', game, {
-    msgAdmin: async () => ({ game: await gameFormatter.admin(game) }),
-    msgPlayers: () => ({ player: player.get('nick') }),
-    data,
-  });
+events.on('game:start', async (game) => handle('GAME_START')
+  .admin({ game: await gameFormatter.admin(game) })
+  .broadcastGame({ game: await gameFormatter.full(game) })
+);
+
+events.on('game:answer', async (game, player, data) => {
+  handle('GAME_ANSWER')
+    .admin({ game: await gameFormatter.admin(game) })
+    .broadcastGame({ player: player.get('nick') })
+    .log(data);
 
   if (await game.getPlayState() === 'question_master_selection') {
-    on_event('GAME_ALL_ANSWERS', game, {
-      msgAdmin: async () => ({ game: await gameFormatter.admin(game) }),
-      msgPlayers: async () => ({ game: await gameFormatter.full(game) }),
-      data,
-    });
+    handle('GAME_ALL_ANSWERS')
+      .admin({ game: await gameFormatter.admin(game) })
+      .broadcastGame({ game: await gameFormatter.full(game) })
+      .log(data);
   }
-};
-
-module.exports.on_select = (game, player, data) => on_event('GAME_SELECT', game, {
-  msgAdmin: async () => ({ game: await gameFormatter.admin(game) }),
-  msgPlayers: async () => ({ game: await gameFormatter.full(game) }),
-  data,
 });
 
-module.exports.on_next = async (game) => {
+events.on('game:select', async (game, player, data) => handle('GAME_SELECT')
+  .admin({ game: await gameFormatter.admin(game) })
+  .broadcastGame({ game: await gameFormatter.full(game) })
+  .log(data)
+);
+
+events.on('game:next', async (game) => {
   const turn = (await game.getTurns({ order: [['createdAt', 'DESC']], limit: 1 }))[0];
 
-  on_event('GAME_TURN', game, {
-    msgAdmin: async () => ({ gameId: game.id, turn: await gameTurnFormatter.admin(turn) }),
-    msgPlayers: async () => ({ turn: await gameTurnFormatter.full(turn) }),
-    number: turn.number,
-  });
+  handle('GAME_TURN')
+    .admin({ gameId: game.id, turn: await gameTurnFormatter.admin(turn) })
+    .broadcastGame({ turn: await gameTurnFormatter.full(turn) })
+    .log({ number: turn.number });
 
-  on_event(game.state === 'started' ? 'GAME_NEXT' : 'GAME_END', game, {
-    msgAdmin: async () => ({ game: await gameFormatter.admin(game) }),
-    msgPlayers: async () => ({ game: await gameFormatter.full(game) }),
-  });
-};
+  handle(game.state === 'started' ? 'GAME_NEXT' : 'GAME_END')
+    .admin({ game: await gameFormatter.admin(game) })
+    .broadcastGame({ game: await gameFormatter.full(game) });
+});

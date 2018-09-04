@@ -30,7 +30,7 @@ router.post('/:id/join', {
     req => isGameState(req.params.game, 'idle'),
   ],
   format: format(),
-  after: (req, game) => events.emit('game join', game, req.player),
+  after: (req, game) => events.emit('game:join', game, req.player),
 }, async ({ player }, res, { game }) => {
   await gameController.join(game, player);
   return game;
@@ -48,7 +48,7 @@ router.post('/:id/leave', {
       ] },
     ] },
   ],
-  after: (req) => events.emit('game leave', req.params.game, req.player),
+  after: (req) => events.emit('game:leave', req.params.game, req.player),
 }, async ({ player }, res, { game }) => {
   await gameController.leave(game, player);
 });

@@ -48,7 +48,7 @@ router.post('/', {
   }],
   validate: playerValidator.body({ avatar: { required: false }, extra: { required: false } }),
   format: format(true),
-  after: (req, player) => events.emit('player create', player, req.validated),
+  after: (req, player) => events.emit('player:create', player, req.validated),
 }, async ({ session, admin, validated }, res) => {
   const player = await Player.create(validated);
 
@@ -89,7 +89,7 @@ router.put('/:nick', {
     nick: { readOnly: true },
   }),
   format: format(true),
-  after: (req, player) => events.emit('player update', player, req.validated),
+  after: (req, player) => events.emit('player:update', player, req.validated),
   middlewares: [
     avatarUpload.single('avatar'),
     (req, res, next) => {
@@ -111,7 +111,7 @@ router.delete('/:nick', {
     req => isPlayer(req.player, req.params.nick),
     req => isNotInGame(req.player),
   ],
-  after: (req, player) => events.emit('player delete', player),
+  after: (req, player) => events.emit('player:delete', player),
 }, async ({ session, admin }, res, { player }) => {
   await player.destroy();
 

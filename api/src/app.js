@@ -12,9 +12,10 @@ const { verbose, error, request: requestLogger } = require('./log');
 const { APIError } = require('./errors');
 const { Player } = require('./models');
 const routes = require('./routes');
-const events = require('./events');
 const websockets = require('./websockets');
 
+require('./events/player-events');
+require('./events/game-events');
 
 const app = express();
 const server = http.Server(app);
@@ -33,7 +34,7 @@ app.use(bodyParser.json());
 app.use(session);
 app.use(morgan('combined', { stream: requestLogger.stream }));
 
-websockets(server, session, events);
+websockets(server, session);
 
 app.use(config.mediaRoot, express.static(config.mediaPath));
 

@@ -1,12 +1,11 @@
 const WSServer = require('socket.io');
 const sharedSession = require('express-socket.io-session');
 
-const { error } = require('../log');
-const { Player } = require('../models');
+const events = require('../events');
 
 let io = null;
 
-module.exports = (http, session, events) => {
+module.exports = (http, session) => {
   io = new WSServer(http);
 
   io.use(sharedSession(session, {
@@ -14,24 +13,16 @@ module.exports = (http, session, events) => {
   }));
 
   io.on('connection', async socket => {
-    try {
-      const { session } = socket.handshake;
+    const { session } = socket.handshake;
 
-      if (session.admin)
-        socket.join('admin');
-      else if (session.playerId) {
-        const player = await Player.findOne({ where: { id: session.playerId } });
+    if (session.admin)
+      socket.join('admin');
+    else if (session.playerId) {
+      events.emit('player:connect', session.playerId, socket);
 
-        if (player) {
-          events.emit('player connect', player, socket);
-
-          socket.on('disconnect', () => {
-            events.emit('player disconnect', player, socket);
-          });
-        }
-      }
-    } catch (e) {
-      error('WS_CONNECT', e);
+      socket.on('disconnect', () => {
+        events.emit('player:disconnect', session.playerId, socket);
+      });
     }
   });
 };
