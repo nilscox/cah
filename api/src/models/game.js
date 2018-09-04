@@ -107,7 +107,7 @@ module.exports = (sequelize, DataTypes) => {
     // console.log('nbChoices: ' + nbChoices);
   };
 
-  Game.prototype.getPropositions = async function(where) {
+  Game.prototype.getPropositions = async function(where = {}) {
     if (!this.questionId)
       return;
 
