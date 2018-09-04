@@ -72,8 +72,7 @@ async function start(game) {
     const player = players[i];
     const choices = await dealCards(game, player);
 
-    // TODO: set init in player ws event
-    events.emit('player:cards', player, choices, { init: true });
+    events.emit('player:cards', player, choices, { initial: true });
   }
 
   await game.update({ state: 'started' });

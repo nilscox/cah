@@ -64,8 +64,8 @@ events.on('player:disconnect', async (playerId) => {
     .log(player);
 });
 
-events.on('player:cards', async (player, cards) => handle('CARDS_DEALT')
-  .admin({ player: await playerFormatter.admin(player) })
-  .sendPlayer(player, { cards: await choiceFormatter.full(cards, { many: true }) })
+events.on('player:cards', async (player, cards, { initial }) => handle('CARDS_DEALT')
+  .admin({ player: await playerFormatter.admin(player), cards, initial })
+  .sendPlayer(player, { cards: await choiceFormatter.full(cards, { many: true }), initial })
   .log(player, cards)
 );
