@@ -129,10 +129,11 @@ export default class GameScreen extends React.Component {
     websocket.off('game:turn', this.handleGameTurn);
   }
 
-  handlePlayerCards = (cards) => {
+  handlePlayerCards = (cards, initial) => {
     const l = cards.length;
 
-    this.props.toast(`${l} new card${l > 1 ? 's' : ''}!`, 3000);
+    if (!initial)
+      this.props.toast(`${l} new card${l > 1 ? 's' : ''}!`, 3000);
   };
 
   handlePlayerChange = (player) => {

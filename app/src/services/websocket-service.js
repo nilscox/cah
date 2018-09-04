@@ -23,7 +23,7 @@ export const createWebSocket = () => {
       break;
 
     case 'CARDS_DEALT':
-      emitter.emit('player:cards', e.cards);
+      emitter.emit('player:cards', e.cards, e.initial);
       break;
 
     case 'GAME_ANSWER':
