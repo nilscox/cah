@@ -89,9 +89,10 @@ async function answerRandomCards(game, player) {
 }
 
 async function selectRandomAnswer(game) {
+  const questionMaster = await game.getQuestionMaster();
   const propositions = await game.getPropositions();
 
-  await this.ctrl.select(game, propositions[~~(Math.random() * propositions.length)]);
+  await this.ctrl.select(game, questionMaster, propositions[~~(Math.random() * propositions.length)]);
 }
 
 async function playRandomTurn(game) {

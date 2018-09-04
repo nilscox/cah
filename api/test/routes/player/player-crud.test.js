@@ -51,6 +51,7 @@ module.exports.create = function() {
         avatar: null,
         connected: false,
         gameId: null,
+        extra: null,
       });
     });
 }
@@ -69,6 +70,7 @@ module.exports.update = async function() {
         avatar: player.avatar,
         connected: false,
         gameId: null,
+        extra: null,
       });
     });
 }
@@ -95,6 +97,7 @@ module.exports.fetchMeCreated = function() {
         avatar: null,
         connected: false,
         gameId: null,
+        extra: null,
       });
     });
 }
@@ -115,6 +118,7 @@ module.exports.fetchMeLogin = async function() {
         avatar: null,
         connected: false,
         gameId: null,
+        extra: null,
       });
     });
 }

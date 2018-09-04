@@ -75,6 +75,7 @@ describe('controller', () => {
 
     it('should select an answer', async function() {
       const game = await this.createStartedGame();
+      const questionMaster = await game.getQuestionMaster();
       const players = await this.getPlayersWithoutQM(game);
 
       for (let i = 0; i < players.length; ++i)
@@ -82,7 +83,7 @@ describe('controller', () => {
 
       const propositions = await game.getPropositions();
 
-      await this.ctrl.select(game, propositions[~~(Math.random() * propositions.length)]);
+      await this.ctrl.select(game, questionMaster, propositions[~~(Math.random() * propositions.length)]);
 
       expect(await game.getPlayState()).to.eql('end_of_turn');
     });
