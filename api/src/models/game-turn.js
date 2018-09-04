@@ -14,5 +14,9 @@ module.exports = (sequelize, DataTypes) => {
     GameTurn.hasMany(Answer, { as: 'answers', foreignKey: 'gameTurnId' });
   };
 
+  GameTurn.prototype.toString = function() {
+    return 'GameTurn<#' + this.id + ' (' + this.number + ')>';
+  };
+
   return GameTurn;
 };

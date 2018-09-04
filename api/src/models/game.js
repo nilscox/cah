@@ -121,5 +121,9 @@ module.exports = (sequelize, DataTypes) => {
     });
   };
 
+  Game.prototype.toString = function() {
+    return 'Game<#' + this.id + '>';
+  };
+
   return Game;
 };

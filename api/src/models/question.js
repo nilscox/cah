@@ -19,5 +19,9 @@ module.exports = (sequelize, DataTypes) => {
     return this.blanks.length;
   };
 
+  Question.prototype.toString = function() {
+    return 'Question<#' + this.id + '>';
+  };
+
   return Question;
 };

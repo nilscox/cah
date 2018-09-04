@@ -13,6 +13,10 @@ module.exports = (sequelize, DataTypes) => {
     Choice.belongsTo(Player, { as: 'player', foreignKey: 'playerId' });
   };
 
+  Choice.prototype.toString = function() {
+    return 'Choice<#' + this.id + '>';
+  };
+
   return Choice;
 
 };

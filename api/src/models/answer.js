@@ -13,5 +13,9 @@ module.exports = (sequelize, DataTypes) => {
     Answer.hasMany(Choice, { as: 'choices', foreignKey: 'answerId' });
   };
 
+  Answer.prototype.toString = function() {
+    return 'Answer<#' + this.id + '>';
+  };
+
   return Answer;
 };

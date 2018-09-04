@@ -14,5 +14,9 @@ module.exports = (sequelize, DataTypes) => {
     Player.hasMany(Choice, { as: 'cards', foreignKey: 'playerId' });
   };
 
+  Player.prototype.toString = function() {
+    return 'Player<#' + this.id + ' (' + this.nick + ')>';
+  };
+
   return Player;
 };
