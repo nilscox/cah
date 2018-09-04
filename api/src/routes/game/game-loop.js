@@ -109,7 +109,7 @@ router.post('/:id/select', {
     return { answerId };
   },
   format: format(),
-  after: (req, game) => events.emit('game select', game, req.validated),
+  after: (req, game) => events.emit('game select', game, req.player, req.validated),
 }, async ({ validated, player }, res, { game }) => {
   const { answerId } = validated;
 
