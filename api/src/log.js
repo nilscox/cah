@@ -35,6 +35,9 @@ if (config.log.server) {
 
 // eslint-disable-next-line no-unused-vars
 const database = module.exports.database = createLogger({
+  transports: [
+    new transports.Stream({ stream: fs.createWriteStream('/dev/null') }),
+  ],
   format: format.combine(
     ignoreTestEnv(),
     format.splat(),
@@ -48,6 +51,9 @@ if (config.log.database) {
 }
 
 const request = module.exports.request = createLogger({
+  transports: [
+    new transports.Stream({ stream: fs.createWriteStream('/dev/null') }),
+  ],
   format: format.combine(
     ignoreTestEnv(),
     format.splat(),
