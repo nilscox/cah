@@ -48,7 +48,6 @@ router.post('/', {
   }],
   validate: playerValidator.body({ avatar: { required: false }, extra: { required: false } }),
   format: format(true),
-  after: (req, player) => events.emit('player:create', player, req.validated),
 }, async ({ session, admin, validated }, res) => {
   const player = await Player.create(validated);
 
@@ -56,6 +55,8 @@ router.post('/', {
     session.playerId = player.id;
 
   res.status(201);
+
+  events.emit('player:create', player, validated);
 
   return player;
 });
@@ -89,7 +90,6 @@ router.put('/:nick', {
     nick: { readOnly: true },
   }),
   format: format(true),
-  after: (req, player) => events.emit('player:update', player, req.validated),
   middlewares: [
     avatarUpload.single('avatar'),
     (req, res, next) => {
@@ -103,7 +103,11 @@ router.put('/:nick', {
   if (validated.avatar)
     validated.avatar = mediaUrl('avatars', validated.avatar);
 
-  return await player.update(validated);
+  player = await player.update(validated);
+
+  events.emit('player:update', player, validated);
+
+  return player;
 });
 
 router.delete('/:nick', {
@@ -111,10 +115,11 @@ router.delete('/:nick', {
     req => isPlayer(req.player, req.params.nick),
     req => isNotInGame(req.player),
   ],
-  after: (req, player) => events.emit('player:delete', player),
 }, async ({ session, admin }, res, { player }) => {
   await player.destroy();
 
   if (!admin)
     delete session.playerId;
+
+  events.emit('player:delete', player);
 });

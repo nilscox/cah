@@ -24,7 +24,6 @@ router.post('/login', {
     return { nick };
   },
   format: (req, value) => playerFormatter.full(value),
-  after: (req, player) => events.emit('player:login', player),
 }, async ({ session, validated }) => {
   const player = await Player.findOne({ where: { nick: validated.nick } });
 
@@ -32,6 +31,8 @@ router.post('/login', {
     throw new NotFoundError('player');
 
   session.playerId = player.id;
+
+  events.emit('player:login', player);
 
   return player;
 });
@@ -41,7 +42,7 @@ router.post('/logout', {
     req => isNotAdmin(req.admin),
     req => isPlayer(req.player),
   ],
-  after: (req) => events.emit('player:logout', req.player),
-}, async ({ session }) => {
+}, async ({ player, session }) => {
   delete session.playerId;
+  events.emit('player:logout', player);
 });

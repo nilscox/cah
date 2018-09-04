@@ -6,14 +6,14 @@ const handle = require('./handle-event');
 
 
 events.on('player:create', async (player, data) => handle('PLAYER_CREATE')
-  .msgAdmin({ player: await playerFormatter.admin(player) })
-  .log(data)
+  .admin({ player: await playerFormatter.admin(player) })
+  .log(player, JSON.stringify(data))
 );
 
 events.on('player:update', async (player, data) => handle('PLAYER_UPDATE')
   .admin({ player: await playerFormatter.admin(player) })
-  .broadcastGame({ player: await playerFormatter.light(player) })
-  .log(data)
+  .broadcastGame(await player.getGame(), { player: await playerFormatter.light(player) })
+  .log(player, JSON.stringify(data))
 );
 
 events.on('player:delete', async (player) => handle('PLAYER_DELETE')
@@ -66,6 +66,6 @@ events.on('player:disconnect', async (playerId) => {
 
 events.on('player:cards', async (player, cards) => handle('CARDS_DEALT')
   .admin({ player: await playerFormatter.admin(player) })
-  .player({ cards: await choiceFormatter.full(cards, { many: true }) })
+  .sendPlayer(player, { cards: await choiceFormatter.full(cards, { many: true }) })
   .log(player, cards)
 );

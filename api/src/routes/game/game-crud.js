@@ -60,12 +60,12 @@ router.post('/', {
     state: { readOnly: true },
   }),
   format: format(),
-  after: (req, game) => events.emit('game:create', game, req.validated),
 }, async ({ validated, player }, res) => {
   if (!validated.ownerId)
     validated.ownerId = player.id;
 
   const game = await Game.create(validated);
+  events.emit('game:create', game, validated);
 
   await gameController.join(game, player);
 
@@ -92,9 +92,9 @@ router.put('/:id', {
     });
   },
   format: format(),
-  after: (req, game) => events.emit('game:update', game, req.validated),
 }, async ({ validated }, res, { game }) => {
   await game.update(validated);
+  events.emit('game:update', game, validated);
 
   return game;
 });
@@ -105,7 +105,7 @@ router.delete('/:id', {
     req => isGameOwner(req.player, req.params.game),
     req => isGameState(req.params.game, 'idle'),
   ],
-  after: req => events.emit('game:delete', req.params.game),
-}, async ({ params }) => {
-  await params.game.destroy();
+}, async (req, res, { game }) => {
+  await game.destroy();
+  events.emit('game:delete', game);
 });

@@ -22,7 +22,7 @@ const server = module.exports = createLogger({
     ignoreTestEnv(),
     timestamp(),
     printf(info => {
-      const rest = info[Symbol.for('splat')].map(i => typeof i === 'object' ? JSON.stringify(i) : i).join(' ');
+      const rest = info[Symbol.for('splat')].join(' ');
       return `${info.timestamp} [${info.level.toUpperCase()}] ${info.message}: ${rest}`;
     }),
   ),

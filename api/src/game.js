@@ -16,13 +16,14 @@ function shuffle(a) {
 }
 
 async function join(game, player) {
-  return await game.addPlayer(player);
+  await game.addPlayer(player);
+  events.emit('game:join', game, player);
 }
 
 async function leave(game, player) {
   await player.removeCards(await player.getCards());
-
-  return await game.removePlayer(player);
+  await game.removePlayer(player);
+  events.emit('game:leave', game, player);
 }
 
 async function dealCards(game, player) {
@@ -76,6 +77,8 @@ async function start(game) {
   }
 
   await game.update({ state: 'started' });
+
+  events.emit('game:start', game);
 }
 
 async function answer(game, player, choices) {
@@ -96,10 +99,13 @@ async function answer(game, player, choices) {
     for (let i = 0; i < propositions.length; ++i)
       await propositions[i].update({ place: i + 1 });
   }
+
+  events.emit('game:answer', game, player, answer);
 }
 
 async function select(game, player, answer) {
   await game.setSelectedAnswer(answer);
+  events.emit('game:select', game, player, answer);
 }
 
 async function nextTurn(game) {
@@ -121,18 +127,22 @@ async function nextTurn(game) {
   });
 
   await game.setSelectedAnswer(null);
-  if (await pickQuestion(game)) {
-    await game.setQuestionMaster(winner);
-
-    for (let i = 0; i < players.length; ++i) {
-      const player = players[i];
-      const choices = await dealCards(game, player);
-
-      if (choices.length > 0)
-        events.emit('player:cards', player, choices);
-    }
-  } else
+  if (!await pickQuestion(game)) {
     await end(game);
+    return;
+  }
+
+  await game.setQuestionMaster(winner);
+
+  for (let i = 0; i < players.length; ++i) {
+    const player = players[i];
+    const choices = await dealCards(game, player);
+
+    if (choices.length > 0)
+      events.emit('player:cards', player, choices);
+  }
+
+  events.emit('game:next', game);
 }
 
 async function end(game) {
@@ -142,6 +152,8 @@ async function end(game) {
     selectedAnswerId: null,
     questionId: null,
   });
+
+  events.emit('game:end', game);
 }
 
 module.exports = {
