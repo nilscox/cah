@@ -25,7 +25,6 @@ events.on('game:delete', async (game) => handle('GAME_DELETE')
 events.on('game:join', async (game, player) => {
   websockets.join(game, player);
 
-  // TODO: something better with that
   return handle('GAME_JOIN')
     .admin({
       game: await gameFormatter.admin(game),
