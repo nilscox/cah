@@ -10,7 +10,6 @@ const {
   isNotQuestionMaster,
   didNotAnswer,
 } = require('../../permissions');
-const events = require('../../events');
 const gameController = require('../../game');
 const findGame = require('./find-game');
 
