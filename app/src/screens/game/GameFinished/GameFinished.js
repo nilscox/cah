@@ -38,8 +38,14 @@ export default class GameFinished extends React.Component {
     const { game } = this.props;
     const { res, json } = await leaveGame(game.id);
 
-    if (res.status === 204)
+    if (res.status === 204) {
+      this.props.setPlayer({
+        ...this.props.player,
+        submitted: null,
+        cards: null,
+      });
       this.setState({ back: true });
+    }
     else
       this.props.onError('leaveGame', json);
   }

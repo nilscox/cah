@@ -171,16 +171,6 @@ export default class GameScreen extends React.Component {
     });
   };
 
-  handlePlayerAnswer = (cards) => {
-    const keepCard = ({ id }) => !cards.find(c => c.id === id);
-
-    this.props.setPlayer({
-      ...this.props.player,
-      submitted: { choices: cards },
-      cards: this.props.player.cards.filter(keepCard),
-    });
-  };
-
   render() {
     const { player } = this.props;
     const { game, history } = this.state;
@@ -199,12 +189,12 @@ export default class GameScreen extends React.Component {
 
     if (game.state === 'finished') {
       title = 'Game finished';
-      view = <GameFinished game={game} history={history} />;
+      view = <GameFinished setPlayer={this.props.setPlayer} game={game} player={player} history={history} />;
     }
 
     if (game.playState === 'players_answer') {
       title = 'Players answer';
-      view = <PlayersAnswer player={player} game={game} onAnswer={this.handlePlayerAnswer} />;
+      view = <PlayersAnswer setPlayer={this.props.setPlayer} player={player} game={game} />;
     }
 
     if (game.playState === 'question_master_selection') {
