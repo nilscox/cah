@@ -125,6 +125,8 @@ async function nextTurn(game) {
     where: { questionId: game.questionId },
   });
 
+  events.emit('game:turn', game, turn);
+
   await game.setSelectedAnswer(null);
   if (!await pickQuestion(game)) {
     await end(game);
