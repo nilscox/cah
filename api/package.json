@@ -32,11 +32,11 @@
     "supertest": "^3.1.0"
   },
   "scripts": {
-    "db:create": "CAH_DB_USER=\"$CAH_DB_ROOT_USER\" CAH_DB_PASSWORD=\"$CAH_DB_ROOT_PASSWORD\" yarn sequelize db:create --config src/config.js",
-    "db:drop": "CAH_DB_USER=\"$CAH_DB_ROOT_USER\" CAH_DB_PASSWORD=\"$CAH_DB_ROOT_PASSWORD\" yarn sequelize db:drop --config src/config.js",
-    "db:migrate": "yarn sequelize db:migrate --config src/config.js",
-    "db:seed": "yarn sequelize db:seed:all --config src/config.js --models-path src/models",
-    "db:reset": "yarn db:drop; yarn db:create && yarn db:migrate && yarn db:seed",
+    "db:create": "CAH_DB_USER=\"$CAH_DB_ROOT_USER\" CAH_DB_PASSWORD=\"$CAH_DB_ROOT_PASSWORD\" yarn sequelize db:create --config src/config/database.js",
+    "db:drop": "CAH_DB_USER=\"$CAH_DB_ROOT_USER\" CAH_DB_PASSWORD=\"$CAH_DB_ROOT_PASSWORD\" yarn sequelize db:drop --config src/config/database.js",
+    "db:migrate": "yarn sequelize db:migrate --config src/config/database.js",
+    "db:seed": "yarn sequelize db:seed:all --config src/config/database.js --models-path src/models",
+    "db:reset": "yarn db:drop; yarn db:create && yarn db:migrate",
     "db:truncate": "for t in answer gameturn game player question choice; do echo \"TRUNCATE TABLE $t CASCADE;\"; done | psql -U $CAH_DB_USER -h $CAH_DB_HOST $CAH_DB_NAME",
     "start": "NODE_ENV=development nodemon index.js",
     "start:debug": "NODE_ENV=development nodemon --inspect index.js",
