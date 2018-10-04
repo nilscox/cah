@@ -4,7 +4,7 @@ const router = require('../createRouter')();
 const { validator, masterQuestionValidator, masterChoiceValidator } = require('../../validators');
 
 router.post('/feed', {
-  authorize: isAdmin,
+  authorize: req => isAdmin(req.admin),
   validate: validator({
     questions: data => masterQuestionValidator.validate(data, { many: true }),
     choices: data => masterChoiceValidator.validate(data, { many: true }),
