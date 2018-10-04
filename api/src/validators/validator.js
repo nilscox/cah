@@ -16,6 +16,13 @@ module.exports = fields => {
 
   const validate = async (data, opts = {}) => {
     const partial = !!opts.partial;
+    const many = !!opts.many;
+
+    if (many) {
+      opts.many = false;
+
+      return await Promise.all(data.map(d => validate(d, opts)));
+    }
 
     const errors = [];
     const validated = {};
@@ -25,7 +32,7 @@ module.exports = fields => {
 
     for (let i = 0; i < keys.length; ++i) {
       const field = keys[i];
-      const validator = fields[field];
+      const validator = fields[field].validate || fields[field];
       const fopts = { ...DEFAULT_OPTS, ...(opts[field] || {}) };
       const isset = data[field] !== undefined;
 
