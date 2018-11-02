@@ -26,6 +26,7 @@ export default class App extends React.Component {
 
   state = {
     loading: true,
+    error: null,
     player: null,
   };
 
@@ -100,8 +101,6 @@ export default class App extends React.Component {
 
     if (res.status === 200)
       this.setPlayer(json);
-    else
-      this.handleError('fetchMe', json);
 
     this.setState({ loading: false });
   }
@@ -115,8 +114,9 @@ export default class App extends React.Component {
     });
   }
 
-  handleError(error, data) {
-    console.log('[ERROR]', error, data);
+  handleError(tag, error) {
+    console.log('[ERROR]', tag, error);
+    this.setState({ error, loading: false });
   }
 
   toast(message, duration = 1500) {
@@ -124,7 +124,7 @@ export default class App extends React.Component {
   }
 
   render() {
-    const { loading, player } = this.state;
+    const { loading, error, player } = this.state;
     const getRouteAfterLoading = () => {
       if (!player)
         return '/auth';
@@ -137,6 +137,10 @@ export default class App extends React.Component {
 
     if (loading)
       return <Loading />;
+
+    console.log(error);
+    if (error)
+      return <Text>Error: {error.message}</Text>;
 
     const common = {
       player,
