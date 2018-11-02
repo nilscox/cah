@@ -1,44 +1,42 @@
-const validator = require('./validator');
-const {
-  ValidationError,
-  InvalidFieldTypeError,
-} = require('../errors');
+const { Validator, ValueValidator, ValidationError } = require('express-extra');
 
-const lang = value => {
-  if (typeof value !== 'string')
-    throw new InvalidFieldTypeError('lang', 'string');
+const LANGS = ['fr', 'en'];
 
-  if (['en', 'fr'].indexOf(value) < 0)
-    throw new ValidationError('lang', 'this field must be one of "en", "fr"');
+const lang = ValueValidator({
+  type: 'string',
+  required: true,
+  validate: value => {
+    if (LANGS.indexOf(value) < 0)
+      throw new ValidationError('this field must be one of ["fr", "en"]');
+  },
+});
 
-  return value;
-};
+const state = ValueValidator({
+  type: 'string',
+  required: false,
+  validate: value => {
+    if (value !== undefined)
+      throw new ValidationError('this field is read only');
+  },
+});
 
-const state = value => value;
+const nbQuestions = ValueValidator({
+  type: 'number',
+  validate: value => {
+    if (value < 1 || value > 100)
+      throw new ValidationError('nbQuestions', 'this field must be between 1 and 100');
+  },
+});
 
-// eslint-disable-next-line no-unused-vars
-const nbQuestions = (value, opts) => {
-  if (typeof value !== 'number')
-    throw new InvalidFieldTypeError('nbQuestions', 'number');
+const cardsPerPlayer = ValueValidator({
+  typq: 'number',
+  validate: value => {
+    if (value < 4 || value > 20)
+      throw new ValidationError('cardsPerPlayer', 'this field must be between 4 and 20');
+  },
+});
 
-  if (value < 1 || value > 100)
-    throw new ValidationError('nbQuestions', 'this field must be between 1 and 100');
-
-  return value;
-};
-
-// eslint-disable-next-line no-unused-vars
-const cardsPerPlayer = (value, opts) => {
-  if (typeof value !== 'number')
-    throw new InvalidFieldTypeError('cardsPerPlayer', 'number');
-
-  if (value < 4 || value > 20)
-    throw new ValidationError('cardsPerPlayer', 'this field must be between 4 and 20');
-
-  return value;
-};
-
-module.exports = validator({
+module.exports = Validator({
   lang,
   state,
   nbQuestions,

@@ -1,8 +1,9 @@
+const { Validator } = require('express-extra');
 const { AuthenticationError } = require('../../errors');
 const { isAdmin, isNotAdmin } = require('../../permissions');
 const { MasterQuestion, MasterChoice } = require('../../models');
 const router = require('../createRouter')();
-const { validator, masterQuestionValidator, masterChoiceValidator } = require('../../validators');
+const { masterQuestionValidator, masterChoiceValidator } = require('../../validators');
 const config = require('../../config');
 
 router.post('/login', {
@@ -22,10 +23,10 @@ router.post('/logout', {
 
 router.post('/feed', {
   authorize: req => isAdmin(req.admin),
-  validate: validator({
+  validate: req => Validator({
     questions: data => masterQuestionValidator.validate(data, { many: true }),
     choices: data => masterChoiceValidator.validate(data, { many: true }),
-  }).body(),
+  })(req.body),
 }, async ({ validated }) => {
   const { questions, choices } = validated;
 

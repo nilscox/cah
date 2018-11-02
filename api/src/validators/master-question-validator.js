@@ -1,36 +1,29 @@
-const validator = require('./validator');
-const {
-  ValidationError,
-  InvalidFieldTypeError,
-} = require('../errors');
+const { Validator, ValueValidator, ValidationError } = require('express-extra');
 
 const LANGS = ['fr', 'en'];
 
-const lang = (value, opts) => {
-  if (typeof value !== 'string')
-    throw new InvalidFieldTypeError('lang', 'string');
+const lang = ValueValidator({
+  type: 'string',
+  required: true,
+  validate: value => {
+    if (LANGS.indexOf(value) < 0)
+      throw new ValidationError('this field must be one of ["fr", "en"]');
+  },
+});
 
-  if (LANGS.indexOf(value) < 0)
-    throw new ValidationError('lang', 'this field must be one of ["fr", "en"]');
+const text = ValueValidator({
+  type: 'string',
+  required: true,
+});
 
-  return value;
-};
+const blanks = ValueValidator({
+  type: 'number',
+  required: true,
+  many: true,
+  allowNull: true,
+});
 
-const text = (value, opts) => {
-  if (typeof value !== 'string')
-    throw new InvalidFieldTypeError('text', 'string');
-
-  return value;
-};
-
-const blanks = (value, opts) => {
-  if (!(value instanceof Array) || value.filter(v => typeof v === 'number').length !== value.length)
-    throw new InvalidFieldTypeError('blanks', 'Array<number>');
-
-  return value;
-};
-
-module.exports = validator({
+module.exports = Validator({
   lang,
   text,
   blanks,

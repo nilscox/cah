@@ -20,7 +20,7 @@ const getEnv = (key, defaultValue) => {
 
 const COOKIES_FILE = getEnv('CAH_COOKIES_FILE', '/tmp/cah-cookies.json');
 const SESSION = getEnv('CAH_SESSION');
-const API_URL = `http://${getEnv('CAH_API_IP')}:${getEnv('CAH_API_PORT')}`;
+const API_URL = getEnv('CAH_API_URL');
 
 if (!fs.existsSync(COOKIES_FILE))
   fs.writeFileSync(COOKIES_FILE, '{}');

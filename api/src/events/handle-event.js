@@ -10,12 +10,16 @@ module.exports = (type) => {
   };
 
   handler.sendPlayer = (player, message) => {
-    websockets.send(player, type, message);
+    if (player)
+      websockets.send(player, type, message);
+
     return handler;
   };
 
   handler.broadcastGame = (game, message) => {
-    websockets.broadcast(game, type, message);
+    if (game)
+      websockets.broadcast(game, type, message);
+
     return handler;
   };
 

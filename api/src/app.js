@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const sessionMiddleware = require('express-session');
 const morgan = require('morgan');
 const sqlFormatter = require('sql-formatter');
+const { ExpressExtraError } = require('express-extra');
 
 const config = require('./config');
 const { verbose, error, request: requestLogger } = require('./log');
@@ -65,7 +66,7 @@ app.use('/api', routes);
 
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
-  if (!(err instanceof APIError)) {
+  if (!(err instanceof APIError) && !(err instanceof ExpressExtraError)) {
     if (err.name === 'SequelizeDatabaseError')
       error('REQUEST', err.message, '\n' + sqlFormatter.format(err.sql));
     else

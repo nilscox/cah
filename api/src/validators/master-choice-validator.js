@@ -1,36 +1,28 @@
-const validator = require('./validator');
-const {
-  ValidationError,
-  InvalidFieldTypeError,
-} = require('../errors');
+const { Validator, ValueValidator, ValidationError } = require('express-extra');
 
 const LANGS = ['fr', 'en'];
 
-const lang = (value, opts) => {
-  if (typeof value !== 'string')
-    throw new InvalidFieldTypeError('lang', 'string');
+const lang = ValueValidator({
+  type: 'string',
+  required: true,
+  validate: value => {
+    if (LANGS.indexOf(value) < 0)
+      throw new ValidationError('this field must be one of ["fr", "en"]');
+  },
+});
 
-  if (LANGS.indexOf(value) < 0)
-    throw new ValidationError('lang', 'this field must be one of ["fr", "en"]');
+const text = ValueValidator({
+  type: 'string',
+  required: true,
+});
 
-  return value;
-};
+const keepCapitalization = ValueValidator({
+  type: 'boolean',
+  required: true,
+  defaultValue: true,
+});
 
-const text = (value, opts) => {
-  if (typeof value !== 'string')
-    throw new InvalidFieldTypeError('text', 'string');
-
-  return value;
-};
-
-const keepCapitalization = (value, opts) => {
-  if (typeof value !== 'boolean')
-    throw new InvalidFieldTypeError('keepCapitalization', 'boolean');
-
-  return value;
-};
-
-module.exports = validator({
+module.exports = Validator({
   lang,
   text,
   keepCapitalization,

@@ -1,10 +1,5 @@
+const { Validator, ValueValidator, ValidationError, InvalidFieldTypeError } = require('express-extra');
 const { Player } = require('../models');
-const validator = require('./validator');
-const {
-  ValidationError,
-  BadRequestError,
-  InvalidFieldTypeError,
-} = require('../errors');
 
 const RESERVED_NICKS = [
   'list',
@@ -13,60 +8,57 @@ const RESERVED_NICKS = [
   'avatar',
 ];
 
-const nick = (value, opts) => {
-  const unique = opts.unique || true;
+const nick = ValueValidator({
+  type: 'string',
+  required: true,
+  validate: async (value, opts) => {
+    const unique = opts.unique || true;
 
-  if (typeof value !== 'string')
-    throw new InvalidFieldTypeError('nick', 'string');
+    if (value.length < 3)
+      throw new ValidationError('this field must be at least 3 characters');
 
-  if (value.length < 3)
-    throw new ValidationError('nick', 'this field must be at least 3 characters');
+    if (value.length > 64)
+      throw new ValidationError('this field must be at most 64 characters');
 
-  if (value.length > 64)
-    throw new ValidationError('nick', 'this field must be at most 64 characters');
+    if (RESERVED_NICKS.indexOf(value) >= 0)
+      throw new ValidationError('this nick is reserved');
 
-  if (RESERVED_NICKS.indexOf(value) >= 0)
-    throw new ValidationError('nick', 'this nick is unauthorized');
+    if (opts.unique) {
+      const count = await Player.count({ where: { nick: value } });
 
-  if (!unique)
-    return value;
-
-  return Player.count({ where: { nick: value } })
-    .then(count => {
       if (count > 0)
-        throw new ValidationError('nick', 'this nick is already taken');
+        throw new ValidationError('this nick is already taken');
+    }
+  },
+});
 
-      return value;
-    });
-};
+const avatar = ValueValidator({
+  validate: value => {
+    if (typeof value !== 'object')
+      throw new InvalidFieldTypeError('file');
 
-const avatar = value => {
-  if (typeof value !== 'object')
-    throw new InvalidFieldTypeError('avatar', 'file');
+    const { mimetype, destination, filename, size } = value;
 
-  const { mimetype, destination, filename, size } = value;
+    if (!mimetype || !destination || !filename || !size)
+      throw new ValidationError('invalid file object');
 
-  if (!mimetype || !destination || !filename || !size)
-    throw new BadRequestError('avatar', 'invalid file object');
+    if (['image/jpeg', 'image/png'].indexOf(mimetype) < 0)
+      throw new ValidationError('invalid mimetype');
 
-  if (['image/jpeg', 'image/png'].indexOf(mimetype) < 0)
-    throw new BadRequestError('avatar', 'invalid mimetype');
+    const maxSize = 1024 * 1024;
+    if (size > maxSize)
+      throw new ValidationError('file size must be lower than ' + maxSize + ' bytes');
+  },
+});
 
-  const maxSize = 1024 * 1024;
-  if (size > maxSize)
-    throw new BadRequestError('avatar', 'file size must be lower than ' + maxSize);
+const extra = ValueValidator({
+  type: 'string',
+  required: true,
+  allowNull: true,
+  defaultValue: null,
+});
 
-  return filename;
-};
-
-const extra = value => {
-  if (value !== null && typeof value !== 'string')
-    throw new InvalidFieldTypeError('extra', 'string');
-
-  return value;
-};
-
-module.exports = validator({
+module.exports = Validator({
   nick,
   avatar,
   extra,

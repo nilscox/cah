@@ -12,6 +12,16 @@ const events = require('../../events');
 const gameController = require('../../game');
 const findGame = require('./find-game');
 
+
+const cleanupUndefined = obj => {
+  Object.keys(obj).forEach(k => {
+    if (obj[k] === undefined)
+      delete obj[k];
+  });
+
+  return obj;
+};
+
 const Op = Sequelize.Op;
 
 const router = require('../createRouter')();
@@ -56,15 +66,13 @@ router.post('/', {
     req => isPlayer(req.player),
     req => isNotInGame(req.player),
   ],
-  validate: gameValidator.body({
-    state: { readOnly: true },
-  }),
+  validate: req => gameValidator(req.body),
   format: format(),
 }, async ({ validated, player }, res) => {
   if (!validated.ownerId)
     validated.ownerId = player.id;
 
-  const game = await Game.create(validated);
+  const game = await Game.create(cleanupUndefined(validated));
   events.emit('game:create', game, validated);
 
   await gameController.join(game, player);
@@ -82,18 +90,17 @@ router.put('/:id', {
     const { game } = req.params;
     const isStarted = game.state === 'started';
 
-    return gameValidator.validate(req.body, {
-      partial: true,
-      ownerId: { readOnly: true },
-      state: { readOnly: true },
-      lang: { readOnly: isStarted },
-      nbQuestions: { readOnly: isStarted },
-      cardsPerPlayer: { readOnly: isStarted },
+    return gameValidator(req.body, {
+      ownerId: { required: false, readOnly: true },
+      state: { required: false, readOnly: true },
+      lang: { required: false, readOnly: isStarted },
+      nbQuestions: { required: false, readOnly: isStarted },
+      cardsPerPlayer: { required: false, readOnly: isStarted },
     });
   },
   format: format(),
 }, async ({ validated }, res, { game }) => {
-  await game.update(validated);
+  await game.update(cleanupUndefined(validated));
   events.emit('game:update', game, validated);
 
   return game;

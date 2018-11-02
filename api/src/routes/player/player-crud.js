@@ -9,6 +9,15 @@ const events = require('../../events');
 const findPlayer = require('./find-player');
 
 
+const cleanupUndefined = obj => {
+  Object.keys(obj).forEach(k => {
+    if (obj[k] === undefined)
+      delete obj[k];
+  });
+
+  return obj;
+};
+
 const router = require('../createRouter')();
 module.exports = router.router;
 
@@ -46,10 +55,12 @@ router.post('/', {
       req => isNotPlayer(req.player),
     ],
   }],
-  validate: playerValidator.body({ avatar: { required: false }, extra: { required: false } }),
+  validate: req => playerValidator(req.body, {
+    nick: { unique: true },
+  }),
   format: format(true),
 }, async ({ session, admin, validated }, res) => {
-  const player = await Player.create(validated);
+  const player = await Player.create(cleanupUndefined(validated));
 
   if (!admin)
     session.playerId = player.id;
@@ -85,8 +96,7 @@ router.put('/:nick', {
   authorize: [
     req => isPlayer(req.player, req.params.nick),
   ],
-  validate: playerValidator.body({
-    partial: true,
+  validate: req => playerValidator(req.body, {
     nick: { readOnly: true },
   }),
   format: format(true),
@@ -103,7 +113,7 @@ router.put('/:nick', {
   if (validated.avatar)
     validated.avatar = mediaUrl('avatars', validated.avatar);
 
-  player = await player.update(validated);
+  player = await player.update(cleanupUndefined(validated));
 
   events.emit('player:update', player, validated);
 
