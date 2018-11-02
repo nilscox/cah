@@ -21,6 +21,7 @@ export CAH_DB_ROOT_PASSWORD
 
 export CAH_API_IP
 export CAH_API_PORT
+export CAH_API_URL="$API_URL"
 
 export CAH_API_LOG_REQUEST
 export CAH_API_LOG_DATABASE
