@@ -74,6 +74,8 @@ router.post('/:id/answer', {
     },
   });
 
+  choices.sort(({ id: a }, { id: b }) => ids.indexOf(b) - ids.indexOf(a));
+
   if (ids.length !== choices.length)
     throw new BadRequestError('invalid id | ids');
 

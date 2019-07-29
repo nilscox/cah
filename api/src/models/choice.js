@@ -3,6 +3,7 @@ module.exports = (sequelize, DataTypes) => {
   const Choice = sequelize.define('choice', {
     text: DataTypes.STRING,
     keepCapitalization: DataTypes.BOOLEAN,
+    place: DataTypes.INTEGER,
     available: DataTypes.BOOLEAN,
   }, {
     tableName: 'choice',

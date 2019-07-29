@@ -86,11 +86,8 @@ async function answer(game, player, choices) {
     questionId: game.questionId,
   });
 
-  await Choice.update({ answerId: answer.id, playerId: null }, {
-    where: {
-      id: { [Op.in]: choices.map(c => c.id) },
-    },
-  });
+  for (let i = 0; i < choices.length; ++i)
+    await choices[i].update({ answerId: answer.id, playerId: null, place: i + 1 });
 
   if (await game.getPlayState() === 'question_master_selection') {
     const propositions = shuffle(await game.getPropositions());
