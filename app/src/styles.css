@@ -1,0 +1,39 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #app {
+  height: 100%;
+}
+
+body {
+  font-family: JetBrainsMono, monospace;
+  background-color: black;
+  color: #789;
+}
+
+input, button {
+  font-family: JetBrainsMono, monospace;
+  background-color: transparent;
+  border: none;
+  outline: none;
+}
+
+input {
+  border-bottom: 1px solid #789;
+  color: #DEF;
+}
+
+button {
+  color: #ABC;
+}
+
+.toast {
+  min-height: 48px;
+  margin: 15px;
+  background: #622;
+  border: 1px solid #C66;
+  font-size: 14px;
+  font-family: JetBrainsMono, monospace;
+}

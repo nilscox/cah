@@ -1,44 +1,27 @@
 {
   "name": "cah",
-  "version": "0.0.1",
-  "private": true,
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
   "scripts": {
-    "start": "node node_modules/react-native/local-cli/cli.js start",
-    "start:nocache": "yarn start --reset-cache",
-    "test": "jest",
-    "android": "react-native run-android",
-    "ios": "react-native run-ios",
-    "forward": "adb reverse tcp:8081 tcp:8081",
-    "genkey": "keytool -genkey -v -keystore android/app/cah-release-key.keystore -alias cah-key -keyalg RSA -keysize 2048 -validity 10000",
-    "build": "cd android && ./gradlew assembleRelease",
-    "install:android": "adb install android/app/build/outputs/apk/app-release.apk",
-    "lint": "eslint index.js src"
-  },
-  "dependencies": {
-    "events": "^3.0.0",
-    "react": "16.4.1",
-    "react-native": "0.56.0",
-    "react-native-easy-toast": "^1.1.0",
-    "react-native-image-crop-picker": "^0.21.1",
-    "react-router-native": "^4.3.0",
-    "socket.io-client": "^2.1.1"
+    "start": "parcel index.html"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-export-default-from": "^7.0.0-rc.2",
-    "babel-eslint": "8",
-    "babel-jest": "23.4.2",
-    "babel-plugin-module-resolver": "^3.1.1",
-    "babel-plugin-transform-inline-environment-variables": "^0.4.3",
-    "babel-preset-react-native": "^5",
-    "eslint": "4.x",
-    "eslint-plugin-babel": "^5.1.0",
-    "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-react": "^7.11.1",
-    "eslint-plugin-react-native": "^3.2.1",
-    "jest": "23.5.0",
-    "react-test-renderer": "16.4.1"
+    "@types/lru-cache": "^5.1.0",
+    "@types/react": "^16.9.19",
+    "@types/react-dom": "^16.9.5",
+    "@types/socket.io-client": "^1.4.32",
+    "parcel-bundler": "^1.12.4",
+    "prettier": "^1.19.1",
+    "typescript": "^3.7.5"
   },
-  "jest": {
-    "preset": "react-native"
+  "dependencies": {
+    "axios": "^0.19.2",
+    "axios-hooks": "^1.9.0",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "react-spring": "^8.0.27",
+    "react-toastify": "^5.5.0",
+    "socket.io-client": "^2.3.0"
   }
 }
