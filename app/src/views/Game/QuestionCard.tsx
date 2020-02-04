@@ -24,35 +24,33 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, choices, validate
       );
 
     if (question.blanks && (choices.length === 0 || choices.every((c) => c === undefined))) {
-      const splitQuestionText = question.text.split(' ');
       let startIndex = 0;
 
       return (
         <span>
           { question.blanks.map((blank) => {
-            const text = splitQuestionText.slice(startIndex, blank).join(' ');
+            const text = question.text.slice(startIndex, blank);
             startIndex = blank;
 
-            return <span key={text}>{ text } <Blank /> </span>
+            return <span key={text}>{ text }<Blank /></span>
           }) }
-          <span>{ splitQuestionText.slice(startIndex).join(' ') }</span>
+          <span>{ question.text.slice(startIndex) }</span>
         </span>
       );
     }
 
     if (question.blanks && choices.length > 0) {
-      const splitQuestionText = question.text.split(' ');
       let startIndex = 0;
 
       return (
         <span onClick={validate}>
           { question.blanks.map((blank, idx) => {
-            const text = splitQuestionText.slice(startIndex, blank).join(' ');
+            const text = question.text.slice(startIndex, blank);
             startIndex = blank;
 
-            return <span key={text}>{ text } { choices[idx] ? choices[idx]?.text : <Blank /> } </span>
+            return <span key={text}>{ text }{ choices[idx] ? choices[idx]?.text : <Blank /> }</span>
           }) }
-          <span>{ splitQuestionText.slice(startIndex).join(' ') }</span>
+          <span>{ question.text.slice(startIndex) }</span>
         </span>
       );
     }
