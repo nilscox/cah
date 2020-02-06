@@ -25,9 +25,13 @@ const JoinGame: React.FC<JoinGameProps> = ({ setGame }) => {
 
   useHandleError(error, {
     message: error => {
-      if (error.response?.data === 'game not found') return 'This game code does not exist, please check';
+      if (error.response?.data === 'game not found') {
+        return 'This game code does not exist, please check';
+      }
 
-      if (error.response?.data === 'game is not idle') return "This game has already started, you can't join it";
+      if (error.response?.data === 'game is not idle') {
+        return "This game has already started, you can't join it";
+      }
     },
   });
 
@@ -55,6 +59,7 @@ const JoinGame: React.FC<JoinGameProps> = ({ setGame }) => {
           minLength={4}
           maxLength={4}
           loading={loading}
+          defaultValue="ABCD"
           onSubmit={gameId => joinGame({ data: { gameId } })}
         />
       </animated.div>

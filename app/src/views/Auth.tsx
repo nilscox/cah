@@ -70,7 +70,7 @@ const Auth: React.FC<AuthProps> = ({ setPlayer }) => {
         ))}
       </div>
 
-      <animated.div style={{ width: '75%', margin: 'auto', ...inputSpring }}>
+      <animated.div style={{ width: '75%', margin: '0 auto', ...inputSpring }}>
         <InputForm
           loading={loading}
           placeholder="Enter your nick..."

@@ -27,6 +27,8 @@ export const nextTurn = (game: Game, lastWinner?: string) => {
     return false;
 
   for (const player of game.players) {
+    delete player.answer;
+
     const newCards: Choice[] = [];
 
     while (player.cards!.length < 11) {
@@ -65,6 +67,8 @@ export const answerChoices = (game: Game, player: Player, choices: Choice[]) => 
     game.playState = 'question_master_selection';
     shuffle(game.answers!);
   }
+
+  player.answer = answer;
 
   return answer;
 };

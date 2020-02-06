@@ -87,14 +87,14 @@ const Game: React.FC<GameProps> = ({ game, player }) => {
   };
 
   return (
-    <>
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <GameHeader
         gameId={game.id}
         toggleGameInfo={() => setShowGameInfo(show => !show)}
         showWhatToDo={() => toast(getExpectedAction(game, player, endOfTurn))}
       />
-      <AnimatedViews views={views} current={getCurrentView()} />
-    </>
+      <AnimatedViews style={{ flex: 1, overflow: 'auto' }} views={views} current={getCurrentView()} />
+    </div>
   );
 };
 

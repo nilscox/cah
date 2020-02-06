@@ -7,6 +7,7 @@ type InputFormProps = {
   minLength?: number;
   maxLength?: number;
   loading?: boolean;
+  defaultValue?: string;
   onSubmit: (value: string) => void;
 };
 
@@ -15,9 +16,10 @@ const InputForm: React.FC<InputFormProps> = ({
   minLength = 1,
   maxLength = Infinity,
   loading,
+  defaultValue,
   onSubmit,
 }) => {
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState(defaultValue || '');
   const canSubmit = !loading && value.length >= minLength && value.length <= maxLength;
 
   const handleSubmit = (e: React.FormEvent) => {

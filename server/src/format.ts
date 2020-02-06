@@ -14,6 +14,9 @@ export const formatPlayer = (player: Player, full = false): PlayerDTO => {
 
   if (full && player.cards) {
     result.cards = player.cards;
+
+    if (player.answer)
+      result.selection = player.answer?.choices;
   }
 
   return result;

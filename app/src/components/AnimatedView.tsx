@@ -4,11 +4,12 @@ import { useSpring, animated } from 'react-spring';
 import { toast } from 'react-toastify';
 
 type AnimatedViewsProps = {
+  style?: React.CSSProperties;
   views: { [key: string]: React.ReactNode };
   current: string;
 };
 
-const AnimatedViews: React.FC<AnimatedViewsProps> = ({ views, current, children }) => {
+const AnimatedViews: React.FC<AnimatedViewsProps> = ({ style, views, current }) => {
   const [view, setView] = useState(current);
   const [nextView, setNextView] = useState<string>();
 
@@ -31,9 +32,8 @@ const AnimatedViews: React.FC<AnimatedViewsProps> = ({ views, current, children 
 
   return (
     <>
-      <animated.div style={{ height: '100%', ...transition }}>
+      <animated.div style={{ ...style, ...transition }}>
         { views[view] }
-        { children }
       </animated.div>
     </>
   );

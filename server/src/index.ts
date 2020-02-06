@@ -84,10 +84,11 @@ app.use((req, res) => {
 });
 
 app.use((err: any, req: any, res: any, next: any) => {
-  console.log(err.stack);
 
   if (err.status)
     res.status(err.status);
+  else
+    console.log(err.stack);
 
   res.send(err.message);
 });
@@ -104,8 +105,8 @@ io.on('connection', socket => {
     player.socket = socket;
 
     if (player.gameId) {
-      io.in(player.gameId).send({ type: 'connected', nick: player.nick });
       socket.join(player.gameId);
+      io.in(player.gameId).send({ type: 'connected', nick: player.nick });
     }
   });
 

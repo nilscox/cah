@@ -40,7 +40,7 @@ router.post('/logout', isAuthenticated, (req, res) => {
 router.get('/me', isAuthenticated, (req, res) => {
   res.json({
     player: formatPlayer(req.player!, true),
-    ...(req.game && { game: formatGame(req.game) }),
+    ...(req.game && { game: formatGame(req.game, true) }),
   });
 });
 

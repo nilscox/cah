@@ -57,11 +57,13 @@ const App: React.FC = () => {
     return null;
   }
 
-  return (
-    <AnimatedViews views={views} current={view}>
-      <ToastContainer />
-    </AnimatedViews>
-  );
+  return <AnimatedViews style={{ height: '100%', overflow: 'auto' }} views={views} current={view} />;
 };
 
-ReactDOM.render(<App />, document.getElementById('app'));
+ReactDOM.render(
+  <>
+    <ToastContainer />
+    <App />
+  </>,
+  document.getElementById('app'),
+);

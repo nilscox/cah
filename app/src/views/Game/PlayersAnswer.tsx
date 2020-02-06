@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import useAxios from 'axios-hooks';
 
@@ -6,7 +6,89 @@ import { GameDTO } from 'dtos/game.dto';
 import { PlayerDTO } from 'dtos/player.dto';
 import { ChoiceDTO } from 'dtos/choice.dto';
 
-import QuestionCard from './QuestionCard';
+import Question from './Question';
+import CardsList from './components/CardsList';
+
+const useSelection = (length: number, isQuestionMaster: boolean) => {
+  const [selection, setSelection] = useState<(ChoiceDTO | null)[]>(new Array(length).fill(null));
+
+  const canSelect = (choice: ChoiceDTO) => {
+    if (isQuestionMaster) {
+      return false;
+    }
+
+    if (selection.includes(null)) {
+      return true;
+    }
+
+    return selection.includes(choice);
+  };
+
+  const toggleSelection = (choice: ChoiceDTO) => {
+    if (isQuestionMaster) {
+      return;
+    }
+
+    const idx = selection.indexOf(choice);
+
+    if (idx === -1) {
+      const firstEmptyIdx = selection.findIndex(c => c === null);
+
+      if (firstEmptyIdx >= 0) {
+        setSelection([...selection.slice(0, firstEmptyIdx), choice, ...selection.slice(firstEmptyIdx + 1)]);
+      }
+    } else {
+      setSelection([...selection.slice(0, idx), null, ...selection.slice(idx + 1)]);
+    }
+  };
+
+  return [
+    selection,
+    setSelection,
+    {
+      canSelect,
+      toggleSelection,
+    },
+  ] as const;
+};
+
+const usePlayerAnswer = (player: PlayerDTO, game: GameDTO) => {
+  const [selection, setSelection, { canSelect, toggleSelection }] = useSelection(
+    game.question?.blanks?.length || 1,
+    player.nick === game.questionMaster
+  );
+
+  useEffect(() => {
+    if (player.selection && player.selection.length > 0) setSelection(player.selection);
+  }, [player.selection]);
+
+  const didAnswer = game.answered?.includes(player.nick);
+
+  const canAnswer = [player.nick !== game.questionMaster, !selection.includes(null), !didAnswer].every(value => value);
+
+  const [{ error }, answer] = useAxios(
+    {
+      url: '/api/game/answer',
+      method: 'POST',
+    },
+    { manual: true }
+  );
+
+  const handleAnswer = () => {
+    if (canAnswer) {
+      answer({ data: { cards: selection.map(c => c?.text) } });
+    }
+  };
+
+  return {
+    selection,
+    canSelect,
+    toggleSelection,
+    canAnswer,
+    didAnswer,
+    handleAnswer,
+  } as const;
+};
 
 type PlayersAnsmerProps = {
   game: GameDTO;
@@ -14,79 +96,32 @@ type PlayersAnsmerProps = {
 };
 
 const PlayersAnswer: React.FC<PlayersAnsmerProps> = ({ game, player }) => {
-  const [choices, setChoices] = useState<(ChoiceDTO | undefined)[]>([]);
-
-  const [, answer] = useAxios({
-    url: '/api/game/answer',
-    method: 'POST',
-  }, { manual: true });
-
-  const handleToggleChoice = (choice: any) => {
-    if (player.nick === game.questionMaster)
-      return;
-
-    const idx = choices.indexOf(choice);
-
-    if (game.question?.blanks === null) {
-      if (idx === -1) {
-        if (choices.length <= 1) {
-          setChoices([choice]);
-          return;
-        }
-      }
-    } else {
-      if (game.question?.blanks) {
-        if (idx === -1) {
-          if (choices.some((c) => c === undefined)) {
-            const placeIndex = choices.findIndex((c) => c === undefined)
-            const updatedChoices = [...choices];
-
-            updatedChoices.splice(placeIndex, 1, choice);
-
-            setChoices(updatedChoices);
-          }
-
-          if (choices.length < game.question?.blanks?.length) {
-            setChoices([...choices, choice]);
-          }
-        } else {
-          const updatedChoices = [...choices];
-          updatedChoices.splice(idx, 1, undefined);
-
-          setChoices(updatedChoices);
-        }
-      }
-    }
-  };
-
-  const handleAnswer = () => {
-    if (player.nick === game.questionMaster)
-      return;
-
-    if (game.question?.blanks === null && choices.length !== 1)
-      return;
-
-    if (game.question?.blanks && choices.length !== game.question?.blanks.length)
-      return;
-
-    answer({ data: { cards: choices.map((c) => c?.text) } });
-  };
+  const { selection, canSelect, toggleSelection, canAnswer, didAnswer, handleAnswer } = usePlayerAnswer(player, game);
 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: 30 }}>
-        <QuestionCard question={game.question!} choices={choices} validate={handleAnswer} />
+      <div
+        style={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: '0 30px',
+          cursor: canAnswer ? 'pointer' : 'initial',
+        }}
+        onClick={handleAnswer}
+      >
+        <Question style={{ color: didAnswer ? '#7C9' : 'inherit' }} question={game.question!} choices={selection} />
       </div>
 
       <div style={{ flex: 2, overflow: 'auto' }}>
-        <ul>
-          { player.cards?.map((c: any) => (
-            <li key={c.text} onClick={() => handleToggleChoice(c)} style={{ backgroundColor: choices.includes(c) ? '#ccc' : '#fff', padding: 12, borderBottom: '1px solid #CCC' }}>
-              { c.text }
-            </li>
-          )) }
-        </ul>
+        <CardsList
+          cards={player.cards!}
+          onSelect={toggleSelection}
+          isSelected={c => selection.includes(c)}
+          canSelect={canSelect}
+        />
       </div>
     </div>
   );
