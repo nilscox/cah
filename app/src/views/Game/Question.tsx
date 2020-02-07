@@ -33,7 +33,7 @@ type QuestionProps = {
 };
 
 const Question: React.FC<QuestionProps> = ({ style, question, choices }) => (
-  <div style={style}>
+  <div style={{ lineHeight: 1.5, ...style }}>
     { getChunks(question, choices).map((chunk, n) =>
       chunk === null
         ? <Blank key={n} />

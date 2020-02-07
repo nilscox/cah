@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ChoiceDTO } from 'dtos/choice.dto';
 import { QuestionDTO } from 'dtos/question.dto';
 import Question from '../Question';
@@ -13,16 +13,21 @@ type AnswersListProps = {
 };
 
 const AnswersList: React.FC<AnswersListProps> = ({ question, answers, winner, onSelect }) => {
-  const winnerSpring = useSpring({
+  const [winnerSpring, setWinnerSpring] = useSpring(() => ({
     config: { tension: 70 },
     from: { opacity: 0 },
-    to: { opacity: 1 },
     onRest: () => setTrail({ opacity: 1 }),
-  });
+  }));
 
   const [trail, setTrail] = useTrail(answers.length, () => ({
     from: { opacity: 0 },
   }));
+
+  useEffect(() => {
+    if (winner) {
+      setWinnerSpring({ opacity:1 });
+    }
+  }, [winner]);
 
   return (
     <>
@@ -54,8 +59,7 @@ const AnswersList: React.FC<AnswersListProps> = ({ question, answers, winner, on
           <div
             style={{
               flex: 3,
-              border: '1px solid #789',
-              borderTop: idx < answers.length! - 1 ? '1px solid #789' : 'none',
+              borderBottom: idx < answers.length! - 1 ? '1px solid #789' : 'none',
               padding: 10,
             }}
           >

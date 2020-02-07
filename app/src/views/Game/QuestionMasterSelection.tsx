@@ -20,7 +20,7 @@ const NextTurn: React.FC = () => {
   const spring = useSpring({
     from: { opacity: 0 },
     to: { opacity: 1 },
-    delay: 2000,
+    delay: 3000,
   });
 
   return <animated.div style={spring} onClick={() => nextTurn()}>Next</animated.div>;
