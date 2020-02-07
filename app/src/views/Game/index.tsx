@@ -49,19 +49,13 @@ type GameProps = {
 };
 
 const Game: React.FC<GameProps> = ({ game, player }) => {
-  const [endOfTurn, setEndOfTurn] = useState(false);
   const [showGameInfo, setShowGameInfo] = useState(false);
-
-  useEffect(() => {
-    if (game.playState === 'question_master_selection')
-      setEndOfTurn(true);
-  }, [game.playState]);
 
   const views = {
     gameIdle: <GameIdle game={game} />,
     gameFinished: <GameFinished game={game} />,
     playersAnswer: <PlayersAnswer game={game} player={player} />,
-    questionMasterSelection: <QuestionMasterSelection game={game} player={player} nextTurn={() => setEndOfTurn(false)} />,
+    questionMasterSelection: <QuestionMasterSelection game={game} player={player} />,
     gameInfo: <GameInfo game={game} />,
   };
 
@@ -72,10 +66,6 @@ const Game: React.FC<GameProps> = ({ game, player }) => {
 
     if (game.state === 'idle') {
       return 'gameIdle';
-    }
-
-    if (endOfTurn) {
-      return 'questionMasterSelection';
     }
 
     if (game.state === 'finished') {
@@ -94,7 +84,7 @@ const Game: React.FC<GameProps> = ({ game, player }) => {
       <GameHeader
         gameId={game.id}
         toggleGameInfo={() => setShowGameInfo(show => !show)}
-        showWhatToDo={() => toast(getExpectedAction(game, player, endOfTurn))}
+        showWhatToDo={() => toast(getExpectedAction(game, player))}
       />
       <AnimatedViews style={{ flex: 1, overflow: 'auto' }} views={views} current={getCurrentView()} />
     </div>

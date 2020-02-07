@@ -12,11 +12,18 @@ const usePlayer = (socket: SocketIOClient.Socket) => {
     if (message.type === 'cards') {
       setPlayer({
         ...player,
-          cards: [
-            ...(player.cards || []),
-            ...message.cards,
-          ],
-        });
+        cards: [
+          ...(player.cards || []),
+          ...message.cards,
+        ],
+      });
+    }
+
+    if (message.type === 'next') {
+      setPlayer({
+        ...player,
+        selection: [],
+      });
     }
   };
 

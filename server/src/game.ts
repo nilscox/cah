@@ -83,6 +83,7 @@ export const selectAnswer = (game: Game, answer: Answer) => {
   };
 
   game.turns!.push(turn);
+  game.playState = 'end_of_turn';
 
   return turn;
 };

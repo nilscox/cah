@@ -22,7 +22,7 @@ export interface Game {
   players: Player[];
   questions: Question[];
   choices: Choice[];
-  playState?: 'players_answer' | 'question_master_selection';
+  playState?: 'players_answer' | 'question_master_selection' | 'end_of_turn';
   questionMaster?: string;
   question?: Question;
   answers?: Answer[];

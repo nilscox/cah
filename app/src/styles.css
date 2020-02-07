@@ -31,9 +31,14 @@ button {
 
 .toast {
   min-height: 48px;
-  margin: 15px;
-  background: #622;
-  border: 1px solid #C66;
   font-size: 14px;
+}
+
+.toast-error {
+  color: #C89;
+}
+
+.Toastify__toast {
+  background: #000;
   font-family: JetBrainsMono, monospace;
 }

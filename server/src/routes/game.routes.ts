@@ -148,11 +148,11 @@ router.post('/select', isInGame, (req, res) => {
   if (game!.state !== 'started')
     throw new APIError(400, 'game is not started');
 
-  if (game!.questionMaster !== player!.nick)
-    throw new APIError(400, 'only the question master can select an answer');
-
   if (game!.playState !== 'question_master_selection')
     throw new APIError(400, 'not all players answered yet');
+
+  if (game!.questionMaster !== player!.nick)
+    throw new APIError(400, 'only the question master can select an answer');
 
   if (answerIndex === undefined)
     throw new APIError(400, 'missing answerIndex');
@@ -164,7 +164,31 @@ router.post('/select', isInGame, (req, res) => {
 
   const turn = selectAnswer(game!, answer);
 
-  if (!nextTurn(game!, turn.winner)) {
+  res.json(formatTurn(turn));
+
+  io.in(game!.id).send({
+    type: 'turn',
+    turn: formatTurn(turn),
+  });
+});
+
+router.post('/next', isInGame, (req, res) => {
+  const { game, player, io } = req;
+
+  if (game!.state !== 'started')
+    throw new APIError(400, 'game is not started');
+
+  if (game!.playState !== 'end_of_turn')
+    throw new APIError(400, 'this turn is not finished');
+
+  if (game!.questionMaster !== player!.nick)
+    throw new APIError(400, 'only the question master can go next');
+
+  const end = !nextTurn(game!, game!.turns![game!.turns!.length - 1].winner);
+
+  res.status(204).end();
+
+  if (end) {
     endGame(game!);
 
     io.in(game!.id).send({
@@ -172,13 +196,6 @@ router.post('/select', isInGame, (req, res) => {
       game: formatGame(game!),
     });
   }
-
-  res.json(formatTurn(turn));
-
-  io.in(game!.id).send({
-    type: 'turn',
-    turn: formatTurn(turn),
-  });
 
   io.in(game!.id).send({
     type: 'next',

@@ -87,6 +87,7 @@ const useGame = (socket: SocketIOClient.Socket) => {
     case 'turn':
       setGame({
         ...game,
+        playState: 'end_of_turn',
         turns: [
           ...(game.turns || []),
           message.turn,

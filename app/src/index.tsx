@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 
 import axios from 'axios';
 import useAxios from 'axios-hooks';
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer, toast, Slide } from 'react-toastify';
 import io from 'socket.io-client';
 
 import 'react-toastify/dist/ReactToastify.min.css';
@@ -62,7 +62,15 @@ const App: React.FC = () => {
 
 ReactDOM.render(
   <>
-    <ToastContainer />
+    <ToastContainer
+      hideProgressBar
+      autoClose={4000}
+      closeButton={false}
+      position={toast.POSITION.TOP_RIGHT}
+      transition={Slide}
+      draggablePercent={30}
+      className="toast"
+    />
     <App />
   </>,
   document.getElementById('app'),

@@ -19,7 +19,7 @@ const useHandleError = (error?: any, { message }: HandleErrorOpts = {}) => {
     toast.error(displayMessage || 'Something wrong happened', {
       position: toast.POSITION.BOTTOM_CENTER,
       hideProgressBar: true,
-      className: 'toast',
+      className: 'toast toast-error',
       transition: Slide,
       draggablePercent: 30,
       closeButton: false,

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import useAxios from 'axios-hooks';
 
@@ -8,13 +8,32 @@ import { PlayerDTO } from 'dtos/player.dto';
 import AnswersList from './components/AnswersList';
 import { animated, useSpring } from 'react-spring';
 
+const NextTurn: React.FC = () => {
+  const [, nextTurn] = useAxios(
+    {
+      url: '/api/game/next',
+      method: 'POST',
+    },
+    { manual: true }
+  );
+
+  const spring = useSpring({
+    from: { opacity: 0 },
+    to: { opacity: 1 },
+    delay: 2000,
+  });
+
+  return <animated.div style={spring} onClick={() => nextTurn()}>Next</animated.div>;
+};
+
 type QuestionMasterSelectionProps = {
   game: GameDTO;
   player: PlayerDTO;
-  nextTurn: () => void;
 };
 
-const QuestionMasterSelection: React.FC<QuestionMasterSelectionProps> = ({ game, player, nextTurn }) => {
+const QuestionMasterSelection: React.FC<QuestionMasterSelectionProps> = ({ game, player }) => {
+  const isQuestionMAster = player.nick === game.questionMaster;
+
   const [, selectAnswer] = useAxios(
     {
       url: '/api/game/select',
@@ -24,26 +43,12 @@ const QuestionMasterSelection: React.FC<QuestionMasterSelectionProps> = ({ game,
   );
 
   const handleSelectAnswer = (answerIndex: number) => {
-    if (player.nick !== game.questionMaster) return;
-
-    selectAnswer({ data: { answerIndex } });
+    if (isQuestionMAster) {
+      selectAnswer({ data: { answerIndex } });
+    }
   };
 
   const lastTurn = game.turns && game.turns[game.turns.length - 1];
-
-  const [nextSpring, setNextSpring] = useSpring(() => ({
-    from: { opacity: 0 },
-    delay: 3000,
-  }));
-
-  useEffect(() => {
-    if (game.playState === 'players_answer')
-      setNextSpring({ opacity: 1 });
-  }, [game.playState]);
-
-  useEffect(() => {
-    console.log(game);
-  }, [game]);
 
   return (
     <div
@@ -64,7 +69,7 @@ const QuestionMasterSelection: React.FC<QuestionMasterSelectionProps> = ({ game,
         }
       </div>
       <div style={{ margin: '30px auto' }}>
-        <animated.div style={nextSpring} onClick={nextTurn}>Next</animated.div>
+        { isQuestionMAster && game.playState === 'end_of_turn' ? <NextTurn /> : '\u00A0' }
       </div>
     </div>
   );

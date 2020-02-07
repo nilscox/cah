@@ -21,9 +21,11 @@ user=mano post /api/game/answer cards:=$'["C23"]'
 user=raspout post /api/game/answer cards:=$'["C34"]'
 user=nils post /api/game/select answerIndex:=0
 
-user=nils post /api/game/answer cards:=$'["C01", "C02"]'
-user=mano post /api/game/answer cards:=$'["C24", "C25"]'
-user=raspout post /api/game/answer cards:=$'["C35", "C36"]'
+user=nils post /api/game/next
+
+user=nils post /api/game/answer cards:=$'["C01"]'
+user=mano post /api/game/answer cards:=$'["C24"]'
+user=raspout post /api/game/answer cards:=$'["C35"]'
 user=vio post /api/game/select answerIndex:=0
 
 get '/api/game?gameId=ABCD'

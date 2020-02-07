@@ -7,7 +7,7 @@ export interface GameDTO {
   id: string;
   state: 'idle' | 'started' | 'finished';
   players: PlayerDTO[];
-  playState?: 'players_answer' | 'question_master_selection';
+  playState?: 'players_answer' | 'question_master_selection' | 'end_of_turn';
   questionMaster?: string;
   question?: QuestionDTO;
   answered?: string[];
