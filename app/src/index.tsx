@@ -28,7 +28,7 @@ const App: React.FC = () => {
   const [game, setGame] = useGame(socket);
   const [view, setView] = useState('auth');
 
-  const [{ loading, data, error, response }] = useAxios('/api/auth/me');
+  const [{ loading, data, error, response }, refetchMe] = useAxios('/api/auth/me');
 
   useEffect(() => {
     if (response?.status === 200) {
@@ -36,6 +36,12 @@ const App: React.FC = () => {
       setGame(data.game);
     }
   }, [response?.status]);
+
+  useEffect(() => {
+    if (player) {
+      refetchMe();
+    }
+  }, [player?.nick]);
 
   const views = {
     auth: <Auth setPlayer={setPlayer} />,
