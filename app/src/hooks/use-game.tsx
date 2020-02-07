@@ -63,7 +63,7 @@ const useGame = (socket: SocketIOClient.Socket) => {
     case 'start':
     case 'next':
     case 'end':
-      setGame(message.game);
+      setGame({ ...game, ...message.game });
       break;
 
     case 'answer':

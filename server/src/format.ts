@@ -37,7 +37,7 @@ export const formatGame = (game: Game, full = false): GameDTO => {
     result.turn = game.turns!.length + 1;
 
     if (game.playState === 'question_master_selection')
-      result.answers = game.answers!.map(a => a.choices);
+      result.answers = game.answers!.map(a => ({ choices: a.choices }));
   }
 
   if (game.state === 'finished') {
@@ -46,7 +46,7 @@ export const formatGame = (game: Game, full = false): GameDTO => {
 
   if (full) {
     if (game.turns)
-      result.turns = game.turns;
+      result.turns = game.turns.map(formatTurn);
   }
 
   return result;

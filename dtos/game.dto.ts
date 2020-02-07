@@ -1,7 +1,7 @@
 import { PlayerDTO } from './player.dto';
 import { QuestionDTO } from './question.dto';
 import { TurnDTO } from './turn.dto';
-import { ChoiceDTO } from './choice.dto';
+import { AnswerDTO } from './answer.dto';
 
 export interface GameDTO {
   id: string;
@@ -11,7 +11,7 @@ export interface GameDTO {
   questionMaster?: string;
   question?: QuestionDTO;
   answered?: string[];
-  answers?: ChoiceDTO[][];
+  answers?: AnswerDTO[];
   turn?: number;
   turns?: TurnDTO[];
   scores?: { [player: string]: number };

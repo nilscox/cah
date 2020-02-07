@@ -1,4 +1,11 @@
 [
   { "text": "Q1", "blanks": null },
-  { "text": "Q2", "blanks": [1, 2] }
+  { "text": "Q2", "blanks": null },
+  { "text": "Q3", "blanks": null },
+  { "text": "Q4", "blanks": null },
+  { "text": "Q5", "blanks": null },
+  { "text": "Q6", "blanks": null },
+  { "text": "Q7", "blanks": null },
+  { "text": "Q8", "blanks": null },
+  { "text": "Q9", "blanks": null }
 ]

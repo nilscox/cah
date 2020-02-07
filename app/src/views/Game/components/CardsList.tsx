@@ -10,9 +10,9 @@ type CardsListProps = {
 };
 
 const CardsList: React.FC<CardsListProps> = ({ cards, onSelect, isSelected, canSelect }) => (
-  <ul>
+  <>
     { cards.map((choice: any) => (
-      <li
+      <div
         key={choice.text}
         onClick={() => canSelect(choice) && onSelect(choice)}
         style={{
@@ -24,9 +24,9 @@ const CardsList: React.FC<CardsListProps> = ({ cards, onSelect, isSelected, canS
         }}
       >
         { choice.text }
-      </li>
+      </div>
     )) }
-  </ul>
+  </>
 );
 
 export default CardsList;

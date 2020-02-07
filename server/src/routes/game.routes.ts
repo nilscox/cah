@@ -137,7 +137,7 @@ router.post('/answer', isInGame, (req, res) => {
   if (game!.playState === 'question_master_selection') {
     io.in(game!.id).send({
       type: 'allanswers',
-      answers: game!.answers!.map(a => a.choices),
+      answers: game!.answers!.map(a => ({ choices: a.choices })),
     });
   }
 });
@@ -148,11 +148,11 @@ router.post('/select', isInGame, (req, res) => {
   if (game!.state !== 'started')
     throw new APIError(400, 'game is not started');
 
-  if (game!.playState !== 'question_master_selection')
-    throw new APIError(400, 'not all players answered yet');
-
   if (game!.questionMaster !== player!.nick)
     throw new APIError(400, 'only the question master can select an answer');
+
+  if (game!.playState !== 'question_master_selection')
+    throw new APIError(400, 'not all players answered yet');
 
   if (answerIndex === undefined)
     throw new APIError(400, 'missing answerIndex');

@@ -9,6 +9,9 @@ export const getExpectedAction = (game: GameDTO, player: PlayerDTO, endOfTurn: b
     return 'The game is finished.';
 
   if (game.playState === 'players_answer') {
+    if (endOfTurn)
+      return 'This turn is finished. Go next when you are ready.';
+
     if (game.questionMaster === player.nick)
       return 'Wait for all players to answer...';
     else if (game.answered?.includes(player.nick))
@@ -16,9 +19,6 @@ export const getExpectedAction = (game: GameDTO, player: PlayerDTO, endOfTurn: b
     else
       return 'Submit an answer.';
   }
-
-  if (endOfTurn)
-    return 'This turn is finished. Go next when you are ready.';
 
   if (game.questionMaster === player.nick)
     return 'Choose an answer';

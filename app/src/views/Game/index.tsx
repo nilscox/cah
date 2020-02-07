@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { toast } from 'react-toastify';
 
@@ -10,7 +10,6 @@ import AnimatedViews from '../../components/AnimatedView';
 import GameIdle from './GameIdle';
 import PlayersAnswer from './PlayersAnswer';
 import GameFinished from './GameFinished';
-import EndOfTurn from './EndOfTurn';
 import QuestionMasterSelection from './QuestionMasterSelection';
 import GameInfo from './GameInfo';
 import { getExpectedAction } from './utils/expectedAction';
@@ -53,12 +52,16 @@ const Game: React.FC<GameProps> = ({ game, player }) => {
   const [endOfTurn, setEndOfTurn] = useState(false);
   const [showGameInfo, setShowGameInfo] = useState(false);
 
+  useEffect(() => {
+    if (game.playState === 'question_master_selection')
+      setEndOfTurn(true);
+  }, [game.playState]);
+
   const views = {
     gameIdle: <GameIdle game={game} />,
     gameFinished: <GameFinished game={game} />,
     playersAnswer: <PlayersAnswer game={game} player={player} />,
-    questionMasterSelection: <QuestionMasterSelection game={game} player={player} />,
-    endOfTurn: <EndOfTurn />,
+    questionMasterSelection: <QuestionMasterSelection game={game} player={player} nextTurn={() => setEndOfTurn(false)} />,
     gameInfo: <GameInfo game={game} />,
   };
 
@@ -71,16 +74,16 @@ const Game: React.FC<GameProps> = ({ game, player }) => {
       return 'gameIdle';
     }
 
+    if (endOfTurn) {
+      return 'questionMasterSelection';
+    }
+
     if (game.state === 'finished') {
       return 'gameFinished';
     }
 
     if (game.playState === 'players_answer') {
       return 'playersAnswer';
-    }
-
-    if (endOfTurn) {
-      return 'endOfTurn';
     }
 
     return 'questionMasterSelection';

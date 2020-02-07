@@ -1,6 +1,6 @@
 import { ChoiceDTO } from './choice.dto';
 
 export interface AnswerDTO {
-  player: string;
+  player?: string;
   choices: ChoiceDTO[];
 }

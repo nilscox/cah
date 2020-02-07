@@ -26,6 +26,7 @@ type GameInfoProps = {
 
 const GameInfo: React.FC<GameInfoProps> = ({ game }) => (
   <div style={{ padding: 20, boxSizing: 'border-box' }}>
+    <pre>{JSON.stringify(game, null, 1)}</pre>
     <div style={{ padding: 10, marginBottom: 20, border: '1px solid #789' }}>
       <PlayersList game={game} players={game.players} />
     </div>
