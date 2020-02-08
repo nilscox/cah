@@ -9,9 +9,12 @@ import socketio from 'socket.io';
 
 import { State } from './types/State';
 import { Player } from './types/Player';
+import { Game } from 'src/types/Game';
 
 import auth from './routes/auth.routes';
 import game from './routes/game.routes';
+
+import * as events from './events';
 
 const questions = require('../../data/fr/questions');
 const choices = require('../../data/fr/choices');
@@ -106,7 +109,7 @@ io.on('connection', socket => {
 
     if (player.gameId) {
       socket.join(player.gameId);
-      io.in(player.gameId).send({ type: 'connected', nick: player.nick });
+      events.connected(io, { id: player.gameId } as Game, player)
     }
   });
 
@@ -115,7 +118,7 @@ io.on('connection', socket => {
       delete player.socket;
 
       if (player.gameId)
-        io.in(player.gameId).send({ type: 'disconnected', nick: player.nick });
+        events.disconnected(io, { id: player.gameId } as Game, player)
     }
   });
 });

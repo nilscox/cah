@@ -62,10 +62,9 @@ const AnswersList: React.FC<AnswersListProps> = ({ question, answers, winner, on
               flex: 3,
               borderBottom: idx < answers.length! - 1 ? '1px solid #789' : 'none',
               padding: 10,
-              fontSize: 12,
             }}
           >
-            {question.blanks ? <Question question={question} choices={answer.choices} /> : answer.choices[0].text}
+            {question.blanks ? <Question dense question={question} choices={answer.choices} /> : answer.choices[0].text}
           </div>
         </div>
       ))}

@@ -27,19 +27,19 @@ const getChunks = (question: QuestionDTO, choices: (ChoiceDTO | null)[]) => {
 };
 
 type QuestionProps = {
-  style?: React.CSSProperties;
+  dense?: boolean;
   question: QuestionDTO;
   choices: (ChoiceDTO | null)[];
 };
 
-const Question: React.FC<QuestionProps> = ({ style, question, choices }) => (
-  <div style={{ lineHeight: 1.5, ...style }}>
+const Question: React.FC<QuestionProps> = ({ dense, question, choices }) => (
+  <span style={{ fontSize: dense ? 12 : 'initial', lineHeight: dense ? 1.3 : 1.6 }}>
     { getChunks(question, choices).map((chunk, n) =>
       chunk === null
         ? <Blank key={n} />
         : <span key={n}>{ chunk }</span>
     ) }
-  </div>
+  </span>
 );
 
 export default Question;

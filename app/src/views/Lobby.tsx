@@ -3,16 +3,12 @@ import React, { useState, useEffect } from 'react';
 import useAxios from 'axios-hooks';
 import { useSpring, animated, useTrail } from 'react-spring';
 
-import { GameDTO } from 'dtos/game.dto';
-
-import InputForm from '../components/InputForm';
+import { useDispatch } from '../hooks/useGame';
 import useHandleError from '../hooks/useHandleError';
+import InputForm from '../components/InputForm';
 
-type JoinGameProps = {
-  setGame: (game: GameDTO) => void;
-};
-
-const JoinGame: React.FC<JoinGameProps> = ({ setGame }) => {
+const JoinGame: React.FC = () => {
+  const dispatch = useDispatch();
   const [showInput, setShowInput] = useState(false);
 
   const [{ loading, data: game, error, response }, joinGame] = useAxios(
@@ -37,7 +33,7 @@ const JoinGame: React.FC<JoinGameProps> = ({ setGame }) => {
 
   useEffect(() => {
     if (response?.status === 200) {
-      setGame(game);
+      dispatch({ type: 'setgame', game });
     }
   }, [response?.status]);
 
@@ -67,11 +63,8 @@ const JoinGame: React.FC<JoinGameProps> = ({ setGame }) => {
   );
 };
 
-type CreateGameProps = {
-  setGame: (game: GameDTO) => void;
-};
-
-const CreateGame: React.FC<CreateGameProps> = ({ setGame }) => {
+const CreateGame: React.FC = () => {
+  const dispatch = useDispatch();
   const [{ loading, data: game, error, response }, createGame] = useAxios(
     {
       method: 'POST',
@@ -84,7 +77,7 @@ const CreateGame: React.FC<CreateGameProps> = ({ setGame }) => {
 
   useEffect(() => {
     if (response?.status === 201) {
-      setGame(game);
+      dispatch({ type: 'setgame', game });
     }
   }, [response?.status]);
 
@@ -97,11 +90,7 @@ const CreateGame: React.FC<CreateGameProps> = ({ setGame }) => {
   );
 };
 
-type LobbyProps = {
-  setGame: (game: GameDTO) => void;
-};
-
-const Lobby: React.FC<LobbyProps> = ({ setGame }) => {
+const Lobby: React.FC = () => {
   const trail = useTrail(3, {
     config: { tension: 70 },
     from: { opacity: 0 },
@@ -112,7 +101,7 @@ const Lobby: React.FC<LobbyProps> = ({ setGame }) => {
   return (
     <div style={{ height: '100%', padding: 20, boxSizing: 'border-box', display: 'flex', flexDirection: 'column' }}>
       <animated.div style={{ flex: 1, display: 'flex', ...trail[0] }}>
-        <JoinGame setGame={setGame} />
+        <JoinGame />
       </animated.div>
 
       <animated.div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', ...trail[1] }}>
@@ -122,7 +111,7 @@ const Lobby: React.FC<LobbyProps> = ({ setGame }) => {
       </animated.div>
 
       <animated.div style={{ flex: 1, display: 'flex', ...trail[2] }}>
-        <CreateGame setGame={setGame} />
+        <CreateGame />
       </animated.div>
     </div>
   );

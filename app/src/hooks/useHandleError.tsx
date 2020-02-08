@@ -19,6 +19,12 @@ const useHandleError = (error?: any, { message }: HandleErrorOpts = {}) => {
     if (displayMessage === false)
       return;
 
+    if (error.response) {
+      console.log(error.message, error.response);
+    } else {
+      console.log(error);
+    }
+
     toast.error(displayMessage || 'Something wrong happened', {
       position: toast.POSITION.BOTTOM_CENTER,
       hideProgressBar: true,

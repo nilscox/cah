@@ -7,6 +7,7 @@ import { formatGame, formatAnswer, formatTurn, formatPlayer } from '../format';
 import { isAuthenticated, isInGame, isNotInGame } from '../guards';
 
 import * as g from '../game';
+import * as events from '../events';
 
 const router = express.Router();
 
@@ -49,7 +50,7 @@ router.post('/new', isAuthenticated, (req, res) => {
 });
 
 router.post('/join', isAuthenticated, isNotInGame, (req, res) => {
-  const { body: { gameId }, state: { games }, player, io } = req;
+  const { body: { gameId }, state: { games }, player } = req;
 
   if (!player)
     throw new APIError(500, 'something is not defined');
@@ -71,15 +72,11 @@ router.post('/join', isAuthenticated, isNotInGame, (req, res) => {
   res.json(formatGame(game));
 
   player.socket?.join(game.id);
-
-  io.in(game.id).send({
-    type: 'join',
-    player: formatPlayer(player),
-  });
+  events.join(req.io, game, player);
 });
 
 router.post('/start', isInGame('idle'), (req, res) => {
-  const { game, io } = req;
+  const { game } = req;
 
   if (!game)
     throw new APIError(500, 'something is not defined');
@@ -88,14 +85,11 @@ router.post('/start', isInGame('idle'), (req, res) => {
 
   res.json(formatGame(game));
 
-  io.in(game.id).send({
-    type: 'start',
-    game: formatGame(game),
-  });
+  events.start(req.io, game);
 });
 
 router.post('/answer', isInGame('started', 'players_answer'), (req, res) => {
-  const { body: { cards }, game, player, io } = req;
+  const { body: { cards }, game, player } = req;
 
   if (!player || !player.cards || !game || !game.question || !game.answers)
     throw new APIError(500, 'something is not defined');
@@ -127,22 +121,16 @@ router.post('/answer', isInGame('started', 'players_answer'), (req, res) => {
 
   res.json(formatAnswer(answer));
 
-  io.in(game.id).send({
-    type: 'answer',
-    nick: player.nick,
-  });
+  events.answer(req.io, game, player.nick);
 
   // @ts-ignore
   if (game.playState === 'question_master_selection') {
-    io.in(game.id).send({
-      type: 'allanswers',
-      answers: game.answers.map(a => ({ choices: a.choices })),
-    });
+    events.allAnswers(req.io, game, game.answers);
   }
 });
 
 router.post('/select', isInGame('started', 'question_master_selection'), (req, res) => {
-  const { body: { answerIndex }, game, player, io } = req;
+  const { body: { answerIndex }, game, player } = req;
 
   if (!player || !game || !game.answers)
     throw new APIError(500, 'something is not defined');
@@ -162,14 +150,11 @@ router.post('/select', isInGame('started', 'question_master_selection'), (req, r
 
   res.json(formatTurn(turn));
 
-  io.in(game.id).send({
-    type: 'turn',
-    turn: formatTurn(turn),
-  });
+  events.turn(req.io, game, turn);
 });
 
 router.post('/next', isInGame('started', 'end_of_turn'), (req, res) => {
-  const { game, player, io } = req;
+  const { game, player } = req;
 
   if (!player || !game || !game.turns)
     throw new APIError(500, 'something is not defined');
@@ -183,17 +168,10 @@ router.post('/next', isInGame('started', 'end_of_turn'), (req, res) => {
 
   if (end) {
     g.end(game);
-
-    io.in(game.id).send({
-      type: 'end',
-      game: formatGame(game),
-    });
+    events.end(req.io, game);
+  } else {
+    events.next(req.io, game);
   }
-
-  io.in(game.id).send({
-    type: 'next',
-    game: formatGame(game),
-  });
 });
 
 export default router;

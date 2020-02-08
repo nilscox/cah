@@ -6,6 +6,9 @@ import { GameDTO } from 'dtos/game.dto';
 import { PlayerDTO } from 'dtos/player.dto';
 import { ChoiceDTO } from 'dtos/choice.dto';
 
+import useHandleError from '../../hooks/useHandleError';
+import { useDispatch } from '../../hooks/useGame';
+
 import Question from './Question';
 import CardsList from './components/CardsList';
 
@@ -53,6 +56,7 @@ const useSelection = (length: number, isQuestionMaster: boolean) => {
 };
 
 const usePlayerAnswer = (player: PlayerDTO, game: GameDTO) => {
+  const dispatch = useDispatch();
   const [selection, setSelection, { canSelect, toggleSelection }] = useSelection(
     game.question?.blanks?.length || 1,
     player.nick === game.questionMaster
@@ -66,13 +70,21 @@ const usePlayerAnswer = (player: PlayerDTO, game: GameDTO) => {
 
   const canAnswer = [player.nick !== game.questionMaster, !selection.includes(null), !didAnswer].every(value => value);
 
-  const [{ error }, answer] = useAxios(
+  const [{ error, response }, answer] = useAxios(
     {
       url: '/api/game/answer',
       method: 'POST',
     },
     { manual: true }
   );
+
+  useHandleError(error);
+
+  useEffect(() => {
+    if (response?.status === 200) {
+      dispatch({ type: 'setselection', selection: selection as ChoiceDTO[] });
+    }
+  }, [response?.status]);
 
   const handleAnswer = () => {
     if (canAnswer) {
@@ -109,10 +121,11 @@ const PlayersAnswer: React.FC<PlayersAnsmerProps> = ({ game, player }) => {
           alignItems: 'center',
           padding: '0 30px',
           cursor: canAnswer ? 'pointer' : 'initial',
+          color: didAnswer ? '#7C9' : 'inherit',
         }}
         onClick={handleAnswer}
       >
-        <Question style={{ color: didAnswer ? '#7C9' : 'inherit' }} question={game.question!} choices={selection} />
+        <Question question={game.question!} choices={selection} />
       </div>
 
       <div style={{ flex: 2, overflow: 'auto' }}>

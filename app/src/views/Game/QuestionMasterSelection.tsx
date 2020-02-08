@@ -24,7 +24,7 @@ const NextTurn: React.FC = () => {
   });
 
   return (
-    <animated.div style={spring} onClick={() => nextTurn()}>
+    <animated.div style={{ ...spring, cursor: 'pointer' }} onClick={() => nextTurn()}>
       Next
     </animated.div>
   );

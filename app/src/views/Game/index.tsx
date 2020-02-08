@@ -29,7 +29,7 @@ const Game: React.FC<GameProps> = ({ game, player, onLeave }) => {
     gameFinished: <GameFinished game={game} onLeave={onLeave} />,
     playersAnswer: <PlayersAnswer game={game} player={player} />,
     questionMasterSelection: <QuestionMasterSelection game={game} player={player} />,
-    gameInfo: <GameInfo game={game} />,
+    gameInfo: <GameInfo player={player} game={game} />,
   };
 
   const getCurrentView = () => {

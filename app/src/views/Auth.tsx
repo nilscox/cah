@@ -3,16 +3,13 @@ import React, { useEffect } from 'react';
 import useAxios from 'axios-hooks';
 import { useTrail, animated, useSpring } from 'react-spring';
 
-import { PlayerDTO } from 'dtos/player.dto';
+import useHandleError from '../hooks/useHandleError';
+import { useDispatch } from '../hooks/useGame';
 
 import InputForm from '../components/InputForm';
-import useHandleError from '../hooks/useHandleError';
 
-type AuthProps = {
-  setPlayer: (user: PlayerDTO) => void;
-};
-
-const Auth: React.FC<AuthProps> = ({ setPlayer }) => {
+const Auth: React.FC = () => {
+  const dispatch = useDispatch();
   const [{ loading, data: player, error, response }, signup] = useAxios(
     {
       method: 'POST',
@@ -23,13 +20,15 @@ const Auth: React.FC<AuthProps> = ({ setPlayer }) => {
 
   useHandleError(error, {
     message: error => {
-      if (error.response?.data === 'nick already taken') return 'This nick is already taken.';
+      if (error.response?.data === 'nick already taken') {
+        return 'This nick is already taken.';
+      }
     }
   });
 
   useEffect(() => {
     if (response?.status === 201) {
-      setPlayer(player);
+      dispatch({ type: 'setplayer', player });
     }
   }, [response?.status]);
 

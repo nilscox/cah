@@ -1,9 +1,10 @@
 import React from 'react';
 
+import { PlayerDTO } from 'dtos/player.dto';
 import { GameDTO } from 'dtos/game.dto';
+import { TurnDTO } from 'dtos/turn.dto';
 
 import PlayersList from './components/PlayersList';
-import { TurnDTO } from 'dtos/turn.dto';
 import Question from './Question';
 
 type TurnProps = {
@@ -14,23 +15,31 @@ const Turn: React.FC<TurnProps> = ({ turn }) => {
   const winner = turn.answers.find(answer => answer.player === turn.winner);
 
   return (
-    <>
-      { turn.number }. <Question question={turn.question} choices={winner?.choices || []} />
-    </>
+    <div style={{ margin: '10px 0', fontSize: 12 }}>
+      { turn.number }. <Question dense question={turn.question} choices={winner?.choices || []} />
+    </div>
   )
 };
 
 type GameInfoProps = {
+  player: PlayerDTO;
   game: GameDTO;
 };
 
-const GameInfo: React.FC<GameInfoProps> = ({ game }) => (
+const GameInfo: React.FC<GameInfoProps> = ({ player, game }) => (
   <div style={{ padding: 20, boxSizing: 'border-box' }}>
-    <pre>{JSON.stringify(game, null, 1)}</pre>
-    <div style={{ padding: 10, marginBottom: 20, border: '1px solid #789' }}>
+
+    <div style={{ margin: '10px 0' }}>Game code: { game.id } </div>
+    <div style={{ margin: '10px 0' }}>Your nick: { player.nick } </div>
+    { game.state === 'started' && <div style={{ margin: '10px 0'}}>Question Master: { game.questionMaster } </div> }
+
+    <div style={{ marginTop: 25 }}>Players:</div>
+    <div style={{ padding: 10 }}>
       <PlayersList game={game} players={game.players} />
     </div>
-    { game.turns?.map(turn => <Turn key={turn.number} turn={turn} />) }
+
+    { game.turns?.reverse().map(turn => <Turn key={turn.number} turn={turn} />) }
+
   </div>
 );
 
