@@ -25,6 +25,7 @@ export const formatPlayer = (player: Player, full = false): PlayerDTO => {
 export const formatGame = (game: Game, full = false): GameDTO => {
   const result: GameDTO = {
     id: game.id,
+    creator: game.creator,
     state: game.state,
     players: game.players.map(p => formatPlayer(p)),
   };

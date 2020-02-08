@@ -76,12 +76,18 @@ router.post('/join', isAuthenticated, isNotInGame, (req, res) => {
 });
 
 router.post('/start', isInGame('idle'), (req, res) => {
-  const { game } = req;
+  const { game, body: { nbQuestion } } = req;
 
   if (!game)
     throw new APIError(500, 'something is not defined');
 
-  g.start(game);
+  if (nbQuestion === undefined)
+    throw new APIError(400, 'missing nbQuestion');
+
+  if (typeof nbQuestion !== 'number' || isNaN(nbQuestion) || nbQuestion <= 0)
+    throw new APIError(400, 'invalid nbQuestion');
+
+  g.start(game, nbQuestion);
 
   res.json(formatGame(game));
 

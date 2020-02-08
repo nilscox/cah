@@ -10,7 +10,9 @@ export const randomItem = <T extends any>(items: T[], remove = false) => {
 
 export const shuffle = <T extends any>(items: T[]) => {
   for (let i = items.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [items[i], items[j]] = [items[j], items[i]];
+    const j = Math.floor(Math.random() * (i + 1));
+    [items[i], items[j]] = [items[j], items[i]];
   }
+
+  return items;
 }

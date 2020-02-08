@@ -18,6 +18,7 @@ export interface Turn {
 
 export interface Game {
   id: string;
+  creator: string;
   state: 'idle' | 'started' | 'finished';
   players: Player[];
   questions: Question[];

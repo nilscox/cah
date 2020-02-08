@@ -1,24 +1,38 @@
 import { Player } from './types/Player';
 import { Game, Answer, Turn } from './types/Game';
 import { Choice } from './types/Choice';
+import { Question } from './types/Question';
+
+import APIError from './APIError';
 import { randomItem, shuffle } from './utils';
-import { Question } from 'src/types/Question';
 
 export const create = (data: { questions: Question[], choices: Choice[]}, player: Player) => {
   const gameId = Math.random().toString(36).slice(-4).toUpperCase();
 
   const game: Game = {
     id: gameId,
+    creator: player.nick,
     state: 'idle',
     players: [player!],
-    questions: [...data.questions],
-    choices: [...data.choices],
+    questions: shuffle([...data.questions]),
+    choices: shuffle([...data.choices]),
   };
 
   return game;
 };
 
-export const start = (game: Game) => {
+export const start = (game: Game, nbQuestion: number) => {
+  const nbPlayers = game.players.length;
+  const questions = game.questions.slice(0, nbQuestion);
+  const nbBlanks = questions.reduce((sum, question) => sum + (question.blanks?.length || 1), 0);
+  const nbChoices = (11 + nbBlanks) * nbPlayers;
+
+  if (nbQuestion > game.questions.length || nbChoices > game.choices.length)
+    throw new APIError(400, 'too many questions');
+
+  game.questions = questions;
+  game.choices = game.choices.slice(0, nbChoices);
+
   game.state = 'started';
   game.playState = 'players_answer';
   game.answers = [];
