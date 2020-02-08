@@ -3,7 +3,7 @@ import express from 'express';
 import { Game } from '../types/Game';
 import { Choice } from '../types/Choice';
 import APIError from '../APIError';
-import { formatGame, formatAnswer, formatTurn, formatPlayer } from '../format';
+import { formatGame, formatAnswer, formatTurn } from '../format';
 import { isAuthenticated, isInGame, isNotInGame } from '../guards';
 
 import * as g from '../game';

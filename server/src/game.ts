@@ -5,8 +5,7 @@ import { randomItem, shuffle } from './utils';
 import { Question } from 'src/types/Question';
 
 export const create = (data: { questions: Question[], choices: Choice[]}, player: Player) => {
-  // const gameId = Math.random().toString(36).slice(-4).toUpperCase();
-  const gameId = 'ABCD';
+  const gameId = Math.random().toString(36).slice(-4).toUpperCase();
 
   const game: Game = {
     id: gameId,

@@ -29,7 +29,7 @@ export type StartEvent = {
   game: GameDTO;
 };
 
-export type AnswersEvent = {
+export type AnswerEvent = {
   type: 'answer';
   nick: string;
 };
@@ -60,7 +60,7 @@ export type GameEvent =
   | JoinEvent
   | CardsEvent
   | StartEvent
-  | AnswersEvent
+  | AnswerEvent
   | AllAnswersEvent
   | NextEvent
   | TurnEvent
