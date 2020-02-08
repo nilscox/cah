@@ -13,8 +13,8 @@ import { Player } from './types/Player';
 import auth from './routes/auth.routes';
 import game from './routes/game.routes';
 
-const questions = require('../data/fr/questions');
-const choices = require('../data/fr/choices');
+const questions = require('../../data/fr/questions');
+const choices = require('../../data/fr/choices');
 
 const app = express();
 const server = http.createServer(app);
