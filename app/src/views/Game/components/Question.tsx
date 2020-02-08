@@ -8,11 +8,13 @@ const Blank: React.FC = () => (
 );
 
 const getChoiceText = (choice: ChoiceDTO | null) => {
-  if (!choice)
+  if (!choice) {
     return null;
+  }
 
-  if (choice.keepCapitalization)
+  if (choice.keepCapitalization) {
     return choice.text;
+  }
 
   return choice.text.toLowerCase();
 };
@@ -32,23 +34,38 @@ const getChunks = (question: QuestionDTO, choices: (ChoiceDTO | null)[]) => {
 
     return chunks.filter(({ chunk }) => chunk !== '');
   } else {
-    return [{ chunk: question.text, from: 'question' }, { chunk: ' ', from: 'question' }, { chunk: getChoiceText(choices[0]), form: 'choice' }];
+    return [
+      { chunk: question.text, from: 'question' },
+      { chunk: ' ', from: 'question' },
+      { chunk: getChoiceText(choices[0]), form: 'choice' },
+    ];
   }
 };
 
 type QuestionProps = {
   dense?: boolean;
+  highlight?: boolean;
   question: QuestionDTO;
   choices: (ChoiceDTO | null)[];
 };
 
-const Question: React.FC<QuestionProps> = ({ dense, question, choices }) => (
+const Question: React.FC<QuestionProps> = ({ dense, highlight, question, choices }) => (
   <span style={{ fontSize: dense ? 12 : 'initial', lineHeight: dense ? 1.3 : 1.6 }}>
-    { getChunks(question, choices).map(({ chunk, from }, n) =>
-      chunk === null
-        ? <Blank key={n} />
-        : <span key={n} style={{ fontWeight: from === 'choice' ? 'bold' : 'initial' }}>{ chunk }</span>
-    ) }
+    {getChunks(question, choices).map(({ chunk, from }, n) =>
+      chunk === null ? (
+        <Blank key={n} />
+      ) : (
+        <span
+          key={n}
+          style={{
+            ...(!highlight && from === 'choice' && { color: '#ABC' }),
+            ...(highlight && { color: '#7C9' }),
+          }}
+        >
+          {chunk}
+        </span>
+      )
+    )}
   </span>
 );
 

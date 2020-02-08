@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 
 import useAxios from 'axios-hooks';
 import { ToastContainer, toast, Slide } from 'react-toastify';
@@ -71,18 +71,20 @@ const App: React.FC = () => {
   }
 
   return (
-    <DispatchProvider value={dispatch}>
-      <ToastContainer
-        hideProgressBar
-        autoClose={4000}
-        closeButton={false}
-        position={toast.POSITION.TOP_RIGHT}
-        transition={Slide}
-        draggablePercent={30}
-        className="toast"
-      />
-      <AnimatedViews style={{ height: '100%', overflow: 'auto' }} views={views} current={view} />
-    </DispatchProvider>
+    <Suspense fallback={null}>
+      <DispatchProvider value={dispatch}>
+        <ToastContainer
+          hideProgressBar
+          autoClose={4000}
+          closeButton={false}
+          position={toast.POSITION.TOP_RIGHT}
+          transition={Slide}
+          draggablePercent={30}
+          className="toast"
+        />
+        <AnimatedViews style={{ height: '100%', overflow: 'auto' }} views={views} current={view} />
+      </DispatchProvider>
+    </Suspense>
   );
 };
 

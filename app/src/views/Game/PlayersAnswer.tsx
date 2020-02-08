@@ -121,11 +121,10 @@ const PlayersAnswer: React.FC<PlayersAnsmerProps> = ({ game, player }) => {
           alignItems: 'center',
           padding: '10px 30px',
           cursor: canAnswer ? 'pointer' : 'initial',
-          color: didAnswer ? '#7C9' : 'inherit',
         }}
         onClick={handleAnswer}
       >
-        <Question question={game.question!} choices={selection} />
+        <Question highlight={didAnswer} question={game.question!} choices={selection} />
       </div>
 
       <div style={{ flex: 2, overflow: 'auto', minHeight: 100, display: 'flex', flexDirection: 'column' }}>

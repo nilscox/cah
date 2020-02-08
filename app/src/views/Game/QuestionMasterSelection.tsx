@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import useAxios from 'axios-hooks';
+import { useTranslation } from 'react-i18next';
 
 import { GameDTO } from 'dtos/game.dto';
 import { PlayerDTO } from 'dtos/player.dto';
@@ -9,6 +10,8 @@ import AnswersList from './components/AnswersList';
 import { animated, useSpring } from 'react-spring';
 
 const NextTurn: React.FC = () => {
+  const { t } = useTranslation();
+
   const [, nextTurn] = useAxios(
     {
       url: '/api/game/next',
@@ -25,7 +28,7 @@ const NextTurn: React.FC = () => {
 
   return (
     <animated.div style={{ ...spring, cursor: 'pointer' }} onClick={() => nextTurn()}>
-      Next
+      {t('game.nextTurn')}
     </animated.div>
   );
 };

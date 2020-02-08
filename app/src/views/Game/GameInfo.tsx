@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { useTranslation } from 'react-i18next';
+
 import { PlayerDTO } from 'dtos/player.dto';
 import { GameDTO } from 'dtos/game.dto';
 import { TurnDTO } from 'dtos/turn.dto';
@@ -26,21 +28,25 @@ type GameInfoProps = {
   game: GameDTO;
 };
 
-const GameInfo: React.FC<GameInfoProps> = ({ player, game }) => (
-  <div style={{ padding: 20, boxSizing: 'border-box' }}>
+const GameInfo: React.FC<GameInfoProps> = ({ player, game }) => {
+  const { t } = useTranslation();
 
-    <div style={{ margin: '10px 0' }}>Game code: <span style={{ fontWeight: 'bold' }}>{ game.id }</span></div>
-    <div style={{ margin: '10px 0' }}>Your nick: <span style={{ fontWeight: 'bold' }}>{ player.nick }</span></div>
-    { game.state === 'started' && <div style={{ margin: '10px 0'}}>Question Master: <span style={{ fontWeight: 'bold' }}>{ game.questionMaster }</span></div> }
+  return (
+    <div style={{ padding: 20, boxSizing: 'border-box' }}>
 
-    <div style={{ marginTop: 25 }}>Players:</div>
-    <div style={{ padding: 10 }}>
-      <PlayersList game={game} players={game.players} />
+      <div style={{ margin: '10px 0' }}>{t('game.gameCode')}: <span style={{ fontWeight: 'bold' }}>{ game.id }</span></div>
+      <div style={{ margin: '10px 0' }}>{t('game.yourNick')}: <span style={{ fontWeight: 'bold' }}>{ player.nick }</span></div>
+      { game.state === 'started' && <div style={{ margin: '10px 0'}}>{t('game.questionMaster')}: <span style={{ fontWeight: 'bold' }}>{ game.questionMaster }</span></div> }
+
+      <div style={{ marginTop: 25 }}>{t('game.players')}:</div>
+      <div style={{ padding: 10 }}>
+        <PlayersList game={game} players={game.players} />
+      </div>
+
+      { game.turns?.reverse().map(turn => <Turn key={turn.number} turn={turn} />) }
+
     </div>
-
-    { game.turns?.reverse().map(turn => <Turn key={turn.number} turn={turn} />) }
-
-  </div>
-);
+  );
+};
 
 export default GameInfo;

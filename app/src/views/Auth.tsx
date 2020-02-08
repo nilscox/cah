@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 
 import useAxios from 'axios-hooks';
+import { useTranslation } from 'react-i18next';
 import { useTrail, animated, useSpring } from 'react-spring';
 
 import useHandleError from '../hooks/useHandleError';
@@ -9,6 +10,7 @@ import { useDispatch } from '../hooks/useGame';
 import InputForm from '../components/InputForm';
 
 const Auth: React.FC = () => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const [{ loading, data: player, error, response }, signup] = useAxios(
     {
@@ -21,7 +23,7 @@ const Auth: React.FC = () => {
   useHandleError(error, {
     message: error => {
       if (error.response?.data === 'nick already taken') {
-        return 'This nick is already taken.';
+        return t('auth.nickAlreadyTaken') as string;
       }
     }
   });
@@ -72,7 +74,7 @@ const Auth: React.FC = () => {
       <animated.div style={{ width: '75%', margin: '0 auto', ...inputSpring }}>
         <InputForm
           loading={loading}
-          placeholder="Enter your nick..."
+          placeholder={t('auth.nickPlaceholder')}
           minLength={3}
           onSubmit={nick => signup({ data: { nick } })}
         />

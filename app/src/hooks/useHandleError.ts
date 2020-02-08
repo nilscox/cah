@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 
+import { useTranslation } from 'react-i18next';
 import { toast, Slide } from 'react-toastify';
 
 type HandleErrorOpts = {
@@ -7,6 +8,8 @@ type HandleErrorOpts = {
 };
 
 const useHandleError = (error?: any, { message }: HandleErrorOpts = {}) => {
+  const { t } = useTranslation();
+
   useEffect(() => {
     if (!error) {
       return;
@@ -25,7 +28,7 @@ const useHandleError = (error?: any, { message }: HandleErrorOpts = {}) => {
       console.log(error);
     }
 
-    toast.error(displayMessage || 'Something wrong happened', {
+    toast.error(displayMessage || t('fallbackErrorMessage'), {
       position: toast.POSITION.BOTTOM_CENTER,
       hideProgressBar: true,
       className: 'toast toast-error',

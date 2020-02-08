@@ -2,6 +2,7 @@ import React, { useMemo, useEffect } from 'react';
 
 import { animated, useTrail } from 'react-spring';
 import useAxios from 'axios-hooks';
+import { useTranslation } from 'react-i18next';
 
 import { GameDTO } from 'dtos/game.dto';
 
@@ -45,6 +46,7 @@ type GameFinishedProps = {
 };
 
 const GameFinished: React.FC<GameFinishedProps> = ({ game, onLeave }) => {
+  const { t } = useTranslation();
   const [{ error, response }, leaveGame] = useAxios(
     {
       method: 'POST',
@@ -84,7 +86,7 @@ const GameFinished: React.FC<GameFinishedProps> = ({ game, onLeave }) => {
         }}
         onClick={() => leaveGame()}
       >
-        Leave game
+        {t('game.leave')}
       </div>
     </div>
   );

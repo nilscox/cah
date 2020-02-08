@@ -1,22 +1,25 @@
 import React, { useEffect } from 'react';
 
+import { useTranslation } from 'react-i18next';
 import { animated, useSpring } from 'react-spring';
 
 import { GameDTO } from 'dtos/game.dto';
 
 import { usePrevious } from '../../../hooks/usePrevious';
 
-const gameState = (state: GameDTO['state'], playState: GameDTO['playState']) => {
+const useGameState = (state: GameDTO['state'], playState: GameDTO['playState']) => {
+  const { t } = useTranslation();
+
   const stateMap = {
-    idle: 'Game idle',
+    idle: t('game.state.idle'),
     started: undefined,
-    finished: 'Game finished',
+    finished: t('game.state.finished'),
   };
 
   const playStateMap = {
-    players_answer: 'Players Answer',
-    question_master_selection: 'Question Master Selection',
-    end_of_turn: 'End of Turn',
+    players_answer: t('game.playState.playersAnswer'),
+    question_master_selection: t('game.playState.questionMasterSelection'),
+    end_of_turn: t('game.playState.endOfTurn'),
   };
 
   return stateMap[state] || playStateMap[playState!];
@@ -28,7 +31,7 @@ type GameStateProps = {
 };
 
 const GameState: React.FC<GameStateProps> = ({ state, playState }) => {
-  const current = gameState(state, playState);
+  const current = useGameState(state, playState);
   const prev = usePrevious(current);
 
   const [prevSpring, setPrevSpring] = useSpring(() => ({

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 import useAxios from 'axios-hooks';
+import { useTranslation } from 'react-i18next';
 import { useSpring, animated, useTrail } from 'react-spring';
 
 import { useDispatch } from '../hooks/useGame';
@@ -8,6 +9,7 @@ import useHandleError from '../hooks/useHandleError';
 import InputForm from '../components/InputForm';
 
 const JoinGame: React.FC = () => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const [showInput, setShowInput] = useState(false);
 
@@ -22,11 +24,11 @@ const JoinGame: React.FC = () => {
   useHandleError(error, {
     message: error => {
       if (error.response?.data === 'game not found') {
-        return 'This game code does not exist, please check';
+        return t('lobby.gameDoesNotExist') as string;
       }
 
       if (error.response?.data === 'game is not idle') {
-        return "This game has already started, you can't join it";
+        return t('lobby.gameAlreadyStarted') as string;
       }
     },
   });
@@ -56,10 +58,10 @@ const JoinGame: React.FC = () => {
       }}
       onClick={() => setShowInput(true)}
     >
-      <div style={{ flex: 1, display: 'flex', alignItems: 'center', fontWeight: 'bold', fontSize: 20 }}>Join a game</div>
+      <div style={{ flex: 1, display: 'flex', alignItems: 'center', fontWeight: 'bold', fontSize: 20 }}>{t('lobby.joinGame')}</div>
       <animated.div style={{ overflow: 'hidden', ...inputSpring }}>
         <InputForm
-          placeholder="Game code..."
+          placeholder={t('lobby.gameCodePlaceholder')}
           minLength={4}
           maxLength={4}
           loading={loading}
@@ -72,8 +74,10 @@ const JoinGame: React.FC = () => {
 };
 
 const CreateGame: React.FC = () => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
-  const [{ loading, data: game, error, response }, createGame] = useAxios(
+
+  const [{ data: game, error, response }, createGame] = useAxios(
     {
       method: 'POST',
       url: '/api/game/new',
@@ -103,12 +107,14 @@ const CreateGame: React.FC = () => {
       }}
       onClick={() => createGame()}
     >
-      Create a new game
+      {t('lobby.createGame')}
     </div>
   );
 };
 
 const Lobby: React.FC = () => {
+  const { t } = useTranslation();
+
   const trail = useTrail(3, {
     config: { tension: 70 },
     from: { opacity: 0 },
@@ -124,7 +130,7 @@ const Lobby: React.FC = () => {
 
       <animated.div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', ...trail[1] }}>
         <div style={{ flex: 1, borderBottom: '2px solid #789' }} />
-        <div style={{ margin: '0 20px', fontSize: 24 }}>OR</div>
+        <div style={{ margin: '0 20px', fontSize: 24 }}>{t('lobby.or')}</div>
         <div style={{ flex: 1, borderBottom: '2px solid #789' }} />
       </animated.div>
 
