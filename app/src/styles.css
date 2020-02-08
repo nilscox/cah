@@ -42,3 +42,13 @@ button {
   background: #000;
   font-family: JetBrainsMono, monospace;
 }
+
+.Toastify__toast--default {
+  color: #789;
+}
+
+@media screen and (min-width: 481px) {
+  .Toastify__toast--default {
+    border: 1px solid #789;
+  }
+}

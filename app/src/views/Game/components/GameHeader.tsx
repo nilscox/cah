@@ -1,6 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+
+import { animated, useSpring } from 'react-spring';
 
 import { GameDTO } from 'dtos/game.dto';
+
+import { usePrevious } from '../../../hooks/usePrevious';
 
 const gameState = (state: GameDTO['state'], playState: GameDTO['playState']) => {
   const stateMap = {
@@ -18,6 +22,43 @@ const gameState = (state: GameDTO['state'], playState: GameDTO['playState']) => 
   return stateMap[state] || playStateMap[playState!];
 };
 
+type GameStateProps = {
+  state: GameDTO['state'];
+  playState: GameDTO['playState'];
+};
+
+const GameState: React.FC<GameStateProps> = ({ state, playState }) => {
+  const current = gameState(state, playState);
+  const prev = usePrevious(current);
+
+  const [prevSpring, setPrevSpring] = useSpring(() => ({
+    config: { tension: 100 },
+    from: { top: -15 },
+    to: { top: 20 },
+  }));
+
+  const [currentSpring, setCurrentSpring] = useSpring(() => ({
+    from: { top: -40 },
+    to: { top: 0 },
+  }));
+
+  useEffect(() => {
+    setPrevSpring({ reset: true });
+    setCurrentSpring({ reset: true });
+  }, [current]);
+
+  return (
+    <>
+      <animated.div style={{ ...currentSpring, position: 'relative' }}>
+        { current }
+      </animated.div>
+      <animated.div style={{ ...prevSpring, position: 'relative', height: 0 }}>
+        { prev }
+      </animated.div>
+    </>
+  );
+};
+
 type GameHeaderProps = {
   state: GameDTO['state'];
   playState: GameDTO['playState'];
@@ -27,7 +68,7 @@ type GameHeaderProps = {
 
 const GameHeader: React.FC<GameHeaderProps> = ({ state, playState, toggleGameInfo, showWhatToDo }) => (
   <div
-    style={{ padding: 8, display: 'flex', flexDirection: 'row', alignItems: 'center', borderBottom: '1px solid #789' }}
+    style={{ padding: 8, display: 'flex', flexDirection: 'row', alignItems: 'center', borderBottom: '1px solid #789', overflow: 'hidden' }}
   >
     <div onClick={toggleGameInfo}>
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -35,7 +76,7 @@ const GameHeader: React.FC<GameHeaderProps> = ({ state, playState, toggleGameInf
       </svg>
     </div>
     <div style={{ flex: 1, textAlign: 'center' }}>
-      { gameState(state, playState) }
+      <GameState state={state} playState={playState} />
     </div>
     <div onClick={showWhatToDo}>
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">

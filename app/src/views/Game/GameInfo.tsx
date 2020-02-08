@@ -29,9 +29,9 @@ type GameInfoProps = {
 const GameInfo: React.FC<GameInfoProps> = ({ player, game }) => (
   <div style={{ padding: 20, boxSizing: 'border-box' }}>
 
-    <div style={{ margin: '10px 0' }}>Game code: { game.id } </div>
-    <div style={{ margin: '10px 0' }}>Your nick: { player.nick } </div>
-    { game.state === 'started' && <div style={{ margin: '10px 0'}}>Question Master: { game.questionMaster } </div> }
+    <div style={{ margin: '10px 0' }}>Game code: <span style={{ fontWeight: 'bold' }}>{ game.id }</span></div>
+    <div style={{ margin: '10px 0' }}>Your nick: <span style={{ fontWeight: 'bold' }}>{ player.nick }</span></div>
+    { game.state === 'started' && <div style={{ margin: '10px 0'}}>Question Master: <span style={{ fontWeight: 'bold' }}>{ game.questionMaster }</span></div> }
 
     <div style={{ marginTop: 25 }}>Players:</div>
     <div style={{ padding: 10 }}>

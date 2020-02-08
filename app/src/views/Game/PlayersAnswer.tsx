@@ -119,7 +119,7 @@ const PlayersAnswer: React.FC<PlayersAnsmerProps> = ({ game, player }) => {
           flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
-          padding: '0 30px',
+          padding: '10px 30px',
           cursor: canAnswer ? 'pointer' : 'initial',
           color: didAnswer ? '#7C9' : 'inherit',
         }}
@@ -128,7 +128,7 @@ const PlayersAnswer: React.FC<PlayersAnsmerProps> = ({ game, player }) => {
         <Question question={game.question!} choices={selection} />
       </div>
 
-      <div style={{ flex: 2, overflow: 'auto' }}>
+      <div style={{ flex: 2, overflow: 'auto', minHeight: 100, display: 'flex', flexDirection: 'column' }}>
         <CardsList
           cards={player.cards!}
           onSelect={toggleSelection}

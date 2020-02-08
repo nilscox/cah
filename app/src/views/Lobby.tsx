@@ -56,6 +56,7 @@ const JoinGame: React.FC = () => {
           maxLength={4}
           loading={loading}
           defaultValue="ABCD"
+          format={value => value.toUpperCase()}
           onSubmit={gameId => joinGame({ data: { gameId } })}
         />
       </animated.div>

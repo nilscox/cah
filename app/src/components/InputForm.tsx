@@ -8,6 +8,7 @@ type InputFormProps = {
   maxLength?: number;
   loading?: boolean;
   defaultValue?: string;
+  format?: (value: string) => string;
   onSubmit: (value: string) => void;
 };
 
@@ -17,6 +18,7 @@ const InputForm: React.FC<InputFormProps> = ({
   maxLength = Infinity,
   loading,
   defaultValue,
+  format,
   onSubmit,
 }) => {
   const [value, setValue] = useState(defaultValue || '');
@@ -41,7 +43,7 @@ const InputForm: React.FC<InputFormProps> = ({
         autoFocus
         value={value}
         placeholder={placeholder}
-        onChange={e => setValue(e.target.value)}
+        onChange={e => setValue(format ? format(e.target.value) : e.target.value)}
         style={{ flex: 1 }}
       />
       <animated.button

@@ -16,6 +16,9 @@ const CardsList: React.FC<CardsListProps> = ({ cards, onSelect, isSelected, canS
         key={choice.text}
         onClick={() => canSelect(choice) && onSelect(choice)}
         style={{
+          flex: 1,
+          display: 'flex',
+          alignItems: 'center',
           padding: 12,
           borderBottom: '1px solid #CCC',
           background: 'white',
