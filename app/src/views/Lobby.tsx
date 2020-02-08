@@ -45,18 +45,25 @@ const JoinGame: React.FC = () => {
   });
 
   return (
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-      <button style={{ flex: 1, fontWeight: 'bold', fontSize: 20 }} onClick={() => setShowInput(true)}>
-        Join a game
-      </button>
+    <div
+      style={{
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        cursor: 'pointer',
+      }}
+      onClick={() => setShowInput(true)}
+    >
+      <div style={{ flex: 1, display: 'flex', alignItems: 'center', fontWeight: 'bold', fontSize: 20 }}>Join a game</div>
       <animated.div style={{ overflow: 'hidden', ...inputSpring }}>
         <InputForm
           placeholder="Game code..."
           minLength={4}
           maxLength={4}
           loading={loading}
-          defaultValue="ABCD"
-          format={value => value.toUpperCase()}
+          format={value => value.toUpperCase().replace(/[^A-Z0-9]/g, '')}
           onSubmit={gameId => joinGame({ data: { gameId } })}
         />
       </animated.div>
@@ -83,10 +90,20 @@ const CreateGame: React.FC = () => {
   }, [response?.status]);
 
   return (
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-      <button style={{ fontWeight: 'bold', fontSize: 20 }} onClick={() => createGame()}>
-        Create a new game
-      </button>
+    <div
+      style={{
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        cursor: 'pointer',
+        fontWeight: 'bold',
+        fontSize: 20
+      }}
+      onClick={() => createGame()}
+    >
+      Create a new game
     </div>
   );
 };

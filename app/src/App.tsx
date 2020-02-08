@@ -13,7 +13,7 @@ import Game from './views/Game';
 
 import AnimatedViews from './components/AnimatedView';
 
-const socket = io('http://localhost:4242');
+const socket = io(process.env.API_URL as string);
 
 const App: React.FC = () => {
   const { game, player, dispatch } = useGame(socket);

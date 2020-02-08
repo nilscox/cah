@@ -5,7 +5,7 @@ import { GameDTO } from 'dtos/game.dto';
 import { TurnDTO } from 'dtos/turn.dto';
 
 import PlayersList from './components/PlayersList';
-import Question from './Question';
+import Question from './components/Question';
 
 type TurnProps = {
   turn: TurnDTO;

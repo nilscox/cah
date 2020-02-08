@@ -14,7 +14,7 @@ router.post('/signup', isNotAuthenticated, (req, res) => {
 
   const { nick } = body;
 
-  const existingPlayer = players.find(p => p.nick === nick);
+  const existingPlayer = players.find(p => p.nick.toLowerCase() === nick.toLowerCase());
 
   if (existingPlayer && existingPlayer.socket)
     throw new APIError(400, 'nick already taken');

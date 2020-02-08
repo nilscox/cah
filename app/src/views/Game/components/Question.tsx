@@ -7,6 +7,16 @@ const Blank: React.FC = () => (
   <span style={{ width: 30, marginBottom: -2, display: 'inline-block', borderBottom: '1px solid #789' }} />
 );
 
+const getChoiceText = (choice: ChoiceDTO | null) => {
+  if (!choice)
+    return null;
+
+  if (choice.keepCapitalization)
+    return choice.text;
+
+  return choice.text.toLowerCase();
+};
+
 const getChunks = (question: QuestionDTO, choices: (ChoiceDTO | null)[]) => {
   if (question.blanks) {
     const chunks = [];
@@ -14,7 +24,7 @@ const getChunks = (question: QuestionDTO, choices: (ChoiceDTO | null)[]) => {
 
     question.blanks.map((pos, n) => {
       chunks.push({ chunk: question.text.slice(lastPos, pos), from: 'question' });
-      chunks.push({ chunk: choices[n]?.text || null, from: 'choice' });
+      chunks.push({ chunk: getChoiceText(choices[n]), from: 'choice' });
       lastPos = pos;
     });
 
@@ -22,7 +32,7 @@ const getChunks = (question: QuestionDTO, choices: (ChoiceDTO | null)[]) => {
 
     return chunks.filter(({ chunk }) => chunk !== '');
   } else {
-    return [{ chunk: question.text, from: 'question' }, { chunk: ' ', from: 'question' }, { chunk: choices[0]?.text || null, form: 'choice' }];
+    return [{ chunk: question.text, from: 'question' }, { chunk: ' ', from: 'question' }, { chunk: getChoiceText(choices[0]), form: 'choice' }];
   }
 };
 

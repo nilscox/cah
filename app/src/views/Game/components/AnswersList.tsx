@@ -1,9 +1,12 @@
 import React, { useEffect } from 'react';
+
+import { animated, useTrail, useSpring } from 'react-spring';
+
 import { ChoiceDTO } from 'dtos/choice.dto';
 import { QuestionDTO } from 'dtos/question.dto';
-import Question from '../Question';
 import { AnswerDTO } from 'dtos/answer.dto';
-import { animated, useTrail, useSpring } from 'react-spring';
+
+import Question from './Question';
 
 type AnswersListProps = {
   question: QuestionDTO;

@@ -3,7 +3,7 @@ import express from 'express';
 import { Game } from '../types/Game';
 import { Choice } from '../types/Choice';
 import APIError from '../APIError';
-import { formatGame, formatAnswer, formatTurn } from '../format';
+import { formatGame, formatAnswer, formatTurn, formatPlayer } from '../format';
 import { isAuthenticated, isInGame, isNotInGame } from '../guards';
 
 import * as g from '../game';
@@ -76,10 +76,13 @@ router.post('/join', isAuthenticated, isNotInGame, (req, res) => {
 });
 
 router.post('/start', isInGame('idle'), (req, res) => {
-  const { game, body: { nbQuestion } } = req;
+  const { game, player, body: { nbQuestion } } = req;
 
-  if (!game)
+  if (!game || !player)
     throw new APIError(500, 'something is not defined');
+
+  if (game.creator !== player.nick)
+    throw new APIError(500, 'you are not the creator of the game');
 
   if (nbQuestion === undefined)
     throw new APIError(400, 'missing nbQuestion');

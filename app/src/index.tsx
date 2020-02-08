@@ -9,6 +9,6 @@ import 'react-toastify/dist/ReactToastify.min.css';
 import './styles.css';
 
 axios.defaults.withCredentials = true;
-axios.defaults.baseURL = 'http://localhost:4242';
+axios.defaults.baseURL = process.env.API_URL;
 
 ReactDOM.render(<App />, document.getElementById('app'));

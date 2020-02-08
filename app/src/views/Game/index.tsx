@@ -25,7 +25,7 @@ const Game: React.FC<GameProps> = ({ game, player, onLeave }) => {
   const [showGameInfo, setShowGameInfo] = useState(false);
 
   const views = {
-    gameIdle: <GameIdle game={game} />,
+    gameIdle: <GameIdle player={player} game={game} />,
     gameFinished: <GameFinished game={game} onLeave={onLeave} />,
     playersAnswer: <PlayersAnswer game={game} player={player} />,
     questionMasterSelection: <QuestionMasterSelection game={game} player={player} />,

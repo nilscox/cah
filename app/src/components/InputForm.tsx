@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { animated, useSpring } from 'react-spring';
 
 type InputFormProps = {
+  type?: React.HTMLProps<'HTMLInputElement'>['type'];
   placeholder?: string;
   minLength?: number;
   maxLength?: number;
@@ -13,6 +14,7 @@ type InputFormProps = {
 };
 
 const InputForm: React.FC<InputFormProps> = ({
+  type,
   placeholder,
   minLength = 1,
   maxLength = Infinity,
@@ -40,7 +42,7 @@ const InputForm: React.FC<InputFormProps> = ({
   return (
     <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'row' }}>
       <input
-        autoFocus
+        type={type}
         value={value}
         placeholder={placeholder}
         onChange={e => setValue(format ? format(e.target.value) : e.target.value)}

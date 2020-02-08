@@ -9,7 +9,7 @@ import { ChoiceDTO } from 'dtos/choice.dto';
 import useHandleError from '../../hooks/useHandleError';
 import { useDispatch } from '../../hooks/useGame';
 
-import Question from './Question';
+import Question from './components/Question';
 import CardsList from './components/CardsList';
 
 const useSelection = (length: number, isQuestionMaster: boolean) => {
