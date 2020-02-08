@@ -44,6 +44,14 @@ const playerReducer = (player: PlayerDTO | undefined, action: Action): PlayerDTO
     return { ...player, cards: newCards, selection: [] };
   }
 
+  if (action.type === 'end') {
+    return {
+      ...player,
+      cards: undefined,
+      selection: undefined,
+    };
+  }
+
   if (action.type === 'setselection') {
     return { ...player, selection: action.selection };
   }
@@ -107,12 +115,19 @@ const gameReducer = (game: GameDTO | undefined, action: Action): GameDTO | undef
     };
   }
 
-  if (
-    action.type === 'start' ||
-    action.type === 'next' ||
-    action.type === 'end'
-  ) {
+  if (action.type === 'start' || action.type === 'next') {
     return { ...game, ...action.game };
+  }
+
+  if (action.type === 'end') {
+    return {
+      ...game,
+      ...action.game,
+      playState: undefined,
+      answers: undefined,
+      question: undefined,
+      questionMaster: undefined,
+    };
   }
 
   if (action.type === 'answer') {

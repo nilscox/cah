@@ -22,7 +22,7 @@
     "questionMaster": "Question Master",
     "players": "Joueurs",
     "tooManyQuestions": "Pas assez de questions disponibles",
-    "nextTurn": "Continuer",
+    "nextTurn": "Question suivante",
     "state": {
       "idle": "Partie en préparation",
       "started": "Partie démarrée",

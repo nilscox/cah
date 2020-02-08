@@ -44,8 +44,11 @@ const App: React.FC = () => {
 
   const onLeave = () => {
     setLeaving(true);
+
+    // code smell
     setTimeout(() => {
       dispatch({ type: 'setgame', game: undefined });
+      dispatch({ type: 'setplayer', player: undefined });
       setLeaving(false);
     }, 1000);
   };

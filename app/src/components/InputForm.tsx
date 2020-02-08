@@ -55,6 +55,7 @@ const InputForm: React.FC<InputFormProps> = ({
           padding: 0,
           fontWeight: 'bold',
           marginLeft: 16,
+          cursor: 'pointer',
           ...submitSpring,
         }}
       >

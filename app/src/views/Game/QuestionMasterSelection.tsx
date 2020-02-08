@@ -64,11 +64,12 @@ const QuestionMasterSelection: React.FC<QuestionMasterSelectionProps> = ({ game,
       }}
     >
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+        {game.question?.blanks === null && <div style={{ marginBottom: 25, lineHeight: 1.5 }}>{game.question.text}</div>}
         {game.playState === 'question_master_selection' ? (
           <AnswersList
             question={game.question!}
             answers={game.answers!}
-            onSelect={isQuestionMaster ? (answerIndex) => selectAnswer({ data: { answerIndex } }) : undefined}
+            onSelect={isQuestionMaster ? answerIndex => selectAnswer({ data: { answerIndex } }) : undefined}
           />
         ) : (
           <AnswersList question={lastTurn!.question} answers={lastTurn!.answers} winner={lastTurn!.winner} />

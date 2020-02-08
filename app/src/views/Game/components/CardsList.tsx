@@ -20,7 +20,7 @@ const CardsList: React.FC<CardsListProps> = ({ cards, onSelect, isSelected, canS
           display: 'flex',
           alignItems: 'center',
           padding: 12,
-          borderBottom: '1px solid #CCC',
+          borderBottom: '1px solid #789',
           background: 'white',
           fontWeight: isSelected(choice) ? 'bold' : 'initial',
           cursor: canSelect(choice) ? 'pointer' : 'initial',

@@ -37,7 +37,7 @@ const getChunks = (question: QuestionDTO, choices: (ChoiceDTO | null)[]) => {
     return [
       { chunk: question.text, from: 'question' },
       { chunk: ' ', from: 'question' },
-      { chunk: getChoiceText(choices[0]), form: 'choice' },
+      { chunk: getChoiceText(choices[0]), from: 'choice' },
     ];
   }
 };
