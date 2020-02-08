@@ -2,8 +2,24 @@ import { Player } from './types/Player';
 import { Game, Answer, Turn } from './types/Game';
 import { Choice } from './types/Choice';
 import { randomItem, shuffle } from './utils';
+import { Question } from 'src/types/Question';
 
-export const startGame = (game: Game) => {
+export const create = (data: { questions: Question[], choices: Choice[]}, player: Player) => {
+  // const gameId = Math.random().toString(36).slice(-4).toUpperCase();
+  const gameId = 'ABCD';
+
+  const game: Game = {
+    id: gameId,
+    state: 'idle',
+    players: [player!],
+    questions: [...data.questions],
+    choices: [...data.choices],
+  };
+
+  return game;
+};
+
+export const start = (game: Game) => {
   game.state = 'started';
   game.playState = 'players_answer';
   game.answers = [];
@@ -88,7 +104,7 @@ export const selectAnswer = (game: Game, answer: Answer) => {
   return turn;
 };
 
-export const endGame = (game: Game) => {
+export const end = (game: Game) => {
   delete game.playState;
   delete game.answers;
   delete game.question;

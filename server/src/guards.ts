@@ -1,6 +1,7 @@
 import { RequestHandler } from 'express';
 
 import APIError from './APIError';
+import { Game } from 'src/types/Game';
 
 export const isNotAuthenticated: RequestHandler = (req, res, next) => {
   if (req.player)
@@ -23,9 +24,17 @@ export const isNotInGame: RequestHandler = (req, res, next) => {
   next();
 };
 
-export const isInGame: RequestHandler = (req, res, next) => {
-  if (!req.game)
+export const isInGame: (state?: Game['state'], playState?: Game['playState']) => RequestHandler = (state, playState) => (req, res, next) => {
+  const { game } = req;
+
+  if (!game)
     throw new APIError(403, 'you must be in game');
+
+  if (state && game.state !== state)
+    throw new APIError(400, 'state is not ' + state);
+
+  if (state && game.playState !== playState)
+    throw new APIError(400, 'play state is not ' + playState);
 
   next();
 };
