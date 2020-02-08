@@ -23,7 +23,11 @@ const NextTurn: React.FC = () => {
     delay: 3000,
   });
 
-  return <animated.div style={spring} onClick={() => nextTurn()}>Next</animated.div>;
+  return (
+    <animated.div style={spring} onClick={() => nextTurn()}>
+      Next
+    </animated.div>
+  );
 };
 
 type QuestionMasterSelectionProps = {
@@ -32,7 +36,7 @@ type QuestionMasterSelectionProps = {
 };
 
 const QuestionMasterSelection: React.FC<QuestionMasterSelectionProps> = ({ game, player }) => {
-  const isQuestionMAster = player.nick === game.questionMaster;
+  const isQuestionMaster = player.nick === game.questionMaster;
 
   const [, selectAnswer] = useAxios(
     {
@@ -41,12 +45,6 @@ const QuestionMasterSelection: React.FC<QuestionMasterSelectionProps> = ({ game,
     },
     { manual: true }
   );
-
-  const handleSelectAnswer = (answerIndex: number) => {
-    if (isQuestionMAster) {
-      selectAnswer({ data: { answerIndex } });
-    }
-  };
 
   const lastTurn = game.turns && game.turns[game.turns.length - 1];
 
@@ -63,13 +61,18 @@ const QuestionMasterSelection: React.FC<QuestionMasterSelectionProps> = ({ game,
       }}
     >
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-        { game.playState === 'question_master_selection'
-          ? <AnswersList question={game.question!} answers={game.answers!} onSelect={handleSelectAnswer} />
-          : <AnswersList question={lastTurn!.question} answers={lastTurn!.answers} winner={lastTurn!.winner} />
-        }
+        {game.playState === 'question_master_selection' ? (
+          <AnswersList
+            question={game.question!}
+            answers={game.answers!}
+            onSelect={isQuestionMaster ? (answerIndex) => selectAnswer({ data: { answerIndex } }) : undefined}
+          />
+        ) : (
+          <AnswersList question={lastTurn!.question} answers={lastTurn!.answers} winner={lastTurn!.winner} />
+        )}
       </div>
       <div style={{ margin: '30px auto' }}>
-        { isQuestionMAster && game.playState === 'end_of_turn' ? <NextTurn /> : '\u00A0' }
+        {isQuestionMaster && game.playState === 'end_of_turn' ? <NextTurn /> : '\u00A0'}
       </div>
     </div>
   );

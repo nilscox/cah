@@ -10,13 +10,15 @@ import 'react-toastify/dist/ReactToastify.min.css';
 
 import useGame from './hooks/use-game';
 import usePlayer from './hooks/use-player';
+import useHandleError from './hooks/useHandleError';
 
 import Auth from './views/Auth';
 import Lobby from './views/Lobby';
 import Game from './views/Game';
 
-import './styles.css';
 import AnimatedViews from './components/AnimatedView';
+
+import './styles.css';
 
 const socket = io('http://localhost:4242');
 
@@ -27,8 +29,16 @@ const App: React.FC = () => {
   const [player, setPlayer] = usePlayer(socket);
   const [game, setGame] = useGame(socket);
   const [view, setView] = useState('auth');
+  const [leaving, setLeaving] = useState(false);
 
   const [{ loading, data, error, response }, refetchMe] = useAxios('/api/auth/me');
+
+  useHandleError(error, {
+    message: (e) => {
+      if (e.response?.status === 403)
+        return false;
+    },
+  });
 
   useEffect(() => {
     if (response?.status === 200) {
@@ -43,21 +53,29 @@ const App: React.FC = () => {
     }
   }, [player?.nick]);
 
+  const onLeave = () => {
+    setLeaving(true);
+    setTimeout(() => {
+      setGame(undefined);
+      setLeaving(false);
+    }, 1000);
+  };
+
   const views = {
     auth: <Auth setPlayer={setPlayer} />,
     lobby: <Lobby setGame={setGame} />,
-    game: <Game game={game!} player={player!} />,
+    game: <Game game={game!} player={player!} onLeave={onLeave} />,
   };
 
   useEffect(() => {
     if (!player) {
       setView('auth');
-    } else if (!game) {
+    } else if (!game || leaving) {
       setView('lobby');
     } else {
       setView('game');
     }
-  }, [player, game]);
+  }, [player, game, leaving]);
 
   if (loading) {
     return null;

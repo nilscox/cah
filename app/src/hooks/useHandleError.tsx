@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { toast, Slide } from 'react-toastify';
 
 type HandleErrorOpts = {
-  message?: string | ((error: any) => string | undefined);
+  message?: string | ((error: any) => string | undefined | false);
 };
 
 const useHandleError = (error?: any, { message }: HandleErrorOpts = {}) => {
@@ -15,6 +15,9 @@ const useHandleError = (error?: any, { message }: HandleErrorOpts = {}) => {
     const displayMessage = typeof message === 'function'
       ? message(error)
       : message;
+
+    if (displayMessage === false)
+      return;
 
     toast.error(displayMessage || 'Something wrong happened', {
       position: toast.POSITION.BOTTOM_CENTER,

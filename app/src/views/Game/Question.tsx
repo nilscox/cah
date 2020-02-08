@@ -22,7 +22,7 @@ const getChunks = (question: QuestionDTO, choices: (ChoiceDTO | null)[]) => {
 
     return chunks.filter(chunk => chunk !== '');
   } else {
-    return [question.text, ' ', choices[0]?.text];
+    return [question.text, ' ', choices[0]?.text || null];
   }
 };
 
