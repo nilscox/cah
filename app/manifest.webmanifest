@@ -1,0 +1,20 @@
+{
+  "short_name": "CAH",
+  "name": "Cards Against Humanity",
+  "icons": [
+    {
+      "src": "/static/icons/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/static/icons/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "display": "standalone",
+  "start_url": "."
+}

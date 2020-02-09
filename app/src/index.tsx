@@ -5,6 +5,8 @@ import axios from 'axios';
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
+import * as serviceWorker from './serviceWorker';
+
 import App from './App';
 
 import en from './locals/en';
@@ -30,3 +32,5 @@ i18n
   });
 
 ReactDOM.render(<App />, document.getElementById('app'));
+
+serviceWorker.unregister();
