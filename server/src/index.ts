@@ -1,6 +1,8 @@
 /// <reference path="./index.d.ts" />
 
 import http from 'http';
+import path from 'path';
+
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
@@ -16,10 +18,14 @@ import game from './routes/game.routes';
 
 import * as events from './events';
 
-const { HOST = 'localhost', PORT = '4242' } = process.env;
+const {
+  HOST = 'localhost',
+  PORT = '4242',
+  DATA = path.resolve(__dirname, '../../data'),
+} = process.env;
 
-const questions = require('../../data/fr/questions');
-const choices = require('../../data/fr/choices');
+const questions = require(path.resolve(DATA, 'fr', 'questions'));
+const choices = require(path.resolve(DATA, 'fr', 'choices'));
 
 const app = express();
 const server = http.createServer(app);
