@@ -16,6 +16,8 @@ import game from './routes/game.routes';
 
 import * as events from './events';
 
+const { HOST = 'localhost', PORT = '4242' } = process.env;
+
 const questions = require('../../data/fr/questions');
 const choices = require('../../data/fr/choices');
 
@@ -123,4 +125,4 @@ io.on('connection', socket => {
   });
 });
 
-server.listen(4242, () => console.log('server started'));
+server.listen(parseInt(PORT), HOST, () => console.log('server started'));
