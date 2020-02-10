@@ -4,7 +4,6 @@ import { Choice } from './Choice';
 
 export interface Answer {
   player: string;
-  question: Question;
   choices: Choice[];
 }
 
@@ -19,6 +18,7 @@ export interface Turn {
 export interface Game {
   id: string;
   creator: string;
+  created: Date;
   state: 'idle' | 'started' | 'finished';
   players: Player[];
   questions: Question[];

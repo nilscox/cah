@@ -19,7 +19,7 @@ router.post('/signup', isNotAuthenticated, (req, res) => {
   if (existingPlayer && existingPlayer.socket)
     throw new APIError(400, 'nick already taken');
 
-  const player = { nick };
+  const player = { nick, created: new Date() };
 
   players.push(player);
 

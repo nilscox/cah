@@ -173,7 +173,6 @@ const useGame = (socket: SocketIOClient.Socket) => {
   };
 
   useEffect(() => {
-    console.warn('warning: useEffect trigger for socket (useGame)');
     socket.on('message', dispatch);
     return () => void socket.off('message', dispatch);
   }, [socket]);

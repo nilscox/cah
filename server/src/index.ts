@@ -21,11 +21,11 @@ import * as events from './events';
 const {
   HOST = 'localhost',
   PORT = '4242',
-  DATA = path.resolve(__dirname, '../../data'),
+  DATA_DIR = path.resolve(__dirname, '../../data'),
 } = process.env;
 
-const questions = require(path.resolve(DATA, 'fr', 'questions'));
-const choices = require(path.resolve(DATA, 'fr', 'choices'));
+const questions = require(path.resolve(DATA_DIR, 'fr', 'questions'));
+const choices = require(path.resolve(DATA_DIR, 'fr', 'choices'));
 
 const app = express();
 const server = http.createServer(app);
@@ -88,6 +88,34 @@ app.use('/api/state', (req, res) => {
     })),
     games: req.state.games,
   });
+});
+
+app.post('/api/clean', (req, res) => {
+  const { state } = req;
+  const maxDuration = 24 * 60 * 60 * 1000;
+  const now = new Date();
+
+  const games = [];
+  const players = [];
+
+  for (const game of state.games) {
+    const duration = now.getTime() - game.created.getTime();
+
+    if (duration < maxDuration)
+      games.push(game);
+  }
+
+  for (const player of state.players) {
+    const duration = now.getTime() - player.created.getTime();
+
+    if (duration < maxDuration)
+      players.push(player);
+  }
+
+  state.games = games;
+  state.players = players;
+
+  res.status(204).end();
 });
 
 app.use((req, res) => {

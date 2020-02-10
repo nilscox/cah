@@ -18,8 +18,6 @@ import './styles.css';
 axios.defaults.withCredentials = true;
 axios.defaults.baseURL = process.env.API_URL;
 
-console.log(en);
-
 i18n
   .use(initReactI18next)
   .init({

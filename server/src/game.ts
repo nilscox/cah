@@ -12,6 +12,7 @@ export const create = (data: { questions: Question[], choices: Choice[]}, player
   const game: Game = {
     id: gameId,
     creator: player.nick,
+    created: new Date(),
     state: 'idle',
     players: [player!],
     questions: shuffle([...data.questions]),
@@ -83,7 +84,6 @@ export const nextTurn = (game: Game, lastWinner?: string) => {
 export const answerChoices = (game: Game, player: Player, choices: Choice[]) => {
   const answer: Answer = {
     player: player.nick,
-    question: game.question!,
     choices,
   };
 
@@ -123,8 +123,10 @@ export const end = (game: Game) => {
   delete game.question;
   delete game.questionMaster;
 
-  for (const player of game.players)
+  for (const player of game.players) {
     delete player.cards;
+    delete player.answer;
+  }
 
   game.state = 'finished';
 
