@@ -11,12 +11,13 @@ import socketio from 'socket.io';
 
 import { State } from './types/State';
 import { Player } from './types/Player';
-import { Game } from 'src/types/Game';
+import { Game } from './types/Game';
 
 import auth from './routes/auth.routes';
 import game from './routes/game.routes';
 
 import * as events from './events';
+import { log } from './log';
 
 const {
   HOST = 'localhost',
@@ -90,7 +91,7 @@ app.use('/api/state', (req, res) => {
   });
 });
 
-app.post('/api/clean', (req, res) => {
+app.get('/api/clean', (req, res) => {
   const { state } = req;
   const maxDuration = 24 * 60 * 60 * 1000;
   const now = new Date();
@@ -159,4 +160,4 @@ io.on('connection', socket => {
   });
 });
 
-server.listen(parseInt(PORT), HOST, () => console.log('server started'));
+server.listen(parseInt(PORT), HOST, () => log('server started'));

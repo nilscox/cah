@@ -6,27 +6,11 @@ import { GameEvent } from 'dtos/events';
 import { Game, Answer, Turn } from './types/Game';
 import { Player } from './types/Player';
 import { formatPlayer, formatGame, formatTurn } from './format';
+import { log } from './log';
 
 const {
   DUMP_DIR = path.resolve(__dirname, '../../games'),
 } = process.env;
-
-const formatedDate = () => {
-  const now = new Date();
-
-  return [
-    [
-      now.getFullYear(),
-      String(now.getMonth() + 1).padStart(2, '0'),
-      String(now.getDate()).padStart(2, '0'),
-    ].join('-'),
-    [
-      now.getHours(),
-      now.getMinutes(),
-      now.getSeconds(),
-    ].join(':')
-  ].join(' ');
-};
 
 const formatEvent = (event: GameEvent) => {
   return event.type;
@@ -55,10 +39,8 @@ const handleEvent = (io: SocketIO.Server, game: Game | undefined, event: GameEve
       dumpGame(game);
   }
 
-  console.log([
-    `[${formatedDate()}]`,
-    game && `[${game.id}]`,
-    ' ',
+  log([
+    game && `[${game.id}] `,
     formatEvent(event),
   ].filter(chunk => !!chunk).join(''));
 };
