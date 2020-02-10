@@ -82,12 +82,17 @@ app.use('/api/auth', auth);
 app.use('/api/game', game);
 
 app.use('/api/state', (req, res) => {
+  const formatPlayer = (player: Player) => ({
+    ...player,
+    socket: player.socket?.id,
+  });
+
   res.json({
-    players: req.state.players.map(player => ({
-      ...player,
-      socket: player.socket?.id,
+    players: req.state.players.map(formatPlayer),
+    games: req.state.games.map(game => ({
+      ...game,
+      players: game.players.map(formatPlayer),
     })),
-    games: req.state.games,
   });
 });
 
