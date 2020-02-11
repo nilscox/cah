@@ -5,6 +5,7 @@
   "license": "MIT",
   "scripts": {
     "build": "parcel build index.html",
+    "build:prod": "NODE_ENV=production parcel build index.html --detailed-report --public-url /cah",
     "start": "parcel index.html"
   },
   "devDependencies": {
