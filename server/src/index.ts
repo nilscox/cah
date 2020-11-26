@@ -7,7 +7,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import session from 'express-session';
-import socketio from 'socket.io';
+import { Server as SocketIOServer, Socket} from 'socket.io';
 
 import { State } from './types/State';
 import { Player } from './types/Player';
@@ -27,12 +27,18 @@ const {
   COOKIE_SECURE = 'false',
 } = process.env;
 
+declare module 'express-session' {
+  export interface SessionData {
+    nick?: string;
+  }
+}
+
 const questions = require(path.resolve(DATA_DIR, 'fr', 'questions'));
 const choices = require(path.resolve(DATA_DIR, 'fr', 'choices'));
 
 const app = express();
 const server = http.createServer(app);
-const io = socketio(server);
+const io = new SocketIOServer(server);
 
 const state: State = {
   data: {
@@ -144,10 +150,10 @@ app.use((err: any, req: any, res: any, next: any) => {
   res.send(err.message);
 });
 
-io.on('connection', socket => {
+io.on('connection', (socket: Socket) => {
   let player: Player | undefined;
 
-  socket.on('login', ({ nick }) => {
+  socket.on('login', ({ nick }: { nick?: string }) => {
     player = state.players.find(p => p.nick === nick);
 
     if (!player)
