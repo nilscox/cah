@@ -23,6 +23,8 @@ const {
   HOST = 'localhost',
   PORT = '4242',
   DATA_DIR = path.resolve(__dirname, '../../data'),
+  COOKIE_SECRET = 'sekret',
+  COOKIE_SECURE = 'false',
 } = process.env;
 
 const questions = require(path.resolve(DATA_DIR, 'fr', 'questions'));
@@ -44,9 +46,13 @@ const state: State = {
 app.use(cors({ origin: true, credentials: true }));
 app.use(bodyParser.json());
 app.use(session({
-  secret: 'secret',
-  saveUninitialized: true,
-  resave: true,
+  secret: COOKIE_SECRET,
+  ...(COOKIE_SECURE === 'true' && {
+    cookie: {
+      secure: true,
+      sameSite: 'none',
+    },
+  }),
 }));
 
 app.use((req, res, next) => {
@@ -165,4 +171,4 @@ io.on('connection', socket => {
   });
 });
 
-server.listen(parseInt(PORT), HOST, () => log('server started'));
+server.listen(parseInt(PORT), HOST, () => log(`server listening on ${HOST}:${PORT}`));
