@@ -8,6 +8,7 @@ import useHandleError from '../hooks/useHandleError';
 import { useDispatch } from '../hooks/useGame';
 
 import InputForm from '../components/InputForm';
+import LanguageSelector from '../components/LanguageSelector';
 
 const Auth: React.FC = () => {
   const { t } = useTranslation();
@@ -15,9 +16,9 @@ const Auth: React.FC = () => {
   const [{ loading, data: player, error, response }, signup] = useAxios(
     {
       method: 'POST',
-      url: '/api/auth/signup'
+      url: '/api/auth/signup',
     },
-    { manual: true }
+    { manual: true },
   );
 
   useHandleError(error, {
@@ -25,7 +26,7 @@ const Auth: React.FC = () => {
       if (error.response?.data === 'nick already taken') {
         return t('auth.nickAlreadyTaken') as string;
       }
-    }
+    },
   });
 
   useEffect(() => {
@@ -39,14 +40,14 @@ const Auth: React.FC = () => {
     from: { opacity: 0 },
     to: { opacity: 1 },
     delay: 500,
-    onRest: () => setInputSpring({ to: { opacity: 1 } })
+    onRest: () => setInputSpring({ to: { opacity: 1 } }),
   });
 
   const [inputSpring, setInputSpring] = useSpring(() => ({
     from: { opacity: 0 },
     to: {},
     config: { tension: 40 },
-    delay: 200
+    delay: 200,
   }));
 
   const items = [
@@ -58,11 +59,11 @@ const Auth: React.FC = () => {
     </>,
     <>
       <span style={{ fontWeight: 'bold' }}>H</span>umanity
-    </>
+    </>,
   ];
 
   return (
-    <>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <div style={{ fontSize: 26, width: '75%', margin: '40px auto', letterSpacing: 6, lineHeight: '1.4em' }}>
         {trail.map((props, index) => (
           <animated.div key={index} style={props}>
@@ -71,15 +72,19 @@ const Auth: React.FC = () => {
         ))}
       </div>
 
-      <animated.div style={{ width: '75%', margin: '0 auto', ...inputSpring }}>
+      <animated.div
+        style={{ flex: 1, display: 'flex', flexDirection: 'column', width: '75%', margin: '0 auto', ...inputSpring }}
+      >
         <InputForm
           loading={loading}
           placeholder={t('auth.nickPlaceholder')}
           minLength={3}
           onSubmit={nick => signup({ data: { nick } })}
         />
+
+        <LanguageSelector />
       </animated.div>
-    </>
+    </div>
   );
 };
 

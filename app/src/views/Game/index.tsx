@@ -18,32 +18,37 @@ import GameInfo from './GameInfo';
 export const useExpectedAction = (game: GameDTO, player: PlayerDTO) => {
   const { t } = useTranslation();
 
-  if (game.state === 'idle')
-    return t('game.actions.waitPlayetsJoin');
+  if (game.state === 'idle') {
+    return t('game.actions.waitPlayersJoin');
+  }
 
-  if (game.state === 'finished')
+  if (game.state === 'finished') {
     return t('game.actions.gameFinished');
+  }
 
   if (game.playState === 'players_answer') {
-    if (game.questionMaster === player.nick)
+    if (game.questionMaster === player.nick) {
       return t('game.actions.waitPlayersAnswer');
-    else if (game.answered?.includes(player.nick))
+    } else if (game.answered?.includes(player.nick)) {
       return t('game.actions.waitOtherPlayersAnswer');
-    else
+    } else {
       return t('game.actions.submitAnswer');
+    }
   }
 
   if (game.playState === 'end_of_turn') {
-    if (game.questionMaster === player.nick)
+    if (game.questionMaster === player.nick) {
       return t('game.actions.turnFinishedQuestionMaster');
-    else
+    } else {
       return t('game.actions.turnFinishedNotQuestionMaster');
+    }
   }
 
-  if (game.questionMaster === player.nick)
+  if (game.questionMaster === player.nick) {
     return t('game.actions.chooseAnswer');
-  else
+  } else {
     return t('game.actions.waitQuestionMasterChooseAnswer');
+  }
 };
 
 type GameProps = {
@@ -90,7 +95,7 @@ const Game: React.FC<GameProps> = ({ game, player, onLeave }) => {
         state={game.state}
         playState={game.playState}
         toggleGameInfo={() => setShowGameInfo(show => !show)}
-        showWhatToDo={() => toast(expectedAction)}
+        showWhatToDo={() => toast(expectedAction, { className: 'toast-exected-action' })}
       />
       <AnimatedViews style={{ flex: 1, overflow: 'auto' }} views={views} current={getCurrentView()} />
     </div>

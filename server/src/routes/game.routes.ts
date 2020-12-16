@@ -1,9 +1,9 @@
 import express from 'express';
 
-import { Game } from '../types/Game';
+import { Game, Language } from '../types/Game';
 import { Choice } from '../types/Choice';
 import APIError from '../APIError';
-import { formatGame, formatAnswer, formatTurn, formatPlayer } from '../format';
+import { formatGame, formatAnswer, formatTurn } from '../format';
 import { isAuthenticated, isInGame, isNotInGame } from '../guards';
 
 import * as g from '../game';
@@ -13,32 +13,45 @@ const router = express.Router();
 
 router.get('/', (req, res) => {
   const gameId = req.query.gameId;
-  const { state: { games } } = req;
+  const {
+    state: { games },
+  } = req;
 
-  if (!gameId)
+  if (!gameId) {
     throw new APIError(400, 'missing gameId query param');
+  }
 
   const game = games.find(g => g.id === gameId);
 
-  if (!game)
+  if (!game) {
     throw new APIError(404, 'game not found');
+  }
 
   res.json(formatGame(game, true));
 });
 
 router.post('/new', isAuthenticated, (req, res) => {
-  const { player, state: { games, data } } = req;
+  const {
+    player,
+    state: { games, data },
+    body: { language },
+  } = req;
 
   let game: Game;
   let n = 0;
 
+  if (language !== 'en' && language !== 'fr') {
+    throw new APIError(400, 'language must be either "en" or "fr"');
+  }
+
   do {
-    game = g.create(data, player!);
+    game = g.create(language, data[language as Language], player!);
     n++;
   } while (n < 10 && games.find(g => g.id === game.id));
 
-  if (n === 10)
+  if (n === 10) {
     throw new APIError(500, 'no more available id');
+  }
 
   games.push(game);
   player!.gameId = game.id;
@@ -50,21 +63,29 @@ router.post('/new', isAuthenticated, (req, res) => {
 });
 
 router.post('/join', isAuthenticated, isNotInGame, (req, res) => {
-  const { body: { gameId }, state: { games }, player } = req;
+  const {
+    body: { gameId },
+    state: { games },
+    player,
+  } = req;
 
-  if (!player)
+  if (!player) {
     throw new APIError(500, 'something is not defined');
+  }
 
-  if (!gameId)
+  if (!gameId) {
     throw new APIError(400, 'missing gameId');
+  }
 
   const game = games.find(g => g.id === gameId);
 
-  if (!game)
+  if (!game) {
     throw new APIError(404, 'game not found');
+  }
 
-  if (game.state !== 'idle')
+  if (game.state !== 'idle') {
     throw new APIError(400, 'game is not idle');
+  }
 
   game.players.push(player);
   player.gameId = game.id;
@@ -76,19 +97,27 @@ router.post('/join', isAuthenticated, isNotInGame, (req, res) => {
 });
 
 router.post('/start', isInGame('idle'), (req, res) => {
-  const { game, player, body: { nbQuestion } } = req;
+  const {
+    game,
+    player,
+    body: { nbQuestion },
+  } = req;
 
-  if (!game || !player)
+  if (!game || !player) {
     throw new APIError(500, 'something is not defined');
+  }
 
-  if (game.creator !== player.nick)
+  if (game.creator !== player.nick) {
     throw new APIError(500, 'you are not the creator of the game');
+  }
 
-  if (nbQuestion === undefined)
+  if (nbQuestion === undefined) {
     throw new APIError(400, 'missing nbQuestion');
+  }
 
-  if (typeof nbQuestion !== 'number' || isNaN(nbQuestion) || nbQuestion <= 0)
+  if (typeof nbQuestion !== 'number' || isNaN(nbQuestion) || nbQuestion <= 0) {
     throw new APIError(400, 'invalid nbQuestion');
+  }
 
   g.start(game, nbQuestion);
 
@@ -98,33 +127,43 @@ router.post('/start', isInGame('idle'), (req, res) => {
 });
 
 router.post('/answer', isInGame('started', 'players_answer'), (req, res) => {
-  const { body: { cards }, game, player } = req;
+  const {
+    body: { cards },
+    game,
+    player,
+  } = req;
 
-  if (!player || !player.cards || !game || !game.question || !game.answers)
+  if (!player || !player.cards || !game || !game.question || !game.answers) {
     throw new APIError(500, 'something is not defined');
+  }
 
-  if (game.questionMaster === player.nick)
+  if (game.questionMaster === player.nick) {
     throw new APIError(400, 'the question master can not answer');
+  }
 
-  if (!cards)
+  if (!cards) {
     throw new APIError(400, 'missing cards');
+  }
 
   const choices: Choice[] = [];
 
   for (const text of cards) {
     const card = player.cards.find(c => c.text === text);
 
-    if (!card)
+    if (!card) {
       throw new APIError(400, 'invalid cards');
+    }
 
     choices.push(card);
   }
 
-  if (game.question!.blanks === null && choices.length !== 1)
+  if (game.question!.blanks === null && choices.length !== 1) {
     throw new APIError(400, 'invalid number of cards');
+  }
 
-  if (game.question.blanks !== null && game.question.blanks.length !== choices.length)
+  if (game.question.blanks !== null && game.question.blanks.length !== choices.length) {
     throw new APIError(400, 'invalid number of cards');
+  }
 
   const answer = g.answerChoices(game, player, choices);
 
@@ -139,21 +178,29 @@ router.post('/answer', isInGame('started', 'players_answer'), (req, res) => {
 });
 
 router.post('/select', isInGame('started', 'question_master_selection'), (req, res) => {
-  const { body: { answerIndex }, game, player } = req;
+  const {
+    body: { answerIndex },
+    game,
+    player,
+  } = req;
 
-  if (!player || !game || !game.answers)
+  if (!player || !game || !game.answers) {
     throw new APIError(500, 'something is not defined');
+  }
 
-  if (game.questionMaster !== player.nick)
+  if (game.questionMaster !== player.nick) {
     throw new APIError(400, 'only the question master can select an answer');
+  }
 
-  if (answerIndex === undefined)
+  if (answerIndex === undefined) {
     throw new APIError(400, 'missing answerIndex');
+  }
 
   const answer = game.answers[answerIndex];
 
-  if (!answer)
+  if (!answer) {
     throw new APIError(400, 'invalid answerIndex');
+  }
 
   const turn = g.selectAnswer(game, answer);
 
@@ -165,11 +212,13 @@ router.post('/select', isInGame('started', 'question_master_selection'), (req, r
 router.post('/next', isInGame('started', 'end_of_turn'), (req, res) => {
   const { game, player } = req;
 
-  if (!player || !game || !game.turns)
+  if (!player || !game || !game.turns) {
     throw new APIError(500, 'something is not defined');
+  }
 
-  if (game.questionMaster !== player.nick)
+  if (game.questionMaster !== player.nick) {
     throw new APIError(400, 'only the question master can go next');
+  }
 
   const end = !g.nextTurn(game, game.turns[game.turns.length - 1].winner);
 

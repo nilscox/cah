@@ -49,6 +49,10 @@ input[type=number] {
   color: #C89;
 }
 
+.toast-exected-action {
+  min-height: 42px;
+}
+
 .Toastify__toast {
   background: #000;
   font-family: JetBrainsMono, monospace;

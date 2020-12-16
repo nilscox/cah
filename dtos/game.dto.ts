@@ -6,6 +6,7 @@ import { AnswerDTO } from './answer.dto';
 export interface GameDTO {
   id: string;
   creator: string;
+  language: 'en' | 'fr',
   state: 'idle' | 'started' | 'finished';
   players: PlayerDTO[];
   playState?: 'players_answer' | 'question_master_selection' | 'end_of_turn';

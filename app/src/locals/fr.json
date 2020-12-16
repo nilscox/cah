@@ -1,4 +1,8 @@
 {
+  "language": {
+    "fr": "Français",
+    "en": "English"
+  },
   "fallbackErrorMessage": "Quelque chose s'est mal passé",
   "auth": {
     "nickPlaceholder": "Entrez votre pseudo...",
@@ -7,8 +11,8 @@
   "lobby": {
     "or": "OU",
     "gameCodePlaceholder": "Code de partie...",
-    "gameDoesNotExist": "Ce code n'exste pas, veuillez vérifier",
-    "gameAlreadyStarted": "Cette partie a déjà démarré, vous ne pouvez pas le rejoindre",
+    "gameDoesNotExist": "Ce code n'exste pas",
+    "gameAlreadyStarted": "Cette partie a déjà démarré, vous ne pouvez pas la rejoindre",
     "joinGame": "Rejoindre une partie",
     "createGame": "Créer une nouvelle partie"
   },

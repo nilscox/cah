@@ -18,7 +18,7 @@ const JoinGame: React.FC = () => {
       method: 'POST',
       url: '/api/game/join',
     },
-    { manual: true }
+    { manual: true },
   );
 
   useHandleError(error, {
@@ -58,7 +58,9 @@ const JoinGame: React.FC = () => {
       }}
       onClick={() => setShowInput(true)}
     >
-      <div style={{ flex: 1, display: 'flex', alignItems: 'center', fontWeight: 'bold', fontSize: 20 }}>{t('lobby.joinGame')}</div>
+      <div style={{ flex: 1, display: 'flex', alignItems: 'center', fontWeight: 'bold', fontSize: 20 }}>
+        {t('lobby.joinGame')}
+      </div>
       <animated.div style={{ overflow: 'hidden', ...inputSpring }}>
         <InputForm
           placeholder={t('lobby.gameCodePlaceholder')}
@@ -74,15 +76,16 @@ const JoinGame: React.FC = () => {
 };
 
 const CreateGame: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const dispatch = useDispatch();
 
   const [{ data: game, error, response }, createGame] = useAxios(
     {
       method: 'POST',
       url: '/api/game/new',
+      data: { language: i18n.language },
     },
-    { manual: true }
+    { manual: true },
   );
 
   useHandleError(error);
@@ -103,7 +106,7 @@ const CreateGame: React.FC = () => {
         alignItems: 'center',
         cursor: 'pointer',
         fontWeight: 'bold',
-        fontSize: 20
+        fontSize: 20,
       }}
       onClick={() => createGame()}
     >

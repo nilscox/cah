@@ -1,4 +1,8 @@
 {
+  "language": {
+    "fr": "Français",
+    "en": "English"
+  },
   "fallbackErrorMessage": "Something wrong happened",
   "auth": {
     "nickPlaceholder": "Enter your nick...",

@@ -1,18 +1,19 @@
 import { Player } from './types/Player';
-import { Game, Answer, Turn } from './types/Game';
+import { Game, Answer, Turn, Language } from './types/Game';
 import { Choice } from './types/Choice';
 import { Question } from './types/Question';
 
 import APIError from './APIError';
 import { randomItem, shuffle } from './utils';
 
-export const create = (data: { questions: Question[], choices: Choice[]}, player: Player) => {
+export const create = (language: Language, data: { questions: Question[]; choices: Choice[] }, player: Player) => {
   const gameId = Math.random().toString(36).slice(-4).toUpperCase();
 
   const game: Game = {
     id: gameId,
     creator: player.nick,
     created: new Date(),
+    language,
     state: 'idle',
     players: [player!],
     questions: shuffle([...data.questions]),
@@ -28,8 +29,9 @@ export const start = (game: Game, nbQuestion: number) => {
   const nbBlanks = questions.reduce((sum, question) => sum + (question.blanks?.length || 1), 0);
   const nbChoices = (11 + nbBlanks) * nbPlayers;
 
-  if (nbQuestion > game.questions.length || nbChoices > game.choices.length)
+  if (nbQuestion > game.questions.length || nbChoices > game.choices.length) {
     throw new APIError(400, 'too many questions');
+  }
 
   game.questions = questions;
   game.choices = game.choices.slice(0, nbChoices);
@@ -39,22 +41,22 @@ export const start = (game: Game, nbQuestion: number) => {
   game.answers = [];
   game.turns = [];
 
-  for (const p of game.players)
+  for (const p of game.players) {
     p.cards = [];
+  }
 
   nextTurn(game);
 };
 
 export const nextTurn = (game: Game, lastWinner?: string) => {
-  if (lastWinner)
-    game.questionMaster = lastWinner;
-  else
-    game.questionMaster = randomItem(game.players).nick;
+  if (lastWinner) game.questionMaster = lastWinner;
+  else game.questionMaster = randomItem(game.players).nick;
 
   game.question = randomItem(game.questions, true);
 
-  if (!game.question)
+  if (!game.question) {
     return false;
+  }
 
   for (const player of game.players) {
     delete player.answer;
@@ -64,15 +66,17 @@ export const nextTurn = (game: Game, lastWinner?: string) => {
     while (player.cards!.length < 11) {
       const card = randomItem(game.choices, true);
 
-      if (!card)
+      if (!card) {
         return false;
+      }
 
       player.cards!.push(card);
       newCards.push(card);
     }
 
-    if (player.socket)
+    if (player.socket) {
       player.socket.send({ type: 'cards', cards: newCards });
+    }
   }
 
   game.playState = 'players_answer';
@@ -89,8 +93,9 @@ export const answerChoices = (game: Game, player: Player, choices: Choice[]) => 
 
   game.answers!.push(answer);
 
-  for (const choice of answer.choices)
+  for (const choice of answer.choices) {
     player.cards!.splice(player!.cards!.indexOf(choice), 1);
+  }
 
   if (game.answers!.length === game.players.length - 1) {
     game.playState = 'question_master_selection';
@@ -130,7 +135,7 @@ export const end = (game: Game) => {
 
   game.state = 'finished';
 
-  const wins: { player: string, wins: number }[] = game.players.map(player => ({ player: player.nick, wins: 0 }));
+  const wins: { player: string; wins: number }[] = game.players.map(player => ({ player: player.nick, wins: 0 }));
 
   for (const turn of game.turns!) {
     const win = wins.find(w => w.player === turn.winner);
@@ -139,8 +144,11 @@ export const end = (game: Game) => {
 
   wins.sort(({ wins: a }, { wins: b }) => b - a);
 
-  game.scores = wins.reduce((scores, { player, wins }) => ({
-    ...scores,
-    [player]: wins,
-  }), {});
+  game.scores = wins.reduce(
+    (scores, { player, wins }) => ({
+      ...scores,
+      [player]: wins,
+    }),
+    {},
+  );
 };

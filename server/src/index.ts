@@ -7,7 +7,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import session from 'express-session';
-import { Server as SocketIOServer, Socket} from 'socket.io';
+import { Server as SocketIOServer, Socket } from 'socket.io';
 
 import { State } from './types/State';
 import { Player } from './types/Player';
@@ -33,33 +33,40 @@ declare module 'express-session' {
   }
 }
 
-const questions = require(path.resolve(DATA_DIR, 'fr', 'questions'));
-const choices = require(path.resolve(DATA_DIR, 'fr', 'choices'));
+const data = ['en', 'fr'].reduce(
+  (obj, language) => ({
+    ...obj,
+    [language]: {
+      questions: require(path.resolve(DATA_DIR, language, 'questions')),
+      choices: require(path.resolve(DATA_DIR, language, 'choices')),
+    },
+  }),
+  {} as State['data'],
+);
 
 const app = express();
 const server = http.createServer(app);
-const io = new SocketIOServer(server);
+const io = new SocketIOServer(server, { cors: { origin: true, credentials: true } });
 
 const state: State = {
-  data: {
-    questions,
-    choices,
-  },
+  data,
   players: [],
   games: [],
 };
 
 app.use(cors({ origin: true, credentials: true }));
 app.use(bodyParser.json());
-app.use(session({
-  secret: COOKIE_SECRET,
-  ...(COOKIE_SECURE === 'true' && {
-    cookie: {
-      secure: true,
-      sameSite: 'none',
-    },
+app.use(
+  session({
+    secret: COOKIE_SECRET,
+    ...(COOKIE_SECURE === 'true' && {
+      cookie: {
+        secure: true,
+        sameSite: 'none',
+      },
+    }),
   }),
-}));
+);
 
 app.use((req, res, next) => {
   req.state = state;
@@ -69,7 +76,9 @@ app.use((req, res, next) => {
 
 app.use((req, res, next) => {
   const nick = req.session?.nick;
-  const { state: { players, games } } = req;
+  const {
+    state: { players, games },
+  } = req;
 
   if (nick) {
     const player = players.find(u => u.nick === nick);
@@ -79,10 +88,11 @@ app.use((req, res, next) => {
     } else {
       req.player = player;
 
-      if (player.gameId)
+      if (player.gameId) {
         req.game = games.find(g => g.id === player?.gameId);
-      else
+      } else {
         delete player.gameId;
+      }
     }
   }
 
@@ -119,15 +129,17 @@ app.get('/api/clean', (req, res) => {
   for (const game of state.games) {
     const duration = now.getTime() - game.created.getTime();
 
-    if (duration < maxDuration)
+    if (duration < maxDuration) {
       games.push(game);
+    }
   }
 
   for (const player of state.players) {
     const duration = now.getTime() - player.created.getTime();
 
-    if (duration < maxDuration)
+    if (duration < maxDuration) {
       players.push(player);
+    }
   }
 
   state.games = games;
@@ -141,11 +153,11 @@ app.use((req, res) => {
 });
 
 app.use((err: any, req: any, res: any, next: any) => {
+  res.status(err.status || 500);
 
-  if (err.status)
-    res.status(err.status);
-  else
+  if (!res.status) {
     console.log(err.stack);
+  }
 
   res.send(err.message);
 });
@@ -156,14 +168,15 @@ io.on('connection', (socket: Socket) => {
   socket.on('login', ({ nick }: { nick?: string }) => {
     player = state.players.find(p => p.nick === nick);
 
-    if (!player)
+    if (!player) {
       return;
+    }
 
     player.socket = socket;
 
     if (player.gameId) {
       socket.join(player.gameId);
-      events.connected(io, { id: player.gameId } as Game, player)
+      events.connected(io, { id: player.gameId } as Game, player);
     }
   });
 
@@ -171,8 +184,9 @@ io.on('connection', (socket: Socket) => {
     if (player) {
       delete player.socket;
 
-      if (player.gameId)
-        events.disconnected(io, { id: player.gameId } as Game, player)
+      if (player.gameId) {
+        events.disconnected(io, { id: player.gameId } as Game, player);
+      }
     }
   });
 });

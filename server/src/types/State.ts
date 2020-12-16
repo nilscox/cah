@@ -1,15 +1,15 @@
 import { Question } from './Question';
 import { Choice } from './Choice';
 import { Player } from './Player';
-import { Game } from './Game';
+import { Game, Language } from './Game';
+
+type Data = {
+  questions: Question[];
+  choices: Choice[];
+};
 
 export interface State {
-
-  data: {
-    questions: Question[];
-    choices: Choice[];
-  };
-
+  data: Record<Language, Data>;
   players: Player[];
   games: Game[];
 }
