@@ -26,13 +26,14 @@ const GameIdle: React.FC<GameIdleProps> = ({ player, game }) => {
       url: '/api/game/start',
       method: 'POST',
     },
-    { manual: true }
+    { manual: true },
   );
 
   useHandleError(error, {
     message: e => {
-      if (e.response?.data === 'too many questions')
+      if (e.response?.data === 'too many questions') {
         return t('game.tooManyQuestions') as string;
+      }
     },
   });
 
@@ -43,6 +44,16 @@ const GameIdle: React.FC<GameIdleProps> = ({ player, game }) => {
     to: [{ flex: showInput ? 1 : 0 }, { opacity: showInput ? 1 : 0 }],
   });
 
+  const handleStartGame = (nbQuestion: string) => {
+    startGame({
+      data: {
+        nbQuestion: parseInt(nbQuestion, 10),
+        // initialQuestionMaster: player.nick,
+        initialQuestionMaster: player.nick,
+      },
+    });
+  };
+
   return (
     <div style={{ height: '100%', padding: 30, boxSizing: 'border-box', display: 'flex', flexDirection: 'column' }}>
       <h2 style={{ fontSize: 22 }}>{t('game.waitingForPlayers')}</h2>
@@ -52,11 +63,15 @@ const GameIdle: React.FC<GameIdleProps> = ({ player, game }) => {
       <div style={{ flex: 2, overflow: 'auto', border: '1px solid #789', padding: 10 }}>
         <PlayersList game={game} players={game.players} />
       </div>
-      { game.creator === player.nick && (
+      {game.creator === player.nick && (
         <div
           style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}
         >
-          {game.players.length >= 2 && <button style={{ flex: 1 }} onClick={() => setShowInput(true)}>{t('game.start')}</button>}
+          {game.players.length >= 2 && (
+            <button style={{ flex: 1 }} onClick={() => setShowInput(true)}>
+              {t('game.start')}
+            </button>
+          )}
           <animated.div style={{ overflow: 'hidden', width: '100%', ...inputSpring }}>
             <InputForm
               type="number"
@@ -64,11 +79,11 @@ const GameIdle: React.FC<GameIdleProps> = ({ player, game }) => {
               minLength={1}
               loading={loading}
               format={value => value.replace(/[^0-9]/g, '')}
-              onSubmit={nbQuestion => startGame({ data: { nbQuestion: parseInt(nbQuestion, 10) } })}
+              onSubmit={handleStartGame}
             />
           </animated.div>
         </div>
-      ) }
+      )}
     </div>
   );
 };

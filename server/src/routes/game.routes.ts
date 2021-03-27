@@ -100,7 +100,7 @@ router.post('/start', isInGame('idle'), (req, res) => {
   const {
     game,
     player,
-    body: { nbQuestion },
+    body: { nbQuestion, initialQuestionMaster },
   } = req;
 
   if (!game || !player) {
@@ -119,7 +119,7 @@ router.post('/start', isInGame('idle'), (req, res) => {
     throw new APIError(400, 'invalid nbQuestion');
   }
 
-  g.start(game, nbQuestion);
+  g.start(game, nbQuestion, initialQuestionMaster);
 
   res.json(formatGame(game));
 
