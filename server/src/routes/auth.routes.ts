@@ -7,21 +7,36 @@ import { isAuthenticated, isNotAuthenticated } from '../guards';
 const router = express.Router();
 
 router.post('/signup', isNotAuthenticated, (req, res) => {
-  const { body, state: { players } } = req;
+  const {
+    body,
+    state: { players },
+  } = req;
 
-  if (!body.nick)
+  if (!body.nick) {
     throw new APIError(400, 'missing nick');
+  }
 
   const { nick } = body;
 
-  const existingPlayer = players.find(p => p.nick.toLowerCase() === nick.toLowerCase());
+  const getPlayer = () => {
+    const existingPlayer = players.find(p => p.nick.toLowerCase() === nick.toLowerCase());
 
-  if (existingPlayer && existingPlayer.socket)
-    throw new APIError(400, 'nick already taken');
+    if (existingPlayer) {
+      if (existingPlayer.socket) {
+        throw new APIError(400, 'nick already taken');
+      }
 
-  const player = { nick, created: new Date() };
+      return existingPlayer;
+    }
 
-  players.push(player);
+    const player = { nick, created: new Date() };
+
+    players.push(player);
+
+    return player;
+  };
+
+  const player = getPlayer();
 
   req.session!.nick = player.nick;
 
@@ -30,7 +45,10 @@ router.post('/signup', isNotAuthenticated, (req, res) => {
 });
 
 router.post('/logout', isAuthenticated, (req, res) => {
-  const { player, state: { players } } = req;
+  const {
+    player,
+    state: { players },
+  } = req;
 
   players.splice(players.indexOf(player!), 1);
 
