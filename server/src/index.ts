@@ -119,7 +119,7 @@ app.use('/api/state', (req, res) => {
 });
 
 app.get('/api/clean', (req, res) => {
-  const { state } = req;
+  const { state, query: { force } } = req;
   const maxDuration = 24 * 60 * 60 * 1000;
   const now = new Date();
 
@@ -144,6 +144,11 @@ app.get('/api/clean', (req, res) => {
 
   state.games = games;
   state.players = players;
+
+  if (force === 'true') {
+    state.games = [];
+    state.players = [];
+  }
 
   res.status(204).end();
 });
