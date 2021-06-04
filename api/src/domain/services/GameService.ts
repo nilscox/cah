@@ -1,12 +1,14 @@
+import { Inject, Service } from 'typedi';
+
 import { Answer } from '../entities/Answer';
 import { Game, PlayState } from '../entities/Game';
 import { Player } from '../entities/Player';
 import { Question } from '../entities/Question';
 import { InvalidPlayStateError } from '../errors/InvalidPlayStateError';
 import { NoMoreChoiceError } from '../errors/NoMoreChoiceError';
-import { ChoiceRepository } from '../interfaces/ChoiceRepository';
-import { GameEvents } from '../interfaces/GameEvents';
-import { PlayerRepository } from '../interfaces/PlayerRepository';
+import { ChoiceRepository, ChoiceRepositoryToken } from '../interfaces/ChoiceRepository';
+import { GameEvents, GameEventsToken } from '../interfaces/GameEvents';
+import { PlayerRepository, PlayerRepositoryToken } from '../interfaces/PlayerRepository';
 
 class StartedGame extends Game {
   playState!: PlayState;
@@ -16,12 +18,16 @@ class StartedGame extends Game {
   winner?: Player;
 }
 
+@Service()
 export class GameService {
-  constructor(
-    private readonly choiceRepository: ChoiceRepository,
-    private readonly playerRepository: PlayerRepository,
-    private readonly gameEvents: GameEvents,
-  ) {}
+  @Inject(ChoiceRepositoryToken)
+  private readonly choiceRepository!: ChoiceRepository;
+
+  @Inject(PlayerRepositoryToken)
+  private readonly playerRepository!: PlayerRepository;
+
+  @Inject(GameEventsToken)
+  private readonly gameEvents!: GameEvents;
 
   ensurePlayState(game: Game, playState: PlayState) {
     if (game.playState !== playState) {

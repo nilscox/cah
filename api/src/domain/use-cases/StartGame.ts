@@ -1,22 +1,32 @@
+import { Inject, Service } from 'typedi';
+
 import { Game, GameState, PlayState } from '../entities/Game';
 import { Player } from '../entities/Player';
 import { Question } from '../entities/Question';
 import { GameAlreadyStartedError } from '../errors/GameAlreadyStartedError';
 import { NotEnoughPlayersError } from '../errors/NotEnoughPlayersError';
-import { ChoiceRepository } from '../interfaces/ChoiceRepository';
-import { GameEvents } from '../interfaces/GameEvents';
-import { GameRepository } from '../interfaces/GameRepository';
-import { QuestionRepository } from '../interfaces/QuestionRepository';
+import { ChoiceRepository, ChoiceRepositoryToken } from '../interfaces/ChoiceRepository';
+import { GameEvents, GameEventsToken } from '../interfaces/GameEvents';
+import { GameRepository, GameRepositoryToken } from '../interfaces/GameRepository';
+import { QuestionRepository, QuestionRepositoryToken } from '../interfaces/QuestionRepository';
 import { GameService } from '../services/GameService';
 
+@Service()
 export class StartGame {
-  constructor(
-    private readonly questionRepository: QuestionRepository,
-    private readonly choiceRepository: ChoiceRepository,
-    private readonly gameRepository: GameRepository,
-    private readonly gameService: GameService,
-    private readonly gameEvents: GameEvents,
-  ) {}
+  @Inject(QuestionRepositoryToken)
+  private readonly questionRepository!: QuestionRepository;
+
+  @Inject(ChoiceRepositoryToken)
+  private readonly choiceRepository!: ChoiceRepository;
+
+  @Inject(GameRepositoryToken)
+  private readonly gameRepository!: GameRepository;
+
+  @Inject(GameEventsToken)
+  private readonly gameEvents!: GameEvents;
+
+  @Inject()
+  private readonly gameService!: GameService;
 
   async startGame(game: Game, questionMaster: Player, turns: number) {
     if (game.state !== GameState.idle) {

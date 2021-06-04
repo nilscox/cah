@@ -58,7 +58,7 @@ export class GameEntity {
   question?: QuestionEntity;
 
   @OneToMany(() => AnswerEntity, (answer) => answer.game, { eager: true })
-  currentAnswers?: AnswerEntity[];
+  answers!: AnswerEntity[];
 
   @OneToOne(() => PlayerEntity, { eager: true })
   @JoinColumn()

@@ -1,10 +1,14 @@
 import { expect } from 'chai';
+import { Container } from 'typedi';
 
 import { Answer } from '../entities/Answer';
 import { PlayState } from '../entities/Game';
 import { InvalidPlayStateError } from '../errors/InvalidPlayStateError';
 import { IsNotQuestionMasterError } from '../errors/IsNotQuestionMasterError';
-import { GameService } from '../services/GameService';
+import { ChoiceRepositoryToken } from '../interfaces/ChoiceRepository';
+import { GameEventsToken } from '../interfaces/GameEvents';
+import { GameRepositoryToken } from '../interfaces/GameRepository';
+import { PlayerRepositoryToken } from '../interfaces/PlayerRepository';
 import { createStartedGame } from '../tests/creators';
 import { InMemoryChoiceRepository } from '../tests/repositories/InMemoryChoiceRepository';
 import { InMemoryGameRepository } from '../tests/repositories/InMemoryGameRepository';
@@ -14,14 +18,25 @@ import { StubGameEvents } from '../tests/stubs/StubGameEvents';
 import { PickWinningAnswer } from './PickWinningAnswer';
 
 describe('PickWinningAnswer', () => {
-  const playerRepository = new InMemoryPlayerRepository();
   const gameRepository = new InMemoryGameRepository();
+  const playerRepository = new InMemoryPlayerRepository();
   const choiceRepository = new InMemoryChoiceRepository();
 
   const gameEvents = new StubGameEvents();
-  const gameService = new GameService(choiceRepository, playerRepository, gameEvents);
 
-  const useCase = new PickWinningAnswer(gameRepository, gameService, gameEvents);
+  let useCase: PickWinningAnswer;
+
+  before(() => {
+    Container.reset();
+
+    Container.set(PlayerRepositoryToken, playerRepository);
+    Container.set(GameRepositoryToken, gameRepository);
+    Container.set(ChoiceRepositoryToken, choiceRepository);
+
+    Container.set(GameEventsToken, gameEvents);
+
+    useCase = Container.get(PickWinningAnswer);
+  });
 
   it('selects the winning answer', async () => {
     const game = await createStartedGame({ playState: PlayState.questionMasterSelection });

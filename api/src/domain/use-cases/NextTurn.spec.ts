@@ -1,8 +1,14 @@
 import { expect } from 'chai';
+import { Container } from 'typedi';
 
 import { Game, GameState, PlayState } from '../entities/Game';
 import { InvalidPlayStateError } from '../errors/InvalidPlayStateError';
-import { GameService } from '../services/GameService';
+import { ChoiceRepositoryToken } from '../interfaces/ChoiceRepository';
+import { GameEventsToken } from '../interfaces/GameEvents';
+import { GameRepositoryToken } from '../interfaces/GameRepository';
+import { PlayerRepositoryToken } from '../interfaces/PlayerRepository';
+import { QuestionRepositoryToken } from '../interfaces/QuestionRepository';
+import { TurnRepositoryToken } from '../interfaces/TurnRepository';
 import { createChoices, createPlayers, createQuestion, createStartedGame } from '../tests/creators';
 import { InMemoryChoiceRepository } from '../tests/repositories/InMemoryChoiceRepository';
 import { InMemoryGameRepository } from '../tests/repositories/InMemoryGameRepository';
@@ -21,9 +27,22 @@ describe('NextTurn', () => {
   const turnRepository = new InMemoryTurnRepository();
 
   const gameEvents = new StubGameEvents();
-  const gameService = new GameService(choiceRepository, playerRepository, gameEvents);
 
-  const useCase = new NextTurn(gameRepository, questionRepository, turnRepository, gameService, gameEvents);
+  let useCase: NextTurn;
+
+  before(() => {
+    Container.reset();
+
+    Container.set(GameRepositoryToken, gameRepository);
+    Container.set(PlayerRepositoryToken, playerRepository);
+    Container.set(QuestionRepositoryToken, questionRepository);
+    Container.set(ChoiceRepositoryToken, choiceRepository);
+    Container.set(TurnRepositoryToken, turnRepository);
+
+    Container.set(GameEventsToken, gameEvents);
+
+    useCase = Container.get(NextTurn);
+  });
 
   const initializeGame = () => {
     const players = createPlayers(4);

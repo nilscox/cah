@@ -1,4 +1,5 @@
-import { Answer } from '../entities/Answer';
+import { Inject, Service } from 'typedi';
+
 import { Choice } from '../entities/Choice';
 import { Game, PlayState } from '../entities/Game';
 import { Player } from '../entities/Player';
@@ -6,20 +7,32 @@ import { AlreadyAnsweredError } from '../errors/AlreadyAnsweredError';
 import { IncorrectNumberOfChoicesError } from '../errors/IncorrectNumberOfChoicesError';
 import { InvalidChoicesSelectionError } from '../errors/InvalidChoicesSelectionError';
 import { IsQuestionMasterError } from '../errors/IsQuestionMasterError';
-import { GameEvents } from '../interfaces/GameEvents';
-import { GameRepository } from '../interfaces/GameRepository';
-import { PlayerRepository } from '../interfaces/PlayerRepository';
+import { AnswerRepository, AnswerRepositoryToken } from '../interfaces/AnswerRepository';
+import { GameEvents, GameEventsToken } from '../interfaces/GameEvents';
+import { GameRepository, GameRepositoryToken } from '../interfaces/GameRepository';
+import { PlayerRepository, PlayerRepositoryToken } from '../interfaces/PlayerRepository';
 import { GameService } from '../services/GameService';
-import { RandomService } from '../services/RandomService';
+import { RandomService, RandomServiceToken } from '../services/RandomService';
 
+@Service()
 export class GiveChoicesSelection {
-  constructor(
-    private readonly playerRepository: PlayerRepository,
-    private readonly gameRepository: GameRepository,
-    private readonly gameService: GameService,
-    private readonly randomService: RandomService,
-    private readonly gameEvents: GameEvents,
-  ) {}
+  @Inject(PlayerRepositoryToken)
+  private readonly playerRepository!: PlayerRepository;
+
+  @Inject(GameRepositoryToken)
+  private readonly gameRepository!: GameRepository;
+
+  @Inject(AnswerRepositoryToken)
+  private readonly answerRepository!: AnswerRepository;
+
+  @Inject(RandomServiceToken)
+  private readonly randomService!: RandomService;
+
+  @Inject(GameEventsToken)
+  private readonly gameEvents!: GameEvents;
+
+  @Inject()
+  private readonly gameService!: GameService;
 
   async giveChoicesSelection(game: Game, player: Player, selection: Choice[]) {
     const { questionMaster, question, answers } = this.gameService.ensurePlayState(game, PlayState.playersAnswer);
@@ -32,7 +45,7 @@ export class GiveChoicesSelection {
       throw new AlreadyAnsweredError();
     }
 
-    if (!selection.every((choice) => player.cards.includes(choice))) {
+    if (!selection.every((choice) => player.cards.some((card) => card.is(choice)))) {
       throw new InvalidChoicesSelectionError(player, selection);
     }
 
@@ -42,12 +55,9 @@ export class GiveChoicesSelection {
 
     await this.playerRepository.removeCards(player, selection);
 
-    const answer = new Answer();
+    const answer = await this.answerRepository.createAnswer(player, selection);
 
-    answer.player = player;
-    answer.choices = selection;
-
-    answers.push(answer);
+    game.answers?.push(answer);
 
     const allPlayersAnswered = answers.length === game.players.length - 1;
 

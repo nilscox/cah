@@ -10,7 +10,7 @@ export class AnswerEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @ManyToOne(() => GameEntity, (game) => game.currentAnswers)
+  @ManyToOne(() => GameEntity, (game) => game.answers)
   game?: GameEntity;
 
   @ManyToOne(() => PlayerEntity, { nullable: false, eager: true })

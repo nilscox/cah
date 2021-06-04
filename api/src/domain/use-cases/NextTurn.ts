@@ -1,18 +1,28 @@
+import { Inject, Service } from 'typedi';
+
 import { Game, GameState, PlayState } from '../entities/Game';
-import { GameEvents } from '../interfaces/GameEvents';
-import { GameRepository } from '../interfaces/GameRepository';
-import { QuestionRepository } from '../interfaces/QuestionRepository';
-import { TurnRepository } from '../interfaces/TurnRepository';
+import { GameEvents, GameEventsToken } from '../interfaces/GameEvents';
+import { GameRepository, GameRepositoryToken } from '../interfaces/GameRepository';
+import { QuestionRepository, QuestionRepositoryToken } from '../interfaces/QuestionRepository';
+import { TurnRepository, TurnRepositoryToken } from '../interfaces/TurnRepository';
 import { GameService } from '../services/GameService';
 
+@Service()
 export class NextTurn {
-  constructor(
-    private readonly gameRepository: GameRepository,
-    private readonly questionRepository: QuestionRepository,
-    private readonly turnRepository: TurnRepository,
-    private readonly gameService: GameService,
-    private readonly gameEvents: GameEvents,
-  ) {}
+  @Inject(GameRepositoryToken)
+  private readonly gameRepository!: GameRepository;
+
+  @Inject(QuestionRepositoryToken)
+  private readonly questionRepository!: QuestionRepository;
+
+  @Inject(TurnRepositoryToken)
+  private readonly turnRepository!: TurnRepository;
+
+  @Inject(GameEventsToken)
+  private readonly gameEvents!: GameEvents;
+
+  @Inject()
+  private readonly gameService!: GameService;
 
   async nextTurn(game: Game) {
     const { questionMaster, question, answers, winner } = this.gameService.ensurePlayState(game, PlayState.endOfTurn);

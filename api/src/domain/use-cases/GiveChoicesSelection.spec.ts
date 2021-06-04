@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+import { Container } from 'typedi';
 
 import { PlayState } from '../entities/Game';
 import { AlreadyAnsweredError } from '../errors/AlreadyAnsweredError';
@@ -6,8 +7,14 @@ import { IncorrectNumberOfChoicesError } from '../errors/IncorrectNumberOfChoice
 import { InvalidChoicesSelectionError } from '../errors/InvalidChoicesSelectionError';
 import { InvalidPlayStateError } from '../errors/InvalidPlayStateError';
 import { IsQuestionMasterError } from '../errors/IsQuestionMasterError';
-import { GameService } from '../services/GameService';
+import { AnswerRepositoryToken } from '../interfaces/AnswerRepository';
+import { ChoiceRepositoryToken } from '../interfaces/ChoiceRepository';
+import { GameEventsToken } from '../interfaces/GameEvents';
+import { GameRepositoryToken } from '../interfaces/GameRepository';
+import { PlayerRepositoryToken } from '../interfaces/PlayerRepository';
+import { RandomServiceToken } from '../services/RandomService';
 import { createQuestion, createStartedGame } from '../tests/creators';
+import { InMemoryAnswerRepository } from '../tests/repositories/InMemoryAnswerRepository';
 import { InMemoryChoiceRepository } from '../tests/repositories/InMemoryChoiceRepository';
 import { InMemoryGameRepository } from '../tests/repositories/InMemoryGameRepository';
 import { InMemoryPlayerRepository } from '../tests/repositories/InMemoryPlayerRepository';
@@ -20,12 +27,26 @@ describe('GiveChoicesSelection', () => {
   const playerRepository = new InMemoryPlayerRepository();
   const gameRepository = new InMemoryGameRepository();
   const choiceRepository = new InMemoryChoiceRepository();
+  const answerRepository = new InMemoryAnswerRepository();
 
   const gameEvents = new StubGameEvents();
-  const gameService = new GameService(choiceRepository, playerRepository, gameEvents);
   const randomService = new StubRandomService();
 
-  const useCase = new GiveChoicesSelection(playerRepository, gameRepository, gameService, randomService, gameEvents);
+  let useCase: GiveChoicesSelection;
+
+  before(() => {
+    Container.reset();
+
+    Container.set(PlayerRepositoryToken, playerRepository);
+    Container.set(GameRepositoryToken, gameRepository);
+    Container.set(ChoiceRepositoryToken, choiceRepository);
+    Container.set(AnswerRepositoryToken, answerRepository);
+
+    Container.set(GameEventsToken, gameEvents);
+    Container.set(RandomServiceToken, randomService);
+
+    useCase = Container.get(GiveChoicesSelection);
+  });
 
   it('validates a single choice for the current turn', async () => {
     const game = createStartedGame();

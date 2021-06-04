@@ -20,4 +20,8 @@ export class ChoiceEntity {
 
   @ManyToOne(() => AnswerEntity, (answer) => answer.choices)
   answer?: AnswerEntity;
+
+  is(other?: ChoiceEntity) {
+    return this.id === other?.id;
+  }
 }

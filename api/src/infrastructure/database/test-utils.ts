@@ -15,11 +15,13 @@ export const createTestDatabase = () => {
   before(async () => {
     connection = await createConnection({
       type: 'sqlite',
-      database: ':memory:',
-      // database: './db.sqlite',
+      // database: ':memory:',
+      database: './db.sqlite',
       entities: ['src/infrastructure/database/entities/*.ts'],
+      dropSchema: true,
       synchronize: true,
       logging: ['error'],
+      // logging: ['query'],
     });
   });
 

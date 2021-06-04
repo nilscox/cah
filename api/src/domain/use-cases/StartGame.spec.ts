@@ -1,9 +1,14 @@
 import { expect } from 'chai';
+import { Container } from 'typedi';
 
 import { GameState, PlayState } from '../entities/Game';
 import { GameAlreadyStartedError } from '../errors/GameAlreadyStartedError';
 import { NotEnoughPlayersError } from '../errors/NotEnoughPlayersError';
-import { GameService } from '../services/GameService';
+import { ChoiceRepositoryToken } from '../interfaces/ChoiceRepository';
+import { GameEventsToken } from '../interfaces/GameEvents';
+import { GameRepositoryToken } from '../interfaces/GameRepository';
+import { PlayerRepositoryToken } from '../interfaces/PlayerRepository';
+import { QuestionRepositoryToken } from '../interfaces/QuestionRepository';
 import { createGame, createPlayer, createPlayers } from '../tests/creators';
 import { InMemoryChoiceRepository } from '../tests/repositories/InMemoryChoiceRepository';
 import { InMemoryGameRepository } from '../tests/repositories/InMemoryGameRepository';
@@ -16,13 +21,25 @@ import { StartGame } from './StartGame';
 describe('StartGame', () => {
   const questionRepository = new InMemoryQuestionRepository();
   const choiceRepository = new InMemoryChoiceRepository();
-  const gameRepository = new InMemoryGameRepository();
   const playerRepository = new InMemoryPlayerRepository();
+  const gameRepository = new InMemoryGameRepository();
 
   const gameEvents = new StubGameEvents();
-  const gameService = new GameService(choiceRepository, playerRepository, gameEvents);
 
-  const useCase = new StartGame(questionRepository, choiceRepository, gameRepository, gameService, gameEvents);
+  let useCase: StartGame;
+
+  before(() => {
+    Container.reset();
+
+    Container.set(QuestionRepositoryToken, questionRepository);
+    Container.set(ChoiceRepositoryToken, choiceRepository);
+    Container.set(PlayerRepositoryToken, playerRepository);
+    Container.set(GameRepositoryToken, gameRepository);
+
+    Container.set(GameEventsToken, gameEvents);
+
+    useCase = Container.get(StartGame);
+  });
 
   it('starts a game', async () => {
     const players = createPlayers(4);

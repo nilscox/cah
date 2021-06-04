@@ -6,6 +6,11 @@ export class StubGameEvents implements GameEvents {
   private playerEvents = new Map<Player, PlayerEvent[]>();
   private gameEvents = new Map<Game, GameEvent[]>();
 
+  clear() {
+    this.playerEvents.clear();
+    this.gameEvents.clear();
+  }
+
   emit(_game: Game, to: Player, event: PlayerEvent): void {
     if (!this.playerEvents.has(to)) {
       this.playerEvents.set(to, []);

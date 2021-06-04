@@ -8,8 +8,12 @@ import { TurnEntity } from '../entities/TurnEntity';
 
 @EntityRepository(QuestionEntity)
 export class SQLQuestionRepository extends Repository<QuestionEntity> implements QuestionRepository {
-  async createQuestions(game: GameEntity, questions: QuestionEntity[]): Promise<void> {
-    await this.insert(questions.map((question) => ({ ...question, game })));
+  async createQuestions(game: GameEntity, questions: Question[]): Promise<void> {
+    const entities = questions.map((question) =>
+      this.create({ text: question.text, blanks: question.blanks, game: { id: game.id } }),
+    );
+
+    await this.insert(entities);
   }
 
   pickRandomQuestions(_count: number): Promise<Question[]> {

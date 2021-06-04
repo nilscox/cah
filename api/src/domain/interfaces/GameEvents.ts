@@ -1,9 +1,13 @@
+import { Token } from 'typedi';
+
 import { Answer } from '../entities/Answer';
 import { Choice } from '../entities/Choice';
 import { Game } from '../entities/Game';
 import { Player } from '../entities/Player';
 import { Question } from '../entities/Question';
 import { Turn } from '../entities/Turn';
+
+export const GameEventsToken = new Token('GameEvents');
 
 type GameStarted = {
   type: 'GameStarted';
