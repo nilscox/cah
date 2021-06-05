@@ -16,7 +16,7 @@
     "simple-import-sort/imports": ["warn", {
       "groups": [
         ["^(path|fs|util)$"],
-        ["^[a-z]"],
+        ["^[@a-z]"],
         ["^src/"],
         ["^../"],
         ["^./"]

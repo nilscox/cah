@@ -1,9 +1,9 @@
-import chai, { expect } from 'chai';
-import chaiAsPromised from 'chai-as-promised';
-import chaiShallowDeepEqual from 'chai-shallow-deep-equal';
+import { expect } from 'chai';
+import request from 'supertest';
 import { Container } from 'typedi';
-import { getConnection, getCustomRepository, getRepository } from 'typeorm';
+import { getConnection, getCustomRepository } from 'typeorm';
 
+import { app } from './application/web';
 import { GameState } from './domain/entities/Game';
 import { AnswerRepositoryToken } from './domain/interfaces/AnswerRepository';
 import { ChoiceRepositoryToken } from './domain/interfaces/ChoiceRepository';
@@ -13,29 +13,15 @@ import { PlayerRepositoryToken } from './domain/interfaces/PlayerRepository';
 import { QuestionRepositoryToken } from './domain/interfaces/QuestionRepository';
 import { TurnRepositoryToken } from './domain/interfaces/TurnRepository';
 import { RandomServiceToken } from './domain/services/RandomService';
-import { createChoices, createQuestions } from './domain/tests/creators';
 import { StubGameEvents } from './domain/tests/stubs/StubGameEvents';
 import { StubRandomService } from './domain/tests/stubs/StubRandomService';
-import { GiveChoicesSelection } from './domain/use-cases/GiveChoicesSelection';
-import { NextTurn } from './domain/use-cases/NextTurn';
-import { PickWinningAnswer } from './domain/use-cases/PickWinningAnswer';
-import { StartGame } from './domain/use-cases/StartGame';
-import { GameEntity } from './infrastructure/database/entities/GameEntity';
-import { PlayerEntity } from './infrastructure/database/entities/PlayerEntity';
 import { SQLAnswerRepository } from './infrastructure/database/repositories/SQLAnswerRepository';
 import { SQLChoiceRepository } from './infrastructure/database/repositories/SQLChoiceRepository';
 import { SQLGameRepository } from './infrastructure/database/repositories/SQLGameRepository';
 import { SQLPlayerRepository } from './infrastructure/database/repositories/SQLPlayerRepository';
 import { SQLQuestionRepository } from './infrastructure/database/repositories/SQLQuestionRepository';
 import { SQLTurnRepository } from './infrastructure/database/repositories/SQLTurnRepository';
-import { createPlayer, createTestDatabase } from './infrastructure/database/test-utils';
-
-chai.use(chaiAsPromised);
-chai.use(chaiShallowDeepEqual);
-
-before(() => {
-  process.stdout.write('\x1Bc');
-});
+import { createTestDatabase } from './infrastructure/database/test-utils';
 
 describe('end-to-end', () => {
   createTestDatabase();
@@ -80,47 +66,18 @@ describe('end-to-end', () => {
   });
 
   it('plays a full game', async () => {
-    const startGame = Container.get(StartGame);
-    const giveChoicesSelection = Container.get(GiveChoicesSelection);
-    const pickWinningAnswer = Container.get(PickWinningAnswer);
-    const nextTurn = Container.get(NextTurn);
+    const asNils = request.agent(app);
+    await asNils.post('/api/player').send({ nick: 'nils' }).expect(201);
 
-    let nils = await createPlayer({ nick: 'nils' });
-    let tom = await createPlayer({ nick: 'tom' });
-    let jeanne = await createPlayer({ nick: 'jeanne' });
+    const asTom = request.agent(app);
+    await asTom.post('/api/player').send({ nick: 'tom' }).expect(201);
 
-    let game = await getRepository(GameEntity).create({ code: '' });
+    const asJeanne = request.agent(app);
+    await asJeanne.post('/api/player').send({ nick: 'jeanne' }).expect(201);
 
-    const reload = async () => {
-      nils = await getRepository(PlayerEntity).findOneOrFail(nils.id);
-      tom = await getRepository(PlayerEntity).findOneOrFail(tom.id);
-      jeanne = await getRepository(PlayerEntity).findOneOrFail(jeanne.id);
-      game = await getRepository(GameEntity).findOneOrFail(game.id);
-    };
+    const { body: game } = await asNils.post('/api/game').send().expect(201);
 
-    questionRepository.pickRandomQuestions = (count: number) => Promise.resolve(createQuestions(count));
-    choiceRepository.pickRandomChoices = (count: number) => Promise.resolve(createChoices(count));
-
-    game.players = [nils, tom, jeanne];
-    await gameRepository.save(game);
-    await reload();
-
-    await startGame.startGame(game, nils, 3);
-    await reload();
-
-    for (let i = 0; i < 3; ++i) {
-      for (const player of game.playersExcludingQM) {
-        await giveChoicesSelection.giveChoicesSelection(game, player, [player.cards[0]]);
-        await reload();
-      }
-
-      await pickWinningAnswer.pickWinningAnswer(game, game.questionMaster!, 0);
-      await reload();
-
-      await nextTurn.nextTurn(game);
-      await reload();
-    }
-
-    expect(game.state).to.eql(GameState.finished);
+    expect(game).to.have.property('code').that.is.a('string').of.length(4);
+    expect(game).to.have.property('state', GameState.idle);
   });
 });

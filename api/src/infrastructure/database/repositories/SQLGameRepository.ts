@@ -9,6 +9,10 @@ export class SQLGameRepository implements GameRepository {
   private readonly repo = getRepository(GameEntity);
   private readonly answerRepository = getRepository(AnswerEntity);
 
+  async createGame(code: string): Promise<Game> {
+    return this.repo.save(this.repo.create({ code }));
+  }
+
   async findOne(gameId: number): Promise<Game | undefined> {
     return this.repo.findOne(gameId);
   }
