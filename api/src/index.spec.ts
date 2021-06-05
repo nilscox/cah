@@ -22,7 +22,6 @@ import { PickWinningAnswer } from './domain/use-cases/PickWinningAnswer';
 import { StartGame } from './domain/use-cases/StartGame';
 import { GameEntity } from './infrastructure/database/entities/GameEntity';
 import { PlayerEntity } from './infrastructure/database/entities/PlayerEntity';
-import { QuestionEntity } from './infrastructure/database/entities/QuestionEntity';
 import { SQLAnswerRepository } from './infrastructure/database/repositories/SQLAnswerRepository';
 import { SQLChoiceRepository } from './infrastructure/database/repositories/SQLChoiceRepository';
 import { SQLGameRepository } from './infrastructure/database/repositories/SQLGameRepository';
@@ -93,10 +92,10 @@ describe('end-to-end', () => {
     let game = await getRepository(GameEntity).create({ code: '' });
 
     const reload = async () => {
-      nils = (await getRepository(PlayerEntity).findOne(nils.id))!;
-      tom = (await getRepository(PlayerEntity).findOne(tom.id))!;
-      jeanne = (await getRepository(PlayerEntity).findOne(jeanne.id))!;
-      game = (await getRepository(GameEntity).findOne(game.id))!;
+      nils = await getRepository(PlayerEntity).findOneOrFail(nils.id);
+      tom = await getRepository(PlayerEntity).findOneOrFail(tom.id);
+      jeanne = await getRepository(PlayerEntity).findOneOrFail(jeanne.id);
+      game = await getRepository(GameEntity).findOneOrFail(game.id);
     };
 
     questionRepository.pickRandomQuestions = (count: number) => Promise.resolve(createQuestions(count));
@@ -106,10 +105,10 @@ describe('end-to-end', () => {
     await gameRepository.save(game);
     await reload();
 
-    await startGame.startGame(game, nils, 4);
+    await startGame.startGame(game, nils, 3);
     await reload();
 
-    for (let i = 0; i < 4; ++i) {
+    for (let i = 0; i < 3; ++i) {
       for (const player of game.playersExcludingQM) {
         await giveChoicesSelection.giveChoicesSelection(game, player, [player.cards[0]]);
         await reload();

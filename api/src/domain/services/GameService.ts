@@ -1,6 +1,5 @@
 import { Inject, Service } from 'typedi';
 
-import { Answer } from '../entities/Answer';
 import { Game, PlayState } from '../entities/Game';
 import { Player } from '../entities/Player';
 import { Question } from '../entities/Question';
@@ -14,7 +13,6 @@ class StartedGame extends Game {
   playState!: PlayState;
   questionMaster!: Player;
   question!: Question;
-  answers!: Answer[];
   winner?: Player;
 }
 
@@ -29,7 +27,7 @@ export class GameService {
   @Inject(GameEventsToken)
   private readonly gameEvents!: GameEvents;
 
-  ensurePlayState(game: Game, playState: PlayState) {
+  ensurePlayState(game: Game, playState: PlayState): StartedGame {
     if (game.playState !== playState) {
       throw new InvalidPlayStateError(game, playState);
     }

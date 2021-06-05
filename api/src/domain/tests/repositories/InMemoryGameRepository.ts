@@ -15,11 +15,11 @@ export class InMemoryGameRepository implements GameRepository {
     }
   }
 
-  async addAnswer(game: Game, answer: Answer): Promise<void> {
-    if (!game.answers) {
-      game.answers = [];
-    }
+  async getAnswers(game: Game): Promise<Answer[]> {
+    return game.answers!;
+  }
 
-    game.answers.push(answer);
+  async addAnswer(game: Game, answer: Answer): Promise<void> {
+    game.answers?.push(answer);
   }
 }

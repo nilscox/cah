@@ -19,7 +19,8 @@ export class PickWinningAnswer {
   private readonly gameService!: GameService;
 
   async pickWinningAnswer(game: Game, player: Player, answerIndex: number) {
-    const { questionMaster, answers } = this.gameService.ensurePlayState(game, PlayState.questionMasterSelection);
+    const { questionMaster } = this.gameService.ensurePlayState(game, PlayState.questionMasterSelection);
+    const answers = await this.gameRepository.getAnswers(game);
 
     if (!player.is(questionMaster)) {
       throw new IsNotQuestionMasterError();

@@ -10,7 +10,7 @@ import { TurnEntity } from '../entities/TurnEntity';
 
 @EntityRepository(ChoiceEntity)
 export class SQLChoiceRepository extends Repository<ChoiceEntity> implements ChoiceRepository {
-  async createChoices(game: GameEntity, choices: ChoiceEntity[]): Promise<void> {
+  async createChoices(game: GameEntity, choices: Choice[]): Promise<void> {
     await this.insert(choices.map((choice) => ({ ...choice, game })));
   }
 

@@ -35,7 +35,8 @@ export class GiveChoicesSelection {
   private readonly gameService!: GameService;
 
   async giveChoicesSelection(game: Game, player: Player, selection: Choice[]) {
-    const { questionMaster, question, answers } = this.gameService.ensurePlayState(game, PlayState.playersAnswer);
+    const { questionMaster, question } = this.gameService.ensurePlayState(game, PlayState.playersAnswer);
+    let answers = await this.gameRepository.getAnswers(game);
 
     if (player.is(questionMaster)) {
       throw new IsQuestionMasterError(player);
@@ -57,7 +58,8 @@ export class GiveChoicesSelection {
 
     const answer = await this.answerRepository.createAnswer(player, selection);
 
-    game.answers?.push(answer);
+    await this.gameRepository.addAnswer(game, answer);
+    answers = await this.gameRepository.getAnswers(game);
 
     const allPlayersAnswered = answers.length === game.players.length - 1;
 
