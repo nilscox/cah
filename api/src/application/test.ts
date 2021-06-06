@@ -1,11 +1,11 @@
 import request from 'supertest';
 import Container from 'typedi';
 
-import { Player } from '../../domain/entities/Player';
-import { Authenticate } from '../../domain/use-cases/Authenticate';
-import { CreateGame } from '../../domain/use-cases/CreateGame';
-import { QueryGame } from '../../domain/use-cases/QueryGame';
-import { QueryPlayer } from '../../domain/use-cases/QueryPlayer';
+import { Player } from '../domain/entities/Player';
+import { Authenticate } from '../domain/use-cases/Authenticate';
+import { CreateGame } from '../domain/use-cases/CreateGame';
+import { QueryGame } from '../domain/use-cases/QueryGame';
+import { QueryPlayer } from '../domain/use-cases/QueryPlayer';
 
 import { app } from './index';
 
@@ -28,8 +28,10 @@ export const mockCreateGame = (createGame: CreateGame['createGame']) => {
 export const auth = (player: Player) => {
   const agent = request.agent(app);
 
-  beforeEach(async () => {
+  before(async () => {
     mockAuthenticate(() => Promise.resolve({ player, created: false }));
+    mockQueryPlayer(() => Promise.resolve(player));
+
     await agent.post('/api/player').expect(200);
   });
 
