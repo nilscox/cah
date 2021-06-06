@@ -4,10 +4,12 @@ import { Game } from '../../../domain/entities/Game';
 import { GameRepository } from '../../../domain/interfaces/GameRepository';
 import { AnswerEntity } from '../entities/AnswerEntity';
 import { GameEntity } from '../entities/GameEntity';
+import { PlayerEntity } from '../entities/PlayerEntity';
 
 export class SQLGameRepository implements GameRepository {
   private readonly repo = getRepository(GameEntity);
   private readonly answerRepository = getRepository(AnswerEntity);
+  private readonly playerRepository = getRepository(PlayerEntity);
 
   async createGame(code: string): Promise<Game> {
     return this.repo.save(this.repo.create({ code }));
@@ -17,8 +19,16 @@ export class SQLGameRepository implements GameRepository {
     return this.repo.findOne(gameId);
   }
 
+  async findByCode(code: string): Promise<Game | undefined> {
+    return this.repo.findOne({ code });
+  }
+
   async save(game: GameEntity): Promise<void> {
     await this.repo.save(game);
+  }
+
+  async addPlayer(game: GameEntity, player: PlayerEntity): Promise<void> {
+    await this.playerRepository.update(player.id, { game });
   }
 
   async getAnswers(game: GameEntity): Promise<AnswerEntity[]> {

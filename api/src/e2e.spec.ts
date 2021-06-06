@@ -1,10 +1,10 @@
 import { expect } from 'chai';
+import { io, Socket } from 'socket.io-client';
 import request from 'supertest';
 import { Container } from 'typedi';
 import { getConnection, getCustomRepository } from 'typeorm';
 
-import { app } from './application/web';
-import { GameState } from './domain/entities/Game';
+import { app } from './application';
 import { AnswerRepositoryToken } from './domain/interfaces/AnswerRepository';
 import { ChoiceRepositoryToken } from './domain/interfaces/ChoiceRepository';
 import { GameEventsToken } from './domain/interfaces/GameEvents';
@@ -65,19 +65,76 @@ describe('end-to-end', () => {
     gameEvents.clear();
   });
 
+  const port = 1234;
+
+  before((done) => {
+    app.listen(port, done);
+  });
+
+  after((done) => {
+    app.close(done);
+  });
+
+  class StubPlayer {
+    private agent = request.agent(app);
+    private socket?: Socket;
+
+    constructor(private readonly nick: string) {}
+
+    async authenticate() {
+      await this.agent.post('/api/player').send({ nick: this.nick }).expect(201);
+
+      const cookie = this.agent.jar.getCookie('connect.sid', {
+        domain: 'localhost',
+        path: '/',
+        script: false,
+        secure: false,
+      });
+
+      this.socket = io(`ws://localhost:${port}`, {
+        extraHeaders: {
+          cookie: [cookie?.name, cookie?.value].join('='),
+        },
+      });
+
+      await new Promise<void>((resolve) => this.socket?.on('connect', resolve));
+    }
+
+    async close() {
+      this.socket?.close();
+    }
+
+    async emit<Result, Payload = unknown>(message: string, payload?: Payload) {
+      return new Promise<Result>((resolve) => {
+        this.socket?.emit(message, payload, resolve);
+      });
+    }
+  }
+
   it('plays a full game', async () => {
-    const asNils = request.agent(app);
-    await asNils.post('/api/player').send({ nick: 'nils' }).expect(201);
+    const nils = new StubPlayer('nils');
+    await nils.authenticate();
 
-    const asTom = request.agent(app);
-    await asTom.post('/api/player').send({ nick: 'tom' }).expect(201);
+    const tom = new StubPlayer('tom');
+    await tom.authenticate();
 
-    const asJeanne = request.agent(app);
-    await asJeanne.post('/api/player').send({ nick: 'jeanne' }).expect(201);
+    const jeanne = new StubPlayer('jeanne');
+    await jeanne.authenticate();
 
-    const { body: game } = await asNils.post('/api/game').send().expect(201);
+    const data = await nils.emit<{ game: { id: number; code: string } }>('createGame');
 
-    expect(game).to.have.property('code').that.is.a('string').of.length(4);
-    expect(game).to.have.property('state', GameState.idle);
+    await nils.emit('joinGame', { code: data.game.code });
+    await tom.emit('joinGame', { code: data.game.code });
+    await jeanne.emit('joinGame', { code: data.game.code });
+
+    const { body: game } = await request(app)
+      .get('/api/game/' + data.game.id)
+      .expect(200);
+
+    expect(game).to.have.property('players').that.is.an('array').of.length(3);
+
+    nils.close();
+    tom.close();
+    jeanne.close();
   });
 });
