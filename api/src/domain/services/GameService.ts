@@ -49,8 +49,7 @@ export class GameService {
         const cards = choices.splice(0, needed);
 
         await this.playerRepository.addCards(player, cards);
-
-        this.gameEvents.emit(game, player, { type: 'CardsDealt', cards });
+        await this.gameEvents.emit(game, player, { type: 'CardsDealt', cards });
       }
     }
   }

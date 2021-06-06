@@ -1,9 +1,9 @@
 import http from 'http';
 
 import { app } from './web';
-import { bootstrap } from './websocket';
+import { WebsocketServer } from './websocket';
 
 const server = http.createServer(app);
-bootstrap(server);
+const wsServer = new WebsocketServer(server);
 
-export { server as app };
+export { server as app, wsServer };

@@ -9,6 +9,11 @@ import { Turn } from '../entities/Turn';
 
 export const GameEventsToken = new Token('GameEvents');
 
+type PlayerJoined = {
+  type: 'PlayerJoined';
+  player: Player;
+};
+
 type GameStarted = {
   type: 'GameStarted';
 };
@@ -45,6 +50,7 @@ type GameFinished = {
 };
 
 export type GameEvent =
+  | PlayerJoined
   | GameStarted
   | TurnStarted
   | PlayerAnswered
@@ -61,6 +67,6 @@ type CardsDealt = {
 export type PlayerEvent = CardsDealt;
 
 export interface GameEvents {
-  emit(game: Game, to: Player, event: PlayerEvent): void;
+  emit(game: Game, to: Player, event: PlayerEvent): Promise<void>;
   broadcast(game: Game, event: GameEvent): void;
 }

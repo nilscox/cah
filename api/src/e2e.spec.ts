@@ -2,18 +2,17 @@ import { expect } from 'chai';
 import { io, Socket } from 'socket.io-client';
 import request from 'supertest';
 import { Container } from 'typedi';
-import { getConnection, getCustomRepository } from 'typeorm';
+import { getCustomRepository } from 'typeorm';
 
-import { app } from './application';
+import { app, wsServer } from './application';
 import { AnswerRepositoryToken } from './domain/interfaces/AnswerRepository';
 import { ChoiceRepositoryToken } from './domain/interfaces/ChoiceRepository';
-import { GameEventsToken } from './domain/interfaces/GameEvents';
+import { GameEvent, GameEventsToken, PlayerEvent } from './domain/interfaces/GameEvents';
 import { GameRepositoryToken } from './domain/interfaces/GameRepository';
 import { PlayerRepositoryToken } from './domain/interfaces/PlayerRepository';
 import { QuestionRepositoryToken } from './domain/interfaces/QuestionRepository';
 import { TurnRepositoryToken } from './domain/interfaces/TurnRepository';
 import { RandomServiceToken } from './domain/services/RandomService';
-import { StubGameEvents } from './domain/tests/stubs/StubGameEvents';
 import { StubRandomService } from './domain/tests/stubs/StubRandomService';
 import { SQLAnswerRepository } from './infrastructure/database/repositories/SQLAnswerRepository';
 import { SQLChoiceRepository } from './infrastructure/database/repositories/SQLChoiceRepository';
@@ -23,7 +22,61 @@ import { SQLQuestionRepository } from './infrastructure/database/repositories/SQ
 import { SQLTurnRepository } from './infrastructure/database/repositories/SQLTurnRepository';
 import { createTestDatabase } from './infrastructure/database/test-utils';
 
-describe('end-to-end', () => {
+const port = 1234;
+
+class WSError extends Error {
+  constructor(public readonly response: unknown) {
+    super('Websocket error\n' + JSON.stringify(response, null, 2));
+  }
+}
+
+class StubPlayer {
+  private agent = request.agent(app);
+  private socket?: Socket;
+
+  public readonly events: (GameEvent | PlayerEvent)[] = [];
+
+  constructor(private readonly nick: string) {}
+
+  async authenticate() {
+    await this.agent.post('/api/player').send({ nick: this.nick }).expect(201);
+
+    const cookie = this.agent.jar.getCookie('connect.sid', {
+      domain: 'localhost',
+      path: '/',
+      script: false,
+      secure: false,
+    });
+
+    this.socket = io(`ws://localhost:${port}`, {
+      extraHeaders: {
+        cookie: [cookie?.name, cookie?.value].join('='),
+      },
+    });
+
+    await new Promise<void>((resolve) => this.socket?.on('connect', resolve));
+
+    this.socket.on('message', (event) => this.events.push(event));
+  }
+
+  close() {
+    this.socket?.close();
+  }
+
+  async emit<Result, Payload = unknown>(message: string, payload?: Payload) {
+    return new Promise<Result>((resolve, reject) => {
+      this.socket?.emit(message, payload, (response: { status: 'ok' | 'ko' } & any) => {
+        if (response.status === 'ok') {
+          resolve(response);
+        } else {
+          reject(new WSError(response));
+        }
+      });
+    });
+  }
+}
+
+describe.only('end-to-end', () => {
   createTestDatabase();
 
   let gameRepository: SQLGameRepository;
@@ -33,7 +86,6 @@ describe('end-to-end', () => {
   let turnRepository: SQLTurnRepository;
   let answerRepository: SQLAnswerRepository;
 
-  let gameEvents: StubGameEvents;
   let randomService: StubRandomService;
 
   before(() => {
@@ -53,74 +105,37 @@ describe('end-to-end', () => {
     Container.set(TurnRepositoryToken, turnRepository);
     Container.set(AnswerRepositoryToken, answerRepository);
 
-    gameEvents = new StubGameEvents();
     randomService = new StubRandomService();
 
-    Container.set(GameEventsToken, gameEvents);
+    Container.set(GameEventsToken, wsServer);
     Container.set(RandomServiceToken, randomService);
   });
 
-  beforeEach(async () => {
-    await getConnection().query('DELETE FROM game');
-    gameEvents.clear();
-  });
-
-  const port = 1234;
-
   before((done) => {
     app.listen(port, done);
+  });
+
+  after(() => {
+    nils.close();
+    tom.close();
+    jeanne.close();
   });
 
   after((done) => {
     app.close(done);
   });
 
-  class StubPlayer {
-    private agent = request.agent(app);
-    private socket?: Socket;
+  const nils = new StubPlayer('nils');
+  const tom = new StubPlayer('tom');
+  const jeanne = new StubPlayer('jeanne');
 
-    constructor(private readonly nick: string) {}
-
-    async authenticate() {
-      await this.agent.post('/api/player').send({ nick: this.nick }).expect(201);
-
-      const cookie = this.agent.jar.getCookie('connect.sid', {
-        domain: 'localhost',
-        path: '/',
-        script: false,
-        secure: false,
-      });
-
-      this.socket = io(`ws://localhost:${port}`, {
-        extraHeaders: {
-          cookie: [cookie?.name, cookie?.value].join('='),
-        },
-      });
-
-      await new Promise<void>((resolve) => this.socket?.on('connect', resolve));
-    }
-
-    async close() {
-      this.socket?.close();
-    }
-
-    async emit<Result, Payload = unknown>(message: string, payload?: Payload) {
-      return new Promise<Result>((resolve) => {
-        this.socket?.emit(message, payload, resolve);
-      });
-    }
-  }
+  before(async () => {
+    await nils.authenticate();
+    await tom.authenticate();
+    await jeanne.authenticate();
+  });
 
   it('plays a full game', async () => {
-    const nils = new StubPlayer('nils');
-    await nils.authenticate();
-
-    const tom = new StubPlayer('tom');
-    await tom.authenticate();
-
-    const jeanne = new StubPlayer('jeanne');
-    await jeanne.authenticate();
-
     const data = await nils.emit<{ game: { id: number; code: string } }>('createGame');
 
     await nils.emit('joinGame', { code: data.game.code });
@@ -133,8 +148,8 @@ describe('end-to-end', () => {
 
     expect(game).to.have.property('players').that.is.an('array').of.length(3);
 
-    nils.close();
-    tom.close();
-    jeanne.close();
+    await nils.emit('startGame');
+
+    console.log(tom.events);
   });
 });
