@@ -67,6 +67,6 @@ type CardsDealt = {
 export type PlayerEvent = CardsDealt;
 
 export interface GameEvents {
-  emit(game: Game, to: Player, event: PlayerEvent): Promise<void>;
+  emit(game: Game, to: Player, event: PlayerEvent): void;
   broadcast(game: Game, event: GameEvent): void;
 }

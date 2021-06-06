@@ -5,6 +5,7 @@ import { Container } from 'typedi';
 import { getCustomRepository } from 'typeorm';
 
 import { app, wsServer } from './application';
+import { Choice } from './domain/entities/Choice';
 import { AnswerRepositoryToken } from './domain/interfaces/AnswerRepository';
 import { ChoiceRepositoryToken } from './domain/interfaces/ChoiceRepository';
 import { GameEvent, GameEventsToken, PlayerEvent } from './domain/interfaces/GameEvents';
@@ -34,6 +35,8 @@ class StubPlayer {
   private agent = request.agent(app);
   private socket?: Socket;
 
+  public readonly cards: Choice[] = [];
+
   public readonly events: (GameEvent | PlayerEvent)[] = [];
 
   constructor(private readonly nick: string) {}
@@ -56,7 +59,7 @@ class StubPlayer {
 
     await new Promise<void>((resolve) => this.socket?.on('connect', resolve));
 
-    this.socket.on('message', (event) => this.events.push(event));
+    this.socket.on('message', (event) => this.handleEvent(event));
   }
 
   close() {
@@ -73,6 +76,21 @@ class StubPlayer {
         }
       });
     });
+  }
+
+  private handleEvent(event: any) {
+    switch (event.type) {
+      case 'PlayerJoined':
+      case 'GameStarted':
+        break;
+      case 'CardsDealt':
+        this.cards.push(...event.cards);
+        break;
+      default:
+        throw new Error('Unknown event recieved: ' + JSON.stringify(event));
+    }
+
+    this.events.push(event);
   }
 }
 
@@ -150,6 +168,6 @@ describe.only('end-to-end', () => {
 
     await nils.emit('startGame');
 
-    console.log(tom.events);
+    console.log(tom.cards);
   });
 });

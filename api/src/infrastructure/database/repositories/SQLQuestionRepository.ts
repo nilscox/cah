@@ -1,3 +1,7 @@
+import fs from 'fs';
+import path from 'path';
+import { promisify } from 'util';
+
 import { EntityRepository, Repository } from 'typeorm';
 
 import { Question } from '../../../domain/entities/Question';
@@ -5,6 +9,8 @@ import { QuestionRepository } from '../../../domain/interfaces/QuestionRepositor
 import { GameEntity } from '../entities/GameEntity';
 import { QuestionEntity } from '../entities/QuestionEntity';
 import { TurnEntity } from '../entities/TurnEntity';
+
+import { randomize } from './SQLChoiceRepository';
 
 @EntityRepository(QuestionEntity)
 export class SQLQuestionRepository extends Repository<QuestionEntity> implements QuestionRepository {
@@ -16,24 +22,33 @@ export class SQLQuestionRepository extends Repository<QuestionEntity> implements
     await this.insert(entities);
   }
 
-  pickRandomQuestions(_count: number): Promise<Question[]> {
-    throw new Error('Method not implemented.');
+  async pickRandomQuestions(count: number): Promise<Question[]> {
+    const data = await promisify(fs.readFile)(path.join(process.env.DATA_DIR!, 'fr', 'questions.json'));
+    const questions = JSON.parse(String(data));
+
+    randomize(questions);
+
+    return questions.slice(0, count).map((data: any) => Object.assign(new Question(), data));
   }
 
   async getNextAvailableQuestion(game: GameEntity): Promise<QuestionEntity | undefined> {
-    return this.createQueryBuilder('question')
-      .where('gameId = :id', { id: game.id })
-      .andWhere('question.id IS NOT :questionId', { questionId: game.question?.id })
-      .andWhere(
-        (qb) =>
-          'question.id NOT IN ' +
-          qb
-            .subQuery()
-            .select('turn.questionId')
-            .from(TurnEntity, 'turn')
-            .where('turn.gameId = :gameId', { gameId: game.id })
-            .getQuery(),
-      )
-      .getOne();
+    const qb = this.createQueryBuilder('question').where('question.gameId = :id', { id: game.id });
+
+    if (game.question) {
+      qb.andWhere('question.id <> :questionId', { questionId: game.question?.id });
+    }
+
+    qb.andWhere(
+      (qb) =>
+        'question.id NOT IN ' +
+        qb
+          .subQuery()
+          .select('turn.questionId')
+          .from(TurnEntity, 'turn')
+          .where('turn.gameId = :gameId', { gameId: game.id })
+          .getQuery(),
+    );
+
+    return qb.getOne();
   }
 }

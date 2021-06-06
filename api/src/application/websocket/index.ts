@@ -146,10 +146,10 @@ export class WebsocketServer implements GameEvents {
     socket.join(this.gameRoomName(game));
   }
 
-  async emit(game: Game, to: Player, event: PlayerEvent): Promise<void> {
+  emit(game: Game, to: Player, event: PlayerEvent): void {
     const socket = this.getClientSocket(to);
 
-    await new Promise<void>((resolve) => socket.send(event, resolve));
+    socket.send(event);
   }
 
   broadcast(game: Game, event: GameEvent): void {
