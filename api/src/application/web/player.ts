@@ -15,12 +15,12 @@ declare module 'express-session' {
 }
 
 class ChoiceDto {
-  @Expose()
-  text: string;
-
   constructor(values: Choice) {
     this.text = values.text;
   }
+
+  @Expose()
+  text: string;
 }
 
 class PlayerDto {
@@ -52,8 +52,7 @@ const formatPlayer = (player: Player) => {
 
 router.post('/', async (req, res, next) => {
   try {
-    const authenticate = Container.get(Authenticate);
-    const { player, created } = await authenticate.authenticate(req.body.nick);
+    const { player, created } = await Container.get(Authenticate).authenticate(req.body.nick);
 
     req.session.playerId = (player as any).id;
 

@@ -1,24 +1,22 @@
 import { expect } from 'chai';
 import request from 'supertest';
 
-import { Player } from '../../domain/entities/Player';
 import { createChoice, createGame, createPlayer } from '../../domain/tests/creators';
+import { auth, mockAuthenticate, mockQueryPlayer } from '../test';
 
 import { app } from './index';
-import { mockAuthenticate, mockQueryPlayer } from './test';
 
 describe('/api/player', () => {
-  const player: Player & { id?: number } = createPlayer({ nick: 'toto' });
-  player.id = 1;
+  const player = createPlayer({ id: 1, nick: 'toto' });
 
   beforeEach(() => {
-    mockAuthenticate(() => Promise.resolve({ player, created: false }));
-    mockQueryPlayer(() => Promise.resolve(player));
+    mockAuthenticate(async () => ({ player, created: false }));
+    mockQueryPlayer(async () => player);
   });
 
   describe('POST /api/player', () => {
     it('authenticates as a new player', async () => {
-      mockAuthenticate(() => Promise.resolve({ player, created: true }));
+      mockAuthenticate(async () => ({ player, created: true }));
 
       const { body } = await request(app).post('/api/player').send({ nick: player.nick }).expect(201);
 
@@ -33,24 +31,20 @@ describe('/api/player', () => {
   });
 
   describe('GET /api/player/me', () => {
-    const agent = request.agent(app);
-
-    beforeEach(async () => {
-      await agent.post('/api/player').send();
-    });
+    const asUser = auth(player);
 
     it('does not retrieve anything when the player is not authenticated', async () => {
       await request(app).get('/api/player/me').expect(401);
     });
 
     it('retrieves the player associated to a session', async () => {
-      const { body } = await agent.get('/api/player/me').expect(200);
+      const { body } = await asUser.get('/api/player/me').expect(200);
 
       expect(body).to.have.property('nick', player.nick);
     });
 
     it('formats a player who is not in game', async () => {
-      const { body } = await agent.get('/api/player/me').expect(200);
+      const { body } = await asUser.get('/api/player/me').expect(200);
 
       expect(body).to.eql({
         nick: player.nick,
@@ -61,13 +55,11 @@ describe('/api/player', () => {
       player.game = createGame();
       player.cards = [createChoice({ text: 'hello' })];
 
-      mockQueryPlayer(() => Promise.resolve(player));
-
-      const { body } = await agent.get('/api/player/me').expect(200);
+      const { body } = await asUser.get('/api/player/me').expect(200);
 
       expect(body).to.eql({
         nick: player.nick,
-        cards: [{ text: 'hello' }],
+        cards: [{ text: player.cards[0].text }],
       });
     });
   });

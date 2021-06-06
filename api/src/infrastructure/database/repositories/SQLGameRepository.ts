@@ -13,7 +13,7 @@ export class SQLGameRepository implements GameRepository {
     return this.repo.save(this.repo.create({ code }));
   }
 
-  async findOne(gameId: number): Promise<Game | undefined> {
+  async findById(gameId: number): Promise<Game | undefined> {
     return this.repo.findOne(gameId);
   }
 

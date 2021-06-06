@@ -17,13 +17,17 @@ export const providePlayerMiddleware: RequestHandler = async (req, res, next) =>
     return next();
   }
 
-  const player = await Container.get(QueryPlayer).queryPlayer(playerId);
+  try {
+    const player = await Container.get(QueryPlayer).queryPlayer(playerId);
 
-  if (!player) {
-    throw new Error('Invalid state: req.session.playerId does not reference an existing player id');
+    if (!player) {
+      throw new Error('Invalid state: req.session.playerId does not reference an existing player id');
+    }
+
+    req.player = player;
+
+    next();
+  } catch (error) {
+    next(error);
   }
-
-  req.player = player;
-
-  next();
 };

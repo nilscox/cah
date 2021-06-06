@@ -5,9 +5,10 @@ import { GameRepository, GameRepositoryToken } from '../interfaces/GameRepositor
 
 @Service()
 export class QueryGame {
-  constructor(@Inject(GameRepositoryToken) private readonly gameRepository: GameRepository) {}
+  @Inject(GameRepositoryToken)
+  private readonly gameRepository!: GameRepository;
 
   queryGame(gameId: number): Promise<Game | undefined> {
-    return this.gameRepository.findOne(gameId);
+    return this.gameRepository.findById(gameId);
   }
 }

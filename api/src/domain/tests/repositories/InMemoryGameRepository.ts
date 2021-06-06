@@ -5,7 +5,11 @@ import { GameRepository } from '../../interfaces/GameRepository';
 export class InMemoryGameRepository implements GameRepository {
   private games: Game[] = [];
 
-  async findOne(_gameId: number): Promise<Game | undefined> {
+  async createGame(_code: string): Promise<Game> {
+    throw new Error('Method not implemented.');
+  }
+
+  async findById(_gameId: number): Promise<Game | undefined> {
     return this.games[0];
   }
 

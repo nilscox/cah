@@ -5,7 +5,8 @@ import { PlayerRepository, PlayerRepositoryToken } from '../interfaces/PlayerRep
 
 @Service()
 export class QueryPlayer {
-  constructor(@Inject(PlayerRepositoryToken) private readonly playerRepository: PlayerRepository) {}
+  @Inject(PlayerRepositoryToken)
+  private readonly playerRepository!: PlayerRepository;
 
   queryPlayer(playerId: number): Promise<Player | undefined> {
     return this.playerRepository.findById(playerId);

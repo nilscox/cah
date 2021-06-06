@@ -25,7 +25,8 @@ export class NextTurn {
   private readonly gameService!: GameService;
 
   async nextTurn(game: Game) {
-    const { questionMaster, question, answers, winner } = this.gameService.ensurePlayState(game, PlayState.endOfTurn);
+    const { questionMaster, question, winner } = this.gameService.ensurePlayState(game, PlayState.endOfTurn);
+    const answers = await this.gameRepository.getAnswers(game);
 
     if (!winner) {
       throw new Error('Invalid state: winner should be defined');

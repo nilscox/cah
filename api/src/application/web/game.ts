@@ -22,21 +22,19 @@ router.param('gameId', async (req, res, next) => {
     return res.status(400).json({ error: 'expected gameId to be a positive number' });
   }
 
-  const queryGame = Container.get(QueryGame);
-
   try {
-    const game = await queryGame.queryGame(gameId);
+    const game = await Container.get(QueryGame).queryGame(gameId);
 
     if (!game) {
       return res.status(404).json({ error: `game with id ${gameId} was not found` });
     }
 
     req.game = game;
+
+    next();
   } catch (e) {
     return res.status(500).json({ error: e.message });
   }
-
-  next();
 });
 
 router.get('/:gameId', (req, res) => {
