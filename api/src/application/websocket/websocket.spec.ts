@@ -3,8 +3,9 @@ import sinon from 'sinon';
 import { io, Socket } from 'socket.io-client';
 
 import { GameState } from '../../domain/entities/Game';
+import { Turn } from '../../domain/entities/Turn';
 import { GameEvent, PlayerEvent } from '../../domain/interfaces/GameEvents';
-import { createChoice, createGame, createPlayer } from '../../domain/tests/creators';
+import { createAnswer, createChoice, createGame, createPlayer, createQuestion } from '../../domain/tests/creators';
 import { app, wsServer } from '../index';
 import { auth, mockCreateGame, mockJoinGame, mockQueryPlayer } from '../test';
 
@@ -71,12 +72,13 @@ describe('websocket', () => {
     });
 
     it('emits an event to a player', async () => {
-      const listener = sinon.fake((_: unknown, ack: () => void) => ack());
+      const listener = sinon.fake();
       socket.on('message', listener);
 
       const event: PlayerEvent = { type: 'CardsDealt' as const, cards: [createChoice()] };
 
-      await wsServer.emit(createGame(), player, event);
+      wsServer.emit(createGame(), player, event);
+      await new Promise((r) => setTimeout(r, 10));
 
       expect(listener.callCount).to.eql(1);
       expect(listener.firstCall.args[0]).to.eql(event);
@@ -99,6 +101,111 @@ describe('websocket', () => {
 
       expect(listener.callCount).to.eql(1);
       expect(listener.firstCall.args[0]).to.eql(event);
+    });
+  });
+
+  describe('events', () => {
+    const player = createPlayer({ id: 1 });
+    const asPlayer = auth(player, port);
+    let socket: Socket;
+    let event: unknown;
+
+    const game = createGame({ id: 1 });
+
+    beforeEach(() => {
+      socket = asPlayer.socket!;
+      wsServer.join(game, player);
+
+      event = undefined;
+      socket.on('message', (e) => {
+        event = e;
+      });
+    });
+
+    const expectEvent = async (expected: Record<string, unknown>) => {
+      while (!event) {
+        await new Promise((r) => setTimeout(r, 0));
+      }
+
+      expect(event).to.eql(expected);
+    };
+
+    it('broadcasts a PlayerJoined event', async () => {
+      const newPlayer = createPlayer({ nick: 'toto' });
+
+      wsServer.broadcast(game, { type: 'PlayerJoined', player: newPlayer });
+      await expectEvent({ type: 'PlayerJoined', player: { nick: newPlayer.nick } });
+    });
+
+    it('broadcasts a GameStarted event', async () => {
+      wsServer.broadcast(game, { type: 'GameStarted' });
+      await expectEvent({ type: 'GameStarted' });
+    });
+
+    it('broadcasts a TurnStarted event', async () => {
+      const question = createQuestion({ text: 'How are you?' });
+
+      wsServer.broadcast(game, { type: 'TurnStarted', question: question, questionMaster: player });
+      await expectEvent({
+        type: 'TurnStarted',
+        question: { text: question.text, neededChoices: question.neededChoices },
+        questionMaster: player.nick,
+      });
+    });
+
+    it('broadcasts a PlayerAnswered event', async () => {
+      wsServer.broadcast(game, { type: 'PlayerAnswered', player });
+      await expectEvent({ type: 'PlayerAnswered', player: player.nick });
+    });
+
+    it('broadcasts a AllPlayersAnswered event', async () => {
+      const choice = createChoice();
+      const answer = createAnswer({ player, choices: [choice] });
+
+      wsServer.broadcast(game, { type: 'AllPlayersAnswered', answers: [answer] });
+      await expectEvent({ type: 'AllPlayersAnswered', answers: [{ id: answer.id, choices: [{ text: choice.text }] }] });
+    });
+
+    it('broadcasts a WinnerSelected event', async () => {
+      const choice = createChoice();
+      const answer = createAnswer({ player, choices: [choice] });
+
+      wsServer.broadcast(game, { type: 'WinnerSelected', answers: [answer], winner: player });
+      await expectEvent({
+        type: 'WinnerSelected',
+        answers: [{ id: answer.id, choices: [{ text: choice.text }], player: player.nick }],
+        winner: player.nick,
+      });
+    });
+
+    it('broadcasts a TurnEnded event', async () => {
+      const question = createQuestion();
+      const choice = createChoice();
+      const answer = createAnswer({ player, choices: [choice] });
+
+      const turn: Turn = {
+        id: 1,
+        questionMaster: player,
+        answers: [answer],
+        question,
+        winner: player,
+      };
+
+      wsServer.broadcast(game, { type: 'TurnEnded', turn });
+      await expectEvent({
+        type: 'TurnEnded',
+        turn: {
+          questionMaster: player.nick,
+          question: { text: question.text, neededChoices: question.neededChoices },
+          answers: [{ id: answer.id, choices: [{ text: choice.text }], player: player.nick }],
+          winner: player.nick,
+        },
+      });
+    });
+
+    it('broadcasts a GameFinished event', async () => {
+      wsServer.broadcast(game, { type: 'GameFinished' });
+      await expectEvent({ type: 'GameFinished' });
     });
   });
 
@@ -129,7 +236,7 @@ describe('websocket', () => {
 
         expect(await emit('createGame', undefined)).to.eql({
           status: 'ok',
-          game: { code: game.code, players: [], state: GameState.idle },
+          game: { id: game.id, code: game.code, players: [], state: GameState.idle },
         });
 
         expect(createGameUseCase.callCount).to.eql(1);
@@ -137,12 +244,12 @@ describe('websocket', () => {
 
       it('returns an error when the player was not found', async () => {
         mockQueryPlayer(async () => undefined);
-        expect(await emit('createGame', undefined)).to.eql({ status: 'ko', error: 'player not found' });
+        expect(await emit('createGame', undefined)).to.shallowDeepEqual({ status: 'ko', error: 'player not found' });
       });
 
       it('returns an error when something wrong happens', async () => {
         mockCreateGame(throwError);
-        expect(await emit('createGame', undefined)).to.eql({ status: 'ko', error: errorMessage });
+        expect(await emit('createGame', undefined)).to.shallowDeepEqual({ status: 'ko', error: errorMessage });
       });
     });
 
@@ -167,13 +274,13 @@ describe('websocket', () => {
       });
 
       it('returns an error when the code is invalid or missing from the request', async () => {
-        expect(await emit('joinGame', { code: 'hello' })).to.eql({
+        expect(await emit('joinGame', { code: 'hello' })).to.shallowDeepEqual({
           status: 'ko',
           error: 'validation errors',
           validationErrors: { code: ['isLength'] },
         });
 
-        expect(await emit('joinGame', {})).to.eql({
+        expect(await emit('joinGame', {})).to.shallowDeepEqual({
           status: 'ko',
           error: 'validation errors',
           validationErrors: { code: ['isLength', 'isString'] },
@@ -182,7 +289,7 @@ describe('websocket', () => {
 
       it('returns an error when something wrong happens', async () => {
         mockJoinGame(throwError);
-        expect(await emit('joinGame', { code: 'ABCD' })).to.eql({ status: 'ko', error: errorMessage });
+        expect(await emit('joinGame', { code: 'ABCD' })).to.shallowDeepEqual({ status: 'ko', error: errorMessage });
       });
     });
   });

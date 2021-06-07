@@ -36,6 +36,7 @@ export class SQLGameRepository implements GameRepository {
       .createQueryBuilder('game')
       .leftJoinAndSelect('game.answers', 'answer')
       .leftJoinAndSelect('answer.player', 'player')
+      .leftJoinAndSelect('answer.choices', 'choices')
       .where({ id: game.id })
       .getOneOrFail();
 

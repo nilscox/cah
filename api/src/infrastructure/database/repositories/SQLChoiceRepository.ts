@@ -23,7 +23,7 @@ export const randomize = <T>(array: T[]) => {
 
 @EntityRepository(ChoiceEntity)
 export class SQLChoiceRepository extends Repository<ChoiceEntity> implements ChoiceRepository {
-  async createChoices(game: GameEntity, choices: Choice[]): Promise<void> {
+  async createChoices(game: GameEntity, choices: Omit<Choice, 'id'>[]): Promise<void> {
     await this.insert(choices.map((choice) => ({ ...choice, game })));
   }
 
@@ -33,7 +33,7 @@ export class SQLChoiceRepository extends Repository<ChoiceEntity> implements Cho
 
     randomize(choices);
 
-    return choices.slice(0, count).map((data: any) => Object.assign(new Choice(), data));
+    return choices.slice(0, count).map((data: unknown) => Object.assign(new Choice(), data));
   }
 
   async getAvailableChoices(game: GameEntity): Promise<ChoiceEntity[]> {

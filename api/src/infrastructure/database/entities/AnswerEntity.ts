@@ -13,10 +13,10 @@ export class AnswerEntity {
   @ManyToOne(() => GameEntity, (game) => game.answers)
   game?: GameEntity;
 
-  @ManyToOne(() => PlayerEntity, { nullable: false })
+  @ManyToOne(() => PlayerEntity, { nullable: false, eager: true })
   player!: PlayerEntity;
 
-  @OneToMany(() => ChoiceEntity, (choice) => choice.answer)
+  @OneToMany(() => ChoiceEntity, (choice) => choice.answer, { eager: true })
   choices!: ChoiceEntity[];
 
   @ManyToOne(() => TurnEntity)

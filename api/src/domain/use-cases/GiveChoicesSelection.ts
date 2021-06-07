@@ -1,6 +1,5 @@
 import { Inject, Service } from 'typedi';
 
-import { Choice } from '../entities/Choice';
 import { Game, PlayState } from '../entities/Game';
 import { Player } from '../entities/Player';
 import { AlreadyAnsweredError } from '../errors/AlreadyAnsweredError';
@@ -8,6 +7,7 @@ import { IncorrectNumberOfChoicesError } from '../errors/IncorrectNumberOfChoice
 import { InvalidChoicesSelectionError } from '../errors/InvalidChoicesSelectionError';
 import { IsQuestionMasterError } from '../errors/IsQuestionMasterError';
 import { AnswerRepository, AnswerRepositoryToken } from '../interfaces/AnswerRepository';
+import { ChoiceRepository, ChoiceRepositoryToken } from '../interfaces/ChoiceRepository';
 import { GameEvents, GameEventsToken } from '../interfaces/GameEvents';
 import { GameRepository, GameRepositoryToken } from '../interfaces/GameRepository';
 import { PlayerRepository, PlayerRepositoryToken } from '../interfaces/PlayerRepository';
@@ -22,6 +22,9 @@ export class GiveChoicesSelection {
   @Inject(GameRepositoryToken)
   private readonly gameRepository!: GameRepository;
 
+  @Inject(ChoiceRepositoryToken)
+  private readonly choiceRepository!: ChoiceRepository;
+
   @Inject(AnswerRepositoryToken)
   private readonly answerRepository!: AnswerRepository;
 
@@ -34,8 +37,9 @@ export class GiveChoicesSelection {
   @Inject()
   private readonly gameService!: GameService;
 
-  async giveChoicesSelection(game: Game, player: Player, selection: Choice[]) {
+  async giveChoicesSelection(game: Game, player: Player, choicesIds: number[]) {
     const { questionMaster, question } = this.gameService.ensurePlayState(game, PlayState.playersAnswer);
+    const selection = await this.choiceRepository.findByIds(choicesIds);
     let answers = await this.gameRepository.getAnswers(game);
 
     if (player.is(questionMaster)) {

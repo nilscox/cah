@@ -9,43 +9,43 @@ import { Turn } from '../entities/Turn';
 
 export const GameEventsToken = new Token('GameEvents');
 
-type PlayerJoined = {
+export type PlayerJoined = {
   type: 'PlayerJoined';
   player: Player;
 };
 
-type GameStarted = {
+export type GameStarted = {
   type: 'GameStarted';
 };
 
-type TurnStarted = {
+export type TurnStarted = {
   type: 'TurnStarted';
   questionMaster: Player;
   question: Question;
 };
 
-type PlayerAnswered = {
+export type PlayerAnswered = {
   type: 'PlayerAnswered';
   player: Player;
 };
 
-type AllPlayersAnswered = {
+export type AllPlayersAnswered = {
   type: 'AllPlayersAnswered';
   answers: Answer[];
 };
 
-type WinnerSelected = {
+export type WinnerSelected = {
   type: 'WinnerSelected';
   answers: Answer[];
   winner: Player;
 };
 
-type TurnEnded = {
+export type TurnEnded = {
   type: 'TurnEnded';
   turn: Turn;
 };
 
-type GameFinished = {
+export type GameFinished = {
   type: 'GameFinished';
 };
 

@@ -1,4 +1,5 @@
-import { IsString, Length, validate, ValidationError } from 'class-validator';
+import { classToPlain } from 'class-transformer';
+import { IsInt, IsNotEmpty, IsPositive, IsString, Length, validate, ValidationError } from 'class-validator';
 import { SessionData } from 'express-session';
 import sharedSession from 'express-socket.io-session';
 import { Server } from 'http';
@@ -9,9 +10,19 @@ import { Game } from '../../domain/entities/Game';
 import { Player } from '../../domain/entities/Player';
 import { GameEvent, GameEvents, PlayerEvent } from '../../domain/interfaces/GameEvents';
 import { CreateGame } from '../../domain/use-cases/CreateGame';
+import { GiveChoicesSelection } from '../../domain/use-cases/GiveChoicesSelection';
 import { JoinGame } from '../../domain/use-cases/JoinGame';
+import { PickWinningAnswer } from '../../domain/use-cases/PickWinningAnswer';
 import { QueryPlayer } from '../../domain/use-cases/QueryPlayer';
 import { StartGame } from '../../domain/use-cases/StartGame';
+import { AllPlayersAnsweredDto } from '../dtos/events/AllPlayersAnsweredDto';
+import { GameFinishedDto } from '../dtos/events/GameFinishedDto';
+import { GameStartedDto } from '../dtos/events/GameStartedDto';
+import { PlayerAnsweredDto } from '../dtos/events/PlayerAnsweredDto';
+import { PlayerJoinedDto } from '../dtos/events/PlayerJoinedDto';
+import { TurnEndedDto } from '../dtos/events/TurnEndedDto';
+import { TurnStartedDto } from '../dtos/events/TurnStartedDto';
+import { WinnerSelectedDto } from '../dtos/events/WinnerSelectedDto';
 import { session } from '../web';
 
 class ValidationErrors extends Error {
@@ -40,12 +51,12 @@ const handleEvent = <Payload, Result>(
         throw new Error('player not found');
       }
 
-      let data = undefined;
+      let data: Payload | undefined = undefined;
 
       if (Dto) {
         data = Object.assign(new Dto(), payload);
 
-        const errors = await validate(Object.assign(new JoinGameDto(), payload));
+        const errors = await validate(data as any);
 
         if (errors.length > 0) {
           throw new ValidationErrors(errors);
@@ -54,12 +65,12 @@ const handleEvent = <Payload, Result>(
 
       const result = await handler(data as Payload, player);
 
-      cb({ status: 'ok', ...result });
+      cb({ status: 'ok', ...classToPlain(result) });
     } catch (error) {
       if (error instanceof ValidationErrors) {
-        cb({ status: 'ko', error: error.message, validationErrors: error.getErrors() });
+        cb({ status: 'ko', error: error.message, validationErrors: error.getErrors(), stack: error.stack });
       } else {
-        cb({ status: 'ko', error: error.message });
+        cb({ status: 'ko', error: error.message, stack: error.stack });
       }
     }
   };
@@ -70,6 +81,29 @@ class JoinGameDto {
   @Length(4, 4)
   code!: string;
 }
+
+class GiveChoicesSelectionDto {
+  @IsInt({ each: true })
+  @IsNotEmpty()
+  choicesIds!: number[];
+}
+
+class PickWinningAnswerDto {
+  @IsInt()
+  @IsPositive()
+  answerId!: number;
+}
+
+const gameEventDtos = {
+  PlayerJoined: PlayerJoinedDto,
+  GameStarted: GameStartedDto,
+  TurnStarted: TurnStartedDto,
+  PlayerAnswered: PlayerAnsweredDto,
+  AllPlayersAnswered: AllPlayersAnsweredDto,
+  WinnerSelected: WinnerSelectedDto,
+  TurnEnded: TurnEndedDto,
+  GameFinished: GameFinishedDto,
+};
 
 export class WebsocketServer implements GameEvents {
   private io: SocketIOServer;
@@ -124,6 +158,28 @@ export class WebsocketServer implements GameEvents {
         await Container.get(StartGame).startGame(player.game, player, 4);
       }),
     );
+
+    socket.on(
+      'giveChoicesSelection',
+      handleEvent(socket, GiveChoicesSelectionDto, async ({ choicesIds }, player) => {
+        if (!player.game) {
+          throw new Error('player is not in game');
+        }
+
+        await Container.get(GiveChoicesSelection).giveChoicesSelection(player.game, player, choicesIds);
+      }),
+    );
+
+    socket.on(
+      'pickWinningAnswer',
+      handleEvent(socket, PickWinningAnswerDto, async ({ answerId }, player) => {
+        if (!player.game) {
+          throw new Error('player is not in game');
+        }
+
+        await Container.get(PickWinningAnswer).pickWinningAnswer(player.game, player, answerId);
+      }),
+    );
   }
 
   onSocketDisconnected(socket: Socket) {
@@ -153,7 +209,10 @@ export class WebsocketServer implements GameEvents {
   }
 
   broadcast(game: Game, event: GameEvent): void {
-    this.io.to(this.gameRoomName(game)).emit('message', event);
+    const Dto = gameEventDtos[event.type];
+    const message = classToPlain(new Dto(event as any), { strategy: 'excludeAll' });
+
+    this.io.to(this.gameRoomName(game)).emit('message', message);
   }
 
   private gameRoomName(game: Game): string {

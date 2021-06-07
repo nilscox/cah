@@ -1,4 +1,6 @@
 export class Question {
+  id!: number;
+
   text!: string;
   blanks?: number[];
 

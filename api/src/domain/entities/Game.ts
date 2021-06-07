@@ -19,7 +19,7 @@ export enum PlayState {
 export class Game {
   static readonly cardsPerPlayer = 11;
 
-  id?: number;
+  id!: number;
 
   code!: string;
   state!: GameState;

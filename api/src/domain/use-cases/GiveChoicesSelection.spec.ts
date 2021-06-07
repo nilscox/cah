@@ -48,12 +48,16 @@ describe('GiveChoicesSelection', () => {
     useCase = Container.get(GiveChoicesSelection);
   });
 
+  const getIds = <T extends { id: number }>(item: T[]): number[] => {
+    return item.map(({ id }) => id);
+  };
+
   it('validates a single choice for the current turn', async () => {
     const game = createStartedGame();
     const [player] = game.playersExcludingQM;
     const selection = [player.cards[0]];
 
-    await useCase.giveChoicesSelection(game, player, selection);
+    await useCase.giveChoicesSelection(game, player, getIds(selection));
 
     expect(player.cards).to.have.length(10);
     expect(player.cards).not.to.contain(selection);
@@ -72,14 +76,14 @@ describe('GiveChoicesSelection', () => {
 
     game.question = createQuestion({ blanks: [1, 2, 3] });
 
-    await useCase.giveChoicesSelection(game, player, selection);
+    await useCase.giveChoicesSelection(game, player, getIds(selection));
 
     expect(player.cards).to.have.length(8);
     expect(player.cards).not.to.contain(selection);
 
     expect(game.answers).to.have.length(1);
     expect(game.answers?.[0].player).to.eql(player);
-    expect(game.answers?.[0].choices).to.eql(selection);
+    expect(game.answers?.[0].choices).to.have.members(selection);
   });
 
   it('enters in question master selection play state when the last player answered', async () => {
@@ -89,7 +93,7 @@ describe('GiveChoicesSelection', () => {
     for (const player of players) {
       expect(game.playState).to.eql(PlayState.playersAnswer);
 
-      await useCase.giveChoicesSelection(game, player, [player.cards[0]]);
+      await useCase.giveChoicesSelection(game, player, [player.cards[0].id]);
     }
 
     expect(game.playState).to.eql(PlayState.questionMasterSelection);
@@ -108,7 +112,7 @@ describe('GiveChoicesSelection', () => {
       const game = createStartedGame({ playState });
       const [player] = game.players;
 
-      const err = await expect(useCase.giveChoicesSelection(game, player, [player.cards[0]])).to.be.rejectedWith(
+      const err = await expect(useCase.giveChoicesSelection(game, player, [player.cards[0].id])).to.be.rejectedWith(
         InvalidPlayStateError,
       );
 
@@ -121,7 +125,7 @@ describe('GiveChoicesSelection', () => {
     const questionMaster = game.questionMaster!;
     const selection = [questionMaster.cards[0]];
 
-    await expect(useCase.giveChoicesSelection(game, questionMaster, selection)).to.be.rejectedWith(
+    await expect(useCase.giveChoicesSelection(game, questionMaster, getIds(selection))).to.be.rejectedWith(
       IsQuestionMasterError,
     );
   });
@@ -132,7 +136,7 @@ describe('GiveChoicesSelection', () => {
     const selection1 = [player.cards[0]];
     const selection2 = [player.cards[1]];
 
-    await useCase.giveChoicesSelection(game, player, selection1);
+    await useCase.giveChoicesSelection(game, player, getIds(selection1));
 
     await expect(useCase.giveChoicesSelection(game, player, selection2)).to.be.rejectedWith(AlreadyAnsweredError);
   });
@@ -142,7 +146,7 @@ describe('GiveChoicesSelection', () => {
     const [player1, player2] = game.playersExcludingQM;
     const selection = [player1.cards[0], player2.cards[0]];
 
-    await expect(useCase.giveChoicesSelection(game, player2, selection)).to.be.rejectedWith(
+    await expect(useCase.giveChoicesSelection(game, player2, getIds(selection))).to.be.rejectedWith(
       InvalidChoicesSelectionError,
     );
   });
@@ -154,7 +158,7 @@ describe('GiveChoicesSelection', () => {
     game.question = createQuestion({ blanks: [1, 2] });
 
     for (const selection of [[], [player.cards[0]], player.cards]) {
-      await expect(useCase.giveChoicesSelection(game, player, selection)).to.be.rejectedWith(
+      await expect(useCase.giveChoicesSelection(game, player, getIds(selection))).to.be.rejectedWith(
         IncorrectNumberOfChoicesError,
       );
     }
