@@ -1,9 +1,9 @@
 import http from 'http';
 
-import { app } from './web';
-import { WebsocketServer } from './websocket';
+import { app, session } from './web';
+import { WebsocketGameEvents } from './websocket';
 
 const server = http.createServer(app);
-const wsServer = new WebsocketServer(server);
+const wsGameEvents = new WebsocketGameEvents(server, session);
 
-export { server as app, wsServer };
+export { server as app, wsGameEvents };

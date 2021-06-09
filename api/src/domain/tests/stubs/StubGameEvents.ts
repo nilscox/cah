@@ -11,15 +11,15 @@ export class StubGameEvents implements GameEvents {
     this.gameEvents.clear();
   }
 
-  emit(_game: Game, to: Player, event: PlayerEvent): void {
-    if (!this.playerEvents.has(to)) {
-      this.playerEvents.set(to, []);
+  onPlayerEvent(player: Player, event: PlayerEvent): void {
+    if (!this.playerEvents.has(player)) {
+      this.playerEvents.set(player, []);
     }
 
-    this.playerEvents.get(to)!.push(event);
+    this.playerEvents.get(player)!.push(event);
   }
 
-  broadcast(game: Game, event: GameEvent): void {
+  onGameEvent(game: Game, event: GameEvent): void {
     if (!this.gameEvents.has(game)) {
       this.gameEvents.set(game, []);
     }

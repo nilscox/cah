@@ -42,6 +42,6 @@ export class PickWinningAnswer {
 
     await this.gameRepository.save(game);
 
-    this.gameEvents.broadcast(game, { type: 'WinnerSelected', answers, winner: game.winner });
+    this.gameEvents.onGameEvent(game, { type: 'WinnerSelected', answers, winner: game.winner });
   }
 }

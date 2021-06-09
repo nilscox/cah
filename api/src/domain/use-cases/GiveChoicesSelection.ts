@@ -74,10 +74,10 @@ export class GiveChoicesSelection {
 
     await this.gameRepository.save(game);
 
-    this.gameEvents.broadcast(game, { type: 'PlayerAnswered', player });
+    this.gameEvents.onGameEvent(game, { type: 'PlayerAnswered', player });
 
     if (allPlayersAnswered) {
-      this.gameEvents.broadcast(game, { type: 'AllPlayersAnswered', answers });
+      this.gameEvents.onGameEvent(game, { type: 'AllPlayersAnswered', answers });
     }
   }
 }

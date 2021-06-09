@@ -22,7 +22,7 @@ export class JoinGame {
 
     await this.gameRepository.addPlayer(game, player);
 
-    this.gameEvents.broadcast(game, { type: 'PlayerJoined', player });
+    this.gameEvents.onGameEvent(game, { type: 'PlayerJoined', player });
 
     return game;
   }

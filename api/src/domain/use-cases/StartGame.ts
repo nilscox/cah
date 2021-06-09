@@ -57,8 +57,8 @@ export class StartGame {
 
     await this.gameService.dealCards(game);
 
-    this.gameEvents.broadcast(game, { type: 'GameStarted' });
-    this.gameEvents.broadcast(game, { type: 'TurnStarted', questionMaster, question: firstQuestion });
+    this.gameEvents.onGameEvent(game, { type: 'GameStarted' });
+    this.gameEvents.onGameEvent(game, { type: 'TurnStarted', questionMaster, question: firstQuestion });
   }
 
   private computeNeededChoicesCount(playersCount: number, questions: Question[]) {

@@ -1,9 +1,8 @@
 import { classToPlain } from 'class-transformer';
-import { IsInt, IsNotEmpty, IsPositive, IsString, Length, validate, ValidationError } from 'class-validator';
+import { RequestHandler } from 'express';
 import { SessionData } from 'express-session';
-import sharedSession from 'express-socket.io-session';
 import { Server } from 'http';
-import { Server as SocketIOServer, Socket } from 'socket.io';
+import { Socket } from 'socket.io';
 import Container from 'typedi';
 
 import { Game } from '../../domain/entities/Game';
@@ -23,76 +22,11 @@ import { PlayerJoinedDto } from '../dtos/events/PlayerJoinedDto';
 import { TurnEndedDto } from '../dtos/events/TurnEndedDto';
 import { TurnStartedDto } from '../dtos/events/TurnStartedDto';
 import { WinnerSelectedDto } from '../dtos/events/WinnerSelectedDto';
-import { session } from '../web';
+import { GiveChoicesSelectionDto } from '../dtos/inputs/GiveChoicesSelectionDto';
+import { JoinGameDto } from '../dtos/inputs/JoinGameDto';
+import { PickWinningAnswerDto } from '../dtos/inputs/PickWinningAnswer';
 
-class ValidationErrors extends Error {
-  constructor(public errors: ValidationError[]) {
-    super('validation errors');
-    Object.setPrototypeOf(this, ValidationErrors.prototype);
-  }
-
-  getErrors() {
-    return this.errors.reduce((obj, error) => ({ ...obj, [error.property]: Object.keys(error.constraints ?? {}) }), {});
-  }
-}
-
-const handleEvent = <Payload, Result>(
-  socket: Socket,
-  Dto: { new (): Payload } | undefined,
-  handler: (payload: Payload, player: Player) => Promise<Result>,
-) => {
-  return async (payload: unknown, cb: (...args: unknown[]) => void) => {
-    const { playerId }: SessionData = (socket.handshake as any).session;
-
-    try {
-      const player = await Container.get(QueryPlayer).queryPlayer(playerId);
-
-      if (!player) {
-        throw new Error('player not found');
-      }
-
-      let data: Payload | undefined = undefined;
-
-      if (Dto) {
-        data = Object.assign(new Dto(), payload);
-
-        const errors = await validate(data as any);
-
-        if (errors.length > 0) {
-          throw new ValidationErrors(errors);
-        }
-      }
-
-      const result = await handler(data as Payload, player);
-
-      cb({ status: 'ok', ...classToPlain(result) });
-    } catch (error) {
-      if (error instanceof ValidationErrors) {
-        cb({ status: 'ko', error: error.message, validationErrors: error.getErrors(), stack: error.stack });
-      } else {
-        cb({ status: 'ko', error: error.message, stack: error.stack });
-      }
-    }
-  };
-};
-
-class JoinGameDto {
-  @IsString()
-  @Length(4, 4)
-  code!: string;
-}
-
-class GiveChoicesSelectionDto {
-  @IsInt({ each: true })
-  @IsNotEmpty()
-  choicesIds!: number[];
-}
-
-class PickWinningAnswerDto {
-  @IsInt()
-  @IsPositive()
-  answerId!: number;
-}
+import { WebsocketServer } from './WebsocketServer';
 
 const gameEventDtos = {
   PlayerJoined: PlayerJoinedDto,
@@ -105,18 +39,22 @@ const gameEventDtos = {
   GameFinished: GameFinishedDto,
 };
 
-export class WebsocketServer implements GameEvents {
-  private io: SocketIOServer;
+export class WebsocketGameEvents extends WebsocketServer implements GameEvents {
   private sockets: Map<number, Socket> = new Map();
 
-  constructor(server: Server) {
-    this.io = new SocketIOServer(server);
+  constructor(server: Server, session: RequestHandler) {
+    super(server, session);
 
-    this.io.use(sharedSession(session));
-    this.io.on('connection', (socket) => this.onSocketConnected(socket));
+    this.registerEventHandler('createGame', this.onCreateGame.bind(this));
+    this.registerEventHandler('joinGame', JoinGameDto, this.onJoinGame.bind(this));
+    this.registerEventHandler('startGame', this.onStartGame.bind(this));
+    this.registerEventHandler('giveChoicesSelection', GiveChoicesSelectionDto, this.onGiveChoicesSelection.bind(this));
+    this.registerEventHandler('pickWinningAnswer', PickWinningAnswerDto, this.onPickWinningAnswer.bind(this));
   }
 
   onSocketConnected(socket: Socket) {
+    super.onSocketConnected(socket);
+
     const playerId = this.getPlayerId(socket);
 
     if (!playerId) {
@@ -128,72 +66,16 @@ export class WebsocketServer implements GameEvents {
     }
 
     this.sockets.set(playerId, socket);
-
-    socket.on('disconnect', () => this.onSocketDisconnected(socket));
-
-    socket.on(
-      'createGame',
-      handleEvent(socket, undefined, async () => {
-        const game = await Container.get(CreateGame).createGame();
-        return { game };
-      }),
-    );
-
-    socket.on(
-      'joinGame',
-      handleEvent(socket, JoinGameDto, async (payload, player) => {
-        const game = await Container.get(JoinGame).joinGame(payload.code, player);
-
-        this.join(game, player);
-      }),
-    );
-
-    socket.on(
-      'startGame',
-      handleEvent(socket, undefined, async (_payload, player) => {
-        if (!player.game) {
-          throw new Error('player is not in game');
-        }
-
-        await Container.get(StartGame).startGame(player.game, player, 4);
-      }),
-    );
-
-    socket.on(
-      'giveChoicesSelection',
-      handleEvent(socket, GiveChoicesSelectionDto, async ({ choicesIds }, player) => {
-        if (!player.game) {
-          throw new Error('player is not in game');
-        }
-
-        await Container.get(GiveChoicesSelection).giveChoicesSelection(player.game, player, choicesIds);
-      }),
-    );
-
-    socket.on(
-      'pickWinningAnswer',
-      handleEvent(socket, PickWinningAnswerDto, async ({ answerId }, player) => {
-        if (!player.game) {
-          throw new Error('player is not in game');
-        }
-
-        await Container.get(PickWinningAnswer).pickWinningAnswer(player.game, player, answerId);
-      }),
-    );
   }
 
   onSocketDisconnected(socket: Socket) {
+    super.onSocketDisconnected(socket);
+
     const playerId = this.getPlayerId(socket);
 
     if (playerId) {
       this.sockets.delete(playerId);
     }
-  }
-
-  getPlayerId(socket: Socket): number | undefined {
-    const { playerId }: SessionData = (socket.handshake as any).session;
-
-    return playerId;
   }
 
   join(game: Game, player: Player) {
@@ -202,17 +84,97 @@ export class WebsocketServer implements GameEvents {
     socket.join(this.gameRoomName(game));
   }
 
-  emit(game: Game, to: Player, event: PlayerEvent): void {
-    const socket = this.getClientSocket(to);
+  onPlayerEvent(player: Player, event: PlayerEvent): void {
+    const socket = this.getClientSocket(player);
 
     socket.send(event);
   }
 
-  broadcast(game: Game, event: GameEvent): void {
+  onGameEvent(game: Game, event: GameEvent) {
     const Dto = gameEventDtos[event.type];
-    const message = classToPlain(new Dto(event as any), { strategy: 'excludeAll' });
+    const message = classToPlain(new Dto(event as any));
 
-    this.io.to(this.gameRoomName(game)).emit('message', message);
+    this.broadcast(this.gameRoomName(game), message);
+  }
+
+  async onCreateGame(socket: Socket) {
+    const player = await this.getPlayer(socket);
+
+    if (!player) {
+      throw new Error('player not found');
+    }
+
+    const game = await Container.get(CreateGame).createGame();
+
+    return { game };
+  }
+
+  async onJoinGame(socket: Socket, payload: JoinGameDto) {
+    const player = await this.getPlayer(socket);
+
+    if (!player) {
+      throw new Error('player not found');
+    }
+
+    const game = await Container.get(JoinGame).joinGame(payload.code, player);
+
+    this.join(game, player);
+  }
+
+  async onStartGame(socket: Socket) {
+    const player = await this.getPlayer(socket);
+
+    if (!player) {
+      throw new Error('player not found');
+    }
+
+    if (!player.game) {
+      throw new Error('player is not in game');
+    }
+
+    await Container.get(StartGame).startGame(player.game, player, 4);
+  }
+
+  async onGiveChoicesSelection(socket: Socket, { choicesIds }: GiveChoicesSelectionDto) {
+    const player = await this.getPlayer(socket);
+
+    if (!player) {
+      throw new Error('player not found');
+    }
+
+    if (!player.game) {
+      throw new Error('player is not in game');
+    }
+
+    await Container.get(GiveChoicesSelection).giveChoicesSelection(player.game, player, choicesIds);
+  }
+
+  async onPickWinningAnswer(socket: Socket, { answerId }: PickWinningAnswerDto) {
+    const player = await this.getPlayer(socket);
+
+    if (!player) {
+      throw new Error('player not found');
+    }
+
+    if (!player.game) {
+      throw new Error('player is not in game');
+    }
+
+    await Container.get(PickWinningAnswer).pickWinningAnswer(player.game, player, answerId);
+  }
+
+  private getPlayerId(socket: Socket): number | undefined {
+    const { playerId }: SessionData = (socket.handshake as any).session;
+
+    return playerId;
+  }
+
+  private async getPlayer(socket: Socket): Promise<Player | undefined> {
+    const playerId = this.getPlayerId(socket);
+
+    if (playerId) {
+      return Container.get(QueryPlayer).queryPlayer(playerId);
+    }
   }
 
   private gameRoomName(game: Game): string {

@@ -2,9 +2,9 @@ import { expect } from 'chai';
 import { io, Socket } from 'socket.io-client';
 import request from 'supertest';
 import { Container } from 'typedi';
-import { getCustomRepository, useContainer } from 'typeorm';
+import { getCustomRepository } from 'typeorm';
 
-import { app, wsServer } from './application';
+import { app, wsGameEvents } from './application';
 import { Choice } from './domain/entities/Choice';
 import { AnswerRepositoryToken } from './domain/interfaces/AnswerRepository';
 import { ChoiceRepositoryToken } from './domain/interfaces/ChoiceRepository';
@@ -194,7 +194,7 @@ describe('end-to-end', () => {
 
     randomService = new StubRandomService();
 
-    Container.set(GameEventsToken, wsServer);
+    Container.set(GameEventsToken, wsGameEvents);
     Container.set(RandomServiceToken, randomService);
   });
 

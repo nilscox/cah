@@ -34,7 +34,7 @@ export class NextTurn {
 
     const turn = await this.turnRepository.createTurn(game, questionMaster, question, answers, winner);
 
-    await this.gameEvents.broadcast(game, { type: 'TurnEnded', turn });
+    await this.gameEvents.onGameEvent(game, { type: 'TurnEnded', turn });
 
     const nextQuestion = await this.questionRepository.getNextAvailableQuestion(game);
 
@@ -46,7 +46,7 @@ export class NextTurn {
       game.answers = [];
       game.winner = undefined;
 
-      this.gameEvents.broadcast(game, {
+      this.gameEvents.onGameEvent(game, {
         type: 'GameFinished',
       });
     } else {
@@ -58,7 +58,7 @@ export class NextTurn {
 
       await this.gameService.dealCards(game);
 
-      this.gameEvents.broadcast(game, {
+      this.gameEvents.onGameEvent(game, {
         type: 'TurnStarted',
         questionMaster: game.questionMaster,
         question: game.question,

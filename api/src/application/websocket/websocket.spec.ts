@@ -6,7 +6,7 @@ import { GameState } from '../../domain/entities/Game';
 import { Turn } from '../../domain/entities/Turn';
 import { GameEvent, PlayerEvent } from '../../domain/interfaces/GameEvents';
 import { createAnswer, createChoice, createGame, createPlayer, createQuestion } from '../../domain/tests/creators';
-import { app, wsServer } from '../index';
+import { app, wsGameEvents } from '../index';
 import { auth, mockCreateGame, mockJoinGame, mockQueryPlayer } from '../test';
 
 describe('websocket', () => {
@@ -77,24 +77,24 @@ describe('websocket', () => {
 
       const event: PlayerEvent = { type: 'CardsDealt' as const, cards: [createChoice()] };
 
-      wsServer.emit(createGame(), player, event);
+      wsGameEvents.onPlayerEvent(player, event);
       await new Promise((r) => setTimeout(r, 10));
 
       expect(listener.callCount).to.eql(1);
       expect(listener.firstCall.args[0]).to.eql(event);
     });
 
-    it('broadcasts an event to all players in a game', async () => {
+    it('handles an event to all players in a game', async () => {
       const game = createGame();
 
-      wsServer.join(game, player);
+      wsGameEvents.join(game, player);
 
       const listener = sinon.fake();
       socket.on('message', listener);
 
       const event: GameEvent = { type: 'GameStarted' as const };
 
-      wsServer.broadcast(game, event);
+      wsGameEvents.onGameEvent(game, event);
 
       // ack are not supported
       await new Promise((r) => setTimeout(r, 10));
@@ -114,7 +114,7 @@ describe('websocket', () => {
 
     beforeEach(() => {
       socket = asPlayer.socket!;
-      wsServer.join(game, player);
+      wsGameEvents.join(game, player);
 
       event = undefined;
       socket.on('message', (e) => {
@@ -130,22 +130,22 @@ describe('websocket', () => {
       expect(event).to.eql(expected);
     };
 
-    it('broadcasts a PlayerJoined event', async () => {
+    it('handles a PlayerJoined event', async () => {
       const newPlayer = createPlayer({ nick: 'toto' });
 
-      wsServer.broadcast(game, { type: 'PlayerJoined', player: newPlayer });
+      wsGameEvents.onGameEvent(game, { type: 'PlayerJoined', player: newPlayer });
       await expectEvent({ type: 'PlayerJoined', player: { nick: newPlayer.nick } });
     });
 
-    it('broadcasts a GameStarted event', async () => {
-      wsServer.broadcast(game, { type: 'GameStarted' });
+    it('handles a GameStarted event', async () => {
+      wsGameEvents.onGameEvent(game, { type: 'GameStarted' });
       await expectEvent({ type: 'GameStarted' });
     });
 
-    it('broadcasts a TurnStarted event', async () => {
+    it('handles a TurnStarted event', async () => {
       const question = createQuestion({ text: 'How are you?' });
 
-      wsServer.broadcast(game, { type: 'TurnStarted', question: question, questionMaster: player });
+      wsGameEvents.onGameEvent(game, { type: 'TurnStarted', question: question, questionMaster: player });
       await expectEvent({
         type: 'TurnStarted',
         question: { text: question.text, neededChoices: question.neededChoices },
@@ -153,24 +153,24 @@ describe('websocket', () => {
       });
     });
 
-    it('broadcasts a PlayerAnswered event', async () => {
-      wsServer.broadcast(game, { type: 'PlayerAnswered', player });
+    it('handles a PlayerAnswered event', async () => {
+      wsGameEvents.onGameEvent(game, { type: 'PlayerAnswered', player });
       await expectEvent({ type: 'PlayerAnswered', player: player.nick });
     });
 
-    it('broadcasts a AllPlayersAnswered event', async () => {
+    it('handles a AllPlayersAnswered event', async () => {
       const choice = createChoice();
       const answer = createAnswer({ player, choices: [choice] });
 
-      wsServer.broadcast(game, { type: 'AllPlayersAnswered', answers: [answer] });
+      wsGameEvents.onGameEvent(game, { type: 'AllPlayersAnswered', answers: [answer] });
       await expectEvent({ type: 'AllPlayersAnswered', answers: [{ id: answer.id, choices: [{ text: choice.text }] }] });
     });
 
-    it('broadcasts a WinnerSelected event', async () => {
+    it('handles a WinnerSelected event', async () => {
       const choice = createChoice();
       const answer = createAnswer({ player, choices: [choice] });
 
-      wsServer.broadcast(game, { type: 'WinnerSelected', answers: [answer], winner: player });
+      wsGameEvents.onGameEvent(game, { type: 'WinnerSelected', answers: [answer], winner: player });
       await expectEvent({
         type: 'WinnerSelected',
         answers: [{ id: answer.id, choices: [{ text: choice.text }], player: player.nick }],
@@ -178,7 +178,7 @@ describe('websocket', () => {
       });
     });
 
-    it('broadcasts a TurnEnded event', async () => {
+    it('handles a TurnEnded event', async () => {
       const question = createQuestion();
       const choice = createChoice();
       const answer = createAnswer({ player, choices: [choice] });
@@ -191,7 +191,7 @@ describe('websocket', () => {
         winner: player,
       };
 
-      wsServer.broadcast(game, { type: 'TurnEnded', turn });
+      wsGameEvents.onGameEvent(game, { type: 'TurnEnded', turn });
       await expectEvent({
         type: 'TurnEnded',
         turn: {
@@ -203,8 +203,8 @@ describe('websocket', () => {
       });
     });
 
-    it('broadcasts a GameFinished event', async () => {
-      wsServer.broadcast(game, { type: 'GameFinished' });
+    it('handles a GameFinished event', async () => {
+      wsGameEvents.onGameEvent(game, { type: 'GameFinished' });
       await expectEvent({ type: 'GameFinished' });
     });
   });
@@ -255,7 +255,7 @@ describe('websocket', () => {
 
     describe('joinGame', () => {
       it('joins a game', async () => {
-        const spyJoin = sinon.spy(wsServer, 'join');
+        const spyJoin = sinon.spy(wsGameEvents, 'join');
 
         const game = createGame();
         const joinGame = sinon.fake.returns(game);
