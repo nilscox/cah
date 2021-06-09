@@ -11,6 +11,7 @@ import { GameEvent, GameEvents, PlayerEvent } from '../../domain/interfaces/Game
 import { CreateGame } from '../../domain/use-cases/CreateGame';
 import { GiveChoicesSelection } from '../../domain/use-cases/GiveChoicesSelection';
 import { JoinGame } from '../../domain/use-cases/JoinGame';
+import { NextTurn } from '../../domain/use-cases/NextTurn';
 import { PickWinningAnswer } from '../../domain/use-cases/PickWinningAnswer';
 import { QueryPlayer } from '../../domain/use-cases/QueryPlayer';
 import { StartGame } from '../../domain/use-cases/StartGame';
@@ -50,6 +51,7 @@ export class WebsocketGameEvents extends WebsocketServer implements GameEvents {
     this.registerEventHandler('startGame', this.onStartGame.bind(this));
     this.registerEventHandler('giveChoicesSelection', GiveChoicesSelectionDto, this.onGiveChoicesSelection.bind(this));
     this.registerEventHandler('pickWinningAnswer', PickWinningAnswerDto, this.onPickWinningAnswer.bind(this));
+    this.registerEventHandler('nextTurn', this.onNextTurn.bind(this));
   }
 
   onSocketConnected(socket: Socket) {
@@ -161,6 +163,20 @@ export class WebsocketGameEvents extends WebsocketServer implements GameEvents {
     }
 
     await Container.get(PickWinningAnswer).pickWinningAnswer(player.game, player, answerId);
+  }
+
+  async onNextTurn(socket: Socket) {
+    const player = await this.getPlayer(socket);
+
+    if (!player) {
+      throw new Error('player not found');
+    }
+
+    if (!player.game) {
+      throw new Error('player is not in game');
+    }
+
+    await Container.get(NextTurn).nextTurn(player.game);
   }
 
   private getPlayerId(socket: Socket): number | undefined {

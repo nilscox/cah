@@ -105,6 +105,11 @@ class StubPlayer {
         this.playState = 'playersAnswer';
         break;
 
+      case 'GameFinished':
+        this.gameState = 'finished';
+        this.playState = undefined;
+        break;
+
       case 'TurnStarted':
         this.questionMaster = event.questionMaster;
         this.question = event.question;
@@ -161,9 +166,15 @@ class StubPlayer {
       answerId: this.answers[answerIndex].id,
     });
   }
+
+  async endCurrentTurn() {
+    await this.emit('nextTurn', { coucou: 42 });
+  }
 }
 
-describe('end-to-end', () => {
+describe('end-to-end', function () {
+  this.timeout(100000);
+
   createTestDatabase();
 
   let gameRepository: SQLGameRepository;
@@ -222,7 +233,7 @@ describe('end-to-end', () => {
     await jeanne.authenticate();
   });
 
-  it('plays a full game', async () => {
+  it.skip('plays a full game', async () => {
     const data = await nils.emit<{ game: { id: number; code: string } }>('createGame');
 
     await nils.joinGame(data.game.code);
@@ -260,12 +271,23 @@ describe('end-to-end', () => {
 
     await expectEqualGameState();
 
-    for (const player of playersExcludingQM()) {
-      await player.giveRandomChoicesSelection();
+    while (questionMaster()) {
+      for (const player of playersExcludingQM()) {
+        await player.giveRandomChoicesSelection();
+        await expectEqualGameState();
+      }
+
+      await questionMaster().pickRandomAnswer();
+      await expectEqualGameState();
+
+      await questionMaster().endCurrentTurn();
       await expectEqualGameState();
     }
 
-    await questionMaster().pickRandomAnswer();
-    await expectEqualGameState();
+    const { body } = await request(app)
+      .get('/api/game/' + data.game.id)
+      .expect(200);
+
+    console.log(body);
   });
 });

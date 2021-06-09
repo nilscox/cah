@@ -7,7 +7,16 @@ import { Turn } from '../../domain/entities/Turn';
 import { GameEvent, PlayerEvent } from '../../domain/interfaces/GameEvents';
 import { createAnswer, createChoice, createGame, createPlayer, createQuestion } from '../../domain/tests/creators';
 import { app, wsGameEvents } from '../index';
-import { auth, mockCreateGame, mockJoinGame, mockQueryPlayer } from '../test';
+import {
+  auth,
+  mockCreateGame,
+  mockGiveChoicesSelection,
+  mockJoinGame,
+  mockNextTurn,
+  mockPickWinningAnswer,
+  mockQueryPlayer,
+  mockStartGame,
+} from '../test';
 
 describe('websocket', () => {
   const port = 1234;
@@ -218,7 +227,7 @@ describe('websocket', () => {
       socket = asPlayer.socket!;
     });
 
-    const emit = (message: string, payload: unknown) => {
+    const emit = (message: string, payload?: unknown) => {
       return new Promise((resolve) => {
         socket.emit(message, payload, resolve);
       });
@@ -234,7 +243,7 @@ describe('websocket', () => {
         const createGameUseCase = sinon.fake.returns(game);
         mockCreateGame(createGameUseCase);
 
-        expect(await emit('createGame', undefined)).to.eql({
+        expect(await emit('createGame')).to.eql({
           status: 'ok',
           game: { id: game.id, code: game.code, players: [], state: GameState.idle },
         });
@@ -244,12 +253,12 @@ describe('websocket', () => {
 
       it('returns an error when the player was not found', async () => {
         mockQueryPlayer(async () => undefined);
-        expect(await emit('createGame', undefined)).to.shallowDeepEqual({ status: 'ko', error: 'player not found' });
+        expect(await emit('createGame')).to.shallowDeepEqual({ status: 'ko', error: 'player not found' });
       });
 
       it('returns an error when something wrong happens', async () => {
         mockCreateGame(throwError);
-        expect(await emit('createGame', undefined)).to.shallowDeepEqual({ status: 'ko', error: errorMessage });
+        expect(await emit('createGame')).to.shallowDeepEqual({ status: 'ko', error: errorMessage });
       });
     });
 
@@ -273,13 +282,7 @@ describe('websocket', () => {
         spyJoin.restore();
       });
 
-      it('returns an error when the code is invalid or missing from the request', async () => {
-        expect(await emit('joinGame', { code: 'hello' })).to.shallowDeepEqual({
-          status: 'ko',
-          error: 'validation errors',
-          validationErrors: { code: ['isLength'] },
-        });
-
+      it('returns an error when the code is missing from the request', async () => {
         expect(await emit('joinGame', {})).to.shallowDeepEqual({
           status: 'ko',
           error: 'validation errors',
@@ -290,6 +293,136 @@ describe('websocket', () => {
       it('returns an error when something wrong happens', async () => {
         mockJoinGame(throwError);
         expect(await emit('joinGame', { code: 'ABCD' })).to.shallowDeepEqual({ status: 'ko', error: errorMessage });
+      });
+    });
+
+    describe('startGame', () => {
+      const game = createGame();
+
+      beforeEach(() => {
+        player.game = game;
+      });
+
+      it('starts the game', async () => {
+        const startGame = sinon.fake();
+        mockStartGame(startGame);
+
+        expect(await emit('startGame')).to.eql({ status: 'ok' });
+
+        expect(startGame.callCount).to.eql(1);
+      });
+
+      it('returns an error when the player is not in game', async () => {
+        player.game = undefined;
+        expect(await emit('startGame')).to.shallowDeepEqual({ status: 'ko', error: 'player is not in game' });
+      });
+
+      it('returns an error when something wrong happens', async () => {
+        mockStartGame(throwError);
+        expect(await emit('startGame')).to.shallowDeepEqual({ status: 'ko', error: errorMessage });
+      });
+    });
+
+    describe('giveChoicesSelection', () => {
+      const game = createGame();
+      const payload = { choicesIds: [1, 2] };
+
+      beforeEach(() => {
+        player.game = game;
+      });
+
+      it('sends a choices selection', async () => {
+        const giveChoicesSelection = sinon.fake();
+        mockGiveChoicesSelection(giveChoicesSelection);
+
+        expect(await emit('giveChoicesSelection', payload)).to.eql({ status: 'ok' });
+
+        expect(giveChoicesSelection.callCount).to.eql(1);
+      });
+
+      it('returns an error when the choices ids are not provided', async () => {
+        expect(await emit('giveChoicesSelection', {})).to.shallowDeepEqual({
+          status: 'ko',
+          error: 'validation errors',
+        });
+      });
+
+      it('returns an error when the player is not in game', async () => {
+        player.game = undefined;
+        expect(await emit('giveChoicesSelection', payload)).to.shallowDeepEqual({
+          status: 'ko',
+          error: 'player is not in game',
+        });
+      });
+
+      it('returns an error when something wrong happens', async () => {
+        mockGiveChoicesSelection(throwError);
+        expect(await emit('giveChoicesSelection', payload)).to.shallowDeepEqual({ status: 'ko', error: errorMessage });
+      });
+    });
+
+    describe('pickWinningAnswer', () => {
+      const game = createGame();
+      const payload = { answerId: 1 };
+
+      beforeEach(() => {
+        player.game = game;
+      });
+
+      it('sends the winning answer id', async () => {
+        const pickWinningAnswer = sinon.fake();
+        mockPickWinningAnswer(pickWinningAnswer);
+
+        expect(await emit('pickWinningAnswer', payload)).to.eql({ status: 'ok' });
+
+        expect(pickWinningAnswer.callCount).to.eql(1);
+      });
+
+      it('returns an error when the choices ids are not provided', async () => {
+        expect(await emit('pickWinningAnswer', {})).to.shallowDeepEqual({
+          status: 'ko',
+          error: 'validation errors',
+        });
+      });
+
+      it('returns an error when the player is not in game', async () => {
+        player.game = undefined;
+        expect(await emit('pickWinningAnswer', payload)).to.shallowDeepEqual({
+          status: 'ko',
+          error: 'player is not in game',
+        });
+      });
+
+      it('returns an error when something wrong happens', async () => {
+        mockPickWinningAnswer(throwError);
+        expect(await emit('pickWinningAnswer', payload)).to.shallowDeepEqual({ status: 'ko', error: errorMessage });
+      });
+    });
+
+    describe('nextTurn', () => {
+      const game = createGame();
+
+      beforeEach(() => {
+        player.game = game;
+      });
+
+      it('ends the current', async () => {
+        const nextTurn = sinon.fake();
+        mockNextTurn(nextTurn);
+
+        expect(await emit('nextTurn')).to.eql({ status: 'ok' });
+
+        expect(nextTurn.callCount).to.eql(1);
+      });
+
+      it('returns an error when the player is not in game', async () => {
+        player.game = undefined;
+        expect(await emit('nextTurn')).to.shallowDeepEqual({ status: 'ko', error: 'player is not in game' });
+      });
+
+      it('returns an error when something wrong happens', async () => {
+        mockNextTurn(throwError);
+        expect(await emit('nextTurn')).to.shallowDeepEqual({ status: 'ko', error: errorMessage });
       });
     });
   });

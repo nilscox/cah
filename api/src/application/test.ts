@@ -5,9 +5,13 @@ import Container from 'typedi';
 import { Player } from '../domain/entities/Player';
 import { Authenticate } from '../domain/use-cases/Authenticate';
 import { CreateGame } from '../domain/use-cases/CreateGame';
+import { GiveChoicesSelection } from '../domain/use-cases/GiveChoicesSelection';
 import { JoinGame } from '../domain/use-cases/JoinGame';
+import { NextTurn } from '../domain/use-cases/NextTurn';
+import { PickWinningAnswer } from '../domain/use-cases/PickWinningAnswer';
 import { QueryGame } from '../domain/use-cases/QueryGame';
 import { QueryPlayer } from '../domain/use-cases/QueryPlayer';
+import { StartGame } from '../domain/use-cases/StartGame';
 
 import { app } from './index';
 
@@ -29,6 +33,22 @@ export const mockCreateGame = (createGame: CreateGame['createGame']) => {
 
 export const mockJoinGame = (joinGame: JoinGame['joinGame']) => {
   Container.set(JoinGame, { joinGame });
+};
+
+export const mockStartGame = (startGame: StartGame['startGame']) => {
+  Container.set(StartGame, { startGame });
+};
+
+export const mockGiveChoicesSelection = (giveChoicesSelection: GiveChoicesSelection['giveChoicesSelection']) => {
+  Container.set(GiveChoicesSelection, { giveChoicesSelection });
+};
+
+export const mockPickWinningAnswer = (pickWinningAnswer: PickWinningAnswer['pickWinningAnswer']) => {
+  Container.set(PickWinningAnswer, { pickWinningAnswer });
+};
+
+export const mockNextTurn = (nextTurn: NextTurn['nextTurn']) => {
+  Container.set(NextTurn, { nextTurn });
 };
 
 type AgentWithSocket = SuperAgentTest & { socket?: Socket };
