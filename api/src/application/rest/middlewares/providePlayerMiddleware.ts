@@ -1,8 +1,8 @@
 import { RequestHandler } from 'express';
 import Container from 'typedi';
 
-import { Player } from '../../domain/entities/Player';
-import { QueryPlayer } from '../../domain/use-cases/QueryPlayer';
+import { Player } from '../../../domain/entities/Player';
+import { QueryPlayer } from '../../../domain/use-cases/QueryPlayer';
 
 declare module 'express-serve-static-core' {
   interface Request {

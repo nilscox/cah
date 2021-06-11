@@ -1,11 +1,10 @@
 import { Router } from 'express';
 import { Container } from 'typedi';
 
-import { Game } from '../../domain/entities/Game';
-import { CreateGame } from '../../domain/use-cases/CreateGame';
-import { QueryGame } from '../../domain/use-cases/QueryGame';
-
-import { isPlayer } from './isPlayer';
+import { Game } from '../../../domain/entities/Game';
+import { CreateGame } from '../../../domain/use-cases/CreateGame';
+import { QueryGame } from '../../../domain/use-cases/QueryGame';
+import { isPlayer } from '../guards/isPlayer';
 
 export const router = Router();
 

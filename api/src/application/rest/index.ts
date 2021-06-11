@@ -1,10 +1,10 @@
 import express, { Router } from 'express';
 import expressSession from 'express-session';
 
-import { errorHandler } from './errorHandler';
-import { router as game } from './game';
-import { router as player } from './player';
-import { providePlayerMiddleware } from './providePlayerMiddleware';
+import { errorHandler } from './middlewares/errorHandler';
+import { providePlayerMiddleware } from './middlewares/providePlayerMiddleware';
+import { router as game } from './routes/game';
+import { router as player } from './routes/player';
 
 export const app = express();
 const api = Router();

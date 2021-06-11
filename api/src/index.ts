@@ -4,7 +4,7 @@ import 'reflect-metadata';
 import { Container } from 'typedi';
 import { createConnection, getCustomRepository } from 'typeorm';
 //
-import { app } from './application/web';
+import { app } from './application/rest';
 import { ChoiceRepositoryToken } from './domain/interfaces/ChoiceRepository';
 import { ExternalDataToken } from './domain/interfaces/ExternalData';
 import { GameRepositoryToken } from './domain/interfaces/GameRepository';

@@ -1,10 +1,9 @@
 import { expect } from 'chai';
 import request from 'supertest';
 
-import { createChoice, createGame, createPlayer } from '../../domain/tests/creators';
-import { auth, mockAuthenticate, mockQueryPlayer } from '../test';
-
-import { app } from './index';
+import { createChoice, createGame, createPlayer } from '../../../domain/tests/creators';
+import { auth, mockAuthenticate, mockQueryPlayer } from '../../test';
+import { app } from '../index';
 
 describe('/api/player', () => {
   const player = createPlayer({ id: 1, nick: 'toto' });

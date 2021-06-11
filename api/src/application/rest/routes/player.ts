@@ -2,11 +2,10 @@ import { classToPlain, Expose } from 'class-transformer';
 import { Router } from 'express';
 import { Container } from 'typedi';
 
-import { Choice } from '../../domain/entities/Choice';
-import { Player } from '../../domain/entities/Player';
-import { Authenticate } from '../../domain/use-cases/Authenticate';
-
-import { isPlayer } from './isPlayer';
+import { Choice } from '../../../domain/entities/Choice';
+import { Player } from '../../../domain/entities/Player';
+import { Authenticate } from '../../../domain/use-cases/Authenticate';
+import { isPlayer } from '../guards/isPlayer';
 
 declare module 'express-session' {
   interface SessionData {
