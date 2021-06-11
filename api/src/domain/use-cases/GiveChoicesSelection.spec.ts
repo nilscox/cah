@@ -14,6 +14,7 @@ import { GameRepositoryToken } from '../interfaces/GameRepository';
 import { PlayerRepositoryToken } from '../interfaces/PlayerRepository';
 import { RandomServiceToken } from '../services/RandomService';
 import { createQuestion, createStartedGame } from '../tests/creators';
+import { inject } from '../tests/inject';
 import { InMemoryAnswerRepository } from '../tests/repositories/InMemoryAnswerRepository';
 import { InMemoryChoiceRepository } from '../tests/repositories/InMemoryChoiceRepository';
 import { InMemoryGameRepository } from '../tests/repositories/InMemoryGameRepository';
@@ -24,26 +25,30 @@ import { StubRandomService } from '../tests/stubs/StubRandomService';
 import { GiveChoicesSelection } from './GiveChoicesSelection';
 
 describe('GiveChoicesSelection', () => {
-  const playerRepository = new InMemoryPlayerRepository();
-  const gameRepository = new InMemoryGameRepository();
-  const choiceRepository = new InMemoryChoiceRepository();
-  const answerRepository = new InMemoryAnswerRepository();
+  let playerRepository: InMemoryPlayerRepository;
+  let gameRepository: InMemoryGameRepository;
+  let choiceRepository: InMemoryChoiceRepository;
+  let answerRepository: InMemoryAnswerRepository;
 
-  const gameEvents = new StubGameEvents();
-  const randomService = new StubRandomService();
+  let gameEvents: StubGameEvents;
+  let randomService: StubRandomService;
 
   let useCase: GiveChoicesSelection;
 
-  before(() => {
+  beforeEach(() => {
     Container.reset();
 
-    Container.set(PlayerRepositoryToken, playerRepository);
-    Container.set(GameRepositoryToken, gameRepository);
-    Container.set(ChoiceRepositoryToken, choiceRepository);
-    Container.set(AnswerRepositoryToken, answerRepository);
+    /* eslint-disable @typescript-eslint/no-unused-vars */
 
-    Container.set(GameEventsToken, gameEvents);
-    Container.set(RandomServiceToken, randomService);
+    playerRepository = inject(PlayerRepositoryToken, new InMemoryPlayerRepository());
+    gameRepository = inject(GameRepositoryToken, new InMemoryGameRepository());
+    choiceRepository = inject(ChoiceRepositoryToken, new InMemoryChoiceRepository());
+    answerRepository = inject(AnswerRepositoryToken, new InMemoryAnswerRepository());
+
+    gameEvents = inject(GameEventsToken, new StubGameEvents());
+    randomService = inject(RandomServiceToken, new StubRandomService());
+
+    /* eslint-enable @typescript-eslint/no-unused-vars */
 
     useCase = Container.get(GiveChoicesSelection);
   });

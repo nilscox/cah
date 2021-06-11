@@ -4,7 +4,7 @@ import { Answer } from '../entities/Answer';
 import { Game } from '../entities/Game';
 import { Player } from '../entities/Player';
 
-export const GameRepositoryToken = new Token('GameRepository');
+export const GameRepositoryToken = new Token<GameRepository>('GameRepository');
 
 export interface GameRepository {
   createGame(code: string): Promise<Game>;

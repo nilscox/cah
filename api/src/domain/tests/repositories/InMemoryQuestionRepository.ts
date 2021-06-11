@@ -3,17 +3,17 @@ import { Question } from '../../entities/Question';
 import { QuestionRepository } from '../../interfaces/QuestionRepository';
 
 export class InMemoryQuestionRepository implements QuestionRepository {
-  private questions = new Map<Game, Question[]>();
+  private questions: Question[] = [];
 
-  async createQuestions(game: Game, questions: Question[]): Promise<void> {
-    this.questions.set(game, questions);
+  async createQuestions(_game: Game, questions: Question[]): Promise<void> {
+    this.questions = questions;
   }
 
-  async getNextAvailableQuestion(game: Game): Promise<Question | undefined> {
-    return this.questions.get(game)?.[0];
+  async getNextAvailableQuestion(): Promise<Question | undefined> {
+    return this.questions?.[0];
   }
 
-  getQuestions(game: Game) {
-    return this.questions.get(game);
+  getQuestions() {
+    return this.questions;
   }
 }

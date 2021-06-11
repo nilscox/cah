@@ -4,14 +4,17 @@ import { Player } from '../../entities/Player';
 import { GameRepository } from '../../interfaces/GameRepository';
 
 export class InMemoryGameRepository implements GameRepository {
-  private games: Game[] = [];
+  private game?: Game;
 
-  async createGame(_code: string): Promise<Game> {
-    throw new Error('Method not implemented.');
+  async createGame(code: string): Promise<Game> {
+    this.game = new Game();
+    this.game.code = code;
+
+    return this.game;
   }
 
   async findById(_gameId: number): Promise<Game | undefined> {
-    return this.games[0];
+    return this.game;
   }
 
   async findByCode(_gameCode: string): Promise<Game | undefined> {
@@ -19,9 +22,7 @@ export class InMemoryGameRepository implements GameRepository {
   }
 
   async save(game: Game): Promise<void> {
-    if (!this.games.includes(game)) {
-      this.games.push(game);
-    }
+    this.game = game;
   }
 
   async addPlayer(_game: Game, _player: Player): Promise<void> {

@@ -10,7 +10,8 @@ import { GameEventsToken } from '../interfaces/GameEvents';
 import { GameRepositoryToken } from '../interfaces/GameRepository';
 import { PlayerRepositoryToken } from '../interfaces/PlayerRepository';
 import { QuestionRepositoryToken } from '../interfaces/QuestionRepository';
-import { createGame, createPlayer, createPlayers } from '../tests/creators';
+import { createGame, createPlayer, createPlayers, createQuestion } from '../tests/creators';
+import { inject } from '../tests/inject';
 import { InMemoryChoiceRepository } from '../tests/repositories/InMemoryChoiceRepository';
 import { InMemoryExternalData } from '../tests/repositories/InMemoryExternalData';
 import { InMemoryGameRepository } from '../tests/repositories/InMemoryGameRepository';
@@ -21,26 +22,30 @@ import { StubGameEvents } from '../tests/stubs/StubGameEvents';
 import { StartGame } from './StartGame';
 
 describe('StartGame', () => {
-  const questionRepository = new InMemoryQuestionRepository();
-  const choiceRepository = new InMemoryChoiceRepository();
-  const playerRepository = new InMemoryPlayerRepository();
-  const gameRepository = new InMemoryGameRepository();
-  const externalData = new InMemoryExternalData();
+  let questionRepository: InMemoryQuestionRepository;
+  let choiceRepository: InMemoryChoiceRepository;
+  let playerRepository: InMemoryPlayerRepository;
+  let gameRepository: InMemoryGameRepository;
 
-  const gameEvents = new StubGameEvents();
+  let externalData: InMemoryExternalData;
+  let gameEvents: StubGameEvents;
 
   let useCase: StartGame;
 
-  before(() => {
+  beforeEach(() => {
     Container.reset();
 
-    Container.set(QuestionRepositoryToken, questionRepository);
-    Container.set(ChoiceRepositoryToken, choiceRepository);
-    Container.set(PlayerRepositoryToken, playerRepository);
-    Container.set(GameRepositoryToken, gameRepository);
+    /* eslint-disable @typescript-eslint/no-unused-vars */
 
-    Container.set(GameEventsToken, gameEvents);
-    Container.set(ExternalDataToken, externalData);
+    questionRepository = inject(QuestionRepositoryToken, new InMemoryQuestionRepository());
+    choiceRepository = inject(ChoiceRepositoryToken, new InMemoryChoiceRepository());
+    playerRepository = inject(PlayerRepositoryToken, new InMemoryPlayerRepository());
+    gameRepository = inject(GameRepositoryToken, new InMemoryGameRepository());
+
+    gameEvents = inject(GameEventsToken, new StubGameEvents());
+    externalData = inject(ExternalDataToken, new InMemoryExternalData());
+
+    /* eslint-enable @typescript-eslint/no-unused-vars */
 
     useCase = Container.get(StartGame);
   });
@@ -59,11 +64,11 @@ describe('StartGame', () => {
     expect(game.answers).to.eql([]);
 
     const questions = questionRepository.getQuestions(game);
-    const choices = choiceRepository.getChoices(game);
+    const choices = choiceRepository.getChoices();
 
     expect(questions).to.have.length(turns);
     expect(game.question).to.eql(questions?.[0]);
-    expect(choices).to.have.length(6);
+    expect(choices).to.have.length(50);
 
     for (const player of game.players) {
       expect(player.cards).to.have.length(11);
@@ -76,6 +81,26 @@ describe('StartGame', () => {
       questionMaster: questionMaster,
       question: game.question,
     });
+  });
+
+  it('select the appropriate number of questions and choices for the whole game', async () => {
+    const players = createPlayers(5);
+    const game = createGame({ players });
+    const [questionMaster] = players;
+    const turns = 4;
+
+    // 9 blanks
+    externalData.setQuestions([
+      createQuestion(),
+      createQuestion({ blanks: [1, 2, 3] }),
+      createQuestion({ blanks: [0] }),
+      createQuestion({ blanks: [9, 8, 7, 6] }),
+    ]);
+
+    await useCase.startGame(game, questionMaster, turns);
+
+    expect(questionRepository.getQuestions(game)).to.have.length(4);
+    expect(choiceRepository.getChoices()).to.have.length(91);
   });
 
   it('does not start a game that is not in idle state', async () => {

@@ -1,7 +1,6 @@
 import { Choice } from '../../entities/Choice';
 import { Game } from '../../entities/Game';
 import { ChoiceRepository } from '../../interfaces/ChoiceRepository';
-import { createChoices } from '../creators';
 
 export class InMemoryChoiceRepository implements ChoiceRepository {
   private choices: Choice[] = [];
@@ -14,15 +13,11 @@ export class InMemoryChoiceRepository implements ChoiceRepository {
     this.choices = choices;
   }
 
-  async pickRandomChoices(count: number): Promise<Choice[]> {
-    return createChoices(count);
+  async getAvailableChoices(): Promise<Choice[]> {
+    return [...this.choices];
   }
 
-  async getAvailableChoices(_game: Game): Promise<Choice[]> {
-    return this.choices;
-  }
-
-  getChoices(_game: Game) {
+  getChoices() {
     return this.choices;
   }
 }

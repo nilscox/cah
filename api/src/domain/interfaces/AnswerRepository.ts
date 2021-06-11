@@ -4,7 +4,7 @@ import { Answer } from '../entities/Answer';
 import { Choice } from '../entities/Choice';
 import { Player } from '../entities/Player';
 
-export const AnswerRepositoryToken = new Token('AnswerRepository');
+export const AnswerRepositoryToken = new Token<AnswerRepository>('AnswerRepository');
 
 export interface AnswerRepository {
   findOne(id: number): Promise<Answer | undefined>;

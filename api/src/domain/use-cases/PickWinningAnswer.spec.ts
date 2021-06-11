@@ -11,6 +11,7 @@ import { GameEventsToken } from '../interfaces/GameEvents';
 import { GameRepositoryToken } from '../interfaces/GameRepository';
 import { PlayerRepositoryToken } from '../interfaces/PlayerRepository';
 import { createAnswers, createStartedGame } from '../tests/creators';
+import { inject } from '../tests/inject';
 import { InMemoryAnswerRepository } from '../tests/repositories/InMemoryAnswerRepository';
 import { InMemoryChoiceRepository } from '../tests/repositories/InMemoryChoiceRepository';
 import { InMemoryGameRepository } from '../tests/repositories/InMemoryGameRepository';
@@ -20,24 +21,28 @@ import { StubGameEvents } from '../tests/stubs/StubGameEvents';
 import { PickWinningAnswer } from './PickWinningAnswer';
 
 describe('PickWinningAnswer', () => {
-  const gameRepository = new InMemoryGameRepository();
-  const playerRepository = new InMemoryPlayerRepository();
-  const choiceRepository = new InMemoryChoiceRepository();
-  const answerRepository = new InMemoryAnswerRepository();
+  let gameRepository: InMemoryGameRepository;
+  let playerRepository: InMemoryPlayerRepository;
+  let choiceRepository: InMemoryChoiceRepository;
+  let answerRepository: InMemoryAnswerRepository;
 
-  const gameEvents = new StubGameEvents();
+  let gameEvents: StubGameEvents;
 
   let useCase: PickWinningAnswer;
 
-  before(() => {
+  beforeEach(() => {
     Container.reset();
 
-    Container.set(PlayerRepositoryToken, playerRepository);
-    Container.set(GameRepositoryToken, gameRepository);
-    Container.set(ChoiceRepositoryToken, choiceRepository);
-    Container.set(AnswerRepositoryToken, answerRepository);
+    /* eslint-disable @typescript-eslint/no-unused-vars */
 
-    Container.set(GameEventsToken, gameEvents);
+    playerRepository = inject(PlayerRepositoryToken, new InMemoryPlayerRepository());
+    gameRepository = inject(GameRepositoryToken, new InMemoryGameRepository());
+    choiceRepository = inject(ChoiceRepositoryToken, new InMemoryChoiceRepository());
+    answerRepository = inject(AnswerRepositoryToken, new InMemoryAnswerRepository());
+
+    gameEvents = inject(GameEventsToken, new StubGameEvents());
+
+    /* eslint-enable @typescript-eslint/no-unused-vars */
 
     useCase = Container.get(PickWinningAnswer);
   });

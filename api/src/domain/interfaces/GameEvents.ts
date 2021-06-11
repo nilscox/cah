@@ -7,8 +7,6 @@ import { Player } from '../entities/Player';
 import { Question } from '../entities/Question';
 import { Turn } from '../entities/Turn';
 
-export const GameEventsToken = new Token('GameEvents');
-
 export type PlayerJoined = {
   type: 'PlayerJoined';
   player: Player;
@@ -65,6 +63,8 @@ type CardsDealt = {
 };
 
 export type PlayerEvent = CardsDealt;
+
+export const GameEventsToken = new Token<GameEvent>('GameEvents');
 
 export interface GameEvents {
   onPlayerEvent(player: Player, event: PlayerEvent): void;
