@@ -133,12 +133,11 @@ describe('GiveChoicesSelection', () => {
   it('does not validate choices when the player has already answered', async () => {
     const game = createStartedGame();
     const player = game.playersExcludingQM[0];
-    const selection1 = [player.cards[0]];
-    const selection2 = [player.cards[1]];
+    const selection = [player.cards[0]];
 
-    await useCase.giveChoicesSelection(game, player, getIds(selection1));
+    await useCase.giveChoicesSelection(game, player, getIds(selection));
 
-    await expect(useCase.giveChoicesSelection(game, player, selection2)).to.be.rejectedWith(AlreadyAnsweredError);
+    await expect(useCase.giveChoicesSelection(game, player, [])).to.be.rejectedWith(AlreadyAnsweredError);
   });
 
   it('does not validate choices that the player does not own', async () => {

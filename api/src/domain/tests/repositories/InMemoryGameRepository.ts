@@ -1,5 +1,6 @@
 import { Answer } from '../../entities/Answer';
 import { Game } from '../../entities/Game';
+import { Player } from '../../entities/Player';
 import { GameRepository } from '../../interfaces/GameRepository';
 
 export class InMemoryGameRepository implements GameRepository {
@@ -13,10 +14,18 @@ export class InMemoryGameRepository implements GameRepository {
     return this.games[0];
   }
 
+  async findByCode(_gameCode: string): Promise<Game | undefined> {
+    throw new Error('Method not implemented.');
+  }
+
   async save(game: Game): Promise<void> {
     if (!this.games.includes(game)) {
       this.games.push(game);
     }
+  }
+
+  async addPlayer(_game: Game, _player: Player): Promise<void> {
+    throw new Error('Method not implemented.');
   }
 
   async getAnswers(game: Game): Promise<Answer[]> {

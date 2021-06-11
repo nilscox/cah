@@ -87,7 +87,8 @@ export class WebsocketServer {
     }
   }
 
-  onSocketDisconnected(socket: Socket) {}
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  onSocketDisconnected(_socket: Socket) {}
 
   broadcast(room: string, message: unknown): void {
     this.io.to(room).emit('message', message);
