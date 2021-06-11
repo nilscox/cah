@@ -27,6 +27,7 @@ import { WinnerSelectedDto } from '../dtos/events/WinnerSelectedDto';
 import { GiveChoicesSelectionDto } from '../dtos/inputs/GiveChoicesSelectionDto';
 import { JoinGameDto } from '../dtos/inputs/JoinGameDto';
 import { PickWinningAnswerDto } from '../dtos/inputs/PickWinningAnswer';
+import { StartGameDto } from '../dtos/inputs/StartGameDto';
 
 import { WebsocketServer } from './WebsocketServer';
 
@@ -49,7 +50,7 @@ export class WebsocketGameEvents extends WebsocketServer implements GameEvents {
 
     this.registerEventHandler('createGame', this.onCreateGame.bind(this));
     this.registerEventHandler('joinGame', JoinGameDto, this.onJoinGame.bind(this));
-    this.registerEventHandler('startGame', this.onStartGame.bind(this));
+    this.registerEventHandler('startGame', StartGameDto, this.onStartGame.bind(this));
     this.registerEventHandler('giveChoicesSelection', GiveChoicesSelectionDto, this.onGiveChoicesSelection.bind(this));
     this.registerEventHandler('pickWinningAnswer', PickWinningAnswerDto, this.onPickWinningAnswer.bind(this));
     this.registerEventHandler('nextTurn', this.onNextTurn.bind(this));
@@ -128,7 +129,7 @@ export class WebsocketGameEvents extends WebsocketServer implements GameEvents {
     this.join(game, player);
   }
 
-  async onStartGame(socket: Socket) {
+  async onStartGame(socket: Socket, { numberOfTurns }: StartGameDto) {
     const player = await this.getPlayer(socket);
 
     if (!player) {
@@ -141,7 +142,7 @@ export class WebsocketGameEvents extends WebsocketServer implements GameEvents {
 
     const game = await Container.get(QueryGame).queryGame(player.gameId);
 
-    await Container.get(StartGame).startGame(game!, player, 4);
+    await Container.get(StartGame).startGame(game!, player, numberOfTurns);
   }
 
   async onGiveChoicesSelection(socket: Socket, { choicesIds }: GiveChoicesSelectionDto) {

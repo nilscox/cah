@@ -315,6 +315,7 @@ describe('websocket', () => {
 
     describe('startGame', () => {
       const game = createGame();
+      const payload = { numberOfTurns: 21 };
 
       beforeEach(() => {
         player.gameId = game.id;
@@ -325,19 +326,29 @@ describe('websocket', () => {
         const startGame = sinon.fake();
         mockStartGame(startGame);
 
-        expect(await emit('startGame')).to.eql({ status: 'ok' });
+        expect(await emit('startGame', payload)).to.eql({ status: 'ok' });
 
         expect(startGame.callCount).to.eql(1);
       });
 
+      it('returns an error when the number of turns is not provided', async () => {
+        expect(await emit('startGame', {})).to.shallowDeepEqual({
+          status: 'ko',
+          error: 'validation errors',
+          validationErrors: {
+            numberOfTurns: ['isPositive', 'isInt'],
+          },
+        });
+      });
+
       it('returns an error when the player is not in game', async () => {
         player.gameId = undefined;
-        expect(await emit('startGame')).to.shallowDeepEqual({ status: 'ko', error: 'player is not in game' });
+        expect(await emit('startGame', payload)).to.shallowDeepEqual({ status: 'ko', error: 'player is not in game' });
       });
 
       it('returns an error when something wrong happens', async () => {
         mockStartGame(throwError);
-        expect(await emit('startGame')).to.shallowDeepEqual({ status: 'ko', error: errorMessage });
+        expect(await emit('startGame', payload)).to.shallowDeepEqual({ status: 'ko', error: errorMessage });
       });
     });
 

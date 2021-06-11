@@ -1,4 +1,4 @@
-import { Connection, createConnection, getRepository } from 'typeorm';
+import { Connection, ConnectionOptions, createConnection, getRepository } from 'typeorm';
 
 import { randomString, RequireField } from '../../utils';
 
@@ -13,15 +13,27 @@ export const createTestDatabase = () => {
   let connection: Connection;
 
   before(async () => {
-    connection = await createConnection({
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const pg: ConnectionOptions = {
+      type: 'postgres',
+      host: 'localhost',
+      database: 'db',
+      username: 'root',
+      password: 'root',
+    };
+
+    const sqlite: ConnectionOptions = {
       type: 'sqlite',
-      // database: ':memory:',
-      database: './db.sqlite',
+      database: ':memory:',
+    };
+
+    connection = await createConnection({
+      ...sqlite,
       entities: ['src/infrastructure/database/entities/*.ts'],
       dropSchema: true,
       synchronize: true,
-      logging: ['error'],
-      // logging: ['query'],
+      // logging: ['query', 'error'],
+      // maxQueryExecutionTime: 150,
     });
   });
 

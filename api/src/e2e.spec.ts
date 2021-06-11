@@ -143,8 +143,16 @@ class StubPlayer {
     this.events.push(event);
   }
 
+  async createGame() {
+    return this.emit<{ game: { id: number; code: string } }>('createGame');
+  }
+
   async joinGame(gameCode: string) {
     await this.emit('joinGame', { code: gameCode });
+  }
+
+  async startGame(numberOfTurns: number) {
+    await this.emit('startGame', { numberOfTurns });
   }
 
   async giveRandomChoicesSelection() {
@@ -254,19 +262,21 @@ describe('end-to-end', function () {
   };
 
   it('plays a full game', async () => {
-    const data = await nils.emit<{ game: { id: number; code: string } }>('createGame');
+    const {
+      game: { id: gameId, code },
+    } = await nils.createGame();
 
-    await nils.joinGame(data.game.code);
-    await tom.joinGame(data.game.code);
-    await jeanne.joinGame(data.game.code);
+    await nils.joinGame(code);
+    await tom.joinGame(code);
+    await jeanne.joinGame(code);
 
     const { body: game } = await request(app)
-      .get('/api/game/' + data.game.id)
+      .get('/api/game/' + gameId)
       .expect(200);
 
     expect(game).to.have.property('players').that.is.an('array').of.length(3);
 
-    await nils.emit('startGame');
+    await nils.startGame(3);
     await expectEqualGameState();
 
     while (questionMaster()) {
@@ -283,7 +293,7 @@ describe('end-to-end', function () {
     }
 
     const { body } = await request(app)
-      .get('/api/game/' + data.game.id)
+      .get('/api/game/' + game.id)
       .expect(200);
 
     expect(body).to.have.property('state', 'finished');
