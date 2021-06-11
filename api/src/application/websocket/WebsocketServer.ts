@@ -1,4 +1,4 @@
-import { classToPlain } from 'class-transformer';
+import { classToPlain, plainToClass } from 'class-transformer';
 import { validate, ValidationError } from 'class-validator';
 import { RequestHandler } from 'express';
 import sharedSession from 'express-socket.io-session';
@@ -50,23 +50,29 @@ export class WebsocketServer {
   private bindSocketEvent<Dto, Result>(
     socket: Socket,
     DtoClass: DtoClass<Dto> | undefined,
-    handler: WSEventHandler<Dto, Result>,
+    handler: WSEventHandler<Dto | undefined, Result>,
   ) {
-    return async (payload: unknown, cb: (...args: unknown[]) => void) => {
+    const getPayload = async (data: unknown) => {
+      if (!DtoClass) {
+        return;
+      }
+
+      const payload = plainToClass(DtoClass, data);
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const errors = await validate(payload as any);
+
+      if (errors.length) {
+        throw new ValidationErrors(errors);
+      }
+
+      return payload;
+    };
+
+    return async (data: unknown, cb: (...args: unknown[]) => void) => {
       try {
-        let data: any;
-
-        if (DtoClass) {
-          data = new DtoClass(payload);
-
-          const errors = await validate(data);
-
-          if (errors.length > 0) {
-            throw new ValidationErrors(errors);
-          }
-        }
-
-        const result = await handler(socket, data);
+        const payload = await getPayload(data);
+        const result = await handler(socket, payload);
 
         cb({ status: 'ok', ...classToPlain(result) });
       } catch (error) {
