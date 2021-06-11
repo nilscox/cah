@@ -7,6 +7,5 @@ export const QuestionRepositoryToken = new Token<QuestionRepository>('QuestionRe
 
 export interface QuestionRepository {
   createQuestions(game: Game, questions: Question[]): Promise<void>;
-  pickRandomQuestions(count: number): Promise<Question[]>;
   getNextAvailableQuestion(game: Game): Promise<Question | undefined>;
 }

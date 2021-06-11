@@ -6,14 +6,17 @@ import { getCustomRepository } from 'typeorm';
 
 import { app, wsGameEvents } from './application';
 import { Choice } from './domain/entities/Choice';
+import { Question } from './domain/entities/Question';
 import { AnswerRepositoryToken } from './domain/interfaces/AnswerRepository';
 import { ChoiceRepositoryToken } from './domain/interfaces/ChoiceRepository';
+import { ExternalData, ExternalDataToken } from './domain/interfaces/ExternalData';
 import { GameEvent, GameEventsToken, PlayerEvent } from './domain/interfaces/GameEvents';
 import { GameRepositoryToken } from './domain/interfaces/GameRepository';
 import { PlayerRepositoryToken } from './domain/interfaces/PlayerRepository';
 import { QuestionRepositoryToken } from './domain/interfaces/QuestionRepository';
 import { TurnRepositoryToken } from './domain/interfaces/TurnRepository';
 import { RandomServiceToken } from './domain/services/RandomService';
+import { createChoices, createQuestions } from './domain/tests/creators';
 import { StubRandomService } from './domain/tests/stubs/StubRandomService';
 import { SQLAnswerRepository } from './infrastructure/database/repositories/SQLAnswerRepository';
 import { SQLChoiceRepository } from './infrastructure/database/repositories/SQLChoiceRepository';
@@ -32,6 +35,32 @@ class WSError extends Error {
     if (stack) {
       this.message += '\n' + stack;
     }
+  }
+}
+
+const randInt = (min: number, max: number) => ~~(Math.random() * (max - min + 1)) + min;
+
+export class InMemoryExternalData implements ExternalData {
+  async pickRandomQuestions(count: number): Promise<Question[]> {
+    return createQuestions(count, InMemoryExternalData.createRandomQuestion);
+  }
+
+  async pickRandomChoices(count: number): Promise<Choice[]> {
+    return createChoices(count, (n) => ({ text: `Choice ${n}.` }));
+  }
+
+  private static createRandomQuestion(n: number) {
+    const question: Record<string, unknown> = {
+      text: `Question ${n} ?`,
+    };
+
+    if (randInt(0, 1) === 0) {
+      question.blanks = Array(randInt(1, 5))
+        .fill(null)
+        .map(() => randInt(0, 100));
+    }
+
+    return question;
   }
 }
 
@@ -158,8 +187,12 @@ class StubPlayer {
   async giveRandomChoicesSelection() {
     const selection = [];
 
-    for (let i = 0; i < this.question!.neededChoices && this.cards.length > 0; ++i) {
-      selection.push(...this.cards.splice(~~(Math.random() * this.cards.length), 1));
+    for (let i = 0; i < this.question!.neededChoices; ++i) {
+      if (this.cards.length === 0) {
+        throw new Error('player has no more cards');
+      }
+
+      selection.push(...this.cards.splice(randInt(0, this.cards.length - 1), 1));
     }
 
     await this.emit('giveChoicesSelection', {
@@ -168,7 +201,7 @@ class StubPlayer {
   }
 
   async pickRandomAnswer() {
-    const answerIndex = ~~(Math.random() * this.answers.length);
+    const answerIndex = randInt(0, this.answers.length - 1);
 
     await this.emit('pickWinningAnswer', {
       answerId: this.answers[answerIndex].id,
@@ -181,8 +214,6 @@ class StubPlayer {
 }
 
 describe('end-to-end', function () {
-  this.timeout(4000);
-
   createTestDatabase();
 
   let gameRepository: SQLGameRepository;
@@ -215,6 +246,8 @@ describe('end-to-end', function () {
 
     Container.set(GameEventsToken, wsGameEvents);
     Container.set(RandomServiceToken, randomService);
+
+    Container.set(ExternalDataToken, new InMemoryExternalData());
   });
 
   before((done) => {
@@ -276,7 +309,7 @@ describe('end-to-end', function () {
 
     expect(game).to.have.property('players').that.is.an('array').of.length(3);
 
-    await nils.startGame(3);
+    await nils.startGame(10);
     await expectEqualGameState();
 
     while (questionMaster()) {

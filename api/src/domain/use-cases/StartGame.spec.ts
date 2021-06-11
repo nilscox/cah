@@ -5,12 +5,14 @@ import { GameState, PlayState } from '../entities/Game';
 import { GameAlreadyStartedError } from '../errors/GameAlreadyStartedError';
 import { NotEnoughPlayersError } from '../errors/NotEnoughPlayersError';
 import { ChoiceRepositoryToken } from '../interfaces/ChoiceRepository';
+import { ExternalDataToken } from '../interfaces/ExternalData';
 import { GameEventsToken } from '../interfaces/GameEvents';
 import { GameRepositoryToken } from '../interfaces/GameRepository';
 import { PlayerRepositoryToken } from '../interfaces/PlayerRepository';
 import { QuestionRepositoryToken } from '../interfaces/QuestionRepository';
 import { createGame, createPlayer, createPlayers } from '../tests/creators';
 import { InMemoryChoiceRepository } from '../tests/repositories/InMemoryChoiceRepository';
+import { InMemoryExternalData } from '../tests/repositories/InMemoryExternalData';
 import { InMemoryGameRepository } from '../tests/repositories/InMemoryGameRepository';
 import { InMemoryPlayerRepository } from '../tests/repositories/InMemoryPlayerRepository';
 import { InMemoryQuestionRepository } from '../tests/repositories/InMemoryQuestionRepository';
@@ -23,6 +25,7 @@ describe('StartGame', () => {
   const choiceRepository = new InMemoryChoiceRepository();
   const playerRepository = new InMemoryPlayerRepository();
   const gameRepository = new InMemoryGameRepository();
+  const externalData = new InMemoryExternalData();
 
   const gameEvents = new StubGameEvents();
 
@@ -37,6 +40,7 @@ describe('StartGame', () => {
     Container.set(GameRepositoryToken, gameRepository);
 
     Container.set(GameEventsToken, gameEvents);
+    Container.set(ExternalDataToken, externalData);
 
     useCase = Container.get(StartGame);
   });

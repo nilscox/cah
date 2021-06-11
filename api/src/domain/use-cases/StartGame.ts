@@ -6,6 +6,7 @@ import { Question } from '../entities/Question';
 import { GameAlreadyStartedError } from '../errors/GameAlreadyStartedError';
 import { NotEnoughPlayersError } from '../errors/NotEnoughPlayersError';
 import { ChoiceRepository, ChoiceRepositoryToken } from '../interfaces/ChoiceRepository';
+import { ExternalData, ExternalDataToken } from '../interfaces/ExternalData';
 import { GameEvents, GameEventsToken } from '../interfaces/GameEvents';
 import { GameRepository, GameRepositoryToken } from '../interfaces/GameRepository';
 import { QuestionRepository, QuestionRepositoryToken } from '../interfaces/QuestionRepository';
@@ -13,6 +14,9 @@ import { GameService } from '../services/GameService';
 
 @Service()
 export class StartGame {
+  @Inject(ExternalDataToken)
+  private readonly externalData!: ExternalData;
+
   @Inject(QuestionRepositoryToken)
   private readonly questionRepository!: QuestionRepository;
 
@@ -37,10 +41,10 @@ export class StartGame {
       throw new NotEnoughPlayersError(game.players.length, 3);
     }
 
-    const questions = await this.questionRepository.pickRandomQuestions(turns);
+    const questions = await this.externalData.pickRandomQuestions(turns);
 
     const nbChoices = this.computeNeededChoicesCount(game.players.length, questions);
-    const choices = await this.choiceRepository.pickRandomChoices(nbChoices);
+    const choices = await this.externalData.pickRandomChoices(nbChoices);
 
     await this.questionRepository.createQuestions(game, questions);
     await this.choiceRepository.createChoices(game, choices);

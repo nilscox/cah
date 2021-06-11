@@ -2,10 +2,11 @@
 import 'reflect-metadata';
 //
 import { Container } from 'typedi';
-import { createConnection } from 'typeorm';
+import { createConnection, getCustomRepository } from 'typeorm';
 //
 import { app } from './application/web';
 import { ChoiceRepositoryToken } from './domain/interfaces/ChoiceRepository';
+import { ExternalDataToken } from './domain/interfaces/ExternalData';
 import { GameRepositoryToken } from './domain/interfaces/GameRepository';
 import { PlayerRepositoryToken } from './domain/interfaces/PlayerRepository';
 import { QuestionRepositoryToken } from './domain/interfaces/QuestionRepository';
@@ -15,22 +16,31 @@ import { SQLGameRepository } from './infrastructure/database/repositories/SQLGam
 import { SQLPlayerRepository } from './infrastructure/database/repositories/SQLPlayerRepository';
 import { SQLQuestionRepository } from './infrastructure/database/repositories/SQLQuestionRepository';
 import { SQLTurnRepository } from './infrastructure/database/repositories/SQLTurnRepository';
+import { FilesystemExternalData } from './infrastructure/FilesystemExternalData';
+
+const {
+  DATABASE = ':memory:',
+  ENTITIES = 'src/infrastructure/database/entities/*.ts',
+  DATA_DIR = './data',
+} = process.env;
 
 const main = async () => {
   await createConnection({
     type: 'sqlite',
-    database: ':memory:',
-    // database: './db.sqlite',
-    entities: ['src/infrastructure/database/entities/*.ts'],
+    database: DATABASE,
+    entities: [ENTITIES],
     synchronize: true,
     logging: ['error'],
   });
 
-  Container.set(ChoiceRepositoryToken, new SQLChoiceRepository());
   Container.set(GameRepositoryToken, new SQLGameRepository());
-  Container.set(QuestionRepositoryToken, new SQLQuestionRepository());
-  Container.set(PlayerRepositoryToken, new SQLPlayerRepository());
-  Container.set(TurnRepositoryToken, new SQLTurnRepository());
+  Container.set(ChoiceRepositoryToken, getCustomRepository(SQLChoiceRepository));
+  Container.set(QuestionRepositoryToken, getCustomRepository(SQLQuestionRepository));
+  Container.set(PlayerRepositoryToken, getCustomRepository(SQLPlayerRepository));
+  Container.set(TurnRepositoryToken, getCustomRepository(SQLTurnRepository));
+
+  Container.set('DATA_DIR', DATA_DIR);
+  Container.set(ExternalDataToken, new FilesystemExternalData());
 
   app.listen(4242, '0.0.0.0', () => {
     console.log('server listening on 0.0.0.0:4242');

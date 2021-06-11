@@ -16,7 +16,7 @@ export class PlayerEntity {
   @ManyToOne(() => GameEntity, (game) => game.players)
   game?: GameEntity;
 
-  @OneToMany(() => ChoiceEntity, (choice) => choice.player, { eager: true })
+  @OneToMany(() => ChoiceEntity, (choice) => choice.player)
   cards!: ChoiceEntity[];
 
   is(other?: PlayerEntity) {

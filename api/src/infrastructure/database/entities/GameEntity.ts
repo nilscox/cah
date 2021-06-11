@@ -30,7 +30,7 @@ export class GameEntity {
   @Column({ unique: true })
   code!: string;
 
-  @OneToMany(() => PlayerEntity, (player) => player.game, { eager: true })
+  @OneToMany(() => PlayerEntity, (player) => player.game)
   players!: PlayerEntity[];
 
   get playersExcludingQM() {

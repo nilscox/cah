@@ -7,7 +7,7 @@ import { PlayerEntity } from '../entities/PlayerEntity';
 @EntityRepository(PlayerEntity)
 export class SQLPlayerRepository extends Repository<PlayerEntity> implements PlayerRepository {
   async findById(playerId: number): Promise<PlayerEntity | undefined> {
-    return this.findOne(playerId);
+    return this.findOne(playerId, { relations: ['cards'] });
   }
 
   async findByNick(nick: string): Promise<PlayerEntity | undefined> {
@@ -24,7 +24,7 @@ export class SQLPlayerRepository extends Repository<PlayerEntity> implements Pla
   }
 
   async removeCards(player: PlayerEntity, cards: ChoiceEntity[]): Promise<void> {
-    player.cards = player.cards.filter((card) => !cards.includes(card));
+    player.cards = player.cards.filter((card) => !cards.find(({ id }) => id === card.id));
     await this.save(player);
   }
 }

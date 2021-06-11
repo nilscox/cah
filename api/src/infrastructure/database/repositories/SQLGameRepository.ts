@@ -16,7 +16,7 @@ export class SQLGameRepository implements GameRepository {
   }
 
   async findById(gameId: number): Promise<Game | undefined> {
-    return this.repo.findOne(gameId);
+    return this.repo.findOne(gameId, { relations: ['players', 'players.cards'] });
   }
 
   async findByCode(code: string): Promise<Game | undefined> {
