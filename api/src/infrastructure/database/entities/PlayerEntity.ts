@@ -11,6 +11,8 @@ export class PlayerEntity {
   @Column({ unique: true })
   nick!: string;
 
+  @Column({ nullable: true })
+  gameId?: number;
   @ManyToOne(() => GameEntity, (game) => game.players)
   game?: GameEntity;
 

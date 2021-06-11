@@ -14,6 +14,7 @@ import {
   mockJoinGame,
   mockNextTurn,
   mockPickWinningAnswer,
+  mockQueryGame,
   mockQueryPlayer,
   mockStartGame,
 } from '../test';
@@ -227,6 +228,10 @@ describe('websocket', () => {
       socket = asPlayer.socket!;
     });
 
+    afterEach(() => {
+      player.gameId = undefined;
+    });
+
     const emit = (message: string, payload?: unknown) => {
       return new Promise((resolve) => {
         socket.emit(message, payload, resolve);
@@ -290,6 +295,18 @@ describe('websocket', () => {
         });
       });
 
+      it('returns an error when the player is already in game', async () => {
+        const game = createGame();
+
+        player.gameId = game.id;
+        mockQueryGame(async () => game);
+
+        expect(await emit('joinGame', { code: 'ABCD' })).to.shallowDeepEqual({
+          status: 'ko',
+          error: 'player is already in game',
+        });
+      });
+
       it('returns an error when something wrong happens', async () => {
         mockJoinGame(throwError);
         expect(await emit('joinGame', { code: 'ABCD' })).to.shallowDeepEqual({ status: 'ko', error: errorMessage });
@@ -300,7 +317,8 @@ describe('websocket', () => {
       const game = createGame();
 
       beforeEach(() => {
-        player.game = game;
+        player.gameId = game.id;
+        mockQueryGame(async () => game);
       });
 
       it('starts the game', async () => {
@@ -313,7 +331,7 @@ describe('websocket', () => {
       });
 
       it('returns an error when the player is not in game', async () => {
-        player.game = undefined;
+        player.gameId = undefined;
         expect(await emit('startGame')).to.shallowDeepEqual({ status: 'ko', error: 'player is not in game' });
       });
 
@@ -328,7 +346,8 @@ describe('websocket', () => {
       const payload = { choicesIds: [1, 2] };
 
       beforeEach(() => {
-        player.game = game;
+        player.gameId = game.id;
+        mockQueryGame(async () => game);
       });
 
       it('sends a choices selection', async () => {
@@ -348,7 +367,7 @@ describe('websocket', () => {
       });
 
       it('returns an error when the player is not in game', async () => {
-        player.game = undefined;
+        player.gameId = undefined;
         expect(await emit('giveChoicesSelection', payload)).to.shallowDeepEqual({
           status: 'ko',
           error: 'player is not in game',
@@ -366,7 +385,8 @@ describe('websocket', () => {
       const payload = { answerId: 1 };
 
       beforeEach(() => {
-        player.game = game;
+        player.gameId = game.id;
+        mockQueryGame(async () => game);
       });
 
       it('sends the winning answer id', async () => {
@@ -386,7 +406,7 @@ describe('websocket', () => {
       });
 
       it('returns an error when the player is not in game', async () => {
-        player.game = undefined;
+        player.gameId = undefined;
         expect(await emit('pickWinningAnswer', payload)).to.shallowDeepEqual({
           status: 'ko',
           error: 'player is not in game',
@@ -403,7 +423,8 @@ describe('websocket', () => {
       const game = createGame();
 
       beforeEach(() => {
-        player.game = game;
+        player.gameId = game.id;
+        mockQueryGame(async () => game);
       });
 
       it('ends the current', async () => {
@@ -416,7 +437,7 @@ describe('websocket', () => {
       });
 
       it('returns an error when the player is not in game', async () => {
-        player.game = undefined;
+        player.gameId = undefined;
         expect(await emit('nextTurn')).to.shallowDeepEqual({ status: 'ko', error: 'player is not in game' });
       });
 

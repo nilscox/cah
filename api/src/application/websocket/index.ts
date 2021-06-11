@@ -13,6 +13,7 @@ import { GiveChoicesSelection } from '../../domain/use-cases/GiveChoicesSelectio
 import { JoinGame } from '../../domain/use-cases/JoinGame';
 import { NextTurn } from '../../domain/use-cases/NextTurn';
 import { PickWinningAnswer } from '../../domain/use-cases/PickWinningAnswer';
+import { QueryGame } from '../../domain/use-cases/QueryGame';
 import { QueryPlayer } from '../../domain/use-cases/QueryPlayer';
 import { StartGame } from '../../domain/use-cases/StartGame';
 import { AllPlayersAnsweredDto } from '../dtos/events/AllPlayersAnsweredDto';
@@ -118,6 +119,10 @@ export class WebsocketGameEvents extends WebsocketServer implements GameEvents {
       throw new Error('player not found');
     }
 
+    if (player.gameId) {
+      throw new Error('player is already in game');
+    }
+
     const game = await Container.get(JoinGame).joinGame(payload.code, player);
 
     this.join(game, player);
@@ -130,11 +135,13 @@ export class WebsocketGameEvents extends WebsocketServer implements GameEvents {
       throw new Error('player not found');
     }
 
-    if (!player.game) {
+    if (!player.gameId) {
       throw new Error('player is not in game');
     }
 
-    await Container.get(StartGame).startGame(player.game, player, 4);
+    const game = await Container.get(QueryGame).queryGame(player.gameId);
+
+    await Container.get(StartGame).startGame(game!, player, 4);
   }
 
   async onGiveChoicesSelection(socket: Socket, { choicesIds }: GiveChoicesSelectionDto) {
@@ -144,11 +151,13 @@ export class WebsocketGameEvents extends WebsocketServer implements GameEvents {
       throw new Error('player not found');
     }
 
-    if (!player.game) {
+    if (!player.gameId) {
       throw new Error('player is not in game');
     }
 
-    await Container.get(GiveChoicesSelection).giveChoicesSelection(player.game, player, choicesIds);
+    const game = await Container.get(QueryGame).queryGame(player.gameId);
+
+    await Container.get(GiveChoicesSelection).giveChoicesSelection(game!, player, choicesIds);
   }
 
   async onPickWinningAnswer(socket: Socket, { answerId }: PickWinningAnswerDto) {
@@ -158,11 +167,13 @@ export class WebsocketGameEvents extends WebsocketServer implements GameEvents {
       throw new Error('player not found');
     }
 
-    if (!player.game) {
+    if (!player.gameId) {
       throw new Error('player is not in game');
     }
 
-    await Container.get(PickWinningAnswer).pickWinningAnswer(player.game, player, answerId);
+    const game = await Container.get(QueryGame).queryGame(player.gameId);
+
+    await Container.get(PickWinningAnswer).pickWinningAnswer(game!, player, answerId);
   }
 
   async onNextTurn(socket: Socket) {
@@ -172,11 +183,13 @@ export class WebsocketGameEvents extends WebsocketServer implements GameEvents {
       throw new Error('player not found');
     }
 
-    if (!player.game) {
+    if (!player.gameId) {
       throw new Error('player is not in game');
     }
 
-    await Container.get(NextTurn).nextTurn(player.game);
+    const game = await Container.get(QueryGame).queryGame(player.gameId);
+
+    await Container.get(NextTurn).nextTurn(game!);
   }
 
   private getPlayerId(socket: Socket): number | undefined {

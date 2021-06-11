@@ -173,7 +173,7 @@ class StubPlayer {
 }
 
 describe('end-to-end', function () {
-  this.timeout(100000);
+  this.timeout(4000);
 
   createTestDatabase();
 
@@ -233,7 +233,27 @@ describe('end-to-end', function () {
     await jeanne.authenticate();
   });
 
-  it.skip('plays a full game', async () => {
+  const questionMaster = () => {
+    return [nils, tom, jeanne].find((player) => player.isQuestionMaster);
+  };
+
+  const playersExcludingQM = () => {
+    return [nils, tom, jeanne].filter((player) => !player.isQuestionMaster);
+  };
+
+  const expectEqualGameState = async () => {
+    await new Promise((r) => setTimeout(r, 0));
+
+    for (const player of [tom, jeanne]) {
+      expect(player.gameState).to.eql(nils.gameState);
+      expect(player.playState).to.eql(nils.playState);
+      expect(player.questionMaster).to.eql(nils.questionMaster);
+      expect(player.question).to.eql(nils.question);
+      expect(player.answers).to.eql(nils.answers);
+    }
+  };
+
+  it('plays a full game', async () => {
     const data = await nils.emit<{ game: { id: number; code: string } }>('createGame');
 
     await nils.joinGame(data.game.code);
@@ -247,28 +267,6 @@ describe('end-to-end', function () {
     expect(game).to.have.property('players').that.is.an('array').of.length(3);
 
     await nils.emit('startGame');
-    await new Promise((r) => setTimeout(r, 0));
-
-    const expectEqualGameState = async () => {
-      await new Promise((r) => setTimeout(r, 0));
-
-      for (const player of [tom, jeanne]) {
-        expect(player.gameState).to.eql(nils.gameState);
-        expect(player.playState).to.eql(nils.playState);
-        expect(player.questionMaster).to.eql(nils.questionMaster);
-        expect(player.question).to.eql(nils.question);
-        expect(player.answers).to.eql(nils.answers);
-      }
-    };
-
-    const questionMaster = () => {
-      return [nils, tom, jeanne].filter((player) => player.isQuestionMaster)[0];
-    };
-
-    const playersExcludingQM = () => {
-      return [nils, tom, jeanne].filter((player) => !player.isQuestionMaster);
-    };
-
     await expectEqualGameState();
 
     while (questionMaster()) {
@@ -277,10 +275,10 @@ describe('end-to-end', function () {
         await expectEqualGameState();
       }
 
-      await questionMaster().pickRandomAnswer();
+      await questionMaster()!.pickRandomAnswer();
       await expectEqualGameState();
 
-      await questionMaster().endCurrentTurn();
+      await questionMaster()!.endCurrentTurn();
       await expectEqualGameState();
     }
 
@@ -288,6 +286,6 @@ describe('end-to-end', function () {
       .get('/api/game/' + data.game.id)
       .expect(200);
 
-    console.log(body);
+    expect(body).to.have.property('state', 'finished');
   });
 });

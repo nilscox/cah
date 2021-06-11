@@ -8,6 +8,7 @@ export class Player {
   public cards!: Choice[];
 
   public game?: Game;
+  public gameId?: number;
 
   is(other?: Player) {
     return this === other;
