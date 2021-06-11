@@ -63,7 +63,7 @@ describe('StartGame', () => {
     expect(game.questionMaster).to.eql(questionMaster);
     expect(game.answers).to.eql([]);
 
-    const questions = questionRepository.getQuestions(game);
+    const questions = questionRepository.getQuestions();
     const choices = choiceRepository.getChoices();
 
     expect(questions).to.have.length(turns);
@@ -99,7 +99,7 @@ describe('StartGame', () => {
 
     await useCase.startGame(game, questionMaster, turns);
 
-    expect(questionRepository.getQuestions(game)).to.have.length(4);
+    expect(questionRepository.getQuestions()).to.have.length(4);
     expect(choiceRepository.getChoices()).to.have.length(91);
   });
 

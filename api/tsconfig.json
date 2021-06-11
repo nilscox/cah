@@ -5,11 +5,12 @@
     "module": "commonjs",
     "lib": ["es2019"],
     "sourceMap": true,
-    "strict": true,
     "esModuleInterop": true,
-    "skipLibCheck": true,
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "strict": true,
+    "noImplicitAny": true,
+    "noImplicitOverride": true
   },
   "include": ["src"]
 }

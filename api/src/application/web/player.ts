@@ -54,7 +54,7 @@ router.post('/', async (req, res, next) => {
   try {
     const { player, created } = await Container.get(Authenticate).authenticate(req.body.nick);
 
-    req.session.playerId = (player as any).id;
+    req.session.playerId = player.id;
 
     if (created) {
       res.status(201);

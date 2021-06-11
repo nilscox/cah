@@ -31,7 +31,7 @@ describe('websocket', () => {
   });
 
   describe('unauthenticated', () => {
-    it.skip('closes the socket connection when not authenticated', async () => {
+    it('closes the socket connection when not authenticated', async () => {
       const socket = io(`ws://localhost:${port}`);
 
       const connectPromise = new Promise<void>((resolve) => socket.on('connect', resolve));
@@ -57,7 +57,7 @@ describe('websocket', () => {
       expect(socket.connected).to.be.true;
     });
 
-    it.skip('prevents from connecting twice', async () => {
+    it('prevents from connecting twice', async () => {
       const cookie = asPlayer.jar.getCookie('connect.sid', {
         domain: 'localhost',
         path: '/',
@@ -78,7 +78,6 @@ describe('websocket', () => {
       const reason = await disconnectPromise;
 
       expect(reason).to.eql('io server disconnect');
-      await new Promise((r) => setTimeout(r, 100));
     });
 
     it('emits an event to a player', async () => {
@@ -275,10 +274,13 @@ describe('websocket', () => {
         const joinGame = sinon.fake.returns(game);
         mockJoinGame(joinGame);
 
-        expect(await emit('joinGame', { code: 'ABCD' })).to.eql({ status: 'ok' });
+        expect(await emit('joinGame', { code: game.code })).to.eql({
+          status: 'ok',
+          game: { id: game.id, code: game.code, state: 'idle', players: [] },
+        });
 
         expect(joinGame.callCount).to.eql(1);
-        expect(joinGame.firstCall.calledWith('ABCD', player));
+        expect(joinGame.firstCall.calledWith(game.code, player));
 
         expect(spyJoin.calledOnce).to.be.true;
         expect(spyJoin.firstCall.args[0]).to.eql(game);

@@ -10,10 +10,10 @@ import { GameEvents, GameEventsToken } from '../interfaces/GameEvents';
 import { PlayerRepository, PlayerRepositoryToken } from '../interfaces/PlayerRepository';
 
 class StartedGame extends Game {
-  playState!: PlayState;
-  questionMaster!: Player;
-  question!: Question;
-  winner?: Player;
+  override playState!: PlayState;
+  override questionMaster!: Player;
+  override question!: Question;
+  override winner?: Player;
 }
 
 @Service()
