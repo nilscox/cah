@@ -86,12 +86,15 @@ describe('NextTurn', () => {
 
     await useCase.nextTurn(game);
 
-    expect(game.playState).to.eql(PlayState.playersAnswer);
-    expect(game.question).to.eql(nextQuestion);
-    expect(game.questionMaster).to.eql(winner);
-    expect(game.answers).to.have.length(0);
+    const savedGame = (await gameRepository.findById(game.id))!;
 
-    for (const player of game.players) {
+    expect(savedGame.playState).to.eql(PlayState.playersAnswer);
+    expect(savedGame.question).to.eql(nextQuestion);
+    expect(savedGame.questionMaster).to.eql(winner);
+    expect(savedGame.answers).to.have.length(0);
+    expect(savedGame.winner).to.be.null;
+
+    for (const player of savedGame.players) {
       expect(player.cards).to.have.length(11);
     }
 
@@ -119,16 +122,22 @@ describe('NextTurn', () => {
 
     await useCase.nextTurn(game);
 
-    expect(game.state).to.eql(GameState.finished);
-    expect(game.playState).to.be.undefined;
-    expect(game.questionMaster).to.be.undefined;
-    expect(game.question).to.be.undefined;
-    expect(game.answers).to.have.length(0);
-    expect(game.winner).to.be.undefined;
+    const savedGame = (await gameRepository.findById(game.id))!;
+
+    expect(savedGame.state).to.eql(GameState.finished);
+    expect(savedGame.playState).to.be.null;
+    expect(savedGame.questionMaster).to.be.null;
+    expect(savedGame.question).to.be.null;
+    expect(savedGame.answers).to.have.length(0);
+    expect(savedGame.winner).to.be.null;
 
     const turns = turnRepository.getTurns();
 
     expect(turns).to.have.length(1);
+
+    for (const player of savedGame.players) {
+      expect(player.cards).to.have.length(0);
+    }
 
     expect(gameEvents.getGameEvents(game)).to.deep.include({ type: 'TurnEnded', turn: turns[0] });
     expect(gameEvents.getGameEvents(game)).to.deep.include({ type: 'GameFinished' });

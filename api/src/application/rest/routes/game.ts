@@ -1,9 +1,11 @@
+import { classToPlain } from 'class-transformer';
 import { Router } from 'express';
 import { Container } from 'typedi';
 
-import { Game } from '../../../domain/entities/Game';
+import { Game, GameState } from '../../../domain/entities/Game';
 import { CreateGame } from '../../../domain/use-cases/CreateGame';
 import { QueryGame } from '../../../domain/use-cases/QueryGame';
+import { GameDto, StartedGameDto } from '../../dtos/entities/GameDto';
 import { isPlayer } from '../guards/isPlayer';
 
 export const router = Router();
@@ -31,23 +33,25 @@ router.param('gameId', async (req, res, next) => {
     req.game = game;
 
     next();
-  } catch (e) {
-    return res.status(500).json({ error: e.message });
+  } catch (error) {
+    next(error);
   }
 });
 
 router.get('/:gameId', (req, res) => {
-  res.json(req.game);
+  const game = req.game!;
+  const Dto = game.state === GameState.started ? StartedGameDto : GameDto;
+
+  res.json(classToPlain(new Dto(req.game!)));
 });
 
-router.post('/', isPlayer, async (_req, res) => {
+router.post('/', isPlayer, async (_req, res, next) => {
   try {
     const createGame = Container.get(CreateGame);
     const game = await createGame.createGame();
 
     res.status(201).json(game);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error });
+    next(error);
   }
 });

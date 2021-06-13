@@ -270,13 +270,19 @@ describe('websocket', () => {
       it('joins a game', async () => {
         const spyJoin = sinon.spy(wsGameEvents, 'join');
 
-        const game = createGame();
+        const game = createGame({ players: [player] });
         const joinGame = sinon.fake.returns(game);
         mockJoinGame(joinGame);
+        mockQueryGame(async () => game);
 
         expect(await emit('joinGame', { code: game.code })).to.eql({
           status: 'ok',
-          game: { id: game.id, code: game.code, state: 'idle', players: [] },
+          game: {
+            id: game.id,
+            code: game.code,
+            state: 'idle',
+            players: [{ nick: player.nick }],
+          },
         });
 
         expect(joinGame.callCount).to.eql(1);

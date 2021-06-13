@@ -3,6 +3,7 @@ import { Inject, Service } from 'typedi';
 import { Game, GameState, PlayState } from '../entities/Game';
 import { GameEvents, GameEventsToken } from '../interfaces/GameEvents';
 import { GameRepository, GameRepositoryToken } from '../interfaces/GameRepository';
+import { PlayerRepository, PlayerRepositoryToken } from '../interfaces/PlayerRepository';
 import { QuestionRepository, QuestionRepositoryToken } from '../interfaces/QuestionRepository';
 import { TurnRepository, TurnRepositoryToken } from '../interfaces/TurnRepository';
 import { GameService } from '../services/GameService';
@@ -11,6 +12,9 @@ import { GameService } from '../services/GameService';
 export class NextTurn {
   @Inject(GameRepositoryToken)
   private readonly gameRepository!: GameRepository;
+
+  @Inject(PlayerRepositoryToken)
+  private readonly playerRepository!: PlayerRepository;
 
   @Inject(QuestionRepositoryToken)
   private readonly questionRepository!: QuestionRepository;
@@ -40,11 +44,15 @@ export class NextTurn {
 
     if (!nextQuestion) {
       game.state = GameState.finished;
-      game.playState = undefined;
-      game.questionMaster = undefined;
-      game.question = undefined;
+      (game as any).playState = null;
+      (game as any).questionMaster = null;
+      (game as any).question = null;
       game.answers = [];
-      game.winner = undefined;
+      (game as any).winner = null;
+
+      for (const player of game.players) {
+        await this.playerRepository.removeCards(player, player.cards);
+      }
 
       this.gameEvents.onGameEvent(game, {
         type: 'GameFinished',
@@ -54,7 +62,7 @@ export class NextTurn {
       game.questionMaster = winner;
       game.question = nextQuestion;
       game.answers = [];
-      game.winner = undefined;
+      (game as any).winner = null;
 
       await this.gameService.dealCards(game);
 

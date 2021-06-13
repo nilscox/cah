@@ -16,6 +16,7 @@ import { PickWinningAnswer } from '../../domain/use-cases/PickWinningAnswer';
 import { QueryGame } from '../../domain/use-cases/QueryGame';
 import { QueryPlayer } from '../../domain/use-cases/QueryPlayer';
 import { StartGame } from '../../domain/use-cases/StartGame';
+import { GameDto } from '../dtos/entities/GameDto';
 import { AllPlayersAnsweredDto } from '../dtos/events/AllPlayersAnsweredDto';
 import { GameFinishedDto } from '../dtos/events/GameFinishedDto';
 import { GameStartedDto } from '../dtos/events/GameStartedDto';
@@ -104,9 +105,12 @@ export class WebsocketGameEvents extends WebsocketServer implements GameEvents {
   async onCreateGame(socket: Socket) {
     await this.getPlayer(socket);
 
-    const game = await Container.get(CreateGame).createGame();
+    const { id } = await Container.get(CreateGame).createGame();
+    const game = await Container.get(QueryGame).queryGame(id);
 
-    return { game };
+    return {
+      game: new GameDto(game!),
+    };
   }
 
   async onJoinGame(socket: Socket, payload: JoinGameDto) {
@@ -116,11 +120,14 @@ export class WebsocketGameEvents extends WebsocketServer implements GameEvents {
       throw new Error('player is already in game');
     }
 
-    const game = await Container.get(JoinGame).joinGame(payload.code, player);
+    const { id } = await Container.get(JoinGame).joinGame(payload.code, player);
+    const game = await Container.get(QueryGame).queryGame(id);
 
-    this.join(game, player);
+    this.join(game!, player);
 
-    return { game };
+    return {
+      game: new GameDto(game!),
+    };
   }
 
   async onStartGame(socket: Socket, { numberOfTurns }: StartGameDto) {
