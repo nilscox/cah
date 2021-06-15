@@ -5,7 +5,7 @@ import { PlayerRepository } from '../../interfaces/PlayerRepository';
 export class InMemoryPlayerRepository implements PlayerRepository {
   private players: Player[] = [];
 
-  setPlayers(players: Player[]): void {
+  set(players: Player[]): void {
     this.players = players;
   }
 
@@ -21,11 +21,13 @@ export class InMemoryPlayerRepository implements PlayerRepository {
     if (this.players[player.id]) {
       this.players[player.id] = player;
     } else {
+      // TODO: don't mutate the player instance
       player.id = this.players.length;
       this.players.push(player);
     }
   }
 
+  // TODO: don't mutate the player instance
   async addCards(player: Player, cards: Choice[]): Promise<void> {
     player.cards.push(...cards);
   }

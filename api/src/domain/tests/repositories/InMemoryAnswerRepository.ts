@@ -1,33 +1,28 @@
+import _ from 'lodash';
+
 import { Answer } from '../../entities/Answer';
 import { AnswerRepository } from '../../interfaces/AnswerRepository';
 
 export class InMemoryAnswerRepository implements AnswerRepository {
   private answers: Answer[] = [];
 
-  setAnswers(answers: Answer[]) {
+  set(answers: Answer[]) {
     this.answers = answers;
   }
 
-  async findAll(): Promise<Answer[]> {
-    return this.answers;
-  }
-
   async findOne(id: number): Promise<Answer | undefined> {
-    return this.answers.find((answer) => answer.id === id);
+    return this.answers[id];
   }
 
   async save(answer: Answer): Promise<void> {
-    if (this.answers[answer.id]) {
+    if (answer.id && this.answers[answer.id]) {
       this.answers[answer.id] = answer;
     } else {
-      answer.id = this.answers.length;
-      this.answers.push(answer);
+      this.answers.push({ ...answer, id: this.answers.length });
     }
   }
 
   async saveAll(answers: Answer[]): Promise<void> {
-    for (const answer of answers) {
-      this.save(answer);
-    }
+    _.forEach(answers, this.save.bind(this));
   }
 }

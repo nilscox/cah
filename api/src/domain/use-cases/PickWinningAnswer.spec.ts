@@ -1,7 +1,8 @@
 import { expect } from 'chai';
 import { Container } from 'typedi';
 
-import { PlayState } from '../entities/Game';
+import { PlayState, StartedGame } from '../entities/Game';
+import { Player } from '../entities/Player';
 import { AnswerNotFoundError } from '../errors/AnswerNotFoundError';
 import { InvalidPlayStateError } from '../errors/InvalidPlayStateError';
 import { IsNotQuestionMasterError } from '../errors/IsNotQuestionMasterError';
@@ -47,45 +48,74 @@ describe('PickWinningAnswer', () => {
     useCase = Container.get(PickWinningAnswer);
   });
 
-  it('selects the winning answer', async () => {
-    const game = await createStartedGame({ playState: PlayState.questionMasterSelection });
-    const questionMaster = game.questionMaster!;
-    const players = game.playersExcludingQM;
+  const playersExcludingQM = (game: StartedGame) => {
+    return game.players.filter((player) => !player.is(game.questionMaster));
+  };
+
+  const initRepositories = (game: StartedGame) => {
+    gameRepository.set([game]);
+    playerRepository.set(game.players);
+    choiceRepository.set(game.players.map(({ cards }) => cards).flat());
+  };
+
+  const createAnswerForPlayers = async (game: StartedGame, players: Player[]) => {
     const answers = createAnswers(players.length, (n) => ({ player: players[n] }));
 
     answerRepository.set(answers);
-    game.answers = answers;
 
-    await useCase.pickWinningAnswer(game, questionMaster, answers[0].id);
+    for (const answer of answers) {
+      await gameRepository.addAnswer(game, answer);
+    }
+
+    return answers;
+  };
+
+  const getGame = (gameId: number) => {
+    return gameRepository.findOne(gameId) as Promise<StartedGame>;
+  };
+
+  it('selects the winning answer', async () => {
+    let game = createStartedGame({ playState: PlayState.questionMasterSelection });
+    const { questionMaster } = game;
+
+    initRepositories(game);
+    const answers = await createAnswerForPlayers(game, playersExcludingQM(game));
+
+    const { id: answerId, player: winner } = answers[0];
+
+    await useCase.pickWinningAnswer(game.id, questionMaster.id, answerId);
+
+    game = await getGame(game.id);
 
     expect(game.playState).to.eql(PlayState.endOfTurn);
-    expect(game.winner).to.eql(players[0]);
+    expect(game.winner).to.eql(winner);
 
     expect(gameEvents.getGameEvents(game)).to.deep.include({
       type: 'WinnerSelected',
-      answers: game.answers,
-      winner: players[0],
+      answers: answers,
+      winner,
     });
   });
 
   it('does not select an answer when the answerId is not valid', async () => {
-    const game = await createStartedGame({ playState: PlayState.questionMasterSelection });
-    const questionMaster = game.questionMaster!;
-    const players = game.playersExcludingQM;
-    const answers = createAnswers(players.length, (n) => ({ player: players[n] }));
+    const game = createStartedGame({ playState: PlayState.questionMasterSelection });
+    const { questionMaster } = game;
 
-    answerRepository.set(answers);
-    game.answers = answers;
+    initRepositories(game);
+    await createAnswerForPlayers(game, playersExcludingQM(game));
 
-    await expect(useCase.pickWinningAnswer(game, questionMaster, 42)).to.be.rejectedWith(AnswerNotFoundError);
+    await expect(useCase.pickWinningAnswer(game.id, questionMaster.id, 42)).to.be.rejectedWith(AnswerNotFoundError);
   });
 
   it('does not select a winner when the game play state is invalid', async () => {
     for (const playState of [PlayState.playersAnswer, PlayState.endOfTurn]) {
       const game = createStartedGame({ playState });
-      const questionMaster = game.questionMaster!;
+      const { questionMaster } = game;
 
-      const err = await expect(useCase.pickWinningAnswer(game, questionMaster, 42)).to.be.rejectedWith(
+      initRepositories(game);
+      await createAnswerForPlayers(game, playersExcludingQM(game));
+
+      const err = await expect(useCase.pickWinningAnswer(game.id, questionMaster.id, 0)).to.be.rejectedWith(
         InvalidPlayStateError,
       );
 
@@ -95,8 +125,11 @@ describe('PickWinningAnswer', () => {
 
   it('does not select a winner when the player is not the question master', async () => {
     const game = await createStartedGame({ playState: PlayState.questionMasterSelection });
-    const players = game.playersExcludingQM;
+    const [player] = playersExcludingQM(game);
 
-    await expect(useCase.pickWinningAnswer(game, players[0], 42)).to.be.rejectedWith(IsNotQuestionMasterError);
+    initRepositories(game);
+    await createAnswerForPlayers(game, playersExcludingQM(game));
+
+    await expect(useCase.pickWinningAnswer(game.id, player.id, 0)).to.be.rejectedWith(IsNotQuestionMasterError);
   });
 });

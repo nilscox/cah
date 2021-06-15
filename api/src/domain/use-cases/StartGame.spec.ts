@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { Container } from 'typedi';
 
-import { GameState, PlayState } from '../entities/Game';
+import { Game, GameState, PlayState, StartedGame } from '../entities/Game';
 import { GameAlreadyStartedError } from '../errors/GameAlreadyStartedError';
 import { NotEnoughPlayersError } from '../errors/NotEnoughPlayersError';
 import { ChoiceRepositoryToken } from '../interfaces/ChoiceRepository';
@@ -50,36 +50,50 @@ describe('StartGame', () => {
     useCase = Container.get(StartGame);
   });
 
+  const initRepositories = (game: Game) => {
+    gameRepository.set([game]);
+    playerRepository.set(game.players);
+  };
+
+  const getGame = (gameId: number) => {
+    return gameRepository.findOne(gameId) as Promise<StartedGame>;
+  };
+
   it('starts a game', async () => {
     const players = createPlayers(4);
     const game = createGame({ players });
     const [questionMaster] = players;
     const turns = 2;
 
-    await useCase.startGame(game, questionMaster, turns);
+    initRepositories(game);
 
-    expect(game.state).to.eql(GameState.started);
-    expect(game.playState).to.eql(PlayState.playersAnswer);
-    expect(game.questionMaster).to.eql(questionMaster);
-    expect(game.answers).to.eql([]);
+    await useCase.startGame(game.id, questionMaster.id, turns);
 
-    const questions = questionRepository.getQuestions();
-    const choices = choiceRepository.findAll();
+    const startedGame = await getGame(game.id);
+
+    expect(startedGame.state).to.eql(GameState.started);
+    expect(startedGame.playState).to.eql(PlayState.playersAnswer);
+    expect(startedGame.questionMaster).to.eql(questionMaster);
+
+    expect(await gameRepository.getAnswers(game)).to.eql([]);
+
+    const questions = questionRepository.get();
+    const choices = choiceRepository.get();
 
     expect(questions).to.have.length(turns);
-    expect(game.question).to.eql(questions?.[0]);
+    expect(startedGame.question).to.eql(questions[0]);
     expect(choices).to.have.length(50);
 
-    for (const player of game.players) {
+    for (const player of startedGame.players) {
       expect(player.cards).to.have.length(11);
       expect(gameEvents.getPlayerEvents(player)).to.deep.include({ type: 'CardsDealt', cards: player.cards });
     }
 
-    expect(gameEvents.getGameEvents(game)).to.deep.include({ type: 'GameStarted' });
-    expect(gameEvents.getGameEvents(game)).to.deep.include({
+    expect(gameEvents.getGameEvents(startedGame)).to.deep.include({ type: 'GameStarted' });
+    expect(gameEvents.getGameEvents(startedGame)).to.deep.include({
       type: 'TurnStarted',
       questionMaster: questionMaster,
-      question: game.question,
+      question: questions[0],
     });
   });
 
@@ -89,6 +103,8 @@ describe('StartGame', () => {
     const [questionMaster] = players;
     const turns = 4;
 
+    initRepositories(game);
+
     // 9 blanks
     externalData.setQuestions([
       createQuestion(),
@@ -97,29 +113,33 @@ describe('StartGame', () => {
       createQuestion({ blanks: [9, 8, 7, 6] }),
     ]);
 
-    await useCase.startGame(game, questionMaster, turns);
+    await useCase.startGame(game.id, questionMaster.id, turns);
 
-    expect(questionRepository.getQuestions()).to.have.length(4);
-    expect(choiceRepository.findAll()).to.have.length(91);
+    expect(questionRepository.get()).to.have.length(4);
+    expect(choiceRepository.get()).to.have.length(91);
   });
 
   it('does not start a game that is not in idle state', async () => {
     const players = createPlayers(4);
-    const game = createGame({ state: GameState.started });
+    const game = createGame({ state: GameState.started, players });
     const [questionMaster] = players;
 
-    await expect(useCase.startGame(game, questionMaster, 1)).to.be.rejectedWith(GameAlreadyStartedError);
+    initRepositories(game);
+
+    await expect(useCase.startGame(game.id, questionMaster.id, 1)).to.be.rejectedWith(GameAlreadyStartedError);
   });
 
   it('does not start a game that have less than three players', async () => {
-    const game = await createGame({ players: [] });
     const questionMaster = createPlayer();
+    const game = await createGame({ players: [questionMaster] });
 
-    await expect(useCase.startGame(game, questionMaster, 1)).to.be.rejectedWith(NotEnoughPlayersError);
+    initRepositories(game);
 
-    game.players.push(questionMaster);
+    await expect(useCase.startGame(game.id, questionMaster.id, 1)).to.be.rejectedWith(NotEnoughPlayersError);
+
     game.players.push(createPlayer());
+    playerRepository.set(game.players);
 
-    await expect(useCase.startGame(game, questionMaster, 1)).to.be.rejectedWith(NotEnoughPlayersError);
+    await expect(useCase.startGame(game.id, questionMaster.id, 1)).to.be.rejectedWith(NotEnoughPlayersError);
   });
 });

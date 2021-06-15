@@ -23,29 +23,29 @@ const creatorsFactory = <T extends { id: number }>(Cls: ClassType<T>, defaults: 
 };
 
 export const { createOne: createQuestion, createMany: createQuestions } = creatorsFactory(Question, () => ({
-  id: 1,
+  id: 0,
   text: 'question',
 }));
 
 export const { createOne: createChoice, createMany: createChoices } = creatorsFactory(Choice, () => ({
-  id: 1,
+  id: 0,
   text: 'choice',
 }));
 
 export const { createOne: createAnswer, createMany: createAnswers } = creatorsFactory(Answer, () => ({
-  id: 1,
+  id: 0,
   player: createPlayer(),
   choices: [],
 }));
 
 export const { createOne: createPlayer, createMany: createPlayers } = creatorsFactory(Player, () => ({
-  id: 1,
+  id: 0,
   nick: 'nick',
   cards: [],
 }));
 
 export const { createOne: createGame } = creatorsFactory(Game, () => ({
-  id: 1,
+  id: 0,
   code: '1234',
   state: GameState.idle,
   players: [],
@@ -60,7 +60,6 @@ export const createStartedGame = (overrides?: Partial<StartedGame>) => {
   game.players = createPlayers(4, (n) => ({ nick: 'player ' + (n + 1) }));
   game.questionMaster = game.players[0];
   game.question = createQuestion();
-  game.answers = [];
 
   const cards = [...createChoices(11 * 4 + 1 * 3)];
 

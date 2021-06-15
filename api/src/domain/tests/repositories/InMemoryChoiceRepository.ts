@@ -5,11 +5,11 @@ import { ChoiceRepository } from '../../interfaces/ChoiceRepository';
 export class InMemoryChoiceRepository implements ChoiceRepository {
   private choices: Choice[] = [];
 
-  setChoices(choices: Choice[]) {
+  set(choices: Choice[]) {
     this.choices = choices;
   }
 
-  async findAll(): Promise<Choice[]> {
+  get(): Choice[] {
     return this.choices;
   }
 

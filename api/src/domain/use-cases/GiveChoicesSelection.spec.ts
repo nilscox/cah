@@ -63,9 +63,23 @@ describe('GiveChoicesSelection', () => {
   };
 
   const initRepositories = (game: StartedGame) => {
-    gameRepository.save(game);
-    playerRepository.setPlayers(game.players);
-    choiceRepository.setChoices(game.players.map(({ cards }) => cards).flat());
+    gameRepository.set([game]);
+    playerRepository.set(game.players);
+    choiceRepository.set(game.players.map(({ cards }) => cards).flat());
+  };
+
+  const createAnswerForPlayers = async (game: StartedGame, players: Player[]) => {
+    const answers = createAnswers(players.length, (n) => ({ player: players[n] }));
+
+    answerRepository.set(answers);
+
+    for (const answer of answers) {
+      await gameRepository.addAnswer(game, answer);
+    }
+  };
+
+  const getGame = (gameId: number) => {
+    return gameRepository.findOne(gameId) as Promise<StartedGame>;
   };
 
   it('validates a single choice for the current turn', async () => {
@@ -112,18 +126,8 @@ describe('GiveChoicesSelection', () => {
     expect(answers?.[0].choices).to.have.members(selection);
   });
 
-  const createAnswerForPlayers = async (game: StartedGame, players: Player[]) => {
-    const answers = createAnswers(players.length, (n) => ({ player: players[n] }));
-
-    answerRepository.setAnswers(answers);
-
-    for (const answer of answers) {
-      await gameRepository.addAnswer(game, answer);
-    }
-  };
-
   it('enters in question master selection play state when the last player answered', async () => {
-    const game = createStartedGame();
+    let game = createStartedGame();
     const [player, ...players] = playersExcludingQM(game);
     const selection = [player.cards[0]];
 
@@ -132,9 +136,9 @@ describe('GiveChoicesSelection', () => {
 
     await useCase.giveChoicesSelection(game.id, player.id, getIds(selection));
 
-    const savedGame = (await gameRepository.findOne(game.id)) as StartedGame;
+    game = await getGame(game.id);
 
-    expect(savedGame.playState).to.eql(PlayState.questionMasterSelection);
+    expect(game.playState).to.eql(PlayState.questionMasterSelection);
 
     const savedAnswers = await gameRepository.getAnswers(game);
 

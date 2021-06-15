@@ -1,6 +1,7 @@
 import { Inject, Service } from 'typedi';
 
-import { Game, GameState, PlayState } from '../entities/Game';
+import { GameState, PlayState } from '../entities/Game';
+import { Turn } from '../entities/Turn';
 import { GameEvents, GameEventsToken } from '../interfaces/GameEvents';
 import { GameRepository, GameRepositoryToken } from '../interfaces/GameRepository';
 import { PlayerRepository, PlayerRepositoryToken } from '../interfaces/PlayerRepository';
@@ -28,15 +29,25 @@ export class NextTurn {
   @Inject()
   private readonly gameService!: GameService;
 
-  async nextTurn(game: Game) {
-    const { questionMaster, question, winner } = this.gameService.ensurePlayState(game, PlayState.endOfTurn);
+  async nextTurn(gameId: number) {
+    const game = await this.gameService.findStartedGame(gameId);
     const answers = await this.gameRepository.getAnswers(game);
+    const { questionMaster, question, winner } = game;
+
+    this.gameService.ensurePlayState(game, PlayState.endOfTurn);
 
     if (!winner) {
       throw new Error('Invalid state: winner should be defined');
     }
 
-    const turn = await this.turnRepository.createTurn(game, questionMaster, question, answers, winner);
+    const turn = new Turn();
+
+    turn.questionMaster = questionMaster;
+    turn.question = question;
+    turn.answers = answers;
+    turn.winner = winner;
+
+    await this.turnRepository.save(turn);
 
     await this.gameEvents.onGameEvent(game, { type: 'TurnEnded', turn });
 
@@ -44,11 +55,10 @@ export class NextTurn {
 
     if (!nextQuestion) {
       game.state = GameState.finished;
-      (game as any).playState = null;
-      (game as any).questionMaster = null;
-      (game as any).question = null;
-      game.answers = [];
-      (game as any).winner = null;
+      game.playState = undefined;
+      game.questionMaster = undefined;
+      game.question = undefined;
+      game.winner = undefined;
 
       for (const player of game.players) {
         await this.playerRepository.removeCards(player, player.cards);
@@ -61,8 +71,7 @@ export class NextTurn {
       game.playState = PlayState.playersAnswer;
       game.questionMaster = winner;
       game.question = nextQuestion;
-      game.answers = [];
-      (game as any).winner = null;
+      game.winner = undefined;
 
       await this.gameService.dealCards(game);
 

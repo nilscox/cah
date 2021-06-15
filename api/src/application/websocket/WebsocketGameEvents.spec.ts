@@ -19,7 +19,7 @@ import {
   mockStartGame,
 } from '../test';
 
-describe('websocket', () => {
+describe.skip('websocket', () => {
   const port = 1234;
 
   before((done) => {

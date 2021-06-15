@@ -9,8 +9,8 @@ export class InMemoryGameRepository implements GameRepository {
   private games: Game[] = [];
   private answers: Record<number, Answer[]> = {};
 
-  async findAll(): Promise<Game[]> {
-    return this.games;
+  set(games: Game[]) {
+    this.games = games;
   }
 
   async findOne(gameId: number): Promise<Game | undefined> {
@@ -21,17 +21,18 @@ export class InMemoryGameRepository implements GameRepository {
     throw new Error('Method not implemented.');
   }
 
-  async addPlayer(game: Game, player: Player): Promise<void> {
-    game.players.push(player);
-  }
-
   async save(game: Game) {
     if (this.games[game.id]) {
       this.games[game.id] = game;
     } else {
       game.id = this.games.length;
+      // todo: push a new instance
       this.games.push(game);
     }
+  }
+
+  async addPlayer(game: Game, player: Player): Promise<void> {
+    game.players.push(player);
   }
 
   async addAnswer(game: Game, answer: Answer): Promise<void> {

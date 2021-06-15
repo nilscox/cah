@@ -1,6 +1,7 @@
 import { Inject, Service } from 'typedi';
 
 import { Game, GameState, PlayState, StartedGame } from '../entities/Game';
+import { EntityNotFoundError } from '../errors/EntityNotFoundError';
 import { InvalidPlayStateError } from '../errors/InvalidPlayStateError';
 import { NoMoreChoiceError } from '../errors/NoMoreChoiceError';
 import { ChoiceRepository, ChoiceRepositoryToken } from '../interfaces/ChoiceRepository';
@@ -32,8 +33,10 @@ export class GameService {
     const game = await this.gameRepository.findOne(gameId);
 
     if (!game) {
-      throw new Error(`game with id ${gameId} not found`);
-    } else if (game.state !== GameState.started) {
+      throw new EntityNotFoundError('game', 'id', gameId);
+    }
+
+    if (game.state !== GameState.started) {
       throw new Error(`game with id ${gameId} is not started`);
     }
 

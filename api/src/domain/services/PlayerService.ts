@@ -1,6 +1,7 @@
 import { Inject, Service } from 'typedi';
 
 import { Player } from '../entities/Player';
+import { EntityNotFoundError } from '../errors/EntityNotFoundError';
 import { PlayerRepository, PlayerRepositoryToken } from '../interfaces/PlayerRepository';
 
 @Service()
@@ -12,7 +13,7 @@ export class PlayerService {
     const player = await this.playerRepository.findOne(playerId);
 
     if (!player) {
-      throw new Error(`Player with id ${playerId} not found`);
+      throw new EntityNotFoundError('player', 'id', playerId);
     }
 
     return player;

@@ -8,5 +8,5 @@ export class Turn {
   questionMaster!: Player;
   question!: Question;
   answers!: Answer[];
-  winner?: Player;
+  winner!: Player;
 }

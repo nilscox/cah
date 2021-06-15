@@ -9,7 +9,7 @@ import { InMemoryChoiceRepository } from '../../../domain/tests/repositories/InM
 import { auth, mockCreateGame, mockQueryGame, mockQueryPlayer } from '../../test';
 import { app } from '../index';
 
-describe('/api/game', () => {
+describe.skip('/api/game', () => {
   const player = createPlayer({ id: 1, nick: 'toto' });
   const asPlayer = auth(player);
 

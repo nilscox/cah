@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { Container } from 'typedi';
 
-import { Game, GameState, PlayState } from '../entities/Game';
+import { GameState, PlayState, StartedGame } from '../entities/Game';
 import { InvalidPlayStateError } from '../errors/InvalidPlayStateError';
 import { ChoiceRepositoryToken } from '../interfaces/ChoiceRepository';
 import { GameEventsToken } from '../interfaces/GameEvents';
@@ -9,7 +9,7 @@ import { GameRepositoryToken } from '../interfaces/GameRepository';
 import { PlayerRepositoryToken } from '../interfaces/PlayerRepository';
 import { QuestionRepositoryToken } from '../interfaces/QuestionRepository';
 import { TurnRepositoryToken } from '../interfaces/TurnRepository';
-import { createChoices, createPlayers, createQuestion, createStartedGame } from '../tests/creators';
+import { createChoices, createQuestion, createStartedGame } from '../tests/creators';
 import { inject } from '../tests/inject';
 import { InMemoryChoiceRepository } from '../tests/repositories/InMemoryChoiceRepository';
 import { InMemoryGameRepository } from '../tests/repositories/InMemoryGameRepository';
@@ -49,56 +49,58 @@ describe('NextTurn', () => {
     useCase = Container.get(NextTurn);
   });
 
+  const playersExcludingQM = (game: StartedGame) => {
+    return game.players.filter((player) => !player.is(game.questionMaster));
+  };
+
+  const initRepositories = (game: StartedGame) => {
+    gameRepository.set([game]);
+    playerRepository.set(game.players);
+    choiceRepository.set(game.players.map(({ cards }) => cards).flat());
+  };
+
   const initializeGame = () => {
-    const players = createPlayers(4);
-    const [questionMaster, winner] = players;
+    const game = createStartedGame({ playState: PlayState.endOfTurn });
 
-    for (const player of players) {
-      player.cards = createChoices(Game.cardsPerPlayer);
-    }
+    initRepositories(game);
+    choiceRepository.createChoices(game, createChoices(3));
 
-    const game = createStartedGame({
-      playState: PlayState.endOfTurn,
-      players,
-      questionMaster,
-      winner,
-    });
-
-    for (const player of game.playersExcludingQM) {
+    for (const player of playersExcludingQM(game)) {
       player.cards.splice(0, 1);
     }
+
+    game.winner = playersExcludingQM(game)[0];
 
     return game;
   };
 
-  beforeEach(() => {
-    turnRepository.clear();
-  });
+  const getGame = (gameId: number) => {
+    return gameRepository.findOne(gameId) as Promise<StartedGame>;
+  };
 
   it('ends the current turn and starts the next one', async () => {
-    const game = initializeGame();
+    let game = initializeGame();
     const { players, winner, questionMaster } = game;
 
     const nextQuestion = createQuestion();
-
     questionRepository.createQuestions(game, [nextQuestion]);
-    choiceRepository.createChoices(game, createChoices(3));
 
-    await useCase.nextTurn(game);
+    await useCase.nextTurn(game.id);
 
-    const savedGame = (await gameRepository.findById(game.id))!;
+    game = await getGame(game.id);
 
-    expect(savedGame.playState).to.eql(PlayState.playersAnswer);
-    expect(savedGame.question).to.eql(nextQuestion);
-    expect(savedGame.questionMaster).to.eql(winner);
-    expect(savedGame.answers).to.have.length(0);
-    expect(savedGame.winner).to.be.null;
+    expect(game.playState).to.eql(PlayState.playersAnswer);
+    expect(game.question).to.eql(nextQuestion);
+    expect(game.questionMaster).to.eql(winner);
+    expect(game.winner).to.be.undefined;
 
-    for (const player of savedGame.players) {
+    expect(await gameRepository.getAnswers(game)).to.have.length(0);
+
+    for (const player of game.players) {
       expect(player.cards).to.have.length(11);
     }
 
-    const turns = turnRepository.getTurns();
+    const turns = turnRepository.get();
 
     expect(turns).to.have.length(1);
 
@@ -118,24 +120,25 @@ describe('NextTurn', () => {
   });
 
   it('terminates the game', async () => {
-    const game = initializeGame();
+    let game = initializeGame();
 
-    await useCase.nextTurn(game);
+    await useCase.nextTurn(game.id);
 
-    const savedGame = (await gameRepository.findById(game.id))!;
+    game = await getGame(game.id);
 
-    expect(savedGame.state).to.eql(GameState.finished);
-    expect(savedGame.playState).to.be.null;
-    expect(savedGame.questionMaster).to.be.null;
-    expect(savedGame.question).to.be.null;
-    expect(savedGame.answers).to.have.length(0);
-    expect(savedGame.winner).to.be.null;
+    expect(game.state).to.eql(GameState.finished);
+    expect(game.playState).to.be.undefined;
+    expect(game.questionMaster).to.be.undefined;
+    expect(game.question).to.be.undefined;
+    expect(game.winner).to.be.undefined;
 
-    const turns = turnRepository.getTurns();
+    expect(await gameRepository.getAnswers(game)).to.have.length(0);
+
+    const turns = turnRepository.get();
 
     expect(turns).to.have.length(1);
 
-    for (const player of savedGame.players) {
+    for (const player of game.players) {
       expect(player.cards).to.have.length(0);
     }
 
@@ -147,7 +150,10 @@ describe('NextTurn', () => {
     for (const playState of [PlayState.playersAnswer, PlayState.questionMasterSelection]) {
       const game = createStartedGame({ playState });
 
-      const err = await expect(useCase.nextTurn(game)).to.be.rejectedWith(InvalidPlayStateError);
+      initRepositories(game);
+      choiceRepository.createChoices(game, createChoices(3));
+
+      const err = await expect(useCase.nextTurn(game.id)).to.be.rejectedWith(InvalidPlayStateError);
 
       expect(err).to.have.property('expected', PlayState.endOfTurn);
     }
