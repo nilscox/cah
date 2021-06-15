@@ -1,23 +1,18 @@
 import { Inject, Service } from 'typedi';
 
-import { Game, PlayState } from '../entities/Game';
-import { Player } from '../entities/Player';
-import { Question } from '../entities/Question';
+import { Game, GameState, PlayState, StartedGame } from '../entities/Game';
 import { InvalidPlayStateError } from '../errors/InvalidPlayStateError';
 import { NoMoreChoiceError } from '../errors/NoMoreChoiceError';
 import { ChoiceRepository, ChoiceRepositoryToken } from '../interfaces/ChoiceRepository';
 import { GameEvents, GameEventsToken } from '../interfaces/GameEvents';
+import { GameRepository, GameRepositoryToken } from '../interfaces/GameRepository';
 import { PlayerRepository, PlayerRepositoryToken } from '../interfaces/PlayerRepository';
-
-class StartedGame extends Game {
-  override playState!: PlayState;
-  override questionMaster!: Player;
-  override question!: Question;
-  override winner?: Player;
-}
 
 @Service()
 export class GameService {
+  @Inject(GameRepositoryToken)
+  private readonly gameRepository!: GameRepository;
+
   @Inject(ChoiceRepositoryToken)
   private readonly choiceRepository!: ChoiceRepository;
 
@@ -27,12 +22,22 @@ export class GameService {
   @Inject(GameEventsToken)
   private readonly gameEvents!: GameEvents;
 
-  ensurePlayState(game: Game, playState: PlayState): StartedGame {
+  ensurePlayState(game: StartedGame, playState: PlayState): void {
     if (game.playState !== playState) {
       throw new InvalidPlayStateError(game, playState);
     }
+  }
 
-    return game as StartedGame;
+  async findStartedGame(gameId: number): Promise<StartedGame> {
+    const game = await this.gameRepository.findOne(gameId);
+
+    if (!game) {
+      throw new Error(`game with id ${gameId} not found`);
+    } else if (game.state !== GameState.started) {
+      throw new Error(`game with id ${gameId} is not started`);
+    }
+
+    return Object.assign(new StartedGame(), game);
   }
 
   async dealCards(game: Game) {

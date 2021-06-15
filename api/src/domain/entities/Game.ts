@@ -1,7 +1,5 @@
-import { Answer } from './Answer';
 import { Player } from './Player';
 import { Question } from './Question';
-import { Turn } from './Turn';
 
 export enum GameState {
   idle = 'idle',
@@ -23,16 +21,14 @@ export class Game {
 
   code!: string;
   state!: GameState;
+
   players!: Player[];
+}
 
-  playState?: PlayState;
-  questionMaster?: Player;
-  question?: Question;
-  answers?: Answer[];
+export class StartedGame extends Game {
+  override state!: GameState.started;
+  playState!: PlayState;
+  questionMaster!: Player;
+  question!: Question;
   winner?: Player;
-  turns?: Turn[];
-
-  get playersExcludingQM() {
-    return this.players.filter((player) => !player.is(this.questionMaster));
-  }
 }

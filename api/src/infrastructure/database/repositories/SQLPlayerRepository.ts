@@ -6,7 +6,7 @@ import { PlayerEntity } from '../entities/PlayerEntity';
 
 @EntityRepository(PlayerEntity)
 export class SQLPlayerRepository extends Repository<PlayerEntity> implements PlayerRepository {
-  async findById(playerId: number): Promise<PlayerEntity | undefined> {
+  async findOne(playerId: number): Promise<PlayerEntity | undefined> {
     return this.findOne(playerId, { relations: ['cards'] });
   }
 

@@ -64,7 +64,7 @@ describe('StartGame', () => {
     expect(game.answers).to.eql([]);
 
     const questions = questionRepository.getQuestions();
-    const choices = choiceRepository.getChoices();
+    const choices = choiceRepository.findAll();
 
     expect(questions).to.have.length(turns);
     expect(game.question).to.eql(questions?.[0]);
@@ -100,7 +100,7 @@ describe('StartGame', () => {
     await useCase.startGame(game, questionMaster, turns);
 
     expect(questionRepository.getQuestions()).to.have.length(4);
-    expect(choiceRepository.getChoices()).to.have.length(91);
+    expect(choiceRepository.findAll()).to.have.length(91);
   });
 
   it('does not start a game that is not in idle state', async () => {

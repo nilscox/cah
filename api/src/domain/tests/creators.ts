@@ -1,11 +1,8 @@
-import Container from 'typedi';
-
 import { Answer } from '../entities/Answer';
 import { Choice } from '../entities/Choice';
-import { Game, GameState, PlayState } from '../entities/Game';
+import { Game, GameState, PlayState, StartedGame } from '../entities/Game';
 import { Player } from '../entities/Player';
 import { Question } from '../entities/Question';
-import { ChoiceRepositoryToken } from '../interfaces/ChoiceRepository';
 
 type ClassType<T> = {
   new (): T;
@@ -39,6 +36,7 @@ export const { createOne: createAnswer, createMany: createAnswers } = creatorsFa
   id: 1,
   player: createPlayer(),
   choices: [],
+  place: undefined,
 }));
 
 export const { createOne: createPlayer, createMany: createPlayers } = creatorsFactory(Player, () => ({
@@ -54,29 +52,24 @@ export const { createOne: createGame } = creatorsFactory(Game, () => ({
   players: [],
 }));
 
-export const createStartedGame = (overrides?: Partial<Game>) => {
-  const players = createPlayers(4, (n) => ({ nick: 'player ' + (n + 1) }));
-  const question = createQuestion();
-  const choices = createChoices(11 * 4 + 1 * 3);
+export const createStartedGame = (overrides?: Partial<StartedGame>) => {
+  const game = new StartedGame();
 
-  const cards = [...choices];
+  game.id = 0;
+  game.state = GameState.started;
+  game.playState = PlayState.playersAnswer;
+  game.players = createPlayers(4, (n) => ({ nick: 'player ' + (n + 1) }));
+  game.questionMaster = game.players[0];
+  game.question = createQuestion();
+  game.answers = [];
 
-  for (const player of players) {
+  const cards = [...createChoices(11 * 4 + 1 * 3)];
+
+  for (const player of game.players) {
     player.cards.push(...cards.splice(0, Game.cardsPerPlayer));
   }
 
-  const game = createGame({
-    players,
-    state: GameState.started,
-    playState: PlayState.playersAnswer,
-    question,
-    questionMaster: players[0],
-    answers: [],
-    turns: [],
-    ...overrides,
-  });
-
-  Container.get(ChoiceRepositoryToken).createChoices(game, choices);
+  Object.assign(game, overrides);
 
   return game;
 };

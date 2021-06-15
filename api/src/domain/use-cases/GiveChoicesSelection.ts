@@ -1,7 +1,7 @@
 import { Inject, Service } from 'typedi';
 
-import { Game, PlayState } from '../entities/Game';
-import { Player } from '../entities/Player';
+import { Answer } from '../entities/Answer';
+import { PlayState } from '../entities/Game';
 import { AlreadyAnsweredError } from '../errors/AlreadyAnsweredError';
 import { IncorrectNumberOfChoicesError } from '../errors/IncorrectNumberOfChoicesError';
 import { InvalidChoicesSelectionError } from '../errors/InvalidChoicesSelectionError';
@@ -12,6 +12,7 @@ import { GameEvents, GameEventsToken } from '../interfaces/GameEvents';
 import { GameRepository, GameRepositoryToken } from '../interfaces/GameRepository';
 import { PlayerRepository, PlayerRepositoryToken } from '../interfaces/PlayerRepository';
 import { GameService } from '../services/GameService';
+import { PlayerService } from '../services/PlayerService';
 import { RandomService, RandomServiceToken } from '../services/RandomService';
 
 @Service()
@@ -37,14 +38,23 @@ export class GiveChoicesSelection {
   @Inject()
   private readonly gameService!: GameService;
 
-  async giveChoicesSelection(game: Game, player: Player, choicesIds: number[]) {
-    const { questionMaster, question } = this.gameService.ensurePlayState(game, PlayState.playersAnswer);
-    const selection = await this.choiceRepository.findByIds(choicesIds);
-    let answers = await this.gameRepository.getAnswers(game);
+  @Inject()
+  private readonly playerService!: PlayerService;
+
+  async giveChoicesSelection(gameId: number, playerId: number, choicesIds: number[]) {
+    const game = await this.gameService.findStartedGame(gameId);
+    const { questionMaster, question } = game;
+
+    this.gameService.ensurePlayState(game, PlayState.playersAnswer);
+
+    const player = await this.playerService.findPlayer(playerId);
 
     if (player.is(questionMaster)) {
       throw new IsQuestionMasterError(player);
     }
+
+    const selection = await this.choiceRepository.findByIds(choicesIds);
+    let answers = await this.answerRepository.findForGame(game);
 
     if (answers.some((answer) => answer.player.is(player))) {
       throw new AlreadyAnsweredError();
@@ -60,15 +70,24 @@ export class GiveChoicesSelection {
 
     await this.playerRepository.removeCards(player, selection);
 
-    const answer = await this.answerRepository.createAnswer(player, selection);
+    const answer = new Answer();
 
-    await this.gameRepository.addAnswer(game, answer);
-    answers = await this.gameRepository.getAnswers(game);
+    answer.player = player;
+    answer.choices = selection;
+
+    await this.answerRepository.save(answer);
+
+    await this.answerRepository.setGame(answer, game);
+    answers = await this.answerRepository.findForGame(game);
 
     const allPlayersAnswered = answers.length === game.players.length - 1;
 
     if (allPlayersAnswered) {
-      game.answers = this.randomService.randomize(answers);
+      answers = this.randomService.randomize(answers);
+      answers.forEach((answer, index) => (answer.place = index + 1));
+
+      await this.answerRepository.saveAll(answers);
+
       game.playState = PlayState.questionMasterSelection;
     }
 

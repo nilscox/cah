@@ -6,4 +6,5 @@ export class Answer {
 
   player!: Player;
   choices!: Choice[];
+  place?: number;
 }

@@ -5,6 +5,14 @@ import { ChoiceRepository } from '../../interfaces/ChoiceRepository';
 export class InMemoryChoiceRepository implements ChoiceRepository {
   private choices: Choice[] = [];
 
+  setChoices(choices: Choice[]) {
+    this.choices = choices;
+  }
+
+  async findAll(): Promise<Choice[]> {
+    return this.choices;
+  }
+
   async findByIds(ids: number[]): Promise<Choice[]> {
     return this.choices.filter(({ id }) => ids.includes(id));
   }
@@ -15,9 +23,5 @@ export class InMemoryChoiceRepository implements ChoiceRepository {
 
   async getAvailableChoices(): Promise<Choice[]> {
     return [...this.choices];
-  }
-
-  getChoices() {
-    return this.choices;
   }
 }

@@ -3,16 +3,27 @@ import { Player } from '../../entities/Player';
 import { PlayerRepository } from '../../interfaces/PlayerRepository';
 
 export class InMemoryPlayerRepository implements PlayerRepository {
-  async findById(_id: number): Promise<Player | undefined> {
-    throw new Error('Method not implemented.');
+  private players: Player[] = [];
+
+  setPlayers(players: Player[]): void {
+    this.players = players;
   }
 
-  async findByNick(_nick: string): Promise<Player | undefined> {
-    throw new Error('Method not implemented.');
+  async findOne(playerId: number): Promise<Player | undefined> {
+    return this.players.find(({ id }) => id === playerId);
   }
 
-  async createPlayer(_nick: string): Promise<Player> {
-    throw new Error('Method not implemented.');
+  async findByNick(playerNick: string): Promise<Player | undefined> {
+    return this.players.find(({ nick }) => nick === playerNick);
+  }
+
+  async save(player: Player): Promise<void> {
+    if (this.players[player.id]) {
+      this.players[player.id] = player;
+    } else {
+      player.id = this.players.length;
+      this.players.push(player);
+    }
   }
 
   async addCards(player: Player, cards: Choice[]): Promise<void> {

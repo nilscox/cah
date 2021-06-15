@@ -1,12 +1,15 @@
 import { Token } from 'typedi';
 
 import { Answer } from '../entities/Answer';
-import { Choice } from '../entities/Choice';
-import { Player } from '../entities/Player';
+import { Game } from '../entities/Game';
 
 export const AnswerRepositoryToken = new Token<AnswerRepository>('AnswerRepository');
 
 export interface AnswerRepository {
+  findAll(): Promise<Answer[]>;
   findOne(id: number): Promise<Answer | undefined>;
-  createAnswer(player: Player, choices: Choice[]): Promise<Answer>;
+  save(answer: Answer): Promise<void>;
+  saveAll(answer: Answer[]): Promise<void>;
+  setGame(answer: Answer, game: Game): Promise<void>;
+  findForGame(game: Game): Promise<Answer[]>;
 }
