@@ -2,6 +2,7 @@ import { expect } from 'chai';
 import { Container } from 'typedi';
 
 import { PlayState, StartedGame } from '../entities/Game';
+import { Player } from '../entities/Player';
 import { AlreadyAnsweredError } from '../errors/AlreadyAnsweredError';
 import { IncorrectNumberOfChoicesError } from '../errors/IncorrectNumberOfChoicesError';
 import { InvalidChoicesSelectionError } from '../errors/InvalidChoicesSelectionError';
@@ -13,7 +14,7 @@ import { GameEventsToken } from '../interfaces/GameEvents';
 import { GameRepositoryToken } from '../interfaces/GameRepository';
 import { PlayerRepositoryToken } from '../interfaces/PlayerRepository';
 import { RandomServiceToken } from '../services/RandomService';
-import { createAnswer, createAnswers, createQuestion, createStartedGame } from '../tests/creators';
+import { createAnswers, createQuestion, createStartedGame } from '../tests/creators';
 import { inject } from '../tests/inject';
 import { InMemoryAnswerRepository } from '../tests/repositories/InMemoryAnswerRepository';
 import { InMemoryChoiceRepository } from '../tests/repositories/InMemoryChoiceRepository';
@@ -24,7 +25,7 @@ import { StubRandomService } from '../tests/stubs/StubRandomService';
 
 import { GiveChoicesSelection } from './GiveChoicesSelection';
 
-describe.only('GiveChoicesSelection', () => {
+describe('GiveChoicesSelection', () => {
   let playerRepository: InMemoryPlayerRepository;
   let gameRepository: InMemoryGameRepository;
   let choiceRepository: InMemoryChoiceRepository;
@@ -64,7 +65,6 @@ describe.only('GiveChoicesSelection', () => {
   const initRepositories = (game: StartedGame) => {
     gameRepository.save(game);
     playerRepository.setPlayers(game.players);
-    answerRepository.setAnswers([]);
     choiceRepository.setChoices(game.players.map(({ cards }) => cards).flat());
   };
 
@@ -81,7 +81,7 @@ describe.only('GiveChoicesSelection', () => {
     expect(player.cards).to.have.length(10);
     expect(player.cards).not.to.contain(selection);
 
-    const answers = await answerRepository.findForGame(game);
+    const answers = await gameRepository.getAnswers(game);
 
     expect(answers).to.have.length(1);
     expect(answers?.[0].player).to.eql(player);
@@ -105,12 +105,22 @@ describe.only('GiveChoicesSelection', () => {
     expect(player.cards).to.have.length(8);
     expect(player.cards).not.to.contain(selection);
 
-    const answers = await answerRepository.findForGame(game);
+    const answers = await gameRepository.getAnswers(game);
 
     expect(answers).to.have.length(1);
     expect(answers?.[0].player).to.eql(player);
     expect(answers?.[0].choices).to.have.members(selection);
   });
+
+  const createAnswerForPlayers = async (game: StartedGame, players: Player[]) => {
+    const answers = createAnswers(players.length, (n) => ({ player: players[n] }));
+
+    answerRepository.setAnswers(answers);
+
+    for (const answer of answers) {
+      await gameRepository.addAnswer(game, answer);
+    }
+  };
 
   it('enters in question master selection play state when the last player answered', async () => {
     const game = createStartedGame();
@@ -118,13 +128,7 @@ describe.only('GiveChoicesSelection', () => {
     const selection = [player.cards[0]];
 
     initRepositories(game);
-
-    const answers = createAnswers(players.length, (n) => ({ player: players[n] }));
-    answerRepository.setAnswers(answers);
-
-    for (const answer of answers) {
-      await answerRepository.setGame(answer, game);
-    }
+    await createAnswerForPlayers(game, players);
 
     await useCase.giveChoicesSelection(game.id, player.id, getIds(selection));
 
@@ -132,10 +136,10 @@ describe.only('GiveChoicesSelection', () => {
 
     expect(savedGame.playState).to.eql(PlayState.questionMasterSelection);
 
-    const savedAnswers = await answerRepository.findForGame(game);
+    const savedAnswers = await gameRepository.getAnswers(game);
 
     expect(savedAnswers).to.have.length([player, ...players].length);
-    expect(savedAnswers[savedAnswers.length - 1].player.is(player)).to.be.true;
+    expect(savedAnswers[0].player.is(player)).to.be.true;
 
     expect(gameEvents.getGameEvents(game)).to.deep.include({
       type: 'AllPlayersAnswered',
@@ -175,10 +179,7 @@ describe.only('GiveChoicesSelection', () => {
     const [player] = playersExcludingQM(game);
 
     initRepositories(game);
-
-    const answer = createAnswer({ player });
-    answerRepository.setAnswers([answer]);
-    await answerRepository.setGame(answer, game);
+    await createAnswerForPlayers(game, [player]);
 
     await expect(useCase.giveChoicesSelection(game.id, player.id, [])).to.be.rejectedWith(AlreadyAnsweredError);
   });

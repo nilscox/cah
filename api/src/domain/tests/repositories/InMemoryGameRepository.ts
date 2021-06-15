@@ -1,9 +1,13 @@
+import _ from 'lodash';
+
+import { Answer } from '../../entities/Answer';
 import { Game } from '../../entities/Game';
 import { Player } from '../../entities/Player';
 import { GameRepository } from '../../interfaces/GameRepository';
 
 export class InMemoryGameRepository implements GameRepository {
   private games: Game[] = [];
+  private answers: Record<number, Answer[]> = {};
 
   async findAll(): Promise<Game[]> {
     return this.games;
@@ -28,5 +32,13 @@ export class InMemoryGameRepository implements GameRepository {
       game.id = this.games.length;
       this.games.push(game);
     }
+  }
+
+  async addAnswer(game: Game, answer: Answer): Promise<void> {
+    this.answers[game.id] = [...(await this.getAnswers(game)), answer];
+  }
+
+  async getAnswers(game: Game): Promise<Answer[]> {
+    return _.sortBy(this.answers[game.id] ?? [], ['place']);
   }
 }

@@ -14,7 +14,7 @@ const creatorsFactory = <T extends { id: number }>(Cls: ClassType<T>, defaults: 
   const createMany = (count: number, overrides?: (n: number) => Partial<T>) =>
     Array(count)
       .fill(null)
-      .map((_, n) => createOne({ id: n + 1, ...overrides?.(n) } as Partial<T>));
+      .map((_, n) => createOne({ id: n, ...overrides?.(n) } as Partial<T>));
 
   return {
     createOne,
@@ -36,7 +36,6 @@ export const { createOne: createAnswer, createMany: createAnswers } = creatorsFa
   id: 1,
   player: createPlayer(),
   choices: [],
-  place: undefined,
 }));
 
 export const { createOne: createPlayer, createMany: createPlayers } = creatorsFactory(Player, () => ({

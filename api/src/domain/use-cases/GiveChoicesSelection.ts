@@ -54,7 +54,7 @@ export class GiveChoicesSelection {
     }
 
     const selection = await this.choiceRepository.findByIds(choicesIds);
-    let answers = await this.answerRepository.findForGame(game);
+    let answers = await this.gameRepository.getAnswers(game);
 
     if (answers.some((answer) => answer.player.is(player))) {
       throw new AlreadyAnsweredError();
@@ -77,8 +77,8 @@ export class GiveChoicesSelection {
 
     await this.answerRepository.save(answer);
 
-    await this.answerRepository.setGame(answer, game);
-    answers = await this.answerRepository.findForGame(game);
+    await this.gameRepository.addAnswer(game, answer);
+    answers = await this.gameRepository.getAnswers(game);
 
     const allPlayersAnswered = answers.length === game.players.length - 1;
 
