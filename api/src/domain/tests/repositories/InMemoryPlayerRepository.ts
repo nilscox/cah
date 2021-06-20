@@ -9,6 +9,10 @@ export class InMemoryPlayerRepository extends InMemoryRepository<Player> impleme
     return this.get().find(({ nick }) => nick === playerNick);
   }
 
+  createPlayer(_nick: string): Promise<Player> {
+    throw new Error('Method not implemented.');
+  }
+
   // TODO: don't mutate the player instance
   async addCards(player: Player, cards: Choice[]): Promise<void> {
     player.cards.push(...cards);

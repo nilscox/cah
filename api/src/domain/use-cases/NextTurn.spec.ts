@@ -2,15 +2,18 @@ import { expect } from 'chai';
 import { Container } from 'typedi';
 
 import { GameState, PlayState, StartedGame } from '../entities/Game';
+import { Player } from '../entities/Player';
 import { InvalidPlayStateError } from '../errors/InvalidPlayStateError';
+import { AnswerRepositoryToken } from '../interfaces/AnswerRepository';
 import { ChoiceRepositoryToken } from '../interfaces/ChoiceRepository';
 import { GameEventsToken } from '../interfaces/GameEvents';
 import { GameRepositoryToken } from '../interfaces/GameRepository';
 import { PlayerRepositoryToken } from '../interfaces/PlayerRepository';
 import { QuestionRepositoryToken } from '../interfaces/QuestionRepository';
 import { TurnRepositoryToken } from '../interfaces/TurnRepository';
-import { createChoices, createQuestion, createStartedGame } from '../tests/creators';
+import { createAnswers, createChoices, createQuestion, createStartedGame } from '../tests/creators';
 import { inject } from '../tests/inject';
+import { InMemoryAnswerRepository } from '../tests/repositories/InMemoryAnswerRepository';
 import { InMemoryChoiceRepository } from '../tests/repositories/InMemoryChoiceRepository';
 import { InMemoryGameRepository } from '../tests/repositories/InMemoryGameRepository';
 import { InMemoryPlayerRepository } from '../tests/repositories/InMemoryPlayerRepository';
@@ -26,6 +29,7 @@ describe('NextTurn', () => {
   let questionRepository: InMemoryQuestionRepository;
   let choiceRepository: InMemoryChoiceRepository;
   let turnRepository: InMemoryTurnRepository;
+  let answerRepository: InMemoryAnswerRepository;
 
   let gameEvents: StubGameEvents;
 
@@ -41,6 +45,7 @@ describe('NextTurn', () => {
     questionRepository = inject(QuestionRepositoryToken, new InMemoryQuestionRepository());
     choiceRepository = inject(ChoiceRepositoryToken, new InMemoryChoiceRepository());
     turnRepository = inject(TurnRepositoryToken, new InMemoryTurnRepository());
+    answerRepository = inject(AnswerRepositoryToken, new InMemoryAnswerRepository());
 
     gameEvents = inject(GameEventsToken, new StubGameEvents());
 
@@ -74,6 +79,18 @@ describe('NextTurn', () => {
     return game;
   };
 
+  const createAnswerForPlayers = async (game: StartedGame, players: Player[]) => {
+    const answers = createAnswers(players.length, (n) => ({ player: players[n] }));
+
+    answerRepository.set(answers);
+
+    for (const answer of answers) {
+      await gameRepository.addAnswer(game, answer);
+    }
+
+    return answers;
+  };
+
   const getGame = (gameId: number) => {
     return gameRepository.findOne(gameId) as Promise<StartedGame>;
   };
@@ -81,6 +98,8 @@ describe('NextTurn', () => {
   it('ends the current turn and starts the next one', async () => {
     let game = initializeGame();
     const { players, winner, questionMaster } = game;
+
+    createAnswerForPlayers(game, playersExcludingQM(game));
 
     const nextQuestion = createQuestion();
     questionRepository.createQuestions(game, [nextQuestion]);
@@ -121,6 +140,8 @@ describe('NextTurn', () => {
 
   it('terminates the game', async () => {
     let game = initializeGame();
+
+    createAnswerForPlayers(game, playersExcludingQM(game));
 
     await useCase.nextTurn(game.id);
 

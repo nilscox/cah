@@ -9,8 +9,10 @@ export const GameRepositoryToken = new Token<GameRepository>('GameRepository');
 export interface GameRepository {
   findOne(gameId: number): Promise<Game | undefined>;
   findByCode(gameCode: string): Promise<Game | undefined>;
+  createGame(code: string): Promise<Game>;
   save(game: Game): Promise<void>;
   addPlayer(game: Game, player: Player): Promise<void>;
   addAnswer(game: Game, answer: Answer): Promise<void>;
   getAnswers(game: Game): Promise<Answer[]>;
+  clearAnswers(game: Game): Promise<void>;
 }

@@ -8,6 +8,7 @@ export const PlayerRepositoryToken = new Token<PlayerRepository>('PlayerReposito
 export interface PlayerRepository {
   findOne(id: number): Promise<Player | undefined>;
   findByNick(nick: string): Promise<Player | undefined>;
+  createPlayer(nick: string): Promise<Player>;
   save(player: Player): Promise<void>;
   addCards(player: Player, cards: Choice[]): Promise<void>;
   removeCards(player: Player, cards: Choice[]): Promise<void>;

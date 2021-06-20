@@ -9,7 +9,7 @@ import { InMemoryChoiceRepository } from '../../../domain/tests/repositories/InM
 import { auth, mockCreateGame, mockQueryGame, mockQueryPlayer } from '../../test';
 import { app } from '../index';
 
-describe.skip('/api/game', () => {
+describe('/api/game', () => {
   const player = createPlayer({ id: 1, nick: 'toto' });
   const asPlayer = auth(player);
 
@@ -25,8 +25,6 @@ describe.skip('/api/game', () => {
 
   describe('GET /api/game/:gameId', () => {
     it('fetches an idle game', async () => {
-      mockQueryGame(async () => game);
-
       const { body } = await request(app).get(`/api/game/${game.id}`).expect(200);
 
       expect(body).to.eql({
@@ -38,7 +36,7 @@ describe.skip('/api/game', () => {
     });
 
     it('fetches a started game', async () => {
-      const game = createStartedGame({ playState: PlayState.playersAnswer });
+      const game = createStartedGame({ id: 1, code: 'COCA', playState: PlayState.playersAnswer });
       mockQueryGame(async () => game);
 
       const { body } = await request(app).get(`/api/game/${game.id}`).expect(200);

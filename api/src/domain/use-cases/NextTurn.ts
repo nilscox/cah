@@ -46,6 +46,7 @@ export class NextTurn {
     turn.question = question;
     turn.answers = answers;
     turn.winner = winner;
+    turn.game = game;
 
     await this.turnRepository.save(turn);
 
@@ -64,6 +65,8 @@ export class NextTurn {
         await this.playerRepository.removeCards(player, player.cards);
       }
 
+      await this.gameRepository.clearAnswers(game);
+
       this.gameEvents.onGameEvent(game, {
         type: 'GameFinished',
       });
@@ -72,6 +75,8 @@ export class NextTurn {
       game.questionMaster = winner;
       game.question = nextQuestion;
       game.winner = undefined;
+
+      await this.gameRepository.clearAnswers(game);
 
       await this.gameService.dealCards(game);
 

@@ -1,6 +1,6 @@
 import { Expose, Type } from 'class-transformer';
 
-import { Game, GameState, PlayState } from '../../../domain/entities/Game';
+import { Game, GameState, PlayState, StartedGame } from '../../../domain/entities/Game';
 
 import { PlayerDto } from './PlayerDto';
 import { QuestionDto } from './QuestionDto';
@@ -39,11 +39,11 @@ export class StartedGameDto extends GameDto {
   @Type(() => QuestionDto)
   question: QuestionDto;
 
-  constructor(game: Game) {
+  constructor(game: StartedGame) {
     super(game);
 
-    this.playState = game.playState!;
-    this.questionMaster = new PlayerDto(game.questionMaster!);
-    this.question = new QuestionDto(game.question!);
+    this.playState = game.playState;
+    this.questionMaster = new PlayerDto(game.questionMaster);
+    this.question = new QuestionDto(game.question);
   }
 }

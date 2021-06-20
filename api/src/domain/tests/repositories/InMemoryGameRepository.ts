@@ -10,7 +10,11 @@ import { InMemoryRepository } from './InMemoryRepository';
 export class InMemoryGameRepository extends InMemoryRepository<Game> implements GameRepository {
   private answers: Record<number, Answer[]> = {};
 
-  async findByCode(gameCode: string): Promise<Game | undefined> {
+  async findByCode(_gameCode: string): Promise<Game | undefined> {
+    throw new Error('Method not implemented.');
+  }
+
+  createGame(_code: string): Promise<Game> {
     throw new Error('Method not implemented.');
   }
 
@@ -24,5 +28,9 @@ export class InMemoryGameRepository extends InMemoryRepository<Game> implements 
 
   async getAnswers(game: Game): Promise<Answer[]> {
     return _.sortBy(this.answers[game.id] ?? [], ['place']);
+  }
+
+  async clearAnswers(game: Game) {
+    this.answers[game.id] = [];
   }
 }

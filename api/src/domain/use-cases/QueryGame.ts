@@ -9,6 +9,6 @@ export class QueryGame {
   private readonly gameRepository!: GameRepository;
 
   queryGame(gameId: number): Promise<Game | undefined> {
-    return this.gameRepository.findById(gameId);
+    return this.gameRepository.findOne(gameId);
   }
 }

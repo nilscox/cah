@@ -34,9 +34,10 @@ const main = async () => {
   });
 
   Container.set(GameRepositoryToken, new SQLGameRepository());
+  Container.set(PlayerRepositoryToken, new SQLPlayerRepository());
+
   Container.set(ChoiceRepositoryToken, getCustomRepository(SQLChoiceRepository));
   Container.set(QuestionRepositoryToken, getCustomRepository(SQLQuestionRepository));
-  Container.set(PlayerRepositoryToken, getCustomRepository(SQLPlayerRepository));
   Container.set(TurnRepositoryToken, getCustomRepository(SQLTurnRepository));
 
   Container.set('DATA_DIR', DATA_DIR);

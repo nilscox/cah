@@ -15,7 +15,7 @@ export class SQLGameRepository implements GameRepository {
     return this.repo.save(this.repo.create({ code }));
   }
 
-  async findById(gameId: number): Promise<Game | undefined> {
+  async findOne(gameId: number): Promise<Game | undefined> {
     return this.repo.findOne(gameId, { relations: ['players', 'players.cards'] });
   }
 
@@ -45,5 +45,9 @@ export class SQLGameRepository implements GameRepository {
 
   async addAnswer(game: GameEntity, answer: AnswerEntity): Promise<void> {
     await this.answerRepository.update(answer.id, { game });
+  }
+
+  async clearAnswers(game: GameEntity): Promise<void> {
+    await this.answerRepository.update({ game }, { game: null });
   }
 }

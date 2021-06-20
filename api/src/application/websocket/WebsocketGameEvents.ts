@@ -133,25 +133,25 @@ export class WebsocketGameEvents extends WebsocketServer implements GameEvents {
   async onStartGame(socket: Socket, { numberOfTurns }: StartGameDto) {
     const { player, game } = await this.getInGamePlayer(socket);
 
-    await Container.get(StartGame).startGame(game!, player, numberOfTurns);
+    await Container.get(StartGame).startGame(game.id, player.id, numberOfTurns);
   }
 
   async onGiveChoicesSelection(socket: Socket, { choicesIds }: GiveChoicesSelectionDto) {
     const { player, game } = await this.getInGamePlayer(socket);
 
-    await Container.get(GiveChoicesSelection).giveChoicesSelection(game!, player, choicesIds);
+    await Container.get(GiveChoicesSelection).giveChoicesSelection(game.id, player.id, choicesIds);
   }
 
   async onPickWinningAnswer(socket: Socket, { answerId }: PickWinningAnswerDto) {
     const { player, game } = await this.getInGamePlayer(socket);
 
-    await Container.get(PickWinningAnswer).pickWinningAnswer(game, player, answerId);
+    await Container.get(PickWinningAnswer).pickWinningAnswer(game.id, player.id, answerId);
   }
 
   async onNextTurn(socket: Socket) {
     const { game } = await this.getInGamePlayer(socket);
 
-    await Container.get(NextTurn).nextTurn(game);
+    await Container.get(NextTurn).nextTurn(game.id);
   }
 
   private async getInGamePlayer(socket: Socket) {

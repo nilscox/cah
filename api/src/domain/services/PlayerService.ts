@@ -13,7 +13,7 @@ export class PlayerService {
     const player = await this.playerRepository.findOne(playerId);
 
     if (!player) {
-      throw new EntityNotFoundError('player', 'id', playerId);
+      throw new EntityNotFoundError('player', 'id', JSON.stringify(playerId));
     }
 
     return player;

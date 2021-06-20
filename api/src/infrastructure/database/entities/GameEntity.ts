@@ -33,10 +33,6 @@ export class GameEntity {
   @OneToMany(() => PlayerEntity, (player) => player.game)
   players!: PlayerEntity[];
 
-  get playersExcludingQM() {
-    return this.players.filter((player) => !player.is(this.questionMaster));
-  }
-
   @OneToMany(() => QuestionEntity, (question) => question.game)
   questions?: QuestionEntity[];
 

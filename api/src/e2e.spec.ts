@@ -213,7 +213,7 @@ class StubPlayer {
   }
 }
 
-describe.skip('end-to-end', function () {
+describe('end-to-end', function () {
   createTestDatabase();
 
   let gameRepository: SQLGameRepository;
@@ -229,7 +229,8 @@ describe.skip('end-to-end', function () {
     Container.reset();
 
     gameRepository = new SQLGameRepository();
-    playerRepository = getCustomRepository(SQLPlayerRepository);
+    playerRepository = new SQLPlayerRepository();
+
     questionRepository = getCustomRepository(SQLQuestionRepository);
     choiceRepository = getCustomRepository(SQLChoiceRepository);
     turnRepository = getCustomRepository(SQLTurnRepository);

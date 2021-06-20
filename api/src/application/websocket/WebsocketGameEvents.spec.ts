@@ -19,7 +19,7 @@ import {
   mockStartGame,
 } from '../test';
 
-describe.skip('websocket', () => {
+describe('websocket', () => {
   const port = 1234;
 
   before((done) => {
@@ -169,7 +169,7 @@ describe.skip('websocket', () => {
 
     it('handles a AllPlayersAnswered event', async () => {
       const choice = createChoice();
-      const answer = createAnswer({ player, choices: [choice] });
+      const answer = createAnswer({ id: 1, player, choices: [choice] });
 
       wsGameEvents.onGameEvent(game, { type: 'AllPlayersAnswered', answers: [answer] });
       await expectEvent({ type: 'AllPlayersAnswered', answers: [{ id: answer.id, choices: [{ text: choice.text }] }] });
@@ -177,7 +177,7 @@ describe.skip('websocket', () => {
 
     it('handles a WinnerSelected event', async () => {
       const choice = createChoice();
-      const answer = createAnswer({ player, choices: [choice] });
+      const answer = createAnswer({ id: 1, player, choices: [choice] });
 
       wsGameEvents.onGameEvent(game, { type: 'WinnerSelected', answers: [answer], winner: player });
       await expectEvent({
@@ -190,7 +190,7 @@ describe.skip('websocket', () => {
     it('handles a TurnEnded event', async () => {
       const question = createQuestion();
       const choice = createChoice();
-      const answer = createAnswer({ player, choices: [choice] });
+      const answer = createAnswer({ id: 1, player, choices: [choice] });
 
       const turn: Turn = {
         id: 1,
@@ -242,10 +242,11 @@ describe.skip('websocket', () => {
 
     describe('createGame', () => {
       it('creates a game', async () => {
-        const game = createGame();
+        const game = createGame({ id: 1 });
 
         const createGameUseCase = sinon.fake.returns(game);
         mockCreateGame(createGameUseCase);
+        mockQueryGame(async () => game);
 
         expect(await emit('createGame')).to.eql({
           status: 'ok',
@@ -270,7 +271,7 @@ describe.skip('websocket', () => {
       it('joins a game', async () => {
         const spyJoin = sinon.spy(wsGameEvents, 'join');
 
-        const game = createGame({ players: [player] });
+        const game = createGame({ id: 1, players: [player] });
         const joinGame = sinon.fake.returns(game);
         mockJoinGame(joinGame);
         mockQueryGame(async () => game);
@@ -304,7 +305,7 @@ describe.skip('websocket', () => {
       });
 
       it('returns an error when the player is already in game', async () => {
-        const game = createGame();
+        const game = createGame({ id: 1 });
 
         player.gameId = game.id;
         mockQueryGame(async () => game);
@@ -322,7 +323,7 @@ describe.skip('websocket', () => {
     });
 
     describe('startGame', () => {
-      const game = createGame();
+      const game = createGame({ id: 1 });
       const payload = { numberOfTurns: 21 };
 
       beforeEach(() => {
@@ -361,7 +362,7 @@ describe.skip('websocket', () => {
     });
 
     describe('giveChoicesSelection', () => {
-      const game = createGame();
+      const game = createGame({ id: 1 });
       const payload = { choicesIds: [1, 2] };
 
       beforeEach(() => {
@@ -400,7 +401,7 @@ describe.skip('websocket', () => {
     });
 
     describe('pickWinningAnswer', () => {
-      const game = createGame();
+      const game = createGame({ id: 1 });
       const payload = { answerId: 1 };
 
       beforeEach(() => {
@@ -439,7 +440,7 @@ describe.skip('websocket', () => {
     });
 
     describe('nextTurn', () => {
-      const game = createGame();
+      const game = createGame({ id: 1 });
 
       beforeEach(() => {
         player.gameId = game.id;
