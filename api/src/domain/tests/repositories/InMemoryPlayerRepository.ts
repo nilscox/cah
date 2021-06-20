@@ -2,29 +2,11 @@ import { Choice } from '../../entities/Choice';
 import { Player } from '../../entities/Player';
 import { PlayerRepository } from '../../interfaces/PlayerRepository';
 
-export class InMemoryPlayerRepository implements PlayerRepository {
-  private players: Player[] = [];
+import { InMemoryRepository } from './InMemoryRepository';
 
-  set(players: Player[]): void {
-    this.players = players;
-  }
-
-  async findOne(playerId: number): Promise<Player | undefined> {
-    return this.players.find(({ id }) => id === playerId);
-  }
-
+export class InMemoryPlayerRepository extends InMemoryRepository<Player> implements PlayerRepository {
   async findByNick(playerNick: string): Promise<Player | undefined> {
-    return this.players.find(({ nick }) => nick === playerNick);
-  }
-
-  async save(player: Player): Promise<void> {
-    if (this.players[player.id]) {
-      this.players[player.id] = player;
-    } else {
-      // TODO: don't mutate the player instance
-      player.id = this.players.length;
-      this.players.push(player);
-    }
+    return this.get().find(({ nick }) => nick === playerNick);
   }
 
   // TODO: don't mutate the player instance

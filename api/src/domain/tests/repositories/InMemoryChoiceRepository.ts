@@ -2,26 +2,18 @@ import { Choice } from '../../entities/Choice';
 import { Game } from '../../entities/Game';
 import { ChoiceRepository } from '../../interfaces/ChoiceRepository';
 
-export class InMemoryChoiceRepository implements ChoiceRepository {
-  private choices: Choice[] = [];
+import { InMemoryRepository } from './InMemoryRepository';
 
-  set(choices: Choice[]) {
-    this.choices = choices;
-  }
-
-  get(): Choice[] {
-    return this.choices;
-  }
-
+export class InMemoryChoiceRepository extends InMemoryRepository<Choice> implements ChoiceRepository {
   async findByIds(ids: number[]): Promise<Choice[]> {
-    return this.choices.filter(({ id }) => ids.includes(id));
+    return [...this.items.values()].filter(({ id }) => ids.includes(id));
   }
 
   async createChoices(_game: Game, choices: Choice[]): Promise<void> {
-    this.choices = choices;
+    this.set(choices);
   }
 
   async getAvailableChoices(): Promise<Choice[]> {
-    return [...this.choices];
+    return [...this.items.values()];
   }
 }

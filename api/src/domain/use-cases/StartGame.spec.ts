@@ -107,10 +107,10 @@ describe('StartGame', () => {
 
     // 9 blanks
     externalData.setQuestions([
-      createQuestion(),
-      createQuestion({ blanks: [1, 2, 3] }),
-      createQuestion({ blanks: [0] }),
-      createQuestion({ blanks: [9, 8, 7, 6] }),
+      createQuestion({ id: 1 }),
+      createQuestion({ id: 2, blanks: [1, 2, 3] }),
+      createQuestion({ id: 3, blanks: [0] }),
+      createQuestion({ id: 4, blanks: [9, 8, 7, 6] }),
     ]);
 
     await useCase.startGame(game.id, questionMaster.id, turns);

@@ -14,7 +14,7 @@ const creatorsFactory = <T extends { id: number }>(Cls: ClassType<T>, defaults: 
   const createMany = (count: number, overrides?: (n: number) => Partial<T>) =>
     Array(count)
       .fill(null)
-      .map((_, n) => createOne({ id: n, ...overrides?.(n) } as Partial<T>));
+      .map((_, n) => createOne({ id: n + 1, ...overrides?.(n) } as Partial<T>));
 
   return {
     createOne,
@@ -23,29 +23,24 @@ const creatorsFactory = <T extends { id: number }>(Cls: ClassType<T>, defaults: 
 };
 
 export const { createOne: createQuestion, createMany: createQuestions } = creatorsFactory(Question, () => ({
-  id: 0,
   text: 'question',
 }));
 
 export const { createOne: createChoice, createMany: createChoices } = creatorsFactory(Choice, () => ({
-  id: 0,
   text: 'choice',
 }));
 
 export const { createOne: createAnswer, createMany: createAnswers } = creatorsFactory(Answer, () => ({
-  id: 0,
   player: createPlayer(),
   choices: [],
 }));
 
 export const { createOne: createPlayer, createMany: createPlayers } = creatorsFactory(Player, () => ({
-  id: 0,
   nick: 'nick',
   cards: [],
 }));
 
 export const { createOne: createGame } = creatorsFactory(Game, () => ({
-  id: 0,
   code: '1234',
   state: GameState.idle,
   players: [],
@@ -54,7 +49,6 @@ export const { createOne: createGame } = creatorsFactory(Game, () => ({
 export const createStartedGame = (overrides?: Partial<StartedGame>) => {
   const game = new StartedGame();
 
-  game.id = 0;
   game.state = GameState.started;
   game.playState = PlayState.playersAnswer;
   game.players = createPlayers(4, (n) => ({ nick: 'player ' + (n + 1) }));

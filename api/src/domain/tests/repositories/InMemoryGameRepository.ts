@@ -5,30 +5,13 @@ import { Game } from '../../entities/Game';
 import { Player } from '../../entities/Player';
 import { GameRepository } from '../../interfaces/GameRepository';
 
-export class InMemoryGameRepository implements GameRepository {
-  private games: Game[] = [];
+import { InMemoryRepository } from './InMemoryRepository';
+
+export class InMemoryGameRepository extends InMemoryRepository<Game> implements GameRepository {
   private answers: Record<number, Answer[]> = {};
-
-  set(games: Game[]) {
-    this.games = games;
-  }
-
-  async findOne(gameId: number): Promise<Game | undefined> {
-    return this.games[gameId];
-  }
 
   async findByCode(gameCode: string): Promise<Game | undefined> {
     throw new Error('Method not implemented.');
-  }
-
-  async save(game: Game) {
-    if (this.games[game.id]) {
-      this.games[game.id] = game;
-    } else {
-      game.id = this.games.length;
-      // todo: push a new instance
-      this.games.push(game);
-    }
   }
 
   async addPlayer(game: Game, player: Player): Promise<void> {
