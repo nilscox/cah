@@ -2,15 +2,13 @@ import { AggregateRoot } from '../../ddd/AggregateRoot';
 import { EventPublisher } from '../../ddd/EventPublisher';
 import { GameState } from '../enums/GameState';
 import { PlayState } from '../enums/PlayState';
-import {
-  InvalidGameStateError,
-  InvalidNumberOfChoicesError,
-  InvalidPlayStateError,
-  NoMoreChoiceError,
-  NotEnoughPlayersError,
-  PlayerAlreadyAnsweredError,
-  PlayerIsQuestionMasterError,
-} from '../errors';
+import { InvalidGameStateError } from '../errors/InvalidGameStateError';
+import { InvalidNumberOfChoicesError } from '../errors/InvalidNumberOfChoicesError';
+import { InvalidPlayStateError } from '../errors/InvalidPlayStateError';
+import { NoMoreChoiceError } from '../errors/NoMoreChoiceError';
+import { NotEnoughPlayersError } from '../errors/NotEnoughPlayersError';
+import { PlayerAlreadyAnsweredError } from '../errors/PlayerAlreadyAnsweredError';
+import { PlayerIsQuestionMasterError } from '../errors/PlayerIsQuestionMasterError';
 import { AllPlayersAnsweredEvent } from '../events/AllPlayersAnsweredEvent';
 import { GameStartedEvent } from '../events/GameStartedEvent';
 import { PlayerAnsweredEvent } from '../events/PlayerAnsweredEvent';

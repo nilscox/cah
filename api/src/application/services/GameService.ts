@@ -1,4 +1,5 @@
-import { GameNotFoundError, PlayerNotFoundError } from '../../domain/errors';
+import { GameNotFoundError } from '../../domain/errors/GameNotFoundError';
+import { PlayerNotFoundError } from '../../domain/errors/PlayerNotFoundError';
 import { GameRepository } from '../../domain/interfaces/GameRepository';
 import { PlayerRepository } from '../../domain/interfaces/PlayerRepository';
 

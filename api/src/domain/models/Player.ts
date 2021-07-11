@@ -1,6 +1,6 @@
 import { AggregateRoot } from '../../ddd/AggregateRoot';
 import { DomainEvent } from '../../ddd/EventPublisher';
-import { InvalidChoicesSelectionError } from '../errors';
+import { InvalidChoicesSelectionError } from '../errors/InvalidChoicesSelectionError';
 
 import { Choice } from './Choice';
 

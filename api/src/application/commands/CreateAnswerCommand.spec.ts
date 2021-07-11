@@ -3,16 +3,14 @@ import _ from 'lodash';
 
 import { GameState } from '../../domain/enums/GameState';
 import { PlayState } from '../../domain/enums/PlayState';
-import {
-  GameNotFoundError,
-  InvalidChoicesSelectionError,
-  InvalidGameStateError,
-  InvalidNumberOfChoicesError,
-  InvalidPlayStateError,
-  PlayerAlreadyAnsweredError,
-  PlayerIsQuestionMasterError,
-  PlayerNotFoundError,
-} from '../../domain/errors';
+import { GameNotFoundError } from '../../domain/errors/GameNotFoundError';
+import { InvalidChoicesSelectionError } from '../../domain/errors/InvalidChoicesSelectionError';
+import { InvalidGameStateError } from '../../domain/errors/InvalidGameStateError';
+import { InvalidNumberOfChoicesError } from '../../domain/errors/InvalidNumberOfChoicesError';
+import { InvalidPlayStateError } from '../../domain/errors/InvalidPlayStateError';
+import { PlayerAlreadyAnsweredError } from '../../domain/errors/PlayerAlreadyAnsweredError';
+import { PlayerIsQuestionMasterError } from '../../domain/errors/PlayerIsQuestionMasterError';
+import { PlayerNotFoundError } from '../../domain/errors/PlayerNotFoundError';
 import { Choice } from '../../domain/models/Choice';
 import { Player } from '../../domain/models/Player';
 import { Blank, Question } from '../../domain/models/Question';
