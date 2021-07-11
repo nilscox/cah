@@ -4,14 +4,14 @@ import { GameState } from '../../domain/enums/GameState';
 import { PlayState } from '../../domain/enums/PlayState';
 import { InvalidGameStateError } from '../../domain/errors/InvalidGameStateError';
 import { NotEnoughPlayersError } from '../../domain/errors/NotEnoughPlayersError';
+import { createBlanks } from '../../domain/models/Blank';
 import { Game } from '../../domain/models/Game';
 import { Player } from '../../domain/models/Player';
-import { Blank } from '../../domain/models/Question';
+import { createQuestion } from '../../domain/models/Question';
 import { InMemoryGameRepository } from '../../infrastructure/InMemoryGameRepository';
 import { InMemoryPlayerRepository } from '../../infrastructure/InMemoryPlayerRepository';
 import { StubEventPublisher } from '../../infrastructure/StubEventPublisher';
 import { StubExternalData } from '../../infrastructure/StubExternalData';
-import { createQuestion } from '../../utils/entityCreators';
 import { GameBuilder } from '../../utils/GameBuilder';
 import { GameService } from '../services/GameService';
 
@@ -75,14 +75,12 @@ describe('StartGameCommand', () => {
       const game = await builder.addPlayers(5).get();
       const questionMaster = game.players[0];
 
-      const createBlanks = (blanks: number[]) => blanks.map((place) => new Blank(place));
-
       // 9 blanks
       externalData.setRandomQuestions([
         createQuestion(),
-        createQuestion({ blanks: createBlanks([1, 2, 3]) }),
-        createQuestion({ blanks: createBlanks([0]) }),
-        createQuestion({ blanks: createBlanks([9, 8, 7, 6]) }),
+        createQuestion({ blanks: createBlanks(3) }),
+        createQuestion({ blanks: createBlanks(1) }),
+        createQuestion({ blanks: createBlanks(4) }),
       ]);
 
       await execute(questionMaster, 4);

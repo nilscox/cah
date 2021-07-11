@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 
-import { Blank, Question } from './Question';
+import { Blank } from './Blank';
+import { Question } from './Question';
 
 describe('Question', () => {
   it('prevents from creating a question with an empty blanks array', () => {

@@ -11,9 +11,10 @@ import { InvalidPlayStateError } from '../../domain/errors/InvalidPlayStateError
 import { PlayerAlreadyAnsweredError } from '../../domain/errors/PlayerAlreadyAnsweredError';
 import { PlayerIsQuestionMasterError } from '../../domain/errors/PlayerIsQuestionMasterError';
 import { PlayerNotFoundError } from '../../domain/errors/PlayerNotFoundError';
+import { Blank } from '../../domain/models/Blank';
 import { Choice } from '../../domain/models/Choice';
 import { Player } from '../../domain/models/Player';
-import { Blank, Question } from '../../domain/models/Question';
+import { Question } from '../../domain/models/Question';
 import { InMemoryGameRepository } from '../../infrastructure/InMemoryGameRepository';
 import { InMemoryPlayerRepository } from '../../infrastructure/InMemoryPlayerRepository';
 import { StubEventPublisher } from '../../infrastructure/StubEventPublisher';

@@ -1,7 +1,7 @@
 import { Entity } from '../ddd/Entity';
-import { Blank, Question } from '../domain/models/Question';
+import { ValueObject } from '../ddd/ValueObject';
 
-const creatorsFactory = <E extends Entity, Props>(createEntity: (index: number) => E) => {
+export const creatorsFactory = <E extends Entity | ValueObject<unknown>, Props>(createEntity: (index: number) => E) => {
   const createOne = (overrides?: Partial<Props>, index = 0) => {
     return Object.assign(createEntity(index), { ...overrides });
   };
@@ -14,14 +14,3 @@ const creatorsFactory = <E extends Entity, Props>(createEntity: (index: number) 
 
   return { createOne, createMany };
 };
-
-type QuestionProps = {
-  text: string;
-  blanks: Blank[];
-};
-
-const questionCreators = creatorsFactory<Question, QuestionProps>((index) => {
-  return new Question(`question ${index + 1}`);
-});
-
-export const { createOne: createQuestion, createMany: createQuestions } = questionCreators;

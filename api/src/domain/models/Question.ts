@@ -1,11 +1,7 @@
 import { Entity } from '../../ddd/Entity';
-import { ValueObject } from '../../ddd/ValueObject';
+import { creatorsFactory } from '../../utils/entityCreators';
 
-export class Blank extends ValueObject<number> {
-  get place() {
-    return this.value;
-  }
-}
+import { Blank } from './Blank';
 
 export class Question extends Entity {
   constructor(private text: string, private blanks?: Blank[]) {
@@ -38,3 +34,14 @@ export class Question extends Entity {
     return text;
   }
 }
+
+type QuestionProps = {
+  text: string;
+  blanks: Blank[];
+};
+
+const questionCreators = creatorsFactory<Question, QuestionProps>((index) => {
+  return new Question(`question ${index + 1}`);
+});
+
+export const { createOne: createQuestion, createMany: createQuestions } = questionCreators;
