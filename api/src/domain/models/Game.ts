@@ -1,4 +1,7 @@
-import { Entity } from '../../ddd/Entity';
+import { AggregateRoot } from '../../ddd/AggregateRoot';
+import { EventPublisher } from '../../ddd/EventPublisher';
+import { GameState } from '../enums/GameState';
+import { PlayState } from '../enums/PlayState';
 import {
   InvalidGameStateError,
   InvalidNumberOfChoicesError,
@@ -8,23 +11,15 @@ import {
   PlayerAlreadyAnsweredError,
   PlayerIsQuestionMasterError,
 } from '../errors';
+import { AllPlayersAnsweredEvent } from '../events/AllPlayersAnsweredEvent';
+import { GameStartedEvent } from '../events/GameStartedEvent';
+import { PlayerAnsweredEvent } from '../events/PlayerAnsweredEvent';
+import { TurnStartedEvent } from '../events/TurnStartedEvent';
 
 import { Answer } from './Answer';
 import { Choice } from './Choice';
 import { Player } from './Player';
 import { Question } from './Question';
-
-export enum GameState {
-  idle = 'idle',
-  started = 'started',
-  finished = 'finished',
-}
-
-export enum PlayState {
-  playersAnswer = 'playersAnswer',
-  questionMasterSelection = 'questionMasterSelection',
-  endOfTurn = 'endOfTurn',
-}
 
 type StartedGame = {
   playState: PlayState;
@@ -33,7 +28,7 @@ type StartedGame = {
   answers: Answer[];
 };
 
-export class Game extends Entity {
+export class Game extends AggregateRoot {
   static cardPerPlayer = 11;
   static minimumPlayersToStart = 3;
 
@@ -49,8 +44,12 @@ export class Game extends Entity {
     return this.players.filter((player) => !player.equals(this.questionMaster));
   }
 
-  constructor() {
-    super();
+  override publishEvents(publisher: EventPublisher) {
+    super.publishEvents(publisher);
+
+    for (const player of this.players) {
+      player.publishEvents(publisher);
+    }
   }
 
   addPlayer(player: Player) {
@@ -110,6 +109,9 @@ export class Game extends Entity {
     this.questionMaster = questionMaster;
     this.question = question;
     this.answers = [];
+
+    this.addEvent(new GameStartedEvent(this));
+    this.addEvent(new TurnStartedEvent(this));
   }
 
   isQuestionMaster(player: Player) {
@@ -117,7 +119,7 @@ export class Game extends Entity {
   }
 
   didAnswer(player: Player) {
-    return this.answers!.some((answer) => answer.player.equals(player));
+    return this.answers?.some((answer) => answer.player.equals(player));
   }
 
   addAnswer(player: Player, choices: Choice[]) {
@@ -139,8 +141,11 @@ export class Game extends Entity {
 
     answers.push(answer);
 
+    this.addEvent(new PlayerAnsweredEvent(this, player));
+
     if (answers.length === this.players.length - 1) {
       this.playState = PlayState.questionMasterSelection;
+      this.addEvent(new AllPlayersAnsweredEvent(this));
     }
   }
 }

@@ -1,11 +1,14 @@
 import { expect } from 'chai';
 
+import { GameState } from '../../domain/enums/GameState';
+import { PlayState } from '../../domain/enums/PlayState';
 import { InvalidGameStateError, NotEnoughPlayersError } from '../../domain/errors';
-import { Game, GameState, PlayState } from '../../domain/models/Game';
+import { Game } from '../../domain/models/Game';
 import { Player } from '../../domain/models/Player';
 import { Blank } from '../../domain/models/Question';
 import { InMemoryGameRepository } from '../../infrastructure/InMemoryGameRepository';
 import { InMemoryPlayerRepository } from '../../infrastructure/InMemoryPlayerRepository';
+import { StubEventPublisher } from '../../infrastructure/StubEventPublisher';
 import { StubExternalData } from '../../infrastructure/StubExternalData';
 import { createQuestion } from '../../utils/entityCreators';
 import { GameBuilder } from '../../utils/GameBuilder';
@@ -18,6 +21,7 @@ describe('StartGameCommand', () => {
   let playerRepository: InMemoryPlayerRepository;
   let gameService: GameService;
   let externalData: StubExternalData;
+  let publisher: StubEventPublisher;
 
   let handler: StartGameHandler;
 
@@ -26,8 +30,9 @@ describe('StartGameCommand', () => {
     playerRepository = new InMemoryPlayerRepository();
     gameService = new GameService(playerRepository, gameRepository);
     externalData = new StubExternalData();
+    publisher = new StubEventPublisher();
 
-    handler = new StartGameHandler(gameService, gameRepository, externalData);
+    handler = new StartGameHandler(gameService, gameRepository, externalData, publisher);
   });
 
   let builder: GameBuilder;
@@ -88,17 +93,13 @@ describe('StartGameCommand', () => {
     it('deals the cards to all players', () => {
       for (const player of game.players) {
         expect(player.getCards()).to.have.length(11);
-        // expect(gameEvents.getPlayerEvents(player)).to.deep.include({ type: 'CardsDealt', cards: player.cards });
+        expect(publisher.events).to.deep.include({ type: 'CardsDealt', player });
       }
     });
 
     it('notifies that the game has started', () => {
-      // expect(gameEvents.getGameEvents(game)).to.deep.include({ type: 'GameStarted' });
-      // expect(gameEvents.getGameEvents(game)).to.deep.include({
-      //   type: 'TurnStarted',
-      //   questionMaster: questionMaster,
-      //   question: questions[0],
-      // })
+      expect(publisher.events).to.deep.include({ type: 'GameStarted', game });
+      expect(publisher.events).to.deep.include({ type: 'TurnStarted', game });
     });
   });
 

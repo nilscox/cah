@@ -1,7 +1,8 @@
+import { PlayState } from '../domain/enums/PlayState';
 import { ExternalData } from '../domain/interfaces/ExternalData';
 import { GameRepository } from '../domain/interfaces/GameRepository';
 import { PlayerRepository } from '../domain/interfaces/PlayerRepository';
-import { Game, PlayState } from '../domain/models/Game';
+import { Game } from '../domain/models/Game';
 import { Player } from '../domain/models/Player';
 
 export class GameBuilder {

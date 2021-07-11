@@ -1,6 +1,8 @@
 import { expect } from 'chai';
 import _ from 'lodash';
 
+import { GameState } from '../../domain/enums/GameState';
+import { PlayState } from '../../domain/enums/PlayState';
 import {
   GameNotFoundError,
   InvalidChoicesSelectionError,
@@ -12,11 +14,11 @@ import {
   PlayerNotFoundError,
 } from '../../domain/errors';
 import { Choice } from '../../domain/models/Choice';
-import { GameState, PlayState } from '../../domain/models/Game';
 import { Player } from '../../domain/models/Player';
 import { Blank, Question } from '../../domain/models/Question';
 import { InMemoryGameRepository } from '../../infrastructure/InMemoryGameRepository';
 import { InMemoryPlayerRepository } from '../../infrastructure/InMemoryPlayerRepository';
+import { StubEventPublisher } from '../../infrastructure/StubEventPublisher';
 import { StubExternalData } from '../../infrastructure/StubExternalData';
 import { GameBuilder } from '../../utils/GameBuilder';
 import { GameService } from '../services/GameService';
@@ -28,6 +30,7 @@ describe('CreateAnswerCommand', () => {
   let playerRepository: InMemoryPlayerRepository;
   let gameService: GameService;
   let externalData: StubExternalData;
+  let publisher: StubEventPublisher;
 
   let handler: CreateAnswerCommandHandler;
 
@@ -36,8 +39,9 @@ describe('CreateAnswerCommand', () => {
     playerRepository = new InMemoryPlayerRepository();
     gameService = new GameService(playerRepository, gameRepository);
     externalData = new StubExternalData();
+    publisher = new StubEventPublisher();
 
-    handler = new CreateAnswerCommandHandler(gameService);
+    handler = new CreateAnswerCommandHandler(gameService, publisher);
   });
 
   let builder: GameBuilder;
@@ -64,6 +68,8 @@ describe('CreateAnswerCommand', () => {
     expect(game.answers![0]).to.have.nested.property('player.id', player.id);
     expect(game.answers![0]).to.have.property('choices').that.have.length(1);
     expect(game.answers![0]).to.have.nested.property('question.id', game.question!.id);
+
+    expect(publisher.events).to.deep.include({ type: 'PlayerAnswered', game, player });
   });
 
   it('creates an answer with multiple choices', async () => {
@@ -87,6 +93,8 @@ describe('CreateAnswerCommand', () => {
     }
 
     expect(game.playState).to.eql(PlayState.questionMasterSelection);
+
+    expect(publisher.events).to.deep.include({ type: 'AllPlayersAnswered', game });
   });
 
   it('does not create an answer when the player does not exist', async () => {
@@ -133,7 +141,7 @@ describe('CreateAnswerCommand', () => {
     const choices = player?.getFirstCards(1);
 
     const error = await expect(execute(player, choices)).to.be.rejectedWith(PlayerIsQuestionMasterError);
-    expect(error).to.shallowDeepEqual({ player });
+    expect(error).to.have.nested.property('player.id', player.id);
   });
 
   it('does not create an answer when the player has already answered', async () => {
@@ -144,7 +152,7 @@ describe('CreateAnswerCommand', () => {
     await expect(execute(player, choices)).to.be.fulfilled;
 
     const error = await expect(execute(player, choices)).to.be.rejectedWith(PlayerAlreadyAnsweredError);
-    expect(error).to.shallowDeepEqual({ player });
+    expect(error).to.have.nested.property('player.id', player.id);
   });
 
   it('does not create an answer with choices that the player does not own', async () => {
@@ -153,7 +161,7 @@ describe('CreateAnswerCommand', () => {
     const choices = [new Choice('choice 1')];
 
     const error = await expect(execute(player, choices)).to.be.rejectedWith(InvalidChoicesSelectionError);
-    expect(error).to.shallowDeepEqual({ player, choicesIds: _.map(choices, 'id') });
+    expect(error).to.shallowDeepEqual({ player: { id: player.id }, choicesIds: _.map(choices, 'id') });
   });
 
   it('does not create an answer with an invalid number of choices', async () => {

@@ -1,9 +1,15 @@
-import { Entity } from '../../ddd/Entity';
+import { AggregateRoot } from '../../ddd/AggregateRoot';
+import { DomainEvent } from '../../ddd/EventPublisher';
 import { InvalidChoicesSelectionError } from '../errors';
 
 import { Choice } from './Choice';
 
-export class Player extends Entity {
+class CardsDealtEvent implements DomainEvent {
+  readonly type = 'CardsDealt';
+  constructor(public readonly player: Player) {}
+}
+
+export class Player extends AggregateRoot {
   private readonly cards: Choice[] = [];
 
   constructor(private nick: string) {
@@ -12,6 +18,7 @@ export class Player extends Entity {
 
   addCards(cards: Choice[]) {
     this.cards.push(...cards);
+    this.addEvent(new CardsDealtEvent(this));
   }
 
   getFirstCards(count: number) {

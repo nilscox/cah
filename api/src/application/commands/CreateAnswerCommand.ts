@@ -1,3 +1,4 @@
+import { EventPublisher } from '../../ddd/EventPublisher';
 import { GameService } from '../services/GameService';
 
 export class CreateAnswerCommand {
@@ -5,7 +6,7 @@ export class CreateAnswerCommand {
 }
 
 export class CreateAnswerCommandHandler {
-  constructor(private readonly gameService: GameService) {}
+  constructor(private readonly gameService: GameService, private readonly publisher: EventPublisher) {}
 
   async execute({ playerId, choicesIds }: CreateAnswerCommand) {
     const player = await this.gameService.getPlayer(playerId);
@@ -14,5 +15,7 @@ export class CreateAnswerCommandHandler {
     const choices = player.getCards(choicesIds);
 
     game.addAnswer(player, choices);
+
+    game.publishEvents(this.publisher);
   }
 }

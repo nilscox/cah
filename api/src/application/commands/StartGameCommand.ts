@@ -1,3 +1,4 @@
+import { EventPublisher } from '../../ddd/EventPublisher';
 import { ExternalData } from '../../domain/interfaces/ExternalData';
 import { GameRepository } from '../../domain/interfaces/GameRepository';
 import { Game } from '../../domain/models/Game';
@@ -12,6 +13,7 @@ export class StartGameHandler {
     private readonly gameService: GameService,
     private readonly gameRepository: GameRepository,
     private readonly externalData: ExternalData,
+    private readonly publisher: EventPublisher,
   ) {}
 
   async execute({ questionMasterId, turns }: StartGameCommand) {
@@ -22,6 +24,8 @@ export class StartGameHandler {
 
     await game.start(questionMaster, questions[0]);
     await game.dealCards([...choices]);
+
+    game.publishEvents(this.publisher);
   }
 
   private async getCards(game: Game, turns: number) {

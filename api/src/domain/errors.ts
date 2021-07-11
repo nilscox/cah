@@ -1,6 +1,7 @@
 import { CustomError } from 'ts-custom-error';
 
-import { GameState, PlayState } from './models/Game';
+import { GameState } from './enums/GameState';
+import { PlayState } from './enums/PlayState';
 import { Player } from './models/Player';
 
 class DomainError extends CustomError {}
