@@ -213,7 +213,7 @@ class StubPlayer {
   }
 }
 
-describe('end-to-end', function () {
+describe.skip('end-to-end', function () {
   createTestDatabase();
 
   let gameRepository: SQLGameRepository;

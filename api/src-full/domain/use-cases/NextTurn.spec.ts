@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+import _ from 'lodash';
 import { Container } from 'typedi';
 
 import { GameState, PlayState, StartedGame } from '../entities/Game';
@@ -97,9 +98,9 @@ describe('NextTurn', () => {
 
   it('ends the current turn and starts the next one', async () => {
     let game = initializeGame();
-    const { players, winner, questionMaster } = game;
+    const { players, winner, questionMaster, question } = game;
 
-    createAnswerForPlayers(game, playersExcludingQM(game));
+    const answers = await createAnswerForPlayers(game, playersExcludingQM(game));
 
     const nextQuestion = createQuestion();
     questionRepository.createQuestions(game, [nextQuestion]);
@@ -122,6 +123,12 @@ describe('NextTurn', () => {
     const turns = turnRepository.get();
 
     expect(turns).to.have.length(1);
+    expect(turns[0]).to.shallowDeepEqual({
+      questionMaster: { id: questionMaster.id },
+      question: { id: question.id },
+      winner: { id: winner!.id },
+      answers: answers.map(({ id }) => ({ id })),
+    });
 
     for (const player of players.filter((player) => player !== questionMaster)) {
       expect(gameEvents.getPlayerEvents(player)).to.deep.include({
@@ -133,8 +140,7 @@ describe('NextTurn', () => {
     expect(gameEvents.getGameEvents(game)).to.deep.include({ type: 'TurnEnded', turn: turns[0] });
     expect(gameEvents.getGameEvents(game)).to.deep.include({
       type: 'TurnStarted',
-      questionMaster: winner,
-      question: nextQuestion,
+      ..._.pick(game, 'questionMaster', 'question'),
     });
   });
 

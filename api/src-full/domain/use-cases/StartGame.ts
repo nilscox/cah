@@ -1,10 +1,9 @@
+import _ from 'lodash';
 import { Inject, Service } from 'typedi';
 
-import { Game, GameState, PlayState, StartedGame } from '../entities/Game';
+import { Game } from '../entities/Game';
 import { Question } from '../entities/Question';
 import { EntityNotFoundError } from '../errors/EntityNotFoundError';
-import { GameAlreadyStartedError } from '../errors/GameAlreadyStartedError';
-import { NotEnoughPlayersError } from '../errors/NotEnoughPlayersError';
 import { ChoiceRepository, ChoiceRepositoryToken } from '../interfaces/ChoiceRepository';
 import { ExternalData, ExternalDataToken } from '../interfaces/ExternalData';
 import { GameEvents, GameEventsToken } from '../interfaces/GameEvents';
@@ -44,14 +43,6 @@ export class StartGame {
       throw new EntityNotFoundError('game', 'id', gameId);
     }
 
-    if (game.state !== GameState.idle) {
-      throw new GameAlreadyStartedError();
-    }
-
-    if (game.players.length < 3) {
-      throw new NotEnoughPlayersError(game.players.length, 3);
-    }
-
     const questions = await this.externalData.pickRandomQuestions(numberOfTurns);
 
     const nbChoices = this.computeNeededChoicesCount(game.players.length, questions);
@@ -60,24 +51,19 @@ export class StartGame {
     await this.questionRepository.createQuestions(game, questions);
     await this.choiceRepository.createChoices(game, choices);
 
-    const firstQuestion = (await this.questionRepository.getNextAvailableQuestion(game))!;
+    const firstQuestion = (await this.questionRepository.getNextAvailableQuestion(game)) as Question;
 
-    const startedGame = new StartedGame();
-
-    startedGame.id = game.id;
-    startedGame.code = game.code;
-    startedGame.players = game.players;
-    startedGame.state = GameState.started;
-    startedGame.playState = PlayState.playersAnswer;
-    startedGame.question = firstQuestion;
-    startedGame.questionMaster = questionMaster;
+    const startedGame = game.start(questionMaster, firstQuestion);
 
     await this.gameRepository.save(startedGame);
 
     await this.gameService.dealCards(startedGame);
 
     this.gameEvents.onGameEvent(startedGame, { type: 'GameStarted' });
-    this.gameEvents.onGameEvent(startedGame, { type: 'TurnStarted', questionMaster, question: firstQuestion });
+    this.gameEvents.onGameEvent(startedGame, {
+      type: 'TurnStarted',
+      ..._.pick(startedGame, 'questionMaster', 'question'),
+    });
   }
 
   private computeNeededChoicesCount(playersCount: number, questions: Question[]) {
