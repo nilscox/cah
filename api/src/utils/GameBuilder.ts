@@ -51,19 +51,21 @@ export class GameBuilder<G extends Game = Game> {
 
   play(to: PlayState): GameBuilder<G> {
     this.register(async () => {
+      const game = this.game as StartedGame;
+
       if (to === PlayState.playersAnswer) {
         return;
       }
 
       for (const player of this.game.playersExcludingQM) {
-        this.game.addAnswer(player, player.getFirstCards(this.game.question!.numberOfBlanks));
+        this.game.addAnswer(player, player.getFirstCards(game.question.numberOfBlanks));
       }
 
       if (to === PlayState.questionMasterSelection) {
         return;
       }
 
-      // ...
+      game.setWinningAnswer(game.questionMaster, game.answers[0].id);
     });
 
     return this;

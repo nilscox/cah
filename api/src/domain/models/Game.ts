@@ -2,17 +2,20 @@ import { AggregateRoot } from '../../ddd/AggregateRoot';
 import { EventPublisher } from '../../ddd/EventPublisher';
 import { GameState } from '../enums/GameState';
 import { PlayState } from '../enums/PlayState';
+import { AnswerNotFoundError } from '../errors/AnswerNotFoundError';
 import { InvalidGameStateError } from '../errors/InvalidGameStateError';
 import { InvalidNumberOfChoicesError } from '../errors/InvalidNumberOfChoicesError';
 import { InvalidPlayStateError } from '../errors/InvalidPlayStateError';
 import { NoMoreChoiceError } from '../errors/NoMoreChoiceError';
 import { NotEnoughPlayersError } from '../errors/NotEnoughPlayersError';
 import { PlayerAlreadyAnsweredError } from '../errors/PlayerAlreadyAnsweredError';
+import { PlayerIsNotQuestionMasterError } from '../errors/PlayerIsNotQuestionMasterError';
 import { PlayerIsQuestionMasterError } from '../errors/PlayerIsQuestionMasterError';
 import { AllPlayersAnsweredEvent } from '../events/AllPlayersAnsweredEvent';
 import { GameStartedEvent } from '../events/GameStartedEvent';
 import { PlayerAnsweredEvent } from '../events/PlayerAnsweredEvent';
 import { TurnStartedEvent } from '../events/TurnStartedEvent';
+import { WinnerSelectedEvent } from '../events/WinnerSelectedEvent';
 
 import { Answer } from './Answer';
 import { Choice } from './Choice';
@@ -30,6 +33,7 @@ export class Game extends AggregateRoot {
   public questionMaster?: Player;
   public question?: Question;
   public answers?: Answer[];
+  public winner?: Player;
 
   get playersExcludingQM() {
     return this.players.filter((player) => !player.equals(this.questionMaster));
@@ -138,6 +142,25 @@ export class Game extends AggregateRoot {
       this.playState = PlayState.questionMasterSelection;
       this.addEvent(new AllPlayersAnsweredEvent(this));
     }
+  }
+
+  setWinningAnswer(player: Player, answerId: string) {
+    const { answers } = this.ensurePlayState(PlayState.questionMasterSelection);
+
+    if (!player.equals(this.questionMaster)) {
+      throw new PlayerIsNotQuestionMasterError(player);
+    }
+
+    const answer = answers.find((answer) => answer.id === answerId);
+
+    if (!answer) {
+      throw new AnswerNotFoundError();
+    }
+
+    this.playState = PlayState.endOfTurn;
+    this.winner = answer.player;
+
+    this.addEvent(new WinnerSelectedEvent(this));
   }
 }
 
