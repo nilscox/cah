@@ -1,4 +1,4 @@
-import { DomainEvent, EventPublisher } from '../ddd/EventPublisher';
+import { DomainEvent, EventPublisher } from '../../ddd/EventPublisher';
 
 export class StubEventPublisher implements EventPublisher {
   events: DomainEvent[] = [];

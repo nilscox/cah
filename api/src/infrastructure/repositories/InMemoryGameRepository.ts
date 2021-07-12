@@ -1,9 +1,9 @@
-import { GameRepository } from '../domain/interfaces/GameRepository';
-import { Answer } from '../domain/models/Answer';
-import { Choice } from '../domain/models/Choice';
-import { Game } from '../domain/models/Game';
-import { Question } from '../domain/models/Question';
-import { Turn } from '../domain/models/Turn';
+import { GameRepository } from '../../domain/interfaces/GameRepository';
+import { Answer } from '../../domain/models/Answer';
+import { Choice } from '../../domain/models/Choice';
+import { Game } from '../../domain/models/Game';
+import { Question } from '../../domain/models/Question';
+import { Turn } from '../../domain/models/Turn';
 
 export class InMemoryGameRepository implements GameRepository {
   private games = new Map<string, Game>();

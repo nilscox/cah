@@ -15,11 +15,11 @@ import { Blank } from '../../domain/models/Blank';
 import { Choice } from '../../domain/models/Choice';
 import { Player } from '../../domain/models/Player';
 import { Question } from '../../domain/models/Question';
-import { InMemoryGameRepository } from '../../infrastructure/InMemoryGameRepository';
-import { InMemoryPlayerRepository } from '../../infrastructure/InMemoryPlayerRepository';
-import { StubEventPublisher } from '../../infrastructure/StubEventPublisher';
-import { StubExternalData } from '../../infrastructure/StubExternalData';
-import { StubRandomService } from '../../infrastructure/StubRandomService';
+import { InMemoryGameRepository } from '../../infrastructure/repositories/InMemoryGameRepository';
+import { InMemoryPlayerRepository } from '../../infrastructure/repositories/InMemoryPlayerRepository';
+import { StubEventPublisher } from '../../infrastructure/stubs/StubEventPublisher';
+import { StubExternalData } from '../../infrastructure/stubs/StubExternalData';
+import { StubRandomService } from '../../infrastructure/stubs/StubRandomService';
 import { GameBuilder } from '../../utils/GameBuilder';
 import { GameService } from '../services/GameService';
 

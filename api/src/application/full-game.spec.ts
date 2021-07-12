@@ -5,10 +5,10 @@ import { Answer } from '../domain/models/Answer';
 import { Choice } from '../domain/models/Choice';
 import { Game, StartedGame } from '../domain/models/Game';
 import { Player } from '../domain/models/Player';
-import { InMemoryGameRepository } from '../infrastructure/InMemoryGameRepository';
-import { InMemoryPlayerRepository } from '../infrastructure/InMemoryPlayerRepository';
-import { StubEventPublisher } from '../infrastructure/StubEventPublisher';
-import { StubExternalData } from '../infrastructure/StubExternalData';
+import { InMemoryGameRepository } from '../infrastructure/repositories/InMemoryGameRepository';
+import { InMemoryPlayerRepository } from '../infrastructure/repositories/InMemoryPlayerRepository';
+import { StubEventPublisher } from '../infrastructure/stubs/StubEventPublisher';
+import { StubExternalData } from '../infrastructure/stubs/StubExternalData';
 
 import { CreateAnswerCommandHandler } from './commands/CreateAnswerCommand';
 import { NextTurnHandler } from './commands/NextTurnCommand';

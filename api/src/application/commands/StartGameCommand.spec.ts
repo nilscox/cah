@@ -8,10 +8,10 @@ import { createBlanks } from '../../domain/models/Blank';
 import { Game } from '../../domain/models/Game';
 import { Player } from '../../domain/models/Player';
 import { createQuestion } from '../../domain/models/Question';
-import { InMemoryGameRepository } from '../../infrastructure/InMemoryGameRepository';
-import { InMemoryPlayerRepository } from '../../infrastructure/InMemoryPlayerRepository';
-import { StubEventPublisher } from '../../infrastructure/StubEventPublisher';
-import { StubExternalData } from '../../infrastructure/StubExternalData';
+import { InMemoryGameRepository } from '../../infrastructure/repositories/InMemoryGameRepository';
+import { InMemoryPlayerRepository } from '../../infrastructure/repositories/InMemoryPlayerRepository';
+import { StubEventPublisher } from '../../infrastructure/stubs/StubEventPublisher';
+import { StubExternalData } from '../../infrastructure/stubs/StubExternalData';
 import { GameBuilder } from '../../utils/GameBuilder';
 import { GameService } from '../services/GameService';
 

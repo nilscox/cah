@@ -1,9 +1,20 @@
+import { IsInt, IsUUID } from 'class-validator';
+
 import { EventPublisher } from '../../ddd/EventPublisher';
 import { GameService } from '../services/GameService';
 import { RandomService } from '../services/RandomService';
 
 export class CreateAnswerCommand {
-  constructor(public readonly playerId: string, public readonly choicesIds: string[]) {}
+  @IsUUID('4')
+  playerId!: string;
+
+  @IsInt({ each: true })
+  choicesIds!: string[];
+
+  constructor(playerId: string, choicesIds: string[]) {
+    this.playerId = playerId;
+    this.choicesIds = choicesIds;
+  }
 }
 
 export class CreateAnswerCommandHandler {

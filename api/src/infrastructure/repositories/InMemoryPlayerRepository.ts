@@ -1,5 +1,5 @@
-import { PlayerRepository } from '../domain/interfaces/PlayerRepository';
-import { Player } from '../domain/models/Player';
+import { PlayerRepository } from '../../domain/interfaces/PlayerRepository';
+import { Player } from '../../domain/models/Player';
 
 export class InMemoryPlayerRepository implements PlayerRepository {
   private players = new Map<string, Player>();

@@ -1,6 +1,6 @@
-import { ExternalData } from '../domain/interfaces/ExternalData';
-import { Choice } from '../domain/models/Choice';
-import { Question } from '../domain/models/Question';
+import { ExternalData } from '../../domain/interfaces/ExternalData';
+import { Choice } from '../../domain/models/Choice';
+import { Question } from '../../domain/models/Question';
 
 export class StubExternalData implements ExternalData {
   private randomQuestions?: Question[];
