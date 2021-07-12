@@ -15,12 +15,14 @@ import { NextTurnHandler } from './commands/NextTurnCommand';
 import { SelectWinnerHandler } from './commands/SelectWinnerCommand';
 import { StartGameHandler } from './commands/StartGameCommand';
 import { GameService } from './services/GameService';
+import { RandomService } from './services/RandomService';
 
 describe('full game', () => {
   let gameRepository: InMemoryGameRepository;
   let playerRepository: InMemoryPlayerRepository;
   let gameService: GameService;
   let externalData: StubExternalData;
+  let randomService: RandomService;
   let publisher: StubEventPublisher;
 
   let startGameHandler: StartGameHandler;
@@ -33,10 +35,11 @@ describe('full game', () => {
     playerRepository = new InMemoryPlayerRepository();
     gameService = new GameService(playerRepository, gameRepository);
     externalData = new StubExternalData();
+    randomService = new RandomService();
     publisher = new StubEventPublisher();
 
     startGameHandler = new StartGameHandler(gameService, gameRepository, externalData, publisher);
-    createAnswerHandler = new CreateAnswerCommandHandler(gameService, publisher);
+    createAnswerHandler = new CreateAnswerCommandHandler(gameService, randomService, publisher);
     selectWinnerHandler = new SelectWinnerHandler(gameService, publisher);
     nextTurnHandler = new NextTurnHandler(gameService, gameRepository, publisher);
   });
@@ -80,5 +83,7 @@ describe('full game', () => {
       await selectWinnerAnswer(startedGame.questionMaster, startedGame.answers[0]);
       await nextTurn(startedGame.questionMaster);
     }
+
+    // console.log(await gameRepository.getTurns(game.id));
   });
 });

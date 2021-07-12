@@ -133,7 +133,7 @@ export class Game extends AggregateRoot {
     return this.answers?.some((answer) => answer.player.equals(player));
   }
 
-  addAnswer(player: Player, choices: Choice[]) {
+  addAnswer(player: Player, choices: Choice[], randomize: <T>(array: T[]) => T[]) {
     const { question, answers } = this.ensurePlayState(PlayState.playersAnswer);
 
     if (this.isQuestionMaster(player)) {
@@ -157,7 +157,9 @@ export class Game extends AggregateRoot {
     this.addEvent(new PlayerAnsweredEvent(this, player));
 
     if (answers.length === this.players.length - 1) {
+      this.answers = randomize(answers);
       this.playState = PlayState.questionMasterSelection;
+
       this.addEvent(new AllPlayersAnsweredEvent(this));
     }
   }

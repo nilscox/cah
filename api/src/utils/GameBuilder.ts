@@ -54,7 +54,7 @@ export class GameBuilder<G extends Game = Game> {
       const game = this.game as StartedGame;
 
       for (const player of this.game.playersExcludingQM) {
-        this.game.addAnswer(player, player.getFirstCards(game.question.numberOfBlanks));
+        this.game.addAnswer(player, player.getFirstCards(game.question.numberOfBlanks), (arr) => arr);
       }
 
       if (to === PlayState.questionMasterSelection) {

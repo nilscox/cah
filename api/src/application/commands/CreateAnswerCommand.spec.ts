@@ -19,6 +19,7 @@ import { InMemoryGameRepository } from '../../infrastructure/InMemoryGameReposit
 import { InMemoryPlayerRepository } from '../../infrastructure/InMemoryPlayerRepository';
 import { StubEventPublisher } from '../../infrastructure/StubEventPublisher';
 import { StubExternalData } from '../../infrastructure/StubExternalData';
+import { StubRandomService } from '../../infrastructure/StubRandomService';
 import { GameBuilder } from '../../utils/GameBuilder';
 import { GameService } from '../services/GameService';
 
@@ -29,6 +30,7 @@ describe('CreateAnswerCommand', () => {
   let playerRepository: InMemoryPlayerRepository;
   let gameService: GameService;
   let externalData: StubExternalData;
+  let randomService: StubRandomService;
   let publisher: StubEventPublisher;
 
   let handler: CreateAnswerCommandHandler;
@@ -38,9 +40,10 @@ describe('CreateAnswerCommand', () => {
     playerRepository = new InMemoryPlayerRepository();
     gameService = new GameService(playerRepository, gameRepository);
     externalData = new StubExternalData();
+    randomService = new StubRandomService();
     publisher = new StubEventPublisher();
 
-    handler = new CreateAnswerCommandHandler(gameService, publisher);
+    handler = new CreateAnswerCommandHandler(gameService, randomService, publisher);
   });
 
   let builder: GameBuilder;
@@ -100,6 +103,19 @@ describe('CreateAnswerCommand', () => {
     expect(publisher.events).to.deep.include({ type: 'AllPlayersAnswered', game });
   });
 
+  it('randomizes the answers when the last player answers', async () => {
+    const game = await builder.addPlayers().start().get();
+    const players = game.playersExcludingQM;
+
+    randomService.randomize = (array) => array.reverse();
+
+    for (const player of players) {
+      await execute(player, player.getFirstCards(1));
+    }
+
+    expect(game.answers.map((answer) => answer.player.id)).to.eql(players.reverse().map((player) => player.id));
+  });
+
   it('does not create an answer when the player does not exist', async () => {
     const player = new Player('player');
     const choices = [new Choice('choice 1')];
@@ -130,12 +146,14 @@ describe('CreateAnswerCommand', () => {
   });
 
   it('does not create an answer when the game is not in play state players answer', async () => {
-    const game = await builder.addPlayers().start().play(PlayState.questionMasterSelection).get();
-    const player = game.playersExcludingQM[0];
-    const choices = player.getFirstCards(1);
+    for (const playState of [PlayState.questionMasterSelection, PlayState.endOfTurn]) {
+      const game = await builder.addPlayers().start().play(playState).get();
+      const player = game.playersExcludingQM[0];
+      const choices = player.getFirstCards(1);
 
-    const error = await expect(execute(player, choices)).to.be.rejectedWith(InvalidPlayStateError);
-    expect(error).to.shallowDeepEqual({ expected: PlayState.playersAnswer, actual: PlayState.questionMasterSelection });
+      const error = await expect(execute(player, choices)).to.be.rejectedWith(InvalidPlayStateError);
+      expect(error).to.shallowDeepEqual({ expected: PlayState.playersAnswer, actual: playState });
+    }
   });
 
   it('does not create an answer when the player is the question master', async () => {
