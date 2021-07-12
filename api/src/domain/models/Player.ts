@@ -10,7 +10,7 @@ class CardsDealtEvent implements DomainEvent {
 }
 
 export class Player extends AggregateRoot {
-  private readonly cards: Choice[] = [];
+  private cards: Choice[] = [];
 
   constructor(private nick: string) {
     super();
@@ -19,6 +19,10 @@ export class Player extends AggregateRoot {
   addCards(cards: Choice[]) {
     this.cards.push(...cards);
     this.addEvent(new CardsDealtEvent(this));
+  }
+
+  removeCards(cards: Choice[]) {
+    this.cards = this.cards.filter((card) => !cards.some((c) => c.equals(card)));
   }
 
   getFirstCards(count: number) {

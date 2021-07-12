@@ -12,8 +12,10 @@ import { PlayerAlreadyAnsweredError } from '../errors/PlayerAlreadyAnsweredError
 import { PlayerIsNotQuestionMasterError } from '../errors/PlayerIsNotQuestionMasterError';
 import { PlayerIsQuestionMasterError } from '../errors/PlayerIsQuestionMasterError';
 import { AllPlayersAnsweredEvent } from '../events/AllPlayersAnsweredEvent';
+import { GameFinishedEvent } from '../events/GameFinishedEvent';
 import { GameStartedEvent } from '../events/GameStartedEvent';
 import { PlayerAnsweredEvent } from '../events/PlayerAnsweredEvent';
+import { TurnFinishedEvent } from '../events/TurnFinishedEvent';
 import { TurnStartedEvent } from '../events/TurnStartedEvent';
 import { WinnerSelectedEvent } from '../events/WinnerSelectedEvent';
 
@@ -21,6 +23,7 @@ import { Answer } from './Answer';
 import { Choice } from './Choice';
 import { Player } from './Player';
 import { Question } from './Question';
+import { Turn } from './Turn';
 
 export class Game extends AggregateRoot {
   static cardPerPlayer = 11;
@@ -39,11 +42,25 @@ export class Game extends AggregateRoot {
     return this.players.filter((player) => !player.equals(this.questionMaster));
   }
 
+  get currentTurn(): Turn {
+    const { questionMaster, question, answers, winner } = this.ensurePlayState(PlayState.endOfTurn);
+
+    return new Turn(questionMaster, question, answers, winner!);
+  }
+
   override publishEvents(publisher: EventPublisher) {
     super.publishEvents(publisher);
 
     for (const player of this.players) {
       player.publishEvents(publisher);
+    }
+  }
+
+  override dropEvents() {
+    super.dropEvents();
+
+    for (const player of this.players) {
+      player.dropEvents();
     }
   }
 
@@ -71,7 +88,6 @@ export class Game extends AggregateRoot {
         const cards = availableChoices.splice(0, needed);
 
         player.addCards(cards);
-        // this.gameEvents.onPlayerEvent(player, { type: 'CardsDealt', cards });
       }
     }
   }
@@ -132,6 +148,8 @@ export class Game extends AggregateRoot {
       throw new InvalidNumberOfChoicesError(question.numberOfBlanks, choices.length);
     }
 
+    player.removeCards(choices);
+
     const answer = new Answer(player, question, choices);
 
     answers.push(answer);
@@ -161,6 +179,37 @@ export class Game extends AggregateRoot {
     this.winner = answer.player;
 
     this.addEvent(new WinnerSelectedEvent(this));
+  }
+
+  nextTurn(nextQuestion: Question) {
+    this.ensurePlayState(PlayState.endOfTurn);
+
+    this.playState = PlayState.playersAnswer;
+    this.questionMaster = this.winner;
+    this.question = nextQuestion;
+    this.answers = [];
+    this.winner = undefined;
+
+    this.addEvent(new TurnFinishedEvent(this));
+    this.addEvent(new TurnStartedEvent(this));
+  }
+
+  finish() {
+    this.ensurePlayState(PlayState.endOfTurn);
+
+    this.state = GameState.finished;
+    this.playState = undefined;
+    this.questionMaster = undefined;
+    this.question = undefined;
+    this.answers = undefined;
+    this.winner = undefined;
+
+    for (const player of this.players) {
+      player.removeCards(player.getCards());
+    }
+
+    this.addEvent(new TurnFinishedEvent(this));
+    this.addEvent(new GameFinishedEvent(this));
   }
 }
 

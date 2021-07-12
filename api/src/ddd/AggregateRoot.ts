@@ -8,6 +8,10 @@ export class AggregateRoot extends Entity {
     this.events.push(event);
   }
 
+  dropEvents() {
+    this.events = [];
+  }
+
   publishEvents(publisher: EventPublisher) {
     for (const event of this.events) {
       publisher.publish(event);

@@ -68,6 +68,8 @@ describe('CreateAnswerCommand', () => {
     expect(game.answers[0]).to.have.property('choices').that.have.length(1);
     expect(game.answers[0]).to.have.nested.property('question.id', game.question.id);
 
+    expect(player.getCards()).to.have.length(10);
+
     expect(publisher.events).to.deep.include({ type: 'PlayerAnswered', game, player });
   });
 
@@ -82,6 +84,8 @@ describe('CreateAnswerCommand', () => {
 
     expect(game.answers).to.have.length(1);
     expect(game.answers[0]).to.have.property('choices').that.have.length(2);
+
+    expect(player.getCards()).to.have.length(9);
   });
 
   it('enters in question master selection play state when the last player answers', async () => {
@@ -146,11 +150,10 @@ describe('CreateAnswerCommand', () => {
   it('does not create an answer when the player has already answered', async () => {
     const game = await builder.addPlayers().start().get();
     const player = game.playersExcludingQM[0];
-    const choices = player.getFirstCards(1);
 
-    await expect(execute(player, choices)).to.be.fulfilled;
+    await expect(execute(player, player.getFirstCards(1))).to.be.fulfilled;
 
-    const error = await expect(execute(player, choices)).to.be.rejectedWith(PlayerAlreadyAnsweredError);
+    const error = await expect(execute(player, player.getFirstCards(1))).to.be.rejectedWith(PlayerAlreadyAnsweredError);
     expect(error).to.have.nested.property('player.id', player.id);
   });
 

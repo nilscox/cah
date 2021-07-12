@@ -22,7 +22,7 @@ export class GameBuilder<G extends Game = Game> {
   addPlayers(count = 3): GameBuilder<G> {
     this.register(async () => {
       for (let i = 0; i < count; ++i) {
-        const player = new Player(`player ${i}`);
+        const player = new Player(`player ${i + 1}`);
 
         await this.playerRepository.save(player);
         this.game.addPlayer(player);
@@ -53,10 +53,6 @@ export class GameBuilder<G extends Game = Game> {
     this.register(async () => {
       const game = this.game as StartedGame;
 
-      if (to === PlayState.playersAnswer) {
-        return;
-      }
-
       for (const player of this.game.playersExcludingQM) {
         this.game.addAnswer(player, player.getFirstCards(game.question.numberOfBlanks));
       }
@@ -66,6 +62,19 @@ export class GameBuilder<G extends Game = Game> {
       }
 
       game.setWinningAnswer(game.questionMaster, game.answers[0].id);
+
+      if (to === PlayState.endOfTurn) {
+        return;
+      }
+
+      const nextQuestion = await this.gameRepository.findNextAvailableQuestion(game.id);
+
+      if (nextQuestion) {
+        game.nextTurn(nextQuestion);
+        game.dealCards(await this.gameRepository.findAvailableChoices(game.id));
+      } else {
+        game.finish();
+      }
     });
 
     return this;
@@ -79,6 +88,8 @@ export class GameBuilder<G extends Game = Game> {
     }
 
     await this.gameRepository.save(this.game);
+
+    this.game.dropEvents();
 
     this.game = new Game();
     this.functions = [];
