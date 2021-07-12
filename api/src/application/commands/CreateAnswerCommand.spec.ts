@@ -64,9 +64,9 @@ describe('CreateAnswerCommand', () => {
     await execute(player, choices);
 
     expect(game.answers).to.have.length(1);
-    expect(game.answers![0]).to.have.nested.property('player.id', player.id);
-    expect(game.answers![0]).to.have.property('choices').that.have.length(1);
-    expect(game.answers![0]).to.have.nested.property('question.id', game.question!.id);
+    expect(game.answers[0]).to.have.nested.property('player.id', player.id);
+    expect(game.answers[0]).to.have.property('choices').that.have.length(1);
+    expect(game.answers[0]).to.have.nested.property('question.id', game.question.id);
 
     expect(publisher.events).to.deep.include({ type: 'PlayerAnswered', game, player });
   });
@@ -81,7 +81,7 @@ describe('CreateAnswerCommand', () => {
     await execute(player, choices);
 
     expect(game.answers).to.have.length(1);
-    expect(game.answers![0]).to.have.property('choices').that.have.length(2);
+    expect(game.answers[0]).to.have.property('choices').that.have.length(2);
   });
 
   it('enters in question master selection play state when the last player answers', async () => {
@@ -136,8 +136,8 @@ describe('CreateAnswerCommand', () => {
 
   it('does not create an answer when the player is the question master', async () => {
     const game = await builder.addPlayers().start().get();
-    const player = game.questionMaster!;
-    const choices = player?.getFirstCards(1);
+    const player = game.questionMaster;
+    const choices = player.getFirstCards(1);
 
     const error = await expect(execute(player, choices)).to.be.rejectedWith(PlayerIsQuestionMasterError);
     expect(error).to.have.nested.property('player.id', player.id);
@@ -157,7 +157,7 @@ describe('CreateAnswerCommand', () => {
   it('does not create an answer with choices that the player does not own', async () => {
     const game = await builder.addPlayers().start().get();
     const player = game.playersExcludingQM[0];
-    const choices = [new Choice('choice 1')];
+    const choices = game.playersExcludingQM[1].getFirstCards(1);
 
     const error = await expect(execute(player, choices)).to.be.rejectedWith(InvalidChoicesSelectionError);
     expect(error).to.shallowDeepEqual({ player: { id: player.id }, choicesIds: _.map(choices, 'id') });

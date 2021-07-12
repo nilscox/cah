@@ -19,13 +19,6 @@ import { Choice } from './Choice';
 import { Player } from './Player';
 import { Question } from './Question';
 
-type StartedGame = {
-  playState: PlayState;
-  questionMaster: Player;
-  question: Question;
-  answers: Answer[];
-};
-
 export class Game extends AggregateRoot {
   static cardPerPlayer = 11;
   static minimumPlayersToStart = 3;
@@ -85,7 +78,7 @@ export class Game extends AggregateRoot {
     }
   }
 
-  ensurePlayState(playState: PlayState) {
+  ensurePlayState(playState: PlayState): StartedGame {
     this.ensureGameState(GameState.started);
 
     if (this.playState !== playState) {
@@ -95,7 +88,7 @@ export class Game extends AggregateRoot {
     return this as StartedGame;
   }
 
-  start(questionMaster: Player, question: Question) {
+  start(questionMaster: Player, firstQuestion: Question) {
     this.ensureGameState(GameState.idle);
 
     if (this.players.length < Game.minimumPlayersToStart) {
@@ -105,7 +98,7 @@ export class Game extends AggregateRoot {
     this.state = GameState.started;
     this.playState = PlayState.playersAnswer;
     this.questionMaster = questionMaster;
-    this.question = question;
+    this.question = firstQuestion;
     this.answers = [];
 
     this.addEvent(new GameStartedEvent(this));
@@ -146,4 +139,11 @@ export class Game extends AggregateRoot {
       this.addEvent(new AllPlayersAnsweredEvent(this));
     }
   }
+}
+
+export class StartedGame extends Game {
+  override playState!: PlayState;
+  override questionMaster!: Player;
+  override question!: Question;
+  override answers!: Answer[];
 }

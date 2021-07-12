@@ -2,10 +2,10 @@ import { PlayState } from '../domain/enums/PlayState';
 import { ExternalData } from '../domain/interfaces/ExternalData';
 import { GameRepository } from '../domain/interfaces/GameRepository';
 import { PlayerRepository } from '../domain/interfaces/PlayerRepository';
-import { Game } from '../domain/models/Game';
+import { Game, StartedGame } from '../domain/models/Game';
 import { Player } from '../domain/models/Player';
 
-export class GameBuilder {
+export class GameBuilder<G extends Game = Game> {
   constructor(
     private readonly gameRepository: GameRepository,
     private readonly playerRepository: PlayerRepository,
@@ -19,7 +19,7 @@ export class GameBuilder {
     this.functions.push(func);
   }
 
-  addPlayers(count = 3) {
+  addPlayers(count = 3): GameBuilder<G> {
     this.register(async () => {
       for (let i = 0; i < count; ++i) {
         const player = new Player(`player ${i}`);
@@ -32,7 +32,7 @@ export class GameBuilder {
     return this;
   }
 
-  start(turns = 1) {
+  start(turns = 1): GameBuilder<StartedGame> {
     this.register(async () => {
       const game = this.game;
 
@@ -46,10 +46,10 @@ export class GameBuilder {
       this.game.dealCards(choices);
     });
 
-    return this;
+    return this as GameBuilder<StartedGame>;
   }
 
-  play(to: PlayState) {
+  play(to: PlayState): GameBuilder<G> {
     this.register(async () => {
       if (to === PlayState.playersAnswer) {
         return;
@@ -69,7 +69,7 @@ export class GameBuilder {
     return this;
   }
 
-  async get() {
+  async get(): Promise<G> {
     const game = this.game;
 
     for (const func of this.functions) {
@@ -81,6 +81,6 @@ export class GameBuilder {
     this.game = new Game();
     this.functions = [];
 
-    return game;
+    return game as G;
   }
 }
