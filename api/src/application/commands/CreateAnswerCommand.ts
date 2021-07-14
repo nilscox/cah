@@ -1,18 +1,15 @@
-import { IsInt, IsUUID } from 'class-validator';
+import { IsUUID } from 'class-validator';
 
 import { EventPublisher } from '../../ddd/EventPublisher';
+import { SessionStore } from '../interfaces/SessionStore';
 import { GameService } from '../services/GameService';
 import { RandomService } from '../services/RandomService';
 
 export class CreateAnswerCommand {
-  @IsUUID('4')
-  playerId!: string;
+  @IsUUID('4', { each: true })
+  choicesIds: string[];
 
-  @IsInt({ each: true })
-  choicesIds!: string[];
-
-  constructor(playerId: string, choicesIds: string[]) {
-    this.playerId = playerId;
+  constructor(choicesIds: string[]) {
     this.choicesIds = choicesIds;
   }
 }
@@ -24,9 +21,9 @@ export class CreateAnswerCommandHandler {
     private readonly publisher: EventPublisher,
   ) {}
 
-  async execute({ playerId, choicesIds }: CreateAnswerCommand) {
-    const player = await this.gameService.getPlayer(playerId);
-    const game = await this.gameService.getGameForPlayer(playerId);
+  async execute({ choicesIds }: CreateAnswerCommand, session: SessionStore) {
+    const player = session.player!;
+    const game = await this.gameService.getGameForPlayer(player.id);
 
     const choices = player.getCards(choicesIds);
 

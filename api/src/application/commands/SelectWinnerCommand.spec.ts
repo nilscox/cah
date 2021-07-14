@@ -41,9 +41,9 @@ describe('SelectWinnerCommand', () => {
   });
 
   const execute = (player: Player, answer: Answer) => {
-    const command = new SelectWinnerCommand(player.id, answer.id);
+    const command = new SelectWinnerCommand(answer.id);
 
-    return handler.execute(command);
+    return handler.execute(command, { player });
   };
 
   it('selects the winning answer', async () => {

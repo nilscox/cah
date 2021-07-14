@@ -11,7 +11,7 @@ import { StubExternalData } from '../../infrastructure/stubs/StubExternalData';
 import { GameBuilder } from '../../utils/GameBuilder';
 import { GameService } from '../services/GameService';
 
-import { NextTurnCommand, NextTurnHandler } from './NextTurnCommand';
+import { NextTurnHandler } from './NextTurnCommand';
 
 describe('NextTurnCommand', () => {
   let gameRepository: InMemoryGameRepository;
@@ -39,9 +39,7 @@ describe('NextTurnCommand', () => {
   });
 
   const execute = (player: Player) => {
-    const command = new NextTurnCommand(player.id);
-
-    return handler.execute(command);
+    return handler.execute({}, { player });
   };
 
   it('ends the current turn and starts the next one', async () => {

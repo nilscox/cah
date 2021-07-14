@@ -1,10 +1,9 @@
 import { EventPublisher } from '../../ddd/EventPublisher';
 import { GameRepository } from '../../domain/interfaces/GameRepository';
+import { SessionStore } from '../interfaces/SessionStore';
 import { GameService } from '../services/GameService';
 
-export class NextTurnCommand {
-  constructor(public readonly playerId: string) {}
-}
+export class NextTurnCommand {}
 
 export class NextTurnHandler {
   constructor(
@@ -13,8 +12,10 @@ export class NextTurnHandler {
     private readonly publisher: EventPublisher,
   ) {}
 
-  async execute({ playerId }: NextTurnCommand) {
-    const game = await this.gameService.getGameForPlayer(playerId);
+  async execute(_: NextTurnCommand, session: SessionStore) {
+    const player = session.player!;
+    const game = await this.gameService.getGameForPlayer(player.id);
+    
     const nextQuestion = await this.gameRepository.findNextAvailableQuestion(game.id);
     const availableChoices = await this.gameRepository.findAvailableChoices(game.id);
 

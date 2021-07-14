@@ -54,9 +54,9 @@ describe('CreateAnswerCommand', () => {
 
   const execute = (player: Player, choices: Choice[]) => {
     const choicesIds = _.map(choices, 'id');
-    const command = new CreateAnswerCommand(player.id, choicesIds);
+    const command = new CreateAnswerCommand(choicesIds);
 
-    return handler.execute(command);
+    return handler.execute(command, { player });
   };
 
   it('creates an answer for the current turn', async () => {
@@ -114,13 +114,6 @@ describe('CreateAnswerCommand', () => {
     }
 
     expect(game.answers.map((answer) => answer.player.id)).to.eql(players.reverse().map((player) => player.id));
-  });
-
-  it('does not create an answer when the player does not exist', async () => {
-    const player = new Player('player');
-    const choices = [new Choice('choice 1')];
-
-    await expect(execute(player, choices)).to.be.rejectedWith(PlayerNotFoundError);
   });
 
   it('does not create an answer when the player is not in a game', async () => {

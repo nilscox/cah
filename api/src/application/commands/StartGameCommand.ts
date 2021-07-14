@@ -1,3 +1,5 @@
+import { IsInt, IsPositive, IsUUID, Min } from 'class-validator';
+
 import { EventPublisher } from '../../ddd/EventPublisher';
 import { ExternalData } from '../../domain/interfaces/ExternalData';
 import { GameRepository } from '../../domain/interfaces/GameRepository';
@@ -5,7 +7,17 @@ import { Game } from '../../domain/models/Game';
 import { GameService } from '../services/GameService';
 
 export class StartGameCommand {
-  constructor(public readonly questionMasterId: string, public readonly turns: number) {}
+  @IsUUID('4')
+  public readonly questionMasterId: string;
+
+  @IsInt()
+  @Min(1)
+  public readonly turns: number;
+
+  constructor(questionMasterId: string, turns: number) {
+    this.questionMasterId = questionMasterId;
+    this.turns = turns;
+  }
 }
 
 export class StartGameHandler {
