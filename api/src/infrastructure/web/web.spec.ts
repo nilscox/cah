@@ -1,36 +1,48 @@
 import { expect } from 'chai';
 import { IsInt } from 'class-validator';
+import { Request } from 'express';
 import request from 'supertest';
 
 import { StubEventPublisher } from '../stubs/StubEventPublisher';
 
 import { HttpUnauthorizedError } from './errors';
-import { bootstrapServer } from './index';
-import { Route } from './Route';
+import { context, dto, guard, handler, middleware, Route } from './Route';
+import { bootstrapServer } from './web';
 
 describe('web', () => {
-  it('registers a handler returning nothing', async () => {
-    const app = bootstrapServer([new Route('get', '/nothing')]);
+  it('registers a route doing nothing', async () => {
+    const route = new Route('get', '/nothing');
+    const app = bootstrapServer([route]);
 
     const { status } = await request(app).get('/nothing');
 
     expect(status).to.eql(200);
   });
 
-  it('registers a handler executing a command and returning an output', async () => {
+  it('executes a middleware', async () => {
     const publisher = new StubEventPublisher();
+    const execute = (req: Request) => publisher.publish(req.body);
 
-    const execute = () => {
-      publisher.publish({ 42: true });
-      return { yolo: false };
-    };
+    const route = new Route('post', '/test').use(middleware({ execute }));
+    const app = bootstrapServer([route]);
 
-    const app = bootstrapServer([new Route('get', '/test').use({ execute })]);
+    await request(app).post('/test').send({ bo: 'dy' }).expect(200);
 
-    const { body } = await request(app).get('/test');
+    expect(publisher.events).to.deep.include({ bo: 'dy' });
+  });
 
-    expect(body).to.eql({ yolo: false });
-    expect(publisher.events).to.deep.include({ 42: true });
+  it('protects a route execution with a guard', async () => {
+    const routes = [
+      new Route('post', '/ko').use(guard(() => false)),
+      new Route('post', '/ok').use(guard(() => true)),
+      new Route('post', '/message').use(guard(() => 'nope')),
+    ];
+
+    const app = bootstrapServer(routes);
+
+    await request(app).post('/ok').expect(200);
+    await request(app).post('/ko').expect(401);
+    await request(app).post('/message').expect(401).expect({ message: 'nope' });
   });
 
   it("validates the handler's input", async () => {
@@ -43,44 +55,53 @@ describe('web', () => {
       }
     }
 
-    const routes = [
-      new Route('post', '/test')
-        .dto((body) => new InputDto(body))
-        .use({
-          execute(input: { saw: number }) {
-            expect(input.saw).to.eql(6);
-          },
-        }),
-    ];
+    const execute = (input: InputDto) => {
+      expect(input.saw).to.eql(6);
+    };
 
-    const app = bootstrapServer(routes);
+    // prettier-ignore
+    const route = new Route('post', '/test')
+      .use(dto(({ body }) => new InputDto(body)))
+      .use(handler({ execute }));
+
+    const app = bootstrapServer([route]);
+
+    await request(app).post('/test').send({ saw: 6 }).expect(200);
 
     const { body } = await request(app).post('/test').expect(400);
 
     expect(body).to.shallowDeepEqual({
       message: 'Validation errors',
-      errors: [
-        {
-          property: 'saw',
-          constraints: { isInt: 'not an int' },
-        },
-      ],
+      errors: [{ property: 'saw', constraints: { isInt: 'not an int' } }],
     });
+  });
 
-    await request(app).post('/test').send({ saw: 6 }).expect(200);
+  it('provides a context to the request', async () => {
+    const route = new Route('get', '/test')
+      .use(context((req) => req.query))
+      .use((req) => expect(req.context).to.eql({ pa: 'ram' }));
+
+    const app = bootstrapServer([route]);
+
+    await request(app).get('/test').query({ pa: 'ram' }).expect(200);
+  });
+
+  it('triggers a handler returning an output', async () => {
+    const execute = () => ({ yolo: true });
+
+    const route = new Route('get', '/test').use(handler({ execute }));
+    const app = bootstrapServer([route]);
+
+    await request(app).get('/test').expect({ yolo: true });
   });
 
   it('terminates the request when the handler throws', async () => {
     const routes = [
-      new Route('post', '/private').use({
-        execute() {
-          throw new HttpUnauthorizedError('dont do that');
-        },
+      new Route('post', '/private').use(() => {
+        throw new HttpUnauthorizedError('dont do that');
       }),
-      new Route('post', '/not-working').use({
-        execute() {
-          throw new Error('nope.');
-        },
+      new Route('post', '/not-working').use(() => {
+        throw new Error('nope.');
       }),
     ];
 

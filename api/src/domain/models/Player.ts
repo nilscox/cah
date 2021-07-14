@@ -12,7 +12,7 @@ class CardsDealtEvent implements DomainEvent {
 export class Player extends AggregateRoot {
   private cards: Choice[] = [];
 
-  constructor(private nick: string) {
+  constructor(public readonly nick: string) {
     super();
   }
 

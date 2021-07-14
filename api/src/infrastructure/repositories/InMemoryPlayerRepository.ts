@@ -8,6 +8,10 @@ export class InMemoryPlayerRepository implements PlayerRepository {
     return this.players.get(id);
   }
 
+  async findPlayerByNick(nick: string): Promise<Player | undefined> {
+    return [...this.players.values()].find((player) => player.nick === nick);
+  }
+
   async save(player: Player): Promise<void> {
     this.players.set(player.id, player);
   }

@@ -5,6 +5,7 @@
   "license": "MIT",
   "scripts": {
     "start": "ts-node src/index.ts",
+    "start:dev": "TS_NODE_TRANSPILE_ONLY=true nodemon src -e ts -x 'yarn start'",
     "build": "tsc",
     "test": "TS_NODE_TRANSPILE_ONLY=true mocha",
     "lint": "eslint src"
@@ -29,6 +30,7 @@
     "eslint": "^7.28.0",
     "eslint-plugin-simple-import-sort": "^7.0.0",
     "mocha": "^9.0.0",
+    "nodemon": "^2.0.12",
     "sinon": "^11.1.1",
     "sqlite3": "^5.0.2",
     "supertest": "^6.1.3",

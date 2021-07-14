@@ -1,42 +1,75 @@
 import { validate } from 'class-validator';
-import { Handler as RequestHandler } from 'express';
+import { Handler as RequestHandler, Request } from 'express';
 
-import { HttpValidationErrors } from './errors';
-import { Handler } from './index';
+import { HttpUnauthorizedError, HttpValidationErrors } from './errors';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type InputDto = object;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type RawBody = any;
+type RouteHandler<T = void> = (req: Request) => T | Promise<T>;
+
+export const middleware = (handler: { execute: (req: Request) => void }): RouteHandler => {
+  return (req) => {
+    handler.execute(req);
+  };
+};
+
+export const guard = <T extends void | boolean | string>(
+  validate: (req: Request) => T | Promise<T>,
+): RouteHandler<void> => {
+  return async (req) => {
+    const result = await validate(req);
+
+    if (result === false || typeof result === 'string') {
+      throw new HttpUnauthorizedError(result || 'unauthorized');
+    }
+  };
+};
+
+export const dto = (dto: (req: Request) => InputDto): RouteHandler => {
+  return async (req) => {
+    const input = dto(req);
+    const errors = await validate(input);
+
+    if (errors.length > 0) {
+      throw new HttpValidationErrors(errors);
+    }
+
+    req.input = input;
+  };
+};
+
+export const context = (getContext: (req: Request) => Request['context']): RouteHandler => {
+  return (req) => {
+    req.context = getContext(req);
+  };
+};
+
+export const handler = <Result>(handler: {
+  execute(input: InputDto, context: Request['context']): Result;
+}): RouteHandler<Result> => {
+  return (req) => {
+    return handler.execute(req.input!, req.context);
+  };
+};
 
 export class Route {
-  private getDto?: (body: RawBody) => InputDto;
-  private handler?: Handler<unknown, unknown>;
+  private handlers: RouteHandler<unknown>[] = [];
 
   constructor(public readonly method: 'get' | 'post', public readonly endpoint: string) {}
 
-  dto(getDto: (body: RawBody) => InputDto) {
-    this.getDto = getDto;
-    return this;
-  }
-
-  use(handler: Handler<unknown, unknown>) {
-    this.handler = handler;
+  use(...handlers: RouteHandler<unknown>[]) {
+    this.handlers.push(...handlers);
     return this;
   }
 
   handle: RequestHandler = async (req, res, next) => {
     try {
-      if (this.getDto) {
-        const errors = await validate(this.getDto(req.body));
+      let result: unknown;
 
-        if (errors.length > 0) {
-          throw new HttpValidationErrors(errors);
-        }
+      for (const handler of this.handlers) {
+        result = await handler(req);
       }
-
-      const result = await this.handler?.execute(req.body);
 
       if (result !== undefined) {
         res.json(result);
