@@ -1,18 +1,19 @@
-import express, { ErrorRequestHandler, RequestHandler } from 'express';
+import express, { ErrorRequestHandler, Express } from 'express';
 import expressSession from 'express-session';
 
+import { errorHandler, FallbackRoute } from './Route';
+
 interface Route {
-  method: 'get' | 'post';
-  endpoint: string;
-  handle: RequestHandler;
+  register: (app: Express) => void;
 }
 
-export const errorHandler: ErrorRequestHandler = (err, req, res, _next) => {
-  const { message, status, ...error } = err;
+class FallbackErrorHandler {
+  execute: ErrorRequestHandler = ({ message, status, ...error }, req, res) => {
+    res.status(status ?? 500).json({ message, ...error });
+  };
+}
 
-  res.status(status ?? 500).json({ message, ...error });
-  // console.error(err);
-};
+const fallbackErrorHandler = new FallbackRoute().use(errorHandler(new FallbackErrorHandler()));
 
 export const bootstrapServer = (routes: Route[]) => {
   const app = express();
@@ -27,10 +28,10 @@ export const bootstrapServer = (routes: Route[]) => {
   app.use(express.json());
 
   for (const route of routes) {
-    app[route.method](route.endpoint, route.handle);
+    route.register(app);
   }
 
-  app.use(errorHandler);
+  fallbackErrorHandler.register(app);
 
   return app;
 };

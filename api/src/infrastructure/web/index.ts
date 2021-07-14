@@ -1,4 +1,4 @@
-import { Request } from 'express';
+import { ErrorRequestHandler, Request } from 'express';
 
 import { CreateAnswerCommand, CreateAnswerCommandHandler } from '../../application/commands/CreateAnswerCommand';
 import { LoginCommand, LoginHandler } from '../../application/commands/LoginCommand';
@@ -15,7 +15,7 @@ import { InMemoryPlayerRepository } from '../repositories/InMemoryPlayerReposito
 import { StubEventPublisher } from '../stubs/StubEventPublisher';
 import { StubExternalData } from '../stubs/StubExternalData';
 
-import { context, dto, guard, handler, InputDto, middleware, Route } from './Route';
+import { context, dto, errorHandler, FallbackRoute, guard, handler, InputDto, middleware, Route } from './Route';
 import { bootstrapServer } from './web';
 
 declare module 'express-session' {
@@ -55,6 +55,20 @@ class ExpressSessionStore implements SessionStore {
   }
 }
 
+class ErrorHandler {
+  execute: ErrorRequestHandler = (error, req, res) => {
+    const { status, message, ...err } = error;
+
+    console.log(error);
+    res.status(status ?? 500);
+
+    return {
+      message,
+      ...err,
+    };
+  };
+}
+
 const isAuthenticated = (req: Request) => {
   if (req.session.playerId === undefined) {
     return 'you must be authenticated';
@@ -89,9 +103,14 @@ const routes = [
     .use(dto(({ body }) => new LoginCommand(body.nick)))
     .use(handler(new LoginHandler(playerRepository))),
 
-  new Route('get', '/me')
+  new Route('get', '/player/me')
     .use(...authPlayerContext)
     .use(dto((req) => ({ playerId: req.session.playerId })))
+    .use(handler(new GetPlayerHandler(playerRepository))),
+
+  new Route('get', '/player/:playerId')
+    .use(...playerContext)
+    .use(dto((req) => ({ playerId: req.params.playerId })))
     .use(handler(new GetPlayerHandler(playerRepository))),
 
   new Route('post', '/start')
@@ -113,6 +132,11 @@ const routes = [
     .use(...authPlayerContext)
     .use(dto(({ body }) => new NextTurnCommand(body.playerId)))
     .use(handler(new NextTurnHandler(gameService, gameRepository, publisher))),
+
+  // prettier-ignore
+  new FallbackRoute()
+    .use(errorHandler(new ErrorHandler()))
+    .use((req, res) => res.status(404).end()),
 ];
 
 export const app = bootstrapServer(routes);

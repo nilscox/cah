@@ -23,5 +23,7 @@ export class LoginHandler {
     await this.playerRepository.save(player);
 
     session.player = player;
+
+    return player;
   }
 }

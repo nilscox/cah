@@ -4,9 +4,21 @@ import { app } from './infrastructure/web';
 
 describe('e2e', () => {
   it('plays a full game', async () => {
-    const player = request.agent(app);
+    const player1 = request.agent(app);
+    const player2 = request.agent(app);
 
-    await player.post('/login').send({ nick: 'nils' });
-    await player.get('/me').expect(200).expect({ nick: 'nils', cards: [] });
+    const { body } = await player1.post('/login').send({ nick: 'nils' });
+
+    await player1.get('/player/me').expect(200).expect({ nick: 'nils', cards: [] });
+
+    await player1
+      .get('/player/' + body.id)
+      .expect(200)
+      .expect({ nick: 'nils', cards: [] });
+
+    await player2
+      .get('/player/' + body.id)
+      .expect(200)
+      .expect({ nick: 'nils' });
   });
 });
