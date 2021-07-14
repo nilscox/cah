@@ -16,6 +16,16 @@ export class GameService {
     return player;
   }
 
+  async getGame(gameId: string) {
+    const game = await this.gameRepository.findGameById(gameId);
+
+    if (!game) {
+      throw new GameNotFoundError();
+    }
+
+    return game;
+  }
+
   async getGameForPlayer(playerId: string) {
     const game = await this.gameRepository.findGameForPlayer(playerId);
 

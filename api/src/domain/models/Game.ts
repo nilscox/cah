@@ -9,10 +9,13 @@ import { InvalidPlayStateError } from '../errors/InvalidPlayStateError';
 import { NoMoreChoiceError } from '../errors/NoMoreChoiceError';
 import { NotEnoughPlayersError } from '../errors/NotEnoughPlayersError';
 import { PlayerAlreadyAnsweredError } from '../errors/PlayerAlreadyAnsweredError';
+import { PlayerIsAlreadyInGameError } from '../errors/PlayerIsAlreadyInGameError';
 import { PlayerIsNotQuestionMasterError } from '../errors/PlayerIsNotQuestionMasterError';
 import { PlayerIsQuestionMasterError } from '../errors/PlayerIsQuestionMasterError';
 import { AllPlayersAnsweredEvent } from '../events/AllPlayersAnsweredEvent';
+import { GameCreatedEvent } from '../events/GameCreatedEvent';
 import { GameFinishedEvent } from '../events/GameFinishedEvent';
+import { GameJoinedEvent } from '../events/GameJoinedEvent';
 import { GameStartedEvent } from '../events/GameStartedEvent';
 import { PlayerAnsweredEvent } from '../events/PlayerAnsweredEvent';
 import { TurnFinishedEvent } from '../events/TurnFinishedEvent';
@@ -29,6 +32,7 @@ export class Game extends AggregateRoot {
   static cardPerPlayer = 11;
   static minimumPlayersToStart = 3;
 
+  public code = Math.random().toString(36).slice(-4);
   public state = GameState.idle;
   public players: Player[] = [];
 
@@ -37,6 +41,12 @@ export class Game extends AggregateRoot {
   public question?: Question;
   public answers?: Answer[];
   public winner?: Player;
+
+  constructor() {
+    super();
+
+    this.addEvent(new GameCreatedEvent(this));
+  }
 
   get playersExcludingQM() {
     return this.players.filter((player) => !player.equals(this.questionMaster));
@@ -64,8 +74,13 @@ export class Game extends AggregateRoot {
     }
   }
 
+  isStarted(): this is StartedGame {
+    return this.state === GameState.started;
+  }
+
   addPlayer(player: Player) {
     this.players.push(player);
+    this.addEvent(new GameJoinedEvent(this, player));
   }
 
   computeNeededChoicesCount(questions: Question[]) {

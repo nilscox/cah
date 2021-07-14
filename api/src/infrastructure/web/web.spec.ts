@@ -6,7 +6,7 @@ import request from 'supertest';
 import { StubEventPublisher } from '../stubs/StubEventPublisher';
 
 import { HttpUnauthorizedError } from './errors';
-import { context, dto, errorHandler, FallbackRoute, guard, handler, middleware, Route } from './Route';
+import { context, dto, errorHandler, FallbackRoute, guard, handler, middleware, Route, status } from './Route';
 import { bootstrapServer } from './web';
 
 describe('web', () => {
@@ -86,6 +86,13 @@ describe('web', () => {
     const app = bootstrapServer([route]);
 
     await request(app).get('/test').query({ pa: 'ram' }).expect(200).expect({ pa: 'ram' });
+  });
+
+  it('specifies a status code', async () => {
+    const route = new Route('get', '/test').use(status(421)).use(defaultHandler);
+    const app = bootstrapServer([route]);
+
+    await request(app).get('/test').expect(421);
   });
 
   it('triggers a handler returning an output', async () => {

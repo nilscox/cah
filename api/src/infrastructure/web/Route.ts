@@ -57,6 +57,13 @@ export const context = <T extends Request['context']>(
   });
 };
 
+export const status = (status: number): RequestHandler => {
+  return (req, res, next) => {
+    res.status(status);
+    next();
+  };
+};
+
 export const handler = <Result>(handler: {
   execute(input: InputDto, context: Request['context']): Result | Promise<Result>;
 }): AsyncRequestHandler => {
