@@ -11,12 +11,18 @@ export class InMemoryGameRepository implements GameRepository {
   private choices = new Map<string, Choice[]>();
   private turns = new Map<string, Turn[]>();
 
+  async findAll(): Promise<Game[]> {
+    return [...this.games.values()];
+  }
+
   async findGameById(id: string): Promise<Game | undefined> {
     return this.games.get(id);
   }
 
   async findGameForPlayer(playerId: string): Promise<Game | undefined> {
-    return [...this.games.values()].find((game) => game.players.some((player) => player.id === playerId));
+    const games = await this.findAll();
+
+    return games.find((game) => game.players.some((player) => player.id === playerId));
   }
 
   async addQuestions(gameId: string, questions: Question[]): Promise<void> {

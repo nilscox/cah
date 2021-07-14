@@ -1,11 +1,14 @@
 import { ErrorRequestHandler, Request } from 'express';
 
 import { CreateAnswerCommand, CreateAnswerCommandHandler } from '../../application/commands/CreateAnswerCommand';
+import { CreateGameCommand, CreateGameHandler } from '../../application/commands/CreateGameCommand';
+import { JoinGameCommand, JoinGameHandler } from '../../application/commands/JoinGameCommand';
 import { LoginCommand, LoginHandler } from '../../application/commands/LoginCommand';
-import { NextTurnCommand, NextTurnHandler } from '../../application/commands/NextTurnCommand';
+import { NextTurnHandler } from '../../application/commands/NextTurnCommand';
 import { SelectWinnerCommand, SelectWinnerHandler } from '../../application/commands/SelectWinnerCommand';
 import { StartGameCommand, StartGameHandler } from '../../application/commands/StartGameCommand';
 import { SessionStore } from '../../application/interfaces/SessionStore';
+import { GetGameHandler, GetGameQuery } from '../../application/queries/GetGameQuery';
 import { GetPlayerHandler } from '../../application/queries/GetPlayerQuery';
 import { GameService } from '../../application/services/GameService';
 import { RandomService } from '../../application/services/RandomService';
@@ -15,7 +18,18 @@ import { InMemoryPlayerRepository } from '../repositories/InMemoryPlayerReposito
 import { StubEventPublisher } from '../stubs/StubEventPublisher';
 import { StubExternalData } from '../stubs/StubExternalData';
 
-import { context, dto, errorHandler, FallbackRoute, guard, handler, InputDto, middleware, Route } from './Route';
+import {
+  context,
+  dto,
+  errorHandler,
+  FallbackRoute,
+  guard,
+  handler,
+  InputDto,
+  middleware,
+  Route,
+  status,
+} from './Route';
 import { bootstrapServer } from './web';
 
 declare module 'express-session' {
@@ -113,6 +127,22 @@ const routes = [
     .use(dto((req) => ({ playerId: req.params.playerId })))
     .use(handler(new GetPlayerHandler(playerRepository))),
 
+  new Route('get', '/game/:gameId')
+    .use(...authPlayerContext)
+    .use(dto((req) => new GetGameQuery(req.params.gameId)))
+    .use(handler(new GetGameHandler(gameService))),
+
+  new Route('post', '/game')
+    .use(...authPlayerContext)
+    .use(dto(() => new CreateGameCommand()))
+    .use(status(201))
+    .use(handler(new CreateGameHandler(gameRepository, publisher))),
+
+  new Route('post', '/game/:gameId/join')
+    .use(...authPlayerContext)
+    .use(dto((req) => new JoinGameCommand(req.params.gameId)))
+    .use(handler(new JoinGameHandler(gameService, gameRepository, publisher))),
+
   new Route('post', '/start')
     .use(...authPlayerContext)
     .use(dto(({ body }) => new StartGameCommand(body.questionMasterId, body.turns)))
@@ -120,17 +150,16 @@ const routes = [
 
   new Route('post', '/answer')
     .use(...authPlayerContext)
-    .use(dto(({ body }) => new CreateAnswerCommand(body.playerId, body.cohicesIds)))
+    .use(dto(({ body }) => new CreateAnswerCommand(body.choicesIds)))
     .use(handler(new CreateAnswerCommandHandler(gameService, randomService, publisher))),
 
   new Route('post', '/select')
     .use(...authPlayerContext)
-    .use(dto(({ body }) => new SelectWinnerCommand(body.playerId, body.answerId)))
+    .use(dto(({ body }) => new SelectWinnerCommand(body.answerId)))
     .use(handler(new SelectWinnerHandler(gameService, publisher))),
 
   new Route('post', '/next')
     .use(...authPlayerContext)
-    .use(dto(({ body }) => new NextTurnCommand(body.playerId)))
     .use(handler(new NextTurnHandler(gameService, gameRepository, publisher))),
 
   // prettier-ignore
