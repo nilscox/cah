@@ -1,7 +1,7 @@
 import { Entity } from './Entity';
-import { DomainEvent, EventPublisher } from './EventPublisher';
+import { EventPublisher } from './EventPublisher';
 
-export class AggregateRoot extends Entity {
+export class AggregateRoot<DomainEvent> extends Entity {
   private events: DomainEvent[] = [];
 
   addEvent(event: DomainEvent) {
@@ -12,7 +12,7 @@ export class AggregateRoot extends Entity {
     this.events = [];
   }
 
-  publishEvents(publisher: EventPublisher) {
+  publishEvents(publisher: EventPublisher<DomainEvent>) {
     for (const event of this.events) {
       publisher.publish(event);
     }

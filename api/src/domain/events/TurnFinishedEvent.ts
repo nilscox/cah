@@ -1,7 +1,6 @@
-import { DomainEvent } from '../../ddd/EventPublisher';
 import { Game } from '../models/Game';
 
-export class TurnFinishedEvent implements DomainEvent {
+export class TurnFinishedEvent {
   readonly type = 'TurnFinished';
   constructor(public readonly game: Game) {}
 }

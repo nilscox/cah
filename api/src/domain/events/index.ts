@@ -21,3 +21,5 @@ export type GameEvent =
   | WinnerSelectedEvent;
 
 export type PlayerEvent = CardsDealtEvent;
+
+export type DomainEvent = GameEvent | PlayerEvent;

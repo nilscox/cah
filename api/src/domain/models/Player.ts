@@ -1,10 +1,11 @@
 import { AggregateRoot } from '../../ddd/AggregateRoot';
 import { InvalidChoicesSelectionError } from '../errors/InvalidChoicesSelectionError';
+import { PlayerEvent } from '../events';
 import { CardsDealtEvent } from '../events/CardsDealtEvent';
 
 import { Choice } from './Choice';
 
-export class Player extends AggregateRoot {
+export class Player extends AggregateRoot<PlayerEvent> {
   private cards: Choice[] = [];
 
   constructor(public readonly nick: string) {

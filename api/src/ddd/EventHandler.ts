@@ -1,5 +1,3 @@
-import { DomainEvent } from './EventPublisher';
-
-export interface EventHandler {
+export interface EventHandler<DomainEvent> {
   execute(event: DomainEvent): void;
 }

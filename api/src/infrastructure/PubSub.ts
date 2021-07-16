@@ -1,10 +1,11 @@
 import { EventHandler } from '../ddd/EventHandler';
-import { DomainEvent, EventPublisher } from '../ddd/EventPublisher';
+import { EventPublisher } from '../ddd/EventPublisher';
+import { DomainEvent } from '../domain/events';
 
-export class PubSub implements EventPublisher {
-  private handlers: EventHandler[] = [];
+export class PubSub implements EventPublisher<DomainEvent> {
+  private handlers: EventHandler<DomainEvent>[] = [];
 
-  subscribe(handler: EventHandler) {
+  subscribe(handler: EventHandler<DomainEvent>) {
     this.handlers.push(handler);
   }
 

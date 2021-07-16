@@ -1,5 +1,6 @@
 import { EventPublisher } from '../../ddd/EventPublisher';
 import { PlayerIsAlreadyInGameError } from '../../domain/errors/PlayerIsAlreadyInGameError';
+import { DomainEvent } from '../../domain/events';
 import { GameRepository } from '../../domain/interfaces/GameRepository';
 import { Game } from '../../domain/models/Game';
 import { RoomsManager } from '../interfaces/RoomsManager';
@@ -10,7 +11,7 @@ export class CreateGameCommand {}
 export class CreateGameHandler {
   constructor(
     private readonly gameRepository: GameRepository,
-    private readonly publisher: EventPublisher,
+    private readonly publisher: EventPublisher<DomainEvent>,
     private readonly roomsManager: RoomsManager,
   ) {}
 

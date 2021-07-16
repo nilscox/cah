@@ -11,6 +11,7 @@ import { NotEnoughPlayersError } from '../errors/NotEnoughPlayersError';
 import { PlayerAlreadyAnsweredError } from '../errors/PlayerAlreadyAnsweredError';
 import { PlayerIsNotQuestionMasterError } from '../errors/PlayerIsNotQuestionMasterError';
 import { PlayerIsQuestionMasterError } from '../errors/PlayerIsQuestionMasterError';
+import { DomainEvent, GameEvent } from '../events';
 import { AllPlayersAnsweredEvent } from '../events/AllPlayersAnsweredEvent';
 import { GameCreatedEvent } from '../events/GameCreatedEvent';
 import { GameFinishedEvent } from '../events/GameFinishedEvent';
@@ -27,7 +28,7 @@ import { Player } from './Player';
 import { Question } from './Question';
 import { Turn } from './Turn';
 
-export class Game extends AggregateRoot {
+export class Game extends AggregateRoot<GameEvent> {
   static cardPerPlayer = 11;
   static minimumPlayersToStart = 3;
 
@@ -61,7 +62,7 @@ export class Game extends AggregateRoot {
     return `game-${this.id}`;
   }
 
-  override publishEvents(publisher: EventPublisher) {
+  override publishEvents(publisher: EventPublisher<DomainEvent>) {
     super.publishEvents(publisher);
 
     for (const player of this.players) {

@@ -1,3 +1,4 @@
+import { PlayState } from '../../domain/enums/PlayState';
 import { GameService } from '../services/GameService';
 
 export class GetGameQuery {
@@ -17,19 +18,17 @@ export class GetGameHandler {
       gameState: game.state,
     };
 
-    if (game.isStarted()) {
-      Object.assign(result, {
-        playState: game.playState,
-        questionMaster: game.questionMaster.nick,
-        question: {
-          numberOfBlanks: game.question.numberOfBlanks,
-          text: game.question.toString(),
-        },
-        answers: game.answers.map((answer) => answer.id),
-        winner: game.winner?.nick,
-      });
+    if (!game.isStarted()) {
+      return result;
     }
 
-    return result;
+    return {
+      ...result,
+      playState: game.playState,
+      questionMaster: game.questionMaster.nick,
+      question: game.question.toJSON(),
+      answers: game.answers.map((answer) => answer.toJSON(game.playState !== PlayState.endOfTurn)),
+      winner: game.winner?.nick,
+    };
   }
 }

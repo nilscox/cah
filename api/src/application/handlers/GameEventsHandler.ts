@@ -4,7 +4,7 @@ import { GameEvent } from '../../domain/events';
 import { Game, StartedGame } from '../../domain/models/Game';
 import { Notifier } from '../interfaces/Notifier';
 
-export class GameEventsHandler implements EventHandler {
+export class GameEventsHandler implements EventHandler<GameEvent> {
   constructor(private readonly notifier: Notifier) {}
 
   execute(event: GameEvent) {

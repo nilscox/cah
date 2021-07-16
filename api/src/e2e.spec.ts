@@ -1,7 +1,6 @@
 import { io, Socket } from 'socket.io-client';
 import request from 'supertest';
 
-import { DomainEvent } from './ddd/EventPublisher';
 import { Choice } from './domain/models/Choice';
 import { server } from './infrastructure/web';
 
@@ -9,6 +8,9 @@ const port = 4444;
 const log = false;
 
 const randInt = (min: number, max: number) => ~~(Math.random() * (max - min + 1)) + min;
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type WSEvent = Record<string, any>;
 
 class StubPlayer {
   private agent = request.agent(server);
@@ -27,7 +29,7 @@ class StubPlayer {
   public answers: { id: number; choices: { text: string }[]; player?: string }[] = [];
   public winner?: string;
 
-  public events: DomainEvent[] = [];
+  public events: WSEvent[] = [];
 
   get isQuestionMaster() {
     return this.questionMaster === this.nick;
@@ -51,7 +53,7 @@ class StubPlayer {
     }
   }
 
-  private handleEvent(event: any) {
+  private handleEvent(event: WSEvent) {
     this.logEvent(event.type);
 
     switch (event.type) {
@@ -191,7 +193,7 @@ class StubPlayer {
 }
 
 describe('e2e', function () {
-  this.slow(300);
+  this.slow(500);
 
   let nils: StubPlayer;
   let tom: StubPlayer;

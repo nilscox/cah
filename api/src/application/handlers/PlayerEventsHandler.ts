@@ -3,7 +3,7 @@ import { PlayerEvent } from '../../domain/events';
 import { Player } from '../../domain/models/Player';
 import { Notifier } from '../interfaces/Notifier';
 
-export class PlayerEventsHandler implements EventHandler {
+export class PlayerEventsHandler implements EventHandler<PlayerEvent> {
   constructor(private readonly notifier: Notifier) {}
 
   execute(event: PlayerEvent) {

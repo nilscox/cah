@@ -1,7 +1,3 @@
-export interface DomainEvent {
-  type: string;
-}
-
-export interface EventPublisher {
+export interface EventPublisher<DomainEvent> {
   publish(event: DomainEvent): void;
 }

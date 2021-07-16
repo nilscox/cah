@@ -1,6 +1,7 @@
 import { IsInt, IsUUID, Min } from 'class-validator';
 
 import { EventPublisher } from '../../ddd/EventPublisher';
+import { DomainEvent } from '../../domain/events';
 import { ExternalData } from '../../domain/interfaces/ExternalData';
 import { GameRepository } from '../../domain/interfaces/GameRepository';
 import { Game } from '../../domain/models/Game';
@@ -25,7 +26,7 @@ export class StartGameHandler {
     private readonly gameService: GameService,
     private readonly gameRepository: GameRepository,
     private readonly externalData: ExternalData,
-    private readonly publisher: EventPublisher,
+    private readonly publisher: EventPublisher<DomainEvent>,
   ) {}
 
   async execute({ questionMasterId, turns }: StartGameCommand) {
