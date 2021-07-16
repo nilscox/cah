@@ -1,13 +1,8 @@
 import { AggregateRoot } from '../../ddd/AggregateRoot';
-import { DomainEvent } from '../../ddd/EventPublisher';
 import { InvalidChoicesSelectionError } from '../errors/InvalidChoicesSelectionError';
+import { CardsDealtEvent } from '../events/CardsDealtEvent';
 
 import { Choice } from './Choice';
-
-class CardsDealtEvent implements DomainEvent {
-  readonly type = 'CardsDealt';
-  constructor(public readonly player: Player) {}
-}
 
 export class Player extends AggregateRoot {
   private cards: Choice[] = [];
@@ -18,7 +13,7 @@ export class Player extends AggregateRoot {
 
   addCards(cards: Choice[]) {
     this.cards.push(...cards);
-    this.addEvent(new CardsDealtEvent(this));
+    this.addEvent(new CardsDealtEvent(this, cards));
   }
 
   removeCards(cards: Choice[]) {

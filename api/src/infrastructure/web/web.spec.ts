@@ -6,7 +6,8 @@ import request from 'supertest';
 import { StubEventPublisher } from '../stubs/StubEventPublisher';
 
 import { HttpUnauthorizedError } from './errors';
-import { context, dto, errorHandler, FallbackRoute, guard, handler, middleware, Route, status } from './Route';
+import { context, dto, errorHandler, guard, handler, middleware, status } from './middlewaresCreators';
+import { FallbackRoute, Route } from './Route';
 import { bootstrapServer } from './web';
 
 describe('web', () => {
@@ -14,7 +15,7 @@ describe('web', () => {
 
   it('registers a route doing nothing', async () => {
     const route = new Route('get', '/nothing').use(defaultHandler);
-    const app = bootstrapServer([route]);
+    const [app] = bootstrapServer([route]);
 
     const { status } = await request(app).get('/nothing');
 
@@ -26,7 +27,7 @@ describe('web', () => {
     const execute = (req: Request) => void publisher.publish(req.body);
 
     const route = new Route('post', '/test').use(middleware({ execute })).use(defaultHandler);
-    const app = bootstrapServer([route]);
+    const [app] = bootstrapServer([route]);
 
     await request(app).post('/test').send({ bo: 'dy' }).expect(200);
 
@@ -40,7 +41,7 @@ describe('web', () => {
       new Route('post', '/message').use(guard(() => 'nope')).use(defaultHandler),
     ];
 
-    const app = bootstrapServer(routes);
+    const [app] = bootstrapServer(routes);
 
     await request(app).post('/ok').expect(200);
     await request(app).post('/ko').expect(401);
@@ -66,7 +67,7 @@ describe('web', () => {
       .use(dto(({ body }) => new InputDto(body)))
       .use(handler({ execute }));
 
-    const app = bootstrapServer([route]);
+    const [app] = bootstrapServer([route]);
 
     await request(app).post('/test').send({ saw: 6 }).expect(200);
 
@@ -83,14 +84,14 @@ describe('web', () => {
       .use(context((req) => req.query))
       .use(handler({ execute: (_, context) => context }));
 
-    const app = bootstrapServer([route]);
+    const [app] = bootstrapServer([route]);
 
     await request(app).get('/test').query({ pa: 'ram' }).expect(200).expect({ pa: 'ram' });
   });
 
   it('specifies a status code', async () => {
     const route = new Route('get', '/test').use(status(421)).use(defaultHandler);
-    const app = bootstrapServer([route]);
+    const [app] = bootstrapServer([route]);
 
     await request(app).get('/test').expect(421);
   });
@@ -99,7 +100,7 @@ describe('web', () => {
     const execute = () => ({ yolo: true });
 
     const route = new Route('get', '/test').use(handler({ execute }));
-    const app = bootstrapServer([route]);
+    const [app] = bootstrapServer([route]);
 
     await request(app).get('/test').expect({ yolo: true });
   });
@@ -114,7 +115,7 @@ describe('web', () => {
       }),
     ];
 
-    const app = bootstrapServer(routes);
+    const [app] = bootstrapServer(routes);
 
     await request(app).post('/private').expect(401).expect({ message: 'dont do that' });
     await request(app).post('/not-working').expect(500).expect({ message: 'nope.' });
@@ -123,7 +124,7 @@ describe('web', () => {
 
   it('registers a fallback route', async () => {
     const route = new FallbackRoute().use((req, res) => void res.json({ fall: 'back' }));
-    const app = bootstrapServer([route]);
+    const [app] = bootstrapServer([route]);
 
     await request(app).get('/nowhere').expect(200).expect({ fall: 'back' });
   });
@@ -136,7 +137,7 @@ describe('web', () => {
       new FallbackRoute().use(errorHandler({ execute: (error: Error) => ({ message: error.message }) })),
     ];
 
-    const app = bootstrapServer(routes);
+    const [app] = bootstrapServer(routes);
 
     await request(app).get('/fail').expect(200).expect({ message: 'catch me' });
   });

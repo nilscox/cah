@@ -1,7 +1,10 @@
 import express, { ErrorRequestHandler, Express } from 'express';
 import expressSession from 'express-session';
+import * as http from 'http';
 
-import { errorHandler, FallbackRoute } from './Route';
+import { errorHandler } from './middlewaresCreators';
+import { FallbackRoute } from './Route';
+import { WebsocketServer } from './websocket';
 
 interface Route {
   register: (app: Express) => void;
@@ -16,13 +19,15 @@ class FallbackErrorHandler {
 const fallbackErrorHandler = new FallbackRoute().use(errorHandler(new FallbackErrorHandler()));
 
 export const bootstrapServer = (routes: Route[]) => {
-  const app = express();
-
   const session = expressSession({
     secret: 'secret',
     resave: false,
     saveUninitialized: true,
   });
+
+  const app = express();
+  const server = http.createServer(app);
+  const wss = new WebsocketServer(server, session);
 
   app.use(session);
   app.use(express.json());
@@ -33,5 +38,5 @@ export const bootstrapServer = (routes: Route[]) => {
 
   fallbackErrorHandler.register(app);
 
-  return app;
+  return [app, server, wss] as const;
 };

@@ -1,4 +1,4 @@
-import { IsInt, IsPositive, IsUUID, Min } from 'class-validator';
+import { IsInt, IsUUID, Min } from 'class-validator';
 
 import { EventPublisher } from '../../ddd/EventPublisher';
 import { ExternalData } from '../../domain/interfaces/ExternalData';

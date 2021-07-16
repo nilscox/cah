@@ -1,7 +1,11 @@
 import { Entity } from '../../ddd/Entity';
 
 export class Choice extends Entity {
-  constructor(private text: string) {
+  get text() {
+    return this._text;
+  }
+
+  constructor(private _text: string) {
     super();
   }
 }

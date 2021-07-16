@@ -1,36 +1,29 @@
 import { ErrorRequestHandler, Request } from 'express';
 
-import { CreateAnswerCommand, CreateAnswerCommandHandler } from '../../application/commands/CreateAnswerCommand';
+import { CreateAnswerCommand, CreateAnswerHandler } from '../../application/commands/CreateAnswerCommand';
 import { CreateGameCommand, CreateGameHandler } from '../../application/commands/CreateGameCommand';
 import { JoinGameCommand, JoinGameHandler } from '../../application/commands/JoinGameCommand';
 import { LoginCommand, LoginHandler } from '../../application/commands/LoginCommand';
 import { NextTurnHandler } from '../../application/commands/NextTurnCommand';
 import { SelectWinnerCommand, SelectWinnerHandler } from '../../application/commands/SelectWinnerCommand';
 import { StartGameCommand, StartGameHandler } from '../../application/commands/StartGameCommand';
+import { GameEventsHandler } from '../../application/handlers/GameEventsHandler';
+import { PlayerEventsHandler } from '../../application/handlers/PlayerEventsHandler';
 import { SessionStore } from '../../application/interfaces/SessionStore';
 import { GetGameHandler, GetGameQuery } from '../../application/queries/GetGameQuery';
 import { GetPlayerHandler } from '../../application/queries/GetPlayerQuery';
 import { GameService } from '../../application/services/GameService';
 import { RandomService } from '../../application/services/RandomService';
 import { Player } from '../../domain/models/Player';
+import { PubSub } from '../PubSub';
 import { InMemoryGameRepository } from '../repositories/InMemoryGameRepository';
 import { InMemoryPlayerRepository } from '../repositories/InMemoryPlayerRepository';
-import { StubEventPublisher } from '../stubs/StubEventPublisher';
 import { StubExternalData } from '../stubs/StubExternalData';
 
-import {
-  context,
-  dto,
-  errorHandler,
-  FallbackRoute,
-  guard,
-  handler,
-  InputDto,
-  middleware,
-  Route,
-  status,
-} from './Route';
+import { context, dto, errorHandler, guard, handler, middleware, status } from './middlewaresCreators';
+import { FallbackRoute, InputDto, Route } from './Route';
 import { bootstrapServer } from './web';
+import { WebsocketNotifier, WebsocketRoomsManager } from './websocket';
 
 declare module 'express-session' {
   export interface SessionData {
@@ -101,7 +94,16 @@ const gameRepository = new InMemoryGameRepository();
 const gameService = new GameService(playerRepository, gameRepository);
 const randomService = new RandomService();
 const externalData = new StubExternalData();
-const publisher = new StubEventPublisher();
+const publisher = new PubSub();
+
+const socketNotifier = new WebsocketNotifier();
+const roomsManager = new WebsocketRoomsManager();
+
+const gameEventsHandler = new GameEventsHandler(socketNotifier);
+const playerEventsHandler = new PlayerEventsHandler(socketNotifier);
+
+publisher.subscribe(gameEventsHandler);
+publisher.subscribe(playerEventsHandler);
 
 const playerContext = [
   middleware(new PlayerProvider(playerRepository)),
@@ -136,12 +138,12 @@ const routes = [
     .use(...authPlayerContext)
     .use(dto(() => new CreateGameCommand()))
     .use(status(201))
-    .use(handler(new CreateGameHandler(gameRepository, publisher))),
+    .use(handler(new CreateGameHandler(gameRepository, publisher, roomsManager))),
 
   new Route('post', '/game/:gameId/join')
     .use(...authPlayerContext)
     .use(dto((req) => new JoinGameCommand(req.params.gameId)))
-    .use(handler(new JoinGameHandler(gameService, gameRepository, publisher))),
+    .use(handler(new JoinGameHandler(gameService, gameRepository, publisher, roomsManager))),
 
   new Route('post', '/start')
     .use(...authPlayerContext)
@@ -151,7 +153,7 @@ const routes = [
   new Route('post', '/answer')
     .use(...authPlayerContext)
     .use(dto(({ body }) => new CreateAnswerCommand(body.choicesIds)))
-    .use(handler(new CreateAnswerCommandHandler(gameService, randomService, publisher))),
+    .use(handler(new CreateAnswerHandler(gameService, randomService, publisher))),
 
   new Route('post', '/select')
     .use(...authPlayerContext)
@@ -168,4 +170,7 @@ const routes = [
     .use((req, res) => res.status(404).end()),
 ];
 
-export const app = bootstrapServer(routes);
+export const [app, server, wss] = bootstrapServer(routes);
+
+socketNotifier.wss = wss;
+roomsManager.wss = wss;

@@ -2,12 +2,17 @@ import { EventPublisher } from '../../ddd/EventPublisher';
 import { PlayerIsAlreadyInGameError } from '../../domain/errors/PlayerIsAlreadyInGameError';
 import { GameRepository } from '../../domain/interfaces/GameRepository';
 import { Game } from '../../domain/models/Game';
+import { RoomsManager } from '../interfaces/RoomsManager';
 import { SessionStore } from '../interfaces/SessionStore';
 
 export class CreateGameCommand {}
 
 export class CreateGameHandler {
-  constructor(private readonly gameRepository: GameRepository, private readonly publisher: EventPublisher) {}
+  constructor(
+    private readonly gameRepository: GameRepository,
+    private readonly publisher: EventPublisher,
+    private readonly roomsManager: RoomsManager,
+  ) {}
 
   async execute(_: unknown, session: SessionStore) {
     const player = session.player!;
@@ -19,6 +24,7 @@ export class CreateGameHandler {
     const game = new Game();
 
     game.addPlayer(player);
+    this.roomsManager.join(game.roomId, player);
 
     await this.gameRepository.save(game);
 

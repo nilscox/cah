@@ -78,8 +78,10 @@ describe('NextTurnCommand', () => {
     expect(game.questionMaster.getCards()).to.have.length(11);
 
     for (const player of players) {
-      expect(player.getCards()).to.have.length(11);
-      expect(publisher.events).to.deep.include({ type: 'CardsDealt', player });
+      const cards = player.getCards();
+
+      expect(cards).to.have.length(11);
+      expect(publisher.events).to.deep.include({ type: 'CardsDealt', player, cards: cards.slice(-1) });
     }
   });
 

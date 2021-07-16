@@ -9,7 +9,6 @@ import { InvalidPlayStateError } from '../errors/InvalidPlayStateError';
 import { NoMoreChoiceError } from '../errors/NoMoreChoiceError';
 import { NotEnoughPlayersError } from '../errors/NotEnoughPlayersError';
 import { PlayerAlreadyAnsweredError } from '../errors/PlayerAlreadyAnsweredError';
-import { PlayerIsAlreadyInGameError } from '../errors/PlayerIsAlreadyInGameError';
 import { PlayerIsNotQuestionMasterError } from '../errors/PlayerIsNotQuestionMasterError';
 import { PlayerIsQuestionMasterError } from '../errors/PlayerIsQuestionMasterError';
 import { AllPlayersAnsweredEvent } from '../events/AllPlayersAnsweredEvent';
@@ -58,12 +57,18 @@ export class Game extends AggregateRoot {
     return new Turn(questionMaster, question, answers, winner!);
   }
 
+  get roomId() {
+    return `game-${this.id}`;
+  }
+
   override publishEvents(publisher: EventPublisher) {
     super.publishEvents(publisher);
 
     for (const player of this.players) {
       player.publishEvents(publisher);
     }
+
+    this.dropEvents();
   }
 
   override dropEvents() {

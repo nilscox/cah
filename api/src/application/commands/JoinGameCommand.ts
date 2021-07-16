@@ -1,6 +1,7 @@
 import { EventPublisher } from '../../ddd/EventPublisher';
 import { PlayerIsAlreadyInGameError } from '../../domain/errors/PlayerIsAlreadyInGameError';
 import { GameRepository } from '../../domain/interfaces/GameRepository';
+import { RoomsManager } from '../interfaces/RoomsManager';
 import { SessionStore } from '../interfaces/SessionStore';
 import { GameService } from '../services/GameService';
 
@@ -13,6 +14,7 @@ export class JoinGameHandler {
     private readonly gameService: GameService,
     private readonly gameRepository: GameRepository,
     private readonly publisher: EventPublisher,
+    private readonly roomsManager: RoomsManager,
   ) {}
 
   async execute({ gameId }: JoinGameCommand, session: SessionStore) {
@@ -25,6 +27,7 @@ export class JoinGameHandler {
     const game = await this.gameService.getGame(gameId);
 
     game.addPlayer(player);
+    this.roomsManager.join(game.roomId, player);
 
     await this.gameRepository.save(game);
 

@@ -6,6 +6,7 @@ import { Player } from '../../domain/models/Player';
 import { InMemoryGameRepository } from '../../infrastructure/repositories/InMemoryGameRepository';
 import { InMemoryPlayerRepository } from '../../infrastructure/repositories/InMemoryPlayerRepository';
 import { StubEventPublisher } from '../../infrastructure/stubs/StubEventPublisher';
+import { StubRoomsManager } from '../../infrastructure/stubs/StubRoomsManager';
 import { StubSessionStore } from '../../infrastructure/stubs/StubSessionStore';
 import { GameService } from '../services/GameService';
 
@@ -16,6 +17,7 @@ describe('JoinGameCommand', () => {
   let playerRepository: InMemoryPlayerRepository;
   let gameService: GameService;
   let publisher: StubEventPublisher;
+  let roomsManager: StubRoomsManager;
 
   let handler: JoinGameHandler;
 
@@ -29,8 +31,9 @@ describe('JoinGameCommand', () => {
     playerRepository = new InMemoryPlayerRepository();
     gameService = new GameService(playerRepository, gameRepository);
     publisher = new StubEventPublisher();
+    roomsManager = new StubRoomsManager();
 
-    handler = new JoinGameHandler(gameService, gameRepository, publisher);
+    handler = new JoinGameHandler(gameService, gameRepository, publisher, roomsManager);
 
     game = new Game();
     await gameRepository.save(game);
@@ -56,6 +59,12 @@ describe('JoinGameCommand', () => {
     const game = await gameRepository.findGameForPlayer(player.id);
 
     expect(game).not.to.be.undefined;
+  });
+
+  it('adds the player to the corresponding room', async () => {
+    await execute();
+
+    expect(roomsManager.has(game.roomId, player)).to.be.true;
   });
 
   it('disallow a player to join a game when he is already in a game', async () => {

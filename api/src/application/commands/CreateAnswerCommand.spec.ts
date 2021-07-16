@@ -10,7 +10,6 @@ import { InvalidNumberOfChoicesError } from '../../domain/errors/InvalidNumberOf
 import { InvalidPlayStateError } from '../../domain/errors/InvalidPlayStateError';
 import { PlayerAlreadyAnsweredError } from '../../domain/errors/PlayerAlreadyAnsweredError';
 import { PlayerIsQuestionMasterError } from '../../domain/errors/PlayerIsQuestionMasterError';
-import { PlayerNotFoundError } from '../../domain/errors/PlayerNotFoundError';
 import { Blank } from '../../domain/models/Blank';
 import { Choice } from '../../domain/models/Choice';
 import { Player } from '../../domain/models/Player';
@@ -23,7 +22,7 @@ import { StubRandomService } from '../../infrastructure/stubs/StubRandomService'
 import { GameBuilder } from '../../utils/GameBuilder';
 import { GameService } from '../services/GameService';
 
-import { CreateAnswerCommand, CreateAnswerCommandHandler } from './CreateAnswerCommand';
+import { CreateAnswerCommand, CreateAnswerHandler } from './CreateAnswerCommand';
 
 describe('CreateAnswerCommand', () => {
   let gameRepository: InMemoryGameRepository;
@@ -33,7 +32,7 @@ describe('CreateAnswerCommand', () => {
   let randomService: StubRandomService;
   let publisher: StubEventPublisher;
 
-  let handler: CreateAnswerCommandHandler;
+  let handler: CreateAnswerHandler;
 
   beforeEach(() => {
     gameRepository = new InMemoryGameRepository();
@@ -43,7 +42,7 @@ describe('CreateAnswerCommand', () => {
     randomService = new StubRandomService();
     publisher = new StubEventPublisher();
 
-    handler = new CreateAnswerCommandHandler(gameService, randomService, publisher);
+    handler = new CreateAnswerHandler(gameService, randomService, publisher);
   });
 
   let builder: GameBuilder;

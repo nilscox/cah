@@ -1,10 +1,18 @@
 import { Entity } from '../../ddd/Entity';
-import { creatorsFactory } from '../../utils/entityCreators';
 
 import { Blank } from './Blank';
+import { Choice } from './Choice';
 
 export class Question extends Entity {
-  constructor(private text: string, private blanks?: Blank[]) {
+  get text() {
+    return this._text;
+  }
+
+  get blanks() {
+    return this._blanks?.map(({ place }) => place);
+  }
+
+  constructor(private _text: string, private _blanks?: Blank[]) {
     super();
 
     if (this.blanks?.length === 0) {
@@ -20,18 +28,37 @@ export class Question extends Entity {
     return this.blanks.length;
   }
 
-  override toString() {
-    if (!this.blanks) {
-      return this.text + ' __';
+  override toString(choices?: Choice[]) {
+    const { blanks, numberOfBlanks } = this;
+
+    if (choices && choices.length !== numberOfBlanks) {
+      throw new Error(`Invalid number of choices, expected ${numberOfBlanks}, got ${choices.length}`);
+    }
+
+    const getChoice = (index: number) => {
+      return choices?.[index]?.text ?? '__';
+    };
+
+    if (!blanks) {
+      return [this.text, getChoice(0)].join(' ');
     }
 
     let text = this.text;
 
-    for (const { place } of this.blanks.reverse()) {
-      text = [text.slice(0, place), text.slice(place)].join('__');
+    for (const [i, place] of Object.entries(blanks.reverse())) {
+      text = [text.slice(0, place), text.slice(place)].join(getChoice(numberOfBlanks - Number(i) - 1));
     }
 
     return text;
+  }
+
+  toJSON() {
+    return {
+      text: this.text,
+      blanks: this.blanks,
+      numberOfBlanks: this.numberOfBlanks,
+      formatted: this.toString(),
+    };
   }
 }
 
@@ -40,8 +67,12 @@ type QuestionProps = {
   blanks: Blank[];
 };
 
-const questionCreators = creatorsFactory<Question, QuestionProps>((index) => {
-  return new Question(`question ${index + 1}`);
-});
+export const createQuestion = ({ text, blanks }: Partial<QuestionProps> = {}) => {
+  return new Question(text ?? 'question', blanks);
+};
 
-export const { createOne: createQuestion, createMany: createQuestions } = questionCreators;
+export const createQuestions = (count: number, overrides?: (index: number) => Partial<QuestionProps>) => {
+  return Array(count)
+    .fill(null)
+    .map((_, n) => createQuestion(overrides?.(n) ?? { text: `question ${n}` }));
+};

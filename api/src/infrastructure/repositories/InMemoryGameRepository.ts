@@ -1,5 +1,4 @@
 import { GameRepository } from '../../domain/interfaces/GameRepository';
-import { Answer } from '../../domain/models/Answer';
 import { Choice } from '../../domain/models/Choice';
 import { Game } from '../../domain/models/Game';
 import { Question } from '../../domain/models/Question';
@@ -50,20 +49,16 @@ export class InMemoryGameRepository implements GameRepository {
   async findAvailableChoices(gameId: string): Promise<Choice[]> {
     const game = this.games.get(gameId);
 
-    const isInAnswer = (choice: Choice) => (answer: Answer) => {
-      return answer.choices.some((answerChoice) => answerChoice.equals(choice));
-    };
-
     const isAvailable = (choice: Choice) => {
       if (game?.players?.some((player) => player.getCards().some((card) => card.equals(choice)))) {
         return false;
       }
 
-      if (game?.answers?.some(isInAnswer(choice))) {
+      if (game?.answers?.some((answer) => answer.hasChoice(choice))) {
         return false;
       }
 
-      return !this.getTurns(gameId).some((turn) => turn.answers.some(isInAnswer(choice)));
+      return !this.getTurns(gameId).some((turn) => turn.answers.some((answer) => answer.hasChoice(choice)));
     };
 
     return this.getChoices(gameId).filter(isAvailable);

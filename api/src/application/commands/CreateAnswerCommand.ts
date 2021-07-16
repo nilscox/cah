@@ -14,7 +14,7 @@ export class CreateAnswerCommand {
   }
 }
 
-export class CreateAnswerCommandHandler {
+export class CreateAnswerHandler {
   constructor(
     private readonly gameService: GameService,
     private readonly randomService: RandomService,
