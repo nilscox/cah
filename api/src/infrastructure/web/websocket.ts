@@ -5,7 +5,7 @@ import { Server } from 'http';
 import { Server as SocketIOServer, Socket } from 'socket.io';
 
 import { Notifier } from '../../application/interfaces/Notifier';
-import { RoomsManager } from '../../application/interfaces/RoomsManager';
+import { RTCManager } from '../../application/interfaces/RTCManager';
 import { Game } from '../../domain/models/Game';
 import { Player } from '../../domain/models/Player';
 
@@ -25,24 +25,14 @@ export class WebsocketServer {
 
     if (playerId) {
       this.sockets.set(playerId, socket);
-      socket.on('disconnect', () => this.sockets.delete(playerId));
+      socket.on('disconnect', () => {
+        this.sockets.delete(playerId);
+      });
     }
   }
 
-  join(room: string, player: Player) {
-    const socket = this.sockets.get(player.id);
-
-    if (socket) {
-      socket.join(room);
-    }
-  }
-
-  emit(player: Player, message: unknown) {
-    const socket = this.sockets.get(player.id);
-
-    if (socket) {
-      socket.emit('message', message);
-    }
+  playerSocket(playerId: string) {
+    return this.sockets.get(playerId);
   }
 
   broadcast(room: string, message: unknown) {
@@ -50,26 +40,34 @@ export class WebsocketServer {
   }
 }
 
-export class WebsocketNotifier implements Notifier {
-  public wss!: WebsocketServer;
+export class WebsocketRTCManager implements RTCManager, Notifier {
+  wss!: WebsocketServer;
+
+  isConnected(player: Player) {
+    return this.wss.playerSocket(player.id) !== undefined;
+  }
+
+  join(game: Game, player: Player): void {
+    const socket = this.wss.playerSocket(player.id);
+
+    if (socket) {
+      socket.join(game.roomId);
+    }
+  }
+
+  leave(_game: Game, _player: Player): void {
+    throw new Error('Method not implemented.');
+  }
 
   notifyPlayer<Message>(player: Player, message: Message): void {
-    this.wss.emit(player, message);
+    const socket = this.wss.playerSocket(player.id);
+
+    if (socket) {
+      socket.emit('message', message);
+    }
   }
 
   notifyGamePlayers<Message>(game: Game, message: Message): void {
     this.wss.broadcast(game.roomId, message);
-  }
-}
-
-export class WebsocketRoomsManager implements RoomsManager {
-  wss!: WebsocketServer;
-
-  join(room: string, player: Player): void {
-    this.wss.join(room, player);
-  }
-
-  leave(_room: string, _player: Player): void {
-    throw new Error('Method not implemented.');
   }
 }

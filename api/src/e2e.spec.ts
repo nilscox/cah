@@ -105,7 +105,7 @@ class StubPlayer {
   }
 
   async authenticate() {
-    const { body: player } = await this.agent.post('/login').send({ nick: this.nick }).expect(200);
+    const { body: player } = await this.agent.post('/login').send({ nick: this.nick }).expect(201);
 
     this.playerId = player.id;
 

@@ -23,7 +23,7 @@ import { StubExternalData } from '../stubs/StubExternalData';
 import { context, dto, errorHandler, guard, handler, middleware, status } from './middlewaresCreators';
 import { FallbackRoute, InputDto, Route } from './Route';
 import { bootstrapServer } from './web';
-import { WebsocketNotifier, WebsocketRoomsManager } from './websocket';
+import { WebsocketRTCManager } from './websocket';
 
 declare module 'express-session' {
   export interface SessionData {
@@ -96,11 +96,10 @@ const randomService = new RandomService();
 const externalData = new StubExternalData();
 const publisher = new PubSub();
 
-const socketNotifier = new WebsocketNotifier();
-const roomsManager = new WebsocketRoomsManager();
+const rtcManager = new WebsocketRTCManager();
 
-const gameEventsHandler = new GameEventsHandler(socketNotifier);
-const playerEventsHandler = new PlayerEventsHandler(socketNotifier);
+const gameEventsHandler = new GameEventsHandler(rtcManager);
+const playerEventsHandler = new PlayerEventsHandler(rtcManager);
 
 publisher.subscribe(gameEventsHandler);
 publisher.subscribe(playerEventsHandler);
@@ -117,33 +116,34 @@ const routes = [
     .use(...playerContext)
     .use(guard(isNotAuthenticated))
     .use(dto(({ body }) => new LoginCommand(body.nick)))
+    .use(status(201))
     .use(handler(new LoginHandler(playerRepository))),
 
   new Route('get', '/player/me')
     .use(...authPlayerContext)
     .use(dto((req) => ({ playerId: req.session.playerId })))
-    .use(handler(new GetPlayerHandler(playerRepository))),
+    .use(handler(new GetPlayerHandler(playerRepository, gameRepository))),
 
   new Route('get', '/player/:playerId')
     .use(...playerContext)
     .use(dto((req) => ({ playerId: req.params.playerId })))
-    .use(handler(new GetPlayerHandler(playerRepository))),
+    .use(handler(new GetPlayerHandler(playerRepository, gameRepository))),
 
   new Route('get', '/game/:gameId')
     .use(...authPlayerContext)
     .use(dto((req) => new GetGameQuery(req.params.gameId)))
-    .use(handler(new GetGameHandler(gameService))),
+    .use(handler(new GetGameHandler(gameService, rtcManager))),
 
   new Route('post', '/game')
     .use(...authPlayerContext)
     .use(dto(() => new CreateGameCommand()))
     .use(status(201))
-    .use(handler(new CreateGameHandler(gameRepository, publisher, roomsManager))),
+    .use(handler(new CreateGameHandler(gameRepository, publisher, rtcManager))),
 
   new Route('post', '/game/:gameId/join')
     .use(...authPlayerContext)
     .use(dto((req) => new JoinGameCommand(req.params.gameId)))
-    .use(handler(new JoinGameHandler(gameService, gameRepository, publisher, roomsManager))),
+    .use(handler(new JoinGameHandler(gameService, gameRepository, publisher, rtcManager))),
 
   new Route('post', '/start')
     .use(...authPlayerContext)
@@ -172,5 +172,4 @@ const routes = [
 
 export const [app, server, wss] = bootstrapServer(routes);
 
-socketNotifier.wss = wss;
-roomsManager.wss = wss;
+rtcManager.wss = wss;

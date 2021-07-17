@@ -86,6 +86,8 @@ export class Game extends AggregateRoot<GameEvent> {
 
   addPlayer(player: Player) {
     this.players.push(player);
+    player.gameId = this.id;
+
     this.addEvent(new GameJoinedEvent(this, player));
   }
 

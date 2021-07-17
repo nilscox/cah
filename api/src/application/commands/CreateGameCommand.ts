@@ -3,7 +3,7 @@ import { PlayerIsAlreadyInGameError } from '../../domain/errors/PlayerIsAlreadyI
 import { DomainEvent } from '../../domain/events';
 import { GameRepository } from '../../domain/interfaces/GameRepository';
 import { Game } from '../../domain/models/Game';
-import { RoomsManager } from '../interfaces/RoomsManager';
+import { RTCManager } from '../interfaces/RTCManager';
 import { SessionStore } from '../interfaces/SessionStore';
 
 export class CreateGameCommand {}
@@ -12,7 +12,7 @@ export class CreateGameHandler {
   constructor(
     private readonly gameRepository: GameRepository,
     private readonly publisher: EventPublisher<DomainEvent>,
-    private readonly roomsManager: RoomsManager,
+    private readonly rtcManager: RTCManager,
   ) {}
 
   async execute(_: unknown, session: SessionStore) {
@@ -25,7 +25,7 @@ export class CreateGameHandler {
     const game = new Game();
 
     game.addPlayer(player);
-    this.roomsManager.join(game.roomId, player);
+    this.rtcManager.join(game, player);
 
     await this.gameRepository.save(game);
 

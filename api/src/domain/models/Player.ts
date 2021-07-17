@@ -6,6 +6,7 @@ import { CardsDealtEvent } from '../events/CardsDealtEvent';
 import { Choice } from './Choice';
 
 export class Player extends AggregateRoot<PlayerEvent> {
+  public gameId?: string;
   private cards: Choice[] = [];
 
   constructor(public readonly nick: string) {
@@ -37,5 +38,13 @@ export class Player extends AggregateRoot<PlayerEvent> {
     }
 
     return cards;
+  }
+
+  toJSON() {
+    return {
+      id: this.id,
+      gameId: this.gameId,
+      nick: this.nick,
+    };
   }
 }
