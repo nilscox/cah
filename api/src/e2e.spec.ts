@@ -1,11 +1,24 @@
+import { Server } from 'http';
 import { io, Socket } from 'socket.io-client';
 import request from 'supertest';
+import { Connection, createConnection } from 'typeorm';
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 import { Choice } from './domain/models/Choice';
-import { server } from './infrastructure/web';
+import { AnswerEntity } from './infrastructure/database/entities/AnswerEntity';
+import { ChoiceEntity } from './infrastructure/database/entities/ChoiceEntity';
+import { GameEntity } from './infrastructure/database/entities/GameEntity';
+import { PlayerEntity } from './infrastructure/database/entities/PlayerEntity';
+import { QuestionEntity } from './infrastructure/database/entities/QuestionEntity';
+import { TurnEntity } from './infrastructure/database/entities/TurnEntity';
+import { bootstrapServer } from './infrastructure/web';
 
-const port = 4444;
+const port = 1222;
 const log = false;
+
+const debug = false;
+const keepDatabase = debug;
+const logging = debug;
 
 const randInt = (min: number, max: number) => ~~(Math.random() * (max - min + 1)) + min;
 
@@ -13,8 +26,8 @@ const randInt = (min: number, max: number) => ~~(Math.random() * (max - min + 1)
 type WSEvent = Record<string, any>;
 
 class StubPlayer {
-  private agent = request.agent(server);
-  private socket?: Socket;
+  public agent: request.SuperAgentTest;
+  public socket?: Socket;
 
   public gameId?: string;
   public playerId?: string;
@@ -24,9 +37,9 @@ class StubPlayer {
 
   public cards: Choice[] = [];
   public questionMaster?: string;
-  public question?: { text: string; numberOfBlanks: number };
+  public question?: { text: string; numberOfBlanks: number; formatted: string };
 
-  public answers: { id: number; choices: { text: string }[]; player?: string }[] = [];
+  public answers: { id: number; choices: { text: string }[]; formatted: string; player?: string }[] = [];
   public winner?: string;
 
   public events: WSEvent[] = [];
@@ -35,7 +48,9 @@ class StubPlayer {
     return this.questionMaster === this.nick;
   }
 
-  constructor(public nick: string) {}
+  constructor(server: Server, public nick: string) {
+    this.agent = request.agent(server);
+  }
 
   close() {
     this.socket?.close();
@@ -180,7 +195,7 @@ class StubPlayer {
       throw new Error('no answer to pick');
     }
 
-    this.log(`randomly picks ${JSON.stringify(answer)}`);
+    this.log(`randomly picks ${answer.formatted}`);
 
     await this.agent.post(`/select`).send({ answerId: answer.id }).expect(200);
   }
@@ -194,31 +209,53 @@ class StubPlayer {
 
 describe('e2e', function () {
   this.slow(500);
+  this.timeout(20000);
 
-  let nils: StubPlayer;
-  let tom: StubPlayer;
-  let jeanne: StubPlayer;
+  let connection: Connection;
+  let server: Server;
 
-  let players: StubPlayer[];
+  const nicks = ['nils', 'tom', 'jeanne', 'vio'] as const;
+  const players: StubPlayer[] = [];
+  let [nils, tom, jeanne]: StubPlayer[] = [];
 
-  before(() => {
-    nils = new StubPlayer('nils');
-    tom = new StubPlayer('tom');
-    jeanne = new StubPlayer('jeanne');
-
-    players = [nils, tom, jeanne];
+  before(async () => {
+    connection = await createConnection({
+      type: 'sqlite',
+      database: keepDatabase ? './db.sqlite' : ':memory:',
+      entities: [PlayerEntity, GameEntity, QuestionEntity, ChoiceEntity, AnswerEntity, TurnEntity],
+      synchronize: true,
+      logging,
+      namingStrategy: new SnakeNamingStrategy(),
+    });
   });
 
-  before((done) => {
-    server.listen(port, done);
+  before(async () => {
+    server = await bootstrapServer(connection);
+    // server = await main();
+
+    await new Promise<void>((resolve) => server.listen(port, resolve));
+  });
+
+  before(() => {
+    for (const nick of nicks) {
+      players.push(new StubPlayer(server, nick));
+    }
+
+    [nils, tom, jeanne] = players;
+  });
+
+  after(() => {
+    for (const player of players) {
+      player.close();
+    }
   });
 
   after((done) => {
-    nils.close();
-    tom.close();
-    jeanne.close();
-
     server.close(done);
+  });
+
+  after(async () => {
+    await connection?.close();
   });
 
   const questionMaster = () => {
@@ -236,13 +273,19 @@ describe('e2e', function () {
 
     const gameId = await nils.createGame();
 
-    for (const player of [tom, jeanne]) {
+    for (const player of players.slice(1)) {
       await player.joinGame(gameId);
     }
 
-    await tom.startGame(jeanne, 4);
+    await tom.startGame(jeanne, 5);
+
+    let turn = 1;
 
     while (questionMaster()) {
+      if (debug) {
+        console.log(`\nturn #${turn++}\n`);
+      }
+
       for (const player of playersExcludingQM()) {
         await player.giveRandomChoicesSelection();
       }

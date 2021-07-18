@@ -101,7 +101,7 @@ export class Game extends AggregateRoot<GameEvent> {
 
   dealCards(availableChoices: Choice[]) {
     for (const player of this.players) {
-      const needed = Game.cardPerPlayer - player.getCards().length;
+      const needed = Game.cardPerPlayer - player.cards.length;
 
       if (needed > availableChoices.length) {
         throw new NoMoreChoiceError();

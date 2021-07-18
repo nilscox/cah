@@ -1,12 +1,19 @@
-import { server } from './infrastructure/web';
+import { bootstrapServer } from './infrastructure/web';
 
 const { PORT = '4242', HOST = '0.0.0.0' } = process.env;
 
 const hostname = HOST;
 const port = Number.parseInt(PORT);
 
-if (isNaN(port) || port <= 0) {
-  throw new Error(`process.env.PORT = "${PORT}" is not a positive integer`);
-}
+const main = async () => {
+  const server = await bootstrapServer();
 
-server.listen(port, hostname, () => console.log(`server started on port ${port}`));
+  if (isNaN(port) || port <= 0) {
+    throw new Error(`process.env.PORT = "${PORT}" is not a positive integer`);
+  }
+
+  await new Promise<void>((resolve) => server.listen(port, hostname, resolve));
+  console.info(`server started on port ${port}`);
+};
+
+main().catch(console.error);

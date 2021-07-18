@@ -14,7 +14,13 @@ export class WebsocketServer {
   private sockets = new Map<string, Socket>();
 
   constructor(server: Server, session: RequestHandler) {
-    this.io = new SocketIOServer(server);
+    this.io = new SocketIOServer(server, {
+      cors: {
+        origin: true,
+        methods: ['GET', 'POST'],
+        credentials: true,
+      },
+    });
 
     this.io.use(sharedsession(session));
     this.io.on('connection', (socket) => this.onSocketConnected(socket));

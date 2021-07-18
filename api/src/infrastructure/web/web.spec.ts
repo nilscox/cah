@@ -8,18 +8,21 @@ import { StubEventPublisher } from '../stubs/StubEventPublisher';
 import { HttpUnauthorizedError } from './errors';
 import { context, dto, errorHandler, guard, handler, middleware, status } from './middlewaresCreators';
 import { FallbackRoute, Route } from './Route';
-import { bootstrapServer } from './web';
+import { createServer, Route as IRoute } from './web';
 
 describe('web', () => {
   const defaultHandler = handler({ execute: () => {} });
 
+  const createAgent = (routes: IRoute[]) => {
+    const [app] = createServer(routes);
+    return request.agent(app);
+  };
+
   it('registers a route doing nothing', async () => {
     const route = new Route('get', '/nothing').use(defaultHandler);
-    const [app] = bootstrapServer([route]);
+    const agent = createAgent([route]);
 
-    const { status } = await request(app).get('/nothing');
-
-    expect(status).to.eql(200);
+    await agent.get('/nothing').expect(200);
   });
 
   it('executes a middleware', async () => {
@@ -27,9 +30,9 @@ describe('web', () => {
     const execute = (req: Request) => void publisher.publish(req.body);
 
     const route = new Route('post', '/test').use(middleware({ execute })).use(defaultHandler);
-    const [app] = bootstrapServer([route]);
+    const agent = createAgent([route]);
 
-    await request(app).post('/test').send({ bo: 'dy' }).expect(200);
+    await agent.post('/test').send({ bo: 'dy' }).expect(200);
 
     expect(publisher.events).to.deep.include({ bo: 'dy' });
   });
@@ -41,11 +44,11 @@ describe('web', () => {
       new Route('post', '/message').use(guard(() => 'nope')).use(defaultHandler),
     ];
 
-    const [app] = bootstrapServer(routes);
+    const agent = createAgent(routes);
 
-    await request(app).post('/ok').expect(200);
-    await request(app).post('/ko').expect(401);
-    await request(app).post('/message').expect(401).expect({ message: 'nope' });
+    await agent.post('/ok').expect(200);
+    await agent.post('/ko').expect(401);
+    await agent.post('/message').expect(401).expect({ message: 'nope' });
   });
 
   it("validates the handler's input", async () => {
@@ -67,11 +70,11 @@ describe('web', () => {
       .use(dto(({ body }) => new InputDto(body)))
       .use(handler({ execute }));
 
-    const [app] = bootstrapServer([route]);
+    const agent = createAgent([route]);
 
-    await request(app).post('/test').send({ saw: 6 }).expect(200);
+    await agent.post('/test').send({ saw: 6 }).expect(200);
 
-    const { body } = await request(app).post('/test').expect(400);
+    const { body } = await agent.post('/test').expect(400);
 
     expect(body).to.shallowDeepEqual({
       message: 'Validation errors',
@@ -84,25 +87,25 @@ describe('web', () => {
       .use(context((req) => req.query))
       .use(handler({ execute: (_, context) => context }));
 
-    const [app] = bootstrapServer([route]);
+    const agent = createAgent([route]);
 
-    await request(app).get('/test').query({ pa: 'ram' }).expect(200).expect({ pa: 'ram' });
+    await agent.get('/test').query({ pa: 'ram' }).expect(200).expect({ pa: 'ram' });
   });
 
   it('specifies a status code', async () => {
     const route = new Route('get', '/test').use(status(421)).use(defaultHandler);
-    const [app] = bootstrapServer([route]);
+    const agent = createAgent([route]);
 
-    await request(app).get('/test').expect(421);
+    await agent.get('/test').expect(421);
   });
 
   it('triggers a handler returning an output', async () => {
     const execute = () => ({ yolo: true });
 
     const route = new Route('get', '/test').use(handler({ execute }));
-    const [app] = bootstrapServer([route]);
+    const agent = createAgent([route]);
 
-    await request(app).get('/test').expect({ yolo: true });
+    await agent.get('/test').expect({ yolo: true });
   });
 
   it('terminates the request when the handler throws', async () => {
@@ -115,18 +118,18 @@ describe('web', () => {
       }),
     ];
 
-    const [app] = bootstrapServer(routes);
+    const agent = createAgent(routes);
 
-    await request(app).post('/private').expect(401).expect({ message: 'dont do that' });
-    await request(app).post('/not-working').expect(500).expect({ message: 'nope.' });
-    await request(app).post('/nowhere').expect(404);
+    await agent.post('/private').expect(401).expect({ message: 'dont do that' });
+    await agent.post('/not-working').expect(500).expect({ message: 'nope.' });
+    await agent.post('/nowhere').expect(404);
   });
 
   it('registers a fallback route', async () => {
     const route = new FallbackRoute().use((req, res) => void res.json({ fall: 'back' }));
-    const [app] = bootstrapServer([route]);
+    const agent = createAgent([route]);
 
-    await request(app).get('/nowhere').expect(200).expect({ fall: 'back' });
+    await agent.get('/nowhere').expect(200).expect({ fall: 'back' });
   });
 
   it('registers an error handler', async () => {
@@ -137,8 +140,8 @@ describe('web', () => {
       new FallbackRoute().use(errorHandler({ execute: (error: Error) => ({ message: error.message }) })),
     ];
 
-    const [app] = bootstrapServer(routes);
+    const agent = createAgent(routes);
 
-    await request(app).get('/fail').expect(200).expect({ message: 'catch me' });
+    await agent.get('/fail').expect(200).expect({ message: 'catch me' });
   });
 });

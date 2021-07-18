@@ -19,7 +19,17 @@ export class StubExternalData implements ExternalData {
       .map((_, n) => new Question(`Question ${n + 1}`));
   }
 
+  private randomChoices?: Choice[];
+
+  setRandomChoices(choices: Choice[]) {
+    this.randomChoices = choices;
+  }
+
   async pickRandomChoices(count: number): Promise<Choice[]> {
+    if (this.randomChoices) {
+      return this.randomChoices;
+    }
+
     return Array(count ?? 0)
       .fill(null)
       .map((_, n) => new Choice(`Choice ${n + 1}`));

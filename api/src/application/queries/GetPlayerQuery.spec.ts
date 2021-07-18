@@ -1,8 +1,8 @@
 import { expect } from 'chai';
 
 import { Player } from '../../domain/models/Player';
-import { InMemoryGameRepository } from '../../infrastructure/repositories/InMemoryGameRepository';
-import { InMemoryPlayerRepository } from '../../infrastructure/repositories/InMemoryPlayerRepository';
+import { InMemoryGameRepository } from '../../infrastructure/database/repositories/game/InMemoryGameRepository';
+import { InMemoryPlayerRepository } from '../../infrastructure/database/repositories/player/InMemoryPlayerRepository';
 import { StubExternalData } from '../../infrastructure/stubs/StubExternalData';
 import { StubSessionStore } from '../../infrastructure/stubs/StubSessionStore';
 import { GameBuilder } from '../../utils/GameBuilder';

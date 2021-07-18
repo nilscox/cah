@@ -53,6 +53,10 @@ export class GameBuilder<G extends Game = Game> {
     this.register(async () => {
       const game = this.game as StartedGame;
 
+      if (to === PlayState.playersAnswer) {
+        return;
+      }
+
       for (const player of this.game.playersExcludingQM) {
         this.game.addAnswer(player, player.getFirstCards(game.question.numberOfBlanks), (arr) => arr);
       }
@@ -82,6 +86,8 @@ export class GameBuilder<G extends Game = Game> {
 
   async get(): Promise<G> {
     const game = this.game;
+
+    await this.gameRepository.save(this.game);
 
     for (const func of this.functions) {
       await func();

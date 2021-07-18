@@ -7,7 +7,9 @@ import { Choice } from './Choice';
 
 export class Player extends AggregateRoot<PlayerEvent> {
   public gameId?: string;
-  private cards: Choice[] = [];
+
+  // todo: optional?
+  public cards: Choice[] = [];
 
   constructor(public readonly nick: string) {
     super();

@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 
-import { InMemoryPlayerRepository } from '../../infrastructure/repositories/InMemoryPlayerRepository';
+import { InMemoryPlayerRepository } from '../../infrastructure/database/repositories/player/InMemoryPlayerRepository';
 import { StubSessionStore } from '../../infrastructure/stubs/StubSessionStore';
 
 import { LoginHandler } from './LoginCommand';

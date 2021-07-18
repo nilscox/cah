@@ -6,8 +6,8 @@ import { InvalidPlayStateError } from '../../domain/errors/InvalidPlayStateError
 import { PlayerIsNotQuestionMasterError } from '../../domain/errors/PlayerIsNotQuestionMasterError';
 import { Answer } from '../../domain/models/Answer';
 import { Player } from '../../domain/models/Player';
-import { InMemoryGameRepository } from '../../infrastructure/repositories/InMemoryGameRepository';
-import { InMemoryPlayerRepository } from '../../infrastructure/repositories/InMemoryPlayerRepository';
+import { InMemoryGameRepository } from '../../infrastructure/database/repositories/game/InMemoryGameRepository';
+import { InMemoryPlayerRepository } from '../../infrastructure/database/repositories/player/InMemoryPlayerRepository';
 import { StubEventPublisher } from '../../infrastructure/stubs/StubEventPublisher';
 import { StubExternalData } from '../../infrastructure/stubs/StubExternalData';
 import { GameBuilder } from '../../utils/GameBuilder';

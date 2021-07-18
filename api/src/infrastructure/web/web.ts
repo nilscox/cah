@@ -1,3 +1,4 @@
+import cors from 'cors';
 import express, { ErrorRequestHandler, Express } from 'express';
 import expressSession from 'express-session';
 import * as http from 'http';
@@ -6,7 +7,7 @@ import { errorHandler } from './middlewaresCreators';
 import { FallbackRoute } from './Route';
 import { WebsocketServer } from './websocket';
 
-interface Route {
+export interface Route {
   register: (app: Express) => void;
 }
 
@@ -18,7 +19,7 @@ class FallbackErrorHandler {
 
 const fallbackErrorHandler = new FallbackRoute().use(errorHandler(new FallbackErrorHandler()));
 
-export const bootstrapServer = (routes: Route[]) => {
+export const createServer = (routes: Route[]) => {
   const session = expressSession({
     secret: 'secret',
     resave: false,
@@ -29,6 +30,7 @@ export const bootstrapServer = (routes: Route[]) => {
   const server = http.createServer(app);
   const wss = new WebsocketServer(server, session);
 
+  app.use(cors({ origin: true, credentials: true }));
   app.use(session);
   app.use(express.json());
 
