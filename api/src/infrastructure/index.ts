@@ -1,33 +1,33 @@
 import { ErrorRequestHandler, Request } from 'express';
 import { Connection } from 'typeorm';
 
-import { CreateAnswerCommand, CreateAnswerHandler } from '../../application/commands/CreateAnswerCommand';
-import { CreateGameCommand, CreateGameHandler } from '../../application/commands/CreateGameCommand';
-import { JoinGameCommand, JoinGameHandler } from '../../application/commands/JoinGameCommand';
-import { LoginCommand, LoginHandler } from '../../application/commands/LoginCommand';
-import { NextTurnHandler } from '../../application/commands/NextTurnCommand';
-import { SelectWinnerCommand, SelectWinnerHandler } from '../../application/commands/SelectWinnerCommand';
-import { StartGameCommand, StartGameHandler } from '../../application/commands/StartGameCommand';
-import { GameEventsHandler } from '../../application/handlers/GameEventsHandler';
-import { PlayerEventsHandler } from '../../application/handlers/PlayerEventsHandler';
-import { SessionStore } from '../../application/interfaces/SessionStore';
-import { GetGameHandler, GetGameQuery } from '../../application/queries/GetGameQuery';
-import { GetPlayerHandler } from '../../application/queries/GetPlayerQuery';
-import { GameService } from '../../application/services/GameService';
-import { RandomService } from '../../application/services/RandomService';
-import { PlayerRepository } from '../../domain/interfaces/PlayerRepository';
-import { Player } from '../../domain/models/Player';
-import { InMemoryGameRepository } from '../database/repositories/game/InMemoryGameRepository';
-import { SQLGameRepository } from '../database/repositories/game/SQLGameRepository';
-import { InMemoryPlayerRepository } from '../database/repositories/player/InMemoryPlayerRepository';
-import { SQLPlayerRepository } from '../database/repositories/player/SQLPlayerRepository';
-import { PubSub } from '../PubSub';
-import { StubExternalData } from '../stubs/StubExternalData';
+import { CreateAnswerCommand, CreateAnswerHandler } from '../application/commands/CreateAnswerCommand';
+import { CreateGameCommand, CreateGameHandler } from '../application/commands/CreateGameCommand';
+import { JoinGameCommand, JoinGameHandler } from '../application/commands/JoinGameCommand';
+import { LoginCommand, LoginHandler } from '../application/commands/LoginCommand';
+import { NextTurnHandler } from '../application/commands/NextTurnCommand';
+import { SelectWinnerCommand, SelectWinnerHandler } from '../application/commands/SelectWinnerCommand';
+import { StartGameCommand, StartGameHandler } from '../application/commands/StartGameCommand';
+import { GameEventsHandler } from '../application/handlers/GameEventsHandler';
+import { PlayerEventsHandler } from '../application/handlers/PlayerEventsHandler';
+import { SessionStore } from '../application/interfaces/SessionStore';
+import { GetGameHandler, GetGameQuery } from '../application/queries/GetGameQuery';
+import { GetPlayerHandler } from '../application/queries/GetPlayerQuery';
+import { GameService } from '../application/services/GameService';
+import { RandomService } from '../application/services/RandomService';
+import { PlayerRepository } from '../domain/interfaces/PlayerRepository';
+import { Player } from '../domain/models/Player';
 
-import { context, dto, errorHandler, guard, handler, middleware, status } from './middlewaresCreators';
-import { FallbackRoute, InputDto, Route } from './Route';
-import { createServer } from './web';
-import { WebsocketRTCManager } from './websocket';
+import { InMemoryGameRepository } from './database/repositories/game/InMemoryGameRepository';
+import { SQLGameRepository } from './database/repositories/game/SQLGameRepository';
+import { InMemoryPlayerRepository } from './database/repositories/player/InMemoryPlayerRepository';
+import { SQLPlayerRepository } from './database/repositories/player/SQLPlayerRepository';
+import { FilesystemExternalData } from './FilesystemExternalData';
+import { PubSub } from './PubSub';
+import { context, dto, errorHandler, guard, handler, middleware, status } from './web/middlewaresCreators';
+import { FallbackRoute, InputDto, Route } from './web/Route';
+import { createServer } from './web/web';
+import { WebsocketRTCManager } from './web/websocket';
 
 declare module 'express-session' {
   export interface SessionData {
@@ -92,14 +92,21 @@ const isNotAuthenticated = (req: Request) => {
   }
 };
 
-export const bootstrapServer = async (connection?: Connection) => {
+export type Config = {
+  connection?: Connection;
+  dataDir: string;
+};
+
+export const bootstrapServer = async (config: Config) => {
+  const { connection, dataDir } = config;
+
   const playerRepository = connection ? new SQLPlayerRepository(connection) : new InMemoryPlayerRepository();
   const gameRepository = connection ? new SQLGameRepository(connection) : new InMemoryGameRepository();
 
   const publisher = new PubSub();
   const gameService = new GameService(playerRepository, gameRepository, publisher);
   const randomService = new RandomService();
-  const externalData = new StubExternalData();
+  const externalData = new FilesystemExternalData(dataDir, randomService);
   const rtcManager = new WebsocketRTCManager();
 
   const gameEventsHandler = new GameEventsHandler(rtcManager);

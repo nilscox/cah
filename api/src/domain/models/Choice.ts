@@ -8,6 +8,13 @@ export class Choice extends Entity {
   constructor(private _text: string) {
     super();
   }
+
+  toJSON() {
+    return {
+      id: this.id,
+      text: this.text,
+    };
+  }
 }
 
 type ChoiceProps = {

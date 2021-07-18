@@ -44,6 +44,7 @@ export class StartGameHandler implements CommandHandler<StartGameCommand, void, 
   }
 
   private async getCards(game: Game, turns: number) {
+    // todo: handle not enough questions
     const questions = await this.externalData.pickRandomQuestions(turns);
     const choices = await this.externalData.pickRandomChoices(game.computeNeededChoicesCount(questions));
 

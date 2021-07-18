@@ -8,7 +8,10 @@ export class PlayerEventsHandler implements EventHandler<PlayerEvent> {
 
   execute(event: PlayerEvent) {
     if (event.type === 'CardsDealt') {
-      this.notify(event.player, { type: event.type, cards: event.cards });
+      this.notify(event.player, {
+        type: event.type,
+        cards: event.cards.map((choice) => choice.toJSON()),
+      });
     }
   }
 

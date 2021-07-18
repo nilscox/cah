@@ -1,17 +1,19 @@
 import { Server } from 'http';
+import path from 'path';
+
 import { io, Socket } from 'socket.io-client';
 import request from 'supertest';
 import { Connection, createConnection } from 'typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 import { Choice } from './domain/models/Choice';
+import { bootstrapServer } from './infrastructure';
 import { AnswerEntity } from './infrastructure/database/entities/AnswerEntity';
 import { ChoiceEntity } from './infrastructure/database/entities/ChoiceEntity';
 import { GameEntity } from './infrastructure/database/entities/GameEntity';
 import { PlayerEntity } from './infrastructure/database/entities/PlayerEntity';
 import { QuestionEntity } from './infrastructure/database/entities/QuestionEntity';
 import { TurnEntity } from './infrastructure/database/entities/TurnEntity';
-import { bootstrapServer } from './infrastructure/web';
 
 const port = 1222;
 const log = false;
@@ -181,7 +183,7 @@ class StubPlayer {
       throw new Error('not enough cards to create a selection');
     }
 
-    this.log(`answers ${JSON.stringify(selection)}`);
+    this.log(`answers "${selection.map(({ text }) => text).join(', ')}"`);
 
     await this.agent
       .post(`/answer`)
@@ -197,7 +199,7 @@ class StubPlayer {
       throw new Error('no answer to pick');
     }
 
-    this.log(`randomly picks ${answer.formatted}`);
+    this.log(`randomly picks "${answer.formatted}"`);
 
     await this.agent.post(`/select`).send({ answerId: answer.id }).expect(200);
   }
@@ -209,10 +211,7 @@ class StubPlayer {
   }
 }
 
-describe('e2e', function () {
-  this.slow(2000);
-  this.timeout(20000);
-
+describe('e2e', () => {
   let connection: Connection;
   let server: Server;
 
@@ -232,7 +231,11 @@ describe('e2e', function () {
   });
 
   before(async () => {
-    server = await bootstrapServer(inMemory ? undefined : connection);
+    server = await bootstrapServer({
+      connection: inMemory ? undefined : connection,
+      dataDir: path.resolve(__dirname, '..', 'data'),
+    });
+
     await new Promise<void>((resolve) => server.listen(port, resolve));
   });
 
@@ -251,7 +254,11 @@ describe('e2e', function () {
   });
 
   after((done) => {
-    server.close(done);
+    if (server) {
+      server?.close(done);
+    } else {
+      done();
+    }
   });
 
   after(async () => {
@@ -266,7 +273,10 @@ describe('e2e', function () {
     return players.filter((player) => !player.isQuestionMaster);
   };
 
-  it('plays a full game', async () => {
+  it('plays a full game', async function () {
+    this.slow(inMemory ? 500 : 3000);
+    this.timeout(inMemory ? 2000 : 6000);
+
     for (const player of players) {
       await player.authenticate();
     }
@@ -282,7 +292,7 @@ describe('e2e', function () {
     let turn = 1;
 
     while (questionMaster()) {
-      if (debug) {
+      if (log) {
         console.log(`\nturn #${turn++}\n`);
       }
 

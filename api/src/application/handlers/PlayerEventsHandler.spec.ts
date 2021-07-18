@@ -26,7 +26,12 @@ describe('PlayerEventsHandler', () => {
 
     expect(notifier.playerMessages(player)).to.deep.include({
       type: 'CardsDealt',
-      cards,
+      cards: [
+        {
+          id: cards[0].id,
+          text: cards[0].text,
+        },
+      ],
     });
   });
 });

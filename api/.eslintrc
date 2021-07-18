@@ -16,7 +16,7 @@
     "@typescript-eslint/no-empty-function": "off",
     "simple-import-sort/imports": ["warn", {
       "groups": [
-        ["^(path|fs|util)$"],
+        ["^(path|fs|util|http)$"],
         ["^[@a-z]"],
         ["^src/"],
         ["^../"],

@@ -1,0 +1,58 @@
+[
+  {
+    "text": "question 1.",
+    "blanks": null
+  },
+  {
+    "text": "question 2 :  ?",
+    "blanks": [13]
+  },
+  {
+    "text": "question 3,  ou  ?",
+    "blanks": [12, 16]
+  },
+  {
+    "text": "question 4.",
+    "blanks": null
+  },
+  {
+    "text": " : question 5!",
+    "blanks": [0]
+  },
+  {
+    "text": "question 6.",
+    "blanks": null
+  },
+  {
+    "text": ", question 7, , ...",
+    "blanks": [0, 14, 16]
+  },
+  {
+    "text": "question 8?",
+    "blanks": null
+  },
+  {
+    "text": "question 9, donc .",
+    "blanks": [17]
+  },
+  {
+    "text": "question 10 :  et  : , , mais pas .",
+    "blanks": [14, 18, 21, 23, 34]
+  },
+  {
+    "text": "question 11.",
+    "blanks": null
+  },
+  {
+    "text": "question 12.",
+    "blanks": null
+  },
+  {
+    "text": "question 13.",
+    "blanks": null
+  },
+  {
+    "text": "question 14.",
+    "blanks": null
+  }
+]
