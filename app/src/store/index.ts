@@ -1,20 +1,17 @@
-import { configureStore } from '@reduxjs/toolkit';
-import { TypedUseSelectorHook, useDispatch as reduxUseDispatch, useSelector as reduxUseSelector } from 'react-redux';
+import { applyMiddleware, combineReducers, createStore } from 'redux';
+import { composeWithDevTools } from 'redux-devtools-extension';
+import thunk from 'redux-thunk';
 
-import { playerSlice } from '../domain/playerSlice';
+import { playerReducer } from './reducers';
+import { AppThunkMiddleware, Dependencies } from './types';
 
-export const createStore = () => {
-  return configureStore({
-    reducer: {
-      player: playerSlice.reducer,
-    },
-  });
+const rootReducer = combineReducers({
+  player: playerReducer,
+});
+
+export const configureStore = (dependencies: Dependencies) => {
+  return createStore(
+    rootReducer,
+    composeWithDevTools(applyMiddleware(thunk.withExtraArgument(dependencies) as AppThunkMiddleware)),
+  );
 };
-
-export type Store = ReturnType<typeof createStore>;
-
-export type RootState = ReturnType<Store['getState']>;
-export type AppDispatch = Store['dispatch'];
-
-export const useDispatch = () => reduxUseDispatch<AppDispatch>();
-export const useSelector: TypedUseSelectorHook<RootState> = reduxUseSelector;

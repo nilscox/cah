@@ -1,13 +1,25 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
-import { setNick } from '../../domain/playerSlice';
-import { useDispatch, useSelector } from '../../store';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { connect } from '../../domain/player/connect/connect';
+import { fetchMe } from '../../domain/player/fetchMe/fetchMe';
+import { login } from '../../domain/player/login/login';
+import { AppState } from '../../store/types';
 
 const App: React.FC = () => {
-  const nick = useSelector((state) => state.player.nick);
+  const player = useSelector((state: AppState) => state.player);
   const dispatch = useDispatch();
 
-  return <button onClick={() => dispatch(setNick('Toto'))}>{nick}</button>;
+  useEffect(() => void dispatch(fetchMe()), [dispatch]);
+
+  useEffect(() => {
+    if (player) {
+      dispatch(connect());
+    }
+  }, [player?.nick, dispatch]);
+
+  return <button onClick={() => dispatch(login('Toto'))}>{player?.nick || 'log in'}</button>;
 };
 
 export default App;
