@@ -16,5 +16,7 @@ export class AggregateRoot<DomainEvent> extends Entity {
     for (const event of this.events) {
       publisher.publish(event);
     }
+
+    this.dropEvents();
   }
 }

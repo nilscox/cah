@@ -48,5 +48,9 @@ export class GameService {
     await this.playerRepository.save(game.players);
 
     game.publishEvents(this.publisher);
+
+    for (const player of game.players) {
+      player.publishEvents(this.publisher);
+    }
   }
 }

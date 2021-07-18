@@ -1,5 +1,4 @@
 import { AggregateRoot } from '../../ddd/AggregateRoot';
-import { EventPublisher } from '../../ddd/EventPublisher';
 import { GameState } from '../enums/GameState';
 import { PlayState } from '../enums/PlayState';
 import { AnswerNotFoundError } from '../errors/AnswerNotFoundError';
@@ -11,7 +10,7 @@ import { NotEnoughPlayersError } from '../errors/NotEnoughPlayersError';
 import { PlayerAlreadyAnsweredError } from '../errors/PlayerAlreadyAnsweredError';
 import { PlayerIsNotQuestionMasterError } from '../errors/PlayerIsNotQuestionMasterError';
 import { PlayerIsQuestionMasterError } from '../errors/PlayerIsQuestionMasterError';
-import { DomainEvent, GameEvent } from '../events';
+import { GameEvent } from '../events';
 import { AllPlayersAnsweredEvent } from '../events/AllPlayersAnsweredEvent';
 import { GameCreatedEvent } from '../events/GameCreatedEvent';
 import { GameFinishedEvent } from '../events/GameFinishedEvent';
@@ -60,24 +59,6 @@ export class Game extends AggregateRoot<GameEvent> {
 
   get roomId() {
     return `game-${this.id}`;
-  }
-
-  override publishEvents(publisher: EventPublisher<DomainEvent>) {
-    super.publishEvents(publisher);
-
-    for (const player of this.players) {
-      player.publishEvents(publisher);
-    }
-
-    this.dropEvents();
-  }
-
-  override dropEvents() {
-    super.dropEvents();
-
-    for (const player of this.players) {
-      player.dropEvents();
-    }
   }
 
   isStarted(): this is StartedGame {
