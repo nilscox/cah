@@ -1,4 +1,4 @@
-import { DomainError } from '../../ddd/DomainError';
+import { DomainError } from './DomainError';
 
 export class NoMoreChoiceError extends DomainError {
   constructor() {

@@ -1,5 +1,6 @@
 import { IsUUID } from 'class-validator';
 
+import { CommandHandler } from '../../ddd/CommandHandler';
 import { SessionStore } from '../interfaces/SessionStore';
 import { GameService } from '../services/GameService';
 import { RandomService } from '../services/RandomService';
@@ -13,7 +14,7 @@ export class CreateAnswerCommand {
   }
 }
 
-export class CreateAnswerHandler {
+export class CreateAnswerHandler implements CommandHandler<CreateAnswerCommand, void, SessionStore> {
   constructor(private readonly gameService: GameService, private readonly randomService: RandomService) {}
 
   async execute({ choicesIds }: CreateAnswerCommand, session: SessionStore) {

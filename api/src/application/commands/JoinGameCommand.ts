@@ -1,3 +1,4 @@
+import { CommandHandler } from '../../ddd/CommandHandler';
 import { PlayerIsAlreadyInGameError } from '../../domain/errors/PlayerIsAlreadyInGameError';
 import { GameRepository } from '../../domain/interfaces/GameRepository';
 import { RTCManager } from '../interfaces/RTCManager';
@@ -8,7 +9,7 @@ export class JoinGameCommand {
   constructor(public readonly gameId: string) {}
 }
 
-export class JoinGameHandler {
+export class JoinGameHandler implements CommandHandler<JoinGameCommand, void, SessionStore> {
   constructor(
     private readonly gameService: GameService,
     private readonly gameRepository: GameRepository,

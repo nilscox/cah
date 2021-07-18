@@ -1,5 +1,6 @@
-import { DomainError } from '../../ddd/DomainError';
 import { GameState } from '../enums/GameState';
+
+import { DomainError } from './DomainError';
 
 export class InvalidGameStateError extends DomainError {
   constructor(public readonly expected: GameState, public readonly actual: GameState) {

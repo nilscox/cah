@@ -1,5 +1,6 @@
 import { IsInt, IsUUID, Min } from 'class-validator';
 
+import { CommandHandler } from '../../ddd/CommandHandler';
 import { ExternalData } from '../../domain/interfaces/ExternalData';
 import { GameRepository } from '../../domain/interfaces/GameRepository';
 import { Game } from '../../domain/models/Game';
@@ -20,7 +21,7 @@ export class StartGameCommand {
   }
 }
 
-export class StartGameHandler {
+export class StartGameHandler implements CommandHandler<StartGameCommand, void, SessionStore> {
   constructor(
     private readonly gameService: GameService,
     private readonly gameRepository: GameRepository,

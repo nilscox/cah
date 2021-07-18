@@ -1,3 +1,4 @@
+import { CommandHandler } from '../../ddd/CommandHandler';
 import { PlayerIsAlreadyInGameError } from '../../domain/errors/PlayerIsAlreadyInGameError';
 import { GameRepository } from '../../domain/interfaces/GameRepository';
 import { Game } from '../../domain/models/Game';
@@ -7,14 +8,18 @@ import { GameService } from '../services/GameService';
 
 export class CreateGameCommand {}
 
-export class CreateGameHandler {
+export type CreateGameResult = {
+  id: string;
+};
+
+export class CreateGameHandler implements CommandHandler<CreateGameCommand, CreateGameResult, SessionStore> {
   constructor(
     private readonly gameService: GameService,
     private readonly gameRepository: GameRepository,
     private readonly rtcManager: RTCManager,
   ) {}
 
-  async execute(_: unknown, session: SessionStore) {
+  async execute(_: CreateGameCommand, session: SessionStore) {
     const player = session.player!;
 
     if (await this.gameRepository.findGameForPlayer(player.id)) {

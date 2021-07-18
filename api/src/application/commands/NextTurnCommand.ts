@@ -1,10 +1,11 @@
+import { CommandHandler } from '../../ddd/CommandHandler';
 import { GameRepository } from '../../domain/interfaces/GameRepository';
 import { SessionStore } from '../interfaces/SessionStore';
 import { GameService } from '../services/GameService';
 
 export class NextTurnCommand {}
 
-export class NextTurnHandler {
+export class NextTurnHandler implements CommandHandler<NextTurnCommand, void, SessionStore> {
   constructor(private readonly gameService: GameService, private readonly gameRepository: GameRepository) {}
 
   async execute(_: NextTurnCommand, session: SessionStore) {

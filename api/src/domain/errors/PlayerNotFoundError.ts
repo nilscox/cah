@@ -1,3 +1,3 @@
-import { DomainError } from '../../ddd/DomainError';
+import { DomainError } from './DomainError';
 
 export class PlayerNotFoundError extends DomainError {}

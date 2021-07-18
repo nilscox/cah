@@ -1,5 +1,6 @@
 import { IsUUID } from 'class-validator';
 
+import { CommandHandler } from '../../ddd/CommandHandler';
 import { SessionStore } from '../interfaces/SessionStore';
 import { GameService } from '../services/GameService';
 
@@ -12,7 +13,7 @@ export class SelectWinnerCommand {
   }
 }
 
-export class SelectWinnerHandler {
+export class SelectWinnerHandler implements CommandHandler<SelectWinnerCommand, void, SessionStore> {
   constructor(private readonly gameService: GameService) {}
 
   async execute({ answerId }: SelectWinnerCommand, session: SessionStore) {

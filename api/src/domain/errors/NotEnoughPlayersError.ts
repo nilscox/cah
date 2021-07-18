@@ -1,4 +1,4 @@
-import { DomainError } from '../../ddd/DomainError';
+import { DomainError } from './DomainError';
 
 export class NotEnoughPlayersError extends DomainError {
   constructor(public readonly minimumNumberOfPlayers: number, public readonly actualNumberOfPlayers: number) {
