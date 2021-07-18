@@ -37,8 +37,5 @@ export class SQLPlayerRepository implements PlayerRepository {
     const players = Array.isArray(player) ? player : [player];
 
     await this.repository.save(players.map(PlayerEntity.toPersistence));
-
-    // todo: is this necessary?
-    // await this.choiceRepository.save(player.getCards());
   }
 }

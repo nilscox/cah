@@ -20,6 +20,8 @@ const debug = false;
 const keepDatabase = debug;
 const logging = debug;
 
+const inMemory = false;
+
 const randInt = (min: number, max: number) => ~~(Math.random() * (max - min + 1)) + min;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -208,7 +210,7 @@ class StubPlayer {
 }
 
 describe('e2e', function () {
-  this.slow(500);
+  this.slow(2000);
   this.timeout(20000);
 
   let connection: Connection;
@@ -230,9 +232,7 @@ describe('e2e', function () {
   });
 
   before(async () => {
-    server = await bootstrapServer(connection);
-    // server = await main();
-
+    server = await bootstrapServer(inMemory ? undefined : connection);
     await new Promise<void>((resolve) => server.listen(port, resolve));
   });
 
@@ -277,7 +277,7 @@ describe('e2e', function () {
       await player.joinGame(gameId);
     }
 
-    await tom.startGame(jeanne, 5);
+    await tom.startGame(jeanne, 12);
 
     let turn = 1;
 

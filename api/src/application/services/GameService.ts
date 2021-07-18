@@ -5,6 +5,7 @@ import { DomainEvent } from '../../domain/events';
 import { GameRepository } from '../../domain/interfaces/GameRepository';
 import { PlayerRepository } from '../../domain/interfaces/PlayerRepository';
 import { Game } from '../../domain/models/Game';
+import { Player } from '../../domain/models/Player';
 
 export class GameService {
   constructor(
@@ -43,9 +44,13 @@ export class GameService {
     return game;
   }
 
-  async saveAndPublish(game: Game) {
+  async saveAndPublish(game: Game, player?: Player) {
     await this.gameRepository.save(game);
     await this.playerRepository.save(game.players);
+
+    if (player) {
+      this.playerRepository.save(player);
+    }
 
     game.publishEvents(this.publisher);
 

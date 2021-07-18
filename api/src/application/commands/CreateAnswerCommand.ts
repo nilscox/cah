@@ -25,6 +25,6 @@ export class CreateAnswerHandler implements CommandHandler<CreateAnswerCommand, 
 
     game.addAnswer(player, choices, this.randomService.randomize);
 
-    await this.gameService.saveAndPublish(game);
+    await this.gameService.saveAndPublish(game, player);
   }
 }
