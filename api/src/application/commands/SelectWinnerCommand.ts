@@ -1,7 +1,5 @@
 import { IsUUID } from 'class-validator';
 
-import { EventPublisher } from '../../ddd/EventPublisher';
-import { DomainEvent } from '../../domain/events';
 import { SessionStore } from '../interfaces/SessionStore';
 import { GameService } from '../services/GameService';
 
@@ -15,7 +13,7 @@ export class SelectWinnerCommand {
 }
 
 export class SelectWinnerHandler {
-  constructor(private readonly gameService: GameService, private readonly publisher: EventPublisher<DomainEvent>) {}
+  constructor(private readonly gameService: GameService) {}
 
   async execute({ answerId }: SelectWinnerCommand, session: SessionStore) {
     const player = session.player!;
@@ -23,6 +21,6 @@ export class SelectWinnerHandler {
 
     game.setWinningAnswer(player, answerId);
 
-    game.publishEvents(this.publisher);
+    await this.gameService.saveAndPublish(game);
   }
 }

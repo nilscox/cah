@@ -1,10 +1,9 @@
 import { IsInt, IsUUID, Min } from 'class-validator';
 
-import { EventPublisher } from '../../ddd/EventPublisher';
-import { DomainEvent } from '../../domain/events';
 import { ExternalData } from '../../domain/interfaces/ExternalData';
 import { GameRepository } from '../../domain/interfaces/GameRepository';
 import { Game } from '../../domain/models/Game';
+import { SessionStore } from '../interfaces/SessionStore';
 import { GameService } from '../services/GameService';
 
 export class StartGameCommand {
@@ -26,19 +25,21 @@ export class StartGameHandler {
     private readonly gameService: GameService,
     private readonly gameRepository: GameRepository,
     private readonly externalData: ExternalData,
-    private readonly publisher: EventPublisher<DomainEvent>,
   ) {}
 
-  async execute({ questionMasterId, turns }: StartGameCommand) {
-    const game = await this.gameService.getGameForPlayer(questionMasterId);
+  async execute({ questionMasterId, turns }: StartGameCommand, session: SessionStore) {
+    const player = session.player!;
+
+    const game = await this.gameService.getGameForPlayer(player.id);
+    // todo: check that the question master is in the game
     const questionMaster = await this.gameService.getPlayer(questionMasterId);
 
     const [questions, choices] = await this.getCards(game, turns);
 
-    await game.start(questionMaster, questions[0]);
-    await game.dealCards([...choices]);
+    game.start(questionMaster, questions[0]);
+    game.dealCards([...choices]);
 
-    game.publishEvents(this.publisher);
+    await this.gameService.saveAndPublish(game);
   }
 
   private async getCards(game: Game, turns: number) {

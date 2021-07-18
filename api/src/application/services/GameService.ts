@@ -1,10 +1,17 @@
+import { EventPublisher } from '../../ddd/EventPublisher';
 import { GameNotFoundError } from '../../domain/errors/GameNotFoundError';
 import { PlayerNotFoundError } from '../../domain/errors/PlayerNotFoundError';
+import { DomainEvent } from '../../domain/events';
 import { GameRepository } from '../../domain/interfaces/GameRepository';
 import { PlayerRepository } from '../../domain/interfaces/PlayerRepository';
+import { Game } from '../../domain/models/Game';
 
 export class GameService {
-  constructor(private readonly playerRepository: PlayerRepository, private readonly gameRepository: GameRepository) {}
+  constructor(
+    private readonly playerRepository: PlayerRepository,
+    private readonly gameRepository: GameRepository,
+    private readonly publisher: EventPublisher<DomainEvent>,
+  ) {}
 
   async getPlayer(playerId: string) {
     const player = await this.playerRepository.findPlayerById(playerId);
@@ -34,5 +41,12 @@ export class GameService {
     }
 
     return game;
+  }
+
+  async saveAndPublish(game: Game) {
+    await this.gameRepository.save(game);
+    await this.playerRepository.save(game.players);
+
+    game.publishEvents(this.publisher);
   }
 }

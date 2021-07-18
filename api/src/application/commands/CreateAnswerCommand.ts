@@ -1,7 +1,5 @@
 import { IsUUID } from 'class-validator';
 
-import { EventPublisher } from '../../ddd/EventPublisher';
-import { DomainEvent } from '../../domain/events';
 import { SessionStore } from '../interfaces/SessionStore';
 import { GameService } from '../services/GameService';
 import { RandomService } from '../services/RandomService';
@@ -16,11 +14,7 @@ export class CreateAnswerCommand {
 }
 
 export class CreateAnswerHandler {
-  constructor(
-    private readonly gameService: GameService,
-    private readonly randomService: RandomService,
-    private readonly publisher: EventPublisher<DomainEvent>,
-  ) {}
+  constructor(private readonly gameService: GameService, private readonly randomService: RandomService) {}
 
   async execute({ choicesIds }: CreateAnswerCommand, session: SessionStore) {
     const player = session.player!;
@@ -30,6 +24,6 @@ export class CreateAnswerHandler {
 
     game.addAnswer(player, choices, this.randomService.randomize);
 
-    game.publishEvents(this.publisher);
+    await this.gameService.saveAndPublish(game);
   }
 }

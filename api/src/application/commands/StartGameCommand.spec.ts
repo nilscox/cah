@@ -29,11 +29,11 @@ describe('StartGameCommand', () => {
   beforeEach(() => {
     gameRepository = new InMemoryGameRepository();
     playerRepository = new InMemoryPlayerRepository();
-    gameService = new GameService(playerRepository, gameRepository);
-    externalData = new StubExternalData();
     publisher = new StubEventPublisher();
+    gameService = new GameService(playerRepository, gameRepository, publisher);
+    externalData = new StubExternalData();
 
-    handler = new StartGameHandler(gameService, gameRepository, externalData, publisher);
+    handler = new StartGameHandler(gameService, gameRepository, externalData);
   });
 
   let builder: GameBuilder;
@@ -43,7 +43,7 @@ describe('StartGameCommand', () => {
   });
 
   const execute = (questionMaster: Player, turns: number) => {
-    return handler.execute(new StartGameCommand(questionMaster.id, turns));
+    return handler.execute(new StartGameCommand(questionMaster.id, turns), { player: questionMaster });
   };
 
   describe('when the game starts', () => {

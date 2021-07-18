@@ -1,5 +1,3 @@
-import { EventPublisher } from '../../ddd/EventPublisher';
-import { DomainEvent } from '../../domain/events';
 import { GameRepository } from '../../domain/interfaces/GameRepository';
 import { SessionStore } from '../interfaces/SessionStore';
 import { GameService } from '../services/GameService';
@@ -7,11 +5,7 @@ import { GameService } from '../services/GameService';
 export class NextTurnCommand {}
 
 export class NextTurnHandler {
-  constructor(
-    private readonly gameService: GameService,
-    private readonly gameRepository: GameRepository,
-    private readonly publisher: EventPublisher<DomainEvent>,
-  ) {}
+  constructor(private readonly gameService: GameService, private readonly gameRepository: GameRepository) {}
 
   async execute(_: NextTurnCommand, session: SessionStore) {
     const player = session.player!;
@@ -29,6 +23,6 @@ export class NextTurnHandler {
       game.finish();
     }
 
-    game.publishEvents(this.publisher);
+    await this.gameService.saveAndPublish(game);
   }
 }

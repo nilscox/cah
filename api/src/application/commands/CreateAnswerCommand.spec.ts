@@ -37,12 +37,12 @@ describe('CreateAnswerCommand', () => {
   beforeEach(() => {
     gameRepository = new InMemoryGameRepository();
     playerRepository = new InMemoryPlayerRepository();
-    gameService = new GameService(playerRepository, gameRepository);
+    publisher = new StubEventPublisher();
+    gameService = new GameService(playerRepository, gameRepository, publisher);
     externalData = new StubExternalData();
     randomService = new StubRandomService();
-    publisher = new StubEventPublisher();
 
-    handler = new CreateAnswerHandler(gameService, randomService, publisher);
+    handler = new CreateAnswerHandler(gameService, randomService);
   });
 
   let builder: GameBuilder;

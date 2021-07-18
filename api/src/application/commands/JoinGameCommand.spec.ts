@@ -29,11 +29,11 @@ describe('JoinGameCommand', () => {
   beforeEach(async () => {
     gameRepository = new InMemoryGameRepository();
     playerRepository = new InMemoryPlayerRepository();
-    gameService = new GameService(playerRepository, gameRepository);
     publisher = new StubEventPublisher();
+    gameService = new GameService(playerRepository, gameRepository, publisher);
     rtcManager = new StubRTCManager();
 
-    handler = new JoinGameHandler(gameService, gameRepository, publisher, rtcManager);
+    handler = new JoinGameHandler(gameService, gameRepository, rtcManager);
 
     game = new Game();
     await gameRepository.save(game);

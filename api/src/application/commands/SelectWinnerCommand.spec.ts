@@ -27,11 +27,11 @@ describe('SelectWinnerCommand', () => {
   beforeEach(() => {
     gameRepository = new InMemoryGameRepository();
     playerRepository = new InMemoryPlayerRepository();
-    gameService = new GameService(playerRepository, gameRepository);
-    externalData = new StubExternalData();
     publisher = new StubEventPublisher();
+    gameService = new GameService(playerRepository, gameRepository, publisher);
+    externalData = new StubExternalData();
 
-    handler = new SelectWinnerHandler(gameService, publisher);
+    handler = new SelectWinnerHandler(gameService);
   });
 
   let builder: GameBuilder;

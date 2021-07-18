@@ -25,11 +25,11 @@ describe('NextTurnCommand', () => {
   beforeEach(() => {
     gameRepository = new InMemoryGameRepository();
     playerRepository = new InMemoryPlayerRepository();
-    gameService = new GameService(playerRepository, gameRepository);
-    externalData = new StubExternalData();
     publisher = new StubEventPublisher();
+    gameService = new GameService(playerRepository, gameRepository, publisher);
+    externalData = new StubExternalData();
 
-    handler = new NextTurnHandler(gameService, gameRepository, publisher);
+    handler = new NextTurnHandler(gameService, gameRepository);
   });
 
   let builder: GameBuilder;

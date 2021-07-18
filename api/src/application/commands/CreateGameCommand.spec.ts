@@ -4,14 +4,18 @@ import { PlayerIsAlreadyInGameError } from '../../domain/errors/PlayerIsAlreadyI
 import { Game } from '../../domain/models/Game';
 import { Player } from '../../domain/models/Player';
 import { InMemoryGameRepository } from '../../infrastructure/repositories/InMemoryGameRepository';
+import { InMemoryPlayerRepository } from '../../infrastructure/repositories/InMemoryPlayerRepository';
 import { StubEventPublisher } from '../../infrastructure/stubs/StubEventPublisher';
 import { StubRTCManager } from '../../infrastructure/stubs/StubRTCManager';
 import { StubSessionStore } from '../../infrastructure/stubs/StubSessionStore';
+import { GameService } from '../services/GameService';
 
 import { CreateGameHandler } from './CreateGameCommand';
 
 describe('CreateGameCommand', () => {
   let gameRepository: InMemoryGameRepository;
+  let playerRepository: InMemoryPlayerRepository;
+  let gameService: GameService;
   let publisher: StubEventPublisher;
   let rtcManager: StubRTCManager;
 
@@ -22,10 +26,12 @@ describe('CreateGameCommand', () => {
 
   beforeEach(() => {
     gameRepository = new InMemoryGameRepository();
+    playerRepository = new InMemoryPlayerRepository();
     publisher = new StubEventPublisher();
+    gameService = new GameService(playerRepository, gameRepository, publisher);
     rtcManager = new StubRTCManager();
 
-    handler = new CreateGameHandler(gameRepository, publisher, rtcManager);
+    handler = new CreateGameHandler(gameService, gameRepository, rtcManager);
 
     session = new StubSessionStore();
     player = session.player = new Player('player');

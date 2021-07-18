@@ -12,7 +12,11 @@ export class InMemoryPlayerRepository implements PlayerRepository {
     return [...this.players.values()].find((player) => player.nick === nick);
   }
 
-  async save(player: Player): Promise<void> {
-    this.players.set(player.id, player);
+  async save(player: Player | Player[]): Promise<void> {
+    if (Array.isArray(player)) {
+      await Promise.all(player.map((player) => this.save(player)));
+    } else {
+      this.players.set(player.id, player);
+    }
   }
 }
