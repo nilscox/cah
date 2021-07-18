@@ -3,12 +3,7 @@ import { Connection, createConnection } from 'typeorm';
 
 import { PlayerRepository } from '../../../../domain/interfaces/PlayerRepository';
 import { Player } from '../../../../domain/models/Player';
-import { AnswerEntity } from '../../entities/AnswerEntity';
-import { ChoiceEntity } from '../../entities/ChoiceEntity';
-import { GameEntity } from '../../entities/GameEntity';
-import { PlayerEntity } from '../../entities/PlayerEntity';
-import { QuestionEntity } from '../../entities/QuestionEntity';
-import { TurnEntity } from '../../entities/TurnEntity';
+import { entities } from '../../entities';
 
 import { InMemoryPlayerRepository } from './InMemoryPlayerRepository';
 import { SQLPlayerRepository } from './SQLPlayerRepository';
@@ -64,7 +59,7 @@ describe('SQLPlayerRepository', () => {
     connection = await createConnection({
       type: 'sqlite',
       database: ':memory:',
-      entities: [PlayerEntity, GameEntity, ChoiceEntity, QuestionEntity, AnswerEntity, TurnEntity],
+      entities,
       synchronize: true,
     });
   });

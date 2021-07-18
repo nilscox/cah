@@ -2,16 +2,13 @@ import { Connection, Repository } from 'typeorm';
 
 import { PlayerRepository } from '../../../../domain/interfaces/PlayerRepository';
 import { Player } from '../../../../domain/models/Player';
-import { ChoiceEntity } from '../../entities/ChoiceEntity';
 import { PlayerEntity } from '../../entities/PlayerEntity';
 
 export class SQLPlayerRepository implements PlayerRepository {
   private readonly repository: Repository<PlayerEntity>;
-  private readonly choiceRepository: Repository<ChoiceEntity>;
 
   constructor(connection: Connection) {
     this.repository = connection.getRepository(PlayerEntity);
-    this.choiceRepository = connection.getRepository(ChoiceEntity);
   }
 
   async findAll(): Promise<Player[]> {

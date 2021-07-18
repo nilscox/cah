@@ -6,6 +6,7 @@
   "scripts": {
     "start": "ts-node src/index.ts",
     "start:dev": "TS_NODE_TRANSPILE_ONLY=true nodemon src -e ts -x 'yarn start'",
+    "cah": "TS_NODE_TRANSPILE_ONLY=true ts-node src/cli.ts",
     "build": "tsc",
     "test": "TS_NODE_TRANSPILE_ONLY=true mocha",
     "lint": "eslint src"

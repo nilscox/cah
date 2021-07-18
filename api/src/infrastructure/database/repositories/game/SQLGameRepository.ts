@@ -28,7 +28,19 @@ export class SQLGameRepository implements GameRepository {
   }
 
   async findAll(): Promise<Game[]> {
-    const entities = await this.repository.find({ relations: ['players'] });
+    const entities = await this.repository.find({
+      relations: [
+        'players',
+        'players.cards',
+        'questionMaster',
+        'question',
+        'currentAnswers',
+        'currentAnswers.player',
+        'currentAnswers.question',
+        'currentAnswers.choices',
+        'winner',
+      ],
+    });
 
     return entities.map(GameEntity.toDomain);
   }

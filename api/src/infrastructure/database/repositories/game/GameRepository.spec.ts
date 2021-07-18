@@ -13,12 +13,7 @@ import { Player } from '../../../../domain/models/Player';
 import { createQuestion, createQuestions } from '../../../../domain/models/Question';
 import { GameBuilder } from '../../../../utils/GameBuilder';
 import { StubExternalData } from '../../../stubs/StubExternalData';
-import { AnswerEntity } from '../../entities/AnswerEntity';
-import { ChoiceEntity } from '../../entities/ChoiceEntity';
-import { GameEntity } from '../../entities/GameEntity';
-import { PlayerEntity } from '../../entities/PlayerEntity';
-import { QuestionEntity } from '../../entities/QuestionEntity';
-import { TurnEntity } from '../../entities/TurnEntity';
+import { entities } from '../../entities';
 import { InMemoryPlayerRepository } from '../player/InMemoryPlayerRepository';
 import { SQLPlayerRepository } from '../player/SQLPlayerRepository';
 
@@ -280,7 +275,7 @@ describe('SQLGameRepository', () => {
     connection = await createConnection({
       type: 'sqlite',
       database: keepDatabase ? './db.sqlite' : ':memory:',
-      entities: [PlayerEntity, GameEntity, QuestionEntity, ChoiceEntity, AnswerEntity, TurnEntity],
+      entities,
       synchronize: true,
       logging,
       namingStrategy: new SnakeNamingStrategy(),
