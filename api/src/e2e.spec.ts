@@ -150,9 +150,7 @@ class StubPlayer {
 
     const { body: game } = await this.agent.post('/game').expect(201);
 
-    this.gameId = game.id;
-
-    return this.gameId as string;
+    return game;
   }
 
   async joinGame(gameId: string) {
@@ -281,10 +279,10 @@ describe('e2e', () => {
       await player.authenticate();
     }
 
-    const gameId = await nils.createGame();
+    const game = await nils.createGame();
 
     for (const player of players.slice(1)) {
-      await player.joinGame(gameId);
+      await player.joinGame(game.code);
     }
 
     await tom.startGame(jeanne, 12);

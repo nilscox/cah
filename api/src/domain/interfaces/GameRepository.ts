@@ -6,6 +6,7 @@ import { Turn } from '../models/Turn';
 export interface GameRepository {
   findAll(): Promise<Game[]>;
   findGameById(id: string): Promise<Game | undefined>;
+  findGameByCode(code: string): Promise<Game | undefined>;
   findGameForPlayer(playerId: string): Promise<Game | undefined>;
   addQuestions(gameId: string, questions: Question[]): Promise<void>;
   findNextAvailableQuestion(gameId: string): Promise<Question | undefined>;

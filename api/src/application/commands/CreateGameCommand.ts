@@ -33,6 +33,6 @@ export class CreateGameHandler implements CommandHandler<CreateGameCommand, Crea
 
     await this.gameService.saveAndPublish(game);
 
-    return { id: game.id };
+    return game;
   }
 }

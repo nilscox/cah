@@ -5,11 +5,15 @@ import { GameFinishedEvent } from './GameFinishedEvent';
 import { GameJoinedEvent } from './GameJoinedEvent';
 import { GameStartedEvent } from './GameStartedEvent';
 import { PlayerAnsweredEvent } from './PlayerAnsweredEvent';
+import { PlayerConnectedEvent } from './PlayerConnectedEvent';
+import { PlayerDisconnectedEvent } from './PlayerDisconnectedEvent';
 import { TurnFinishedEvent } from './TurnFinishedEvent';
 import { TurnStartedEvent } from './TurnStartedEvent';
 import { WinnerSelectedEvent } from './WinnerSelectedEvent';
 
 export type GameEvent =
+  | PlayerConnectedEvent
+  | PlayerDisconnectedEvent
   | GameCreatedEvent
   | GameJoinedEvent
   | GameStartedEvent

@@ -27,7 +27,7 @@ import { PubSub } from './PubSub';
 import { context, dto, errorHandler, guard, handler, middleware, status } from './web/middlewaresCreators';
 import { FallbackRoute, InputDto, Route } from './web/Route';
 import { createServer } from './web/web';
-import { WebsocketRTCManager } from './web/websocket';
+import { WebsocketRTCManager, WebsocketServer } from './web/websocket';
 
 declare module 'express-session' {
   export interface SessionData {
@@ -107,7 +107,9 @@ export const bootstrapServer = async (config: Config) => {
   const gameService = new GameService(playerRepository, gameRepository, publisher);
   const randomService = new RandomService();
   const externalData = new FilesystemExternalData(dataDir, randomService);
-  const rtcManager = new WebsocketRTCManager();
+
+  const wss = new WebsocketServer();
+  const rtcManager = new WebsocketRTCManager(playerRepository, gameRepository, wss, publisher);
 
   const gameEventsHandler = new GameEventsHandler(rtcManager);
   const playerEventsHandler = new PlayerEventsHandler(rtcManager);
@@ -152,9 +154,9 @@ export const bootstrapServer = async (config: Config) => {
       .use(status(201))
       .use(handler(new CreateGameHandler(gameService, gameRepository, rtcManager))),
 
-    new Route('post', '/game/:gameId/join')
+    new Route('post', '/game/:gameCode/join')
       .use(...authPlayerContext)
-      .use(dto((req) => new JoinGameCommand(req.params.gameId)))
+      .use(dto((req) => new JoinGameCommand(req.params.gameCode)))
       .use(handler(new JoinGameHandler(gameService, gameRepository, rtcManager))),
 
     new Route('post', '/start')
@@ -181,9 +183,5 @@ export const bootstrapServer = async (config: Config) => {
       .use((req, res) => res.status(404).end()),
   ];
 
-  const [_app, server, wss] = createServer(routes);
-
-  rtcManager.wss = wss;
-
-  return server;
+  return createServer(routes, wss);
 };

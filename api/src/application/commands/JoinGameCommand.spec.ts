@@ -43,7 +43,7 @@ describe('JoinGameCommand', () => {
   });
 
   const execute = () => {
-    return handler.execute({ gameId: game.id }, session);
+    return handler.execute({ gameCode: game.code }, session);
   };
 
   it('joins a game', async () => {

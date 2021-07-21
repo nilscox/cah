@@ -65,6 +65,31 @@ export class SQLGameRepository implements GameRepository {
     }
   }
 
+  async findGameByCode(code: string): Promise<Game | undefined> {
+    const entity = await this.repository.findOne(
+      {
+        code,
+      },
+      {
+        relations: [
+          'players',
+          'players.cards',
+          'questionMaster',
+          'question',
+          'currentAnswers',
+          'currentAnswers.player',
+          'currentAnswers.question',
+          'currentAnswers.choices',
+          'winner',
+        ],
+      },
+    );
+
+    if (entity) {
+      return GameEntity.toDomain(entity);
+    }
+  }
+
   async findGameForPlayer(playerId: string): Promise<Game | undefined> {
     const game = await this.repository
       .createQueryBuilder('game')

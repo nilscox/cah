@@ -9,13 +9,13 @@ import { HttpUnauthorizedError } from './errors';
 import { context, dto, errorHandler, guard, handler, middleware, status } from './middlewaresCreators';
 import { FallbackRoute, Route } from './Route';
 import { createServer, Route as IRoute } from './web';
+import { WebsocketServer } from './websocket';
 
 describe('web', () => {
   const defaultHandler = handler({ execute: () => {} });
 
   const createAgent = (routes: IRoute[]) => {
-    const [app] = createServer(routes);
-    return request.agent(app);
+    return request.agent(createServer(routes, new WebsocketServer()));
   };
 
   it('registers a route doing nothing', async () => {

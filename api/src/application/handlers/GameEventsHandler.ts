@@ -9,6 +9,8 @@ export class GameEventsHandler implements EventHandler<GameEvent> {
 
   execute(event: GameEvent) {
     switch (event.type) {
+      case 'PlayerConnected':
+      case 'PlayerDisconnected':
       case 'GameJoined':
         this.notify(event.game, {
           type: event.type,
