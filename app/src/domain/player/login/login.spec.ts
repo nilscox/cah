@@ -1,23 +1,35 @@
-import { configureStore } from '../../../store';
-import { expectPartialState } from '../../../store/utils';
-import { InMemoryGameGateway } from '../../gateways/InMemoryGameGateway';
-import { InMemoryPlayerGateway } from '../../gateways/InMemoryPlayerGateway';
-import { InMemoryRTCGateway } from '../../gateways/InMemoryRTCGateway';
+import expect from 'expect';
+
+import { AppStore } from '../../../store/types';
+import { expectPartialState, inMemoryStore } from '../../../store/utils';
+import { InMemoryRouterGateway } from '../../gateways/InMemoryRouterGateway';
 
 import { login } from './login';
 
 describe('login', () => {
+  let routerGateway: InMemoryRouterGateway;
+
+  let store: AppStore;
+
+  beforeEach(() => {
+    routerGateway = new InMemoryRouterGateway();
+
+    store = inMemoryStore({ routerGateway });
+  });
+
   it('logs in', async () => {
-    const playerGateway = new InMemoryPlayerGateway();
-    const gameGateway = new InMemoryGameGateway();
-    const rtcGateway = new InMemoryRTCGateway();
-
-    const store = configureStore({ playerGateway, gameGateway, rtcGateway });
-
     await store.dispatch(login('Toto'));
 
     expectPartialState(store, 'player', {
       nick: 'Toto',
     });
+  });
+
+  it('redirects to the home page', async () => {
+    routerGateway.push('/login');
+
+    await store.dispatch(login('Tata'));
+
+    expect(routerGateway.pathname).toEqual('/');
   });
 });

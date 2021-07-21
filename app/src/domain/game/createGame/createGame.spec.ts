@@ -1,19 +1,25 @@
+import expect from 'expect';
+
 import { GameState } from '../../../interfaces/entities/Game';
-import { configureStore } from '../../../store';
-import { expectState } from '../../../store/utils';
-import { InMemoryGameGateway } from '../../gateways/InMemoryGameGateway';
-import { InMemoryPlayerGateway } from '../../gateways/InMemoryPlayerGateway';
-import { InMemoryRTCGateway } from '../../gateways/InMemoryRTCGateway';
+import { AppStore } from '../../../store/types';
+import { expectState, inMemoryStore } from '../../../store/utils';
+import { InMemoryRouterGateway } from '../../gateways/InMemoryRouterGateway';
 
 import { createGame } from './createGame';
 
 describe('createGame', () => {
-  it('creates a game', async () => {
-    const playerGateway = new InMemoryPlayerGateway();
-    const gameGateway = new InMemoryGameGateway();
-    const rtcGateway = new InMemoryRTCGateway();
+  let routerGateway: InMemoryRouterGateway;
 
-    const store = configureStore({ playerGateway, gameGateway, rtcGateway });
+  let store: AppStore;
+
+  beforeEach(() => {
+    routerGateway = new InMemoryRouterGateway();
+
+    store = inMemoryStore({ routerGateway });
+  });
+
+  it('creates a game', async () => {
+    const store = inMemoryStore();
 
     await store.dispatch(createGame());
 
@@ -23,5 +29,11 @@ describe('createGame', () => {
       state: GameState.idle,
       players: [],
     });
+  });
+
+  it('redirects to the game view', async () => {
+    await store.dispatch(createGame());
+
+    expect(routerGateway.pathname).toEqual('/game/OK42');
   });
 });

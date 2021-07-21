@@ -52,6 +52,7 @@
   },
   "dependencies": {
     "axios": "^0.21.1",
+    "history": "^4",
     "jetbrains-mono": "^1.0.5",
     "normalize.css": "^8.0.1",
     "react": "^17.0.2",
