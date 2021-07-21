@@ -26,6 +26,8 @@
   "rules": {
     "no-console": "off",
     "@typescript-eslint/explicit-module-boundary-types": "off",
+    "react/prop-types": "off",
+    "react/no-unescaped-entities": "off",
     "simple-import-sort/imports": ["warn", {
       "groups": [
         ["^(react|react-dom)$"],

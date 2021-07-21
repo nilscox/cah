@@ -9,16 +9,22 @@ import { HTTPAdapter } from './HTTPAdapter';
 export class HTTPGameGateway implements GameGateway {
   constructor(private readonly http: HTTPAdapter) {}
 
-  fetchGame(gameId: string): Promise<Game> {
-    throw new Error('Method not implemented.');
+  async fetchGame(gameId: string): Promise<Game> {
+    const { body } = await this.http.get<Game>(`/game/${gameId}`);
+
+    return body;
   }
 
-  createGame(): Promise<void> {
-    throw new Error('Method not implemented.');
+  async createGame(): Promise<Game> {
+    const { body } = await this.http.post<Game>('/game');
+
+    return body;
   }
 
-  joinGame(gameCode: string): Promise<void> {
-    throw new Error('Method not implemented.');
+  async joinGame(code: string): Promise<Game> {
+    const { body } = await this.http.post<Game>(`/game/${code}/join`);
+
+    return body;
   }
 
   startGame(questionMaster: Player, turns: number): Promise<void> {

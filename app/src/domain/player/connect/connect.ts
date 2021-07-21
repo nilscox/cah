@@ -1,6 +1,5 @@
-import { createAction, ThunkResult } from '../../../store/createAction';
-
-export const setConnected = createAction('player/set-connected');
+import { ThunkResult } from '../../../store/createAction';
+import { setConnected } from '../../actions';
 
 export const connect = (): ThunkResult<Promise<void>> => {
   return async (dispatch, _getState, { rtcGateway }) => {

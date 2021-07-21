@@ -1,21 +1,22 @@
 import { Store } from 'redux';
 import { ThunkMiddleware } from 'redux-thunk';
 
-import { setConnected } from '../domain/player/connect/connect';
-import { setPlayer } from '../domain/player/login/login';
+import { Actions } from '../domain/actions';
 import { GameGateway } from '../interfaces/gateways/GameGateway';
 import { PlayerGateway } from '../interfaces/gateways/PlayerGateway';
 import { RTCGateway } from '../interfaces/gateways/RTCGateway';
 
-import { PlayerState } from './reducers';
+import { AppState as A, GameState, PlayerState } from './reducers';
 
 export type Nullable<T> = T | null;
 
 export type AppState = {
   player: PlayerState;
+  game: GameState;
+  app: A;
 };
 
-export type AppAction = ReturnType<typeof setPlayer | typeof setConnected>;
+export type AppAction = Actions;
 
 export type Dependencies = {
   playerGateway: PlayerGateway;

@@ -1,7 +1,7 @@
 /* eslint-disable */
 
 const path = require('path');
-const { HotModuleReplacementPlugin } = require('webpack');
+const { DefinePlugin, EnvironmentPlugin, HotModuleReplacementPlugin } = require('webpack');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
@@ -17,6 +17,7 @@ module.exports = {
   output: {
     filename: '[name].[contenthash].js',
     path: path.resolve(__dirname, 'dist'),
+    publicPath: '/',
   },
 
   resolve: {
@@ -33,6 +34,24 @@ module.exports = {
           target: 'es6',
         },
       },
+
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader'],
+      },
+
+      {
+        test: /\.svg$/,
+        loader: '@svgr/webpack',
+      },
+
+      {
+        test: /\.(woff|woff2|eot|ttf|otf)$/,
+        loader: 'file-loader',
+        options: {
+          name: '[name].[contenthash].[ext]',
+        },
+      },
     ],
   },
 
@@ -40,11 +59,14 @@ module.exports = {
     dev && new HotModuleReplacementPlugin(),
     dev && new ReactRefreshWebpackPlugin(),
     new HtmlWebpackPlugin(),
+    new DefinePlugin({ process: { env: {} } }),
+    new EnvironmentPlugin(),
   ].filter(Boolean),
 
   devServer: {
     host: HOST,
     port: Number(PORT),
     hot: true,
+    historyApiFallback: true,
   },
 };

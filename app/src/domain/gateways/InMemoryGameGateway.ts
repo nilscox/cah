@@ -3,18 +3,19 @@ import { Choice } from '../../interfaces/entities/Choice';
 import { Game } from '../../interfaces/entities/Game';
 import { Player } from '../../interfaces/entities/Player';
 import { GameGateway } from '../../interfaces/gateways/GameGateway';
+import { createGame } from '../../utils/factories';
 
 export class InMemoryGameGateway implements GameGateway {
-  fetchGame(gameId: string): Promise<Game> {
-    throw new Error('Method not implemented.');
+  async fetchGame(gameId: string): Promise<Game> {
+    return createGame({ id: gameId });
   }
 
-  createGame(): Promise<void> {
-    throw new Error('Method not implemented.');
+  async createGame(): Promise<Game> {
+    return createGame({ code: 'OK42' });
   }
 
-  joinGame(gameCode: string): Promise<void> {
-    throw new Error('Method not implemented.');
+  async joinGame(gameCode: string): Promise<Game> {
+    return createGame({ code: gameCode });
   }
 
   startGame(questionMaster: Player, turns: number): Promise<void> {

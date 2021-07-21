@@ -1,8 +1,5 @@
-import { Player } from '../../../interfaces/entities/Player';
-import { createAction, ThunkResult } from '../../../store/createAction';
-import { connect } from '../connect/connect';
-
-export const setPlayer = createAction<Player, 'player/set'>('player/set');
+import { ThunkResult } from '../../../store/createAction';
+import { setPlayer } from '../../actions';
 
 export const login = (nick: string): ThunkResult<Promise<void>> => {
   return async (dispatch, _getState, { playerGateway }) => {

@@ -1,6 +1,5 @@
-import expect from 'expect';
-
 import { configureStore } from '../../../store';
+import { expectPartialState } from '../../../store/utils';
 import { InMemoryGameGateway } from '../../gateways/InMemoryGameGateway';
 import { InMemoryPlayerGateway } from '../../gateways/InMemoryPlayerGateway';
 import { InMemoryRTCGateway } from '../../gateways/InMemoryRTCGateway';
@@ -17,13 +16,8 @@ describe('login', () => {
 
     await store.dispatch(login('Toto'));
 
-    expect(store.getState()).toEqual({
-      player: {
-        id: 'id',
-        nick: 'Toto',
-        connected: false,
-        gameId: undefined,
-      },
+    expectPartialState(store, 'player', {
+      nick: 'Toto',
     });
   });
 });

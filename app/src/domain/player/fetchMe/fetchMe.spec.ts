@@ -1,6 +1,5 @@
-import expect from 'expect';
-
 import { configureStore } from '../../../store';
+import { expectPartialState, expectState } from '../../../store/utils';
 import { InMemoryGameGateway } from '../../gateways/InMemoryGameGateway';
 import { InMemoryPlayerGateway } from '../../gateways/InMemoryPlayerGateway';
 import { InMemoryRTCGateway } from '../../gateways/InMemoryRTCGateway';
@@ -17,8 +16,7 @@ describe('fetchMe', () => {
 
     await store.dispatch(fetchMe());
 
-    expect(store.getState()).toEqual({
-      player: null,
-    });
+    expectPartialState(store, 'player', {});
+    expectState(store, 'app', { ready: true });
   });
 });

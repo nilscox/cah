@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 
 import axios from 'axios';
 import { Provider as ReduxProvider } from 'react-redux';
+import { BrowserRouter } from 'react-router-dom';
 
 import { configureStore } from '../../store';
 import { Dependencies } from '../../store/types';
@@ -13,6 +14,11 @@ import { WSAdapter } from '../gateways/WSAdapter';
 import { WSRTCGateway } from '../gateways/WSRTCGateway';
 
 import App from './App';
+import { GlobalStyles } from './styles/GlobalStyles';
+import ThemeProvider from './styles/ThemeProvider';
+
+import 'normalize.css';
+import 'jetbrains-mono';
 
 const axiosInstance = axios.create({
   baseURL: 'http://localhost:4242',
@@ -33,8 +39,13 @@ const dependencies: Dependencies = {
 const store = configureStore(dependencies);
 
 ReactDOM.render(
-  <ReduxProvider store={store}>
-    <App />
-  </ReduxProvider>,
+  <BrowserRouter>
+    <ReduxProvider store={store}>
+      <ThemeProvider>
+        <GlobalStyles />
+        <App />
+      </ThemeProvider>
+    </ReduxProvider>
+  </BrowserRouter>,
   document.getElementById('app'),
 );

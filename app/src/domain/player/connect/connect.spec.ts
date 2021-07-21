@@ -1,19 +1,12 @@
-import expect from 'expect';
-
-import { Player } from '../../../interfaces/entities/Player';
 import { configureStore } from '../../../store';
+import { expectPartialState } from '../../../store/utils';
+import { createPlayer } from '../../../utils/factories';
+import { setPlayer } from '../../actions';
 import { InMemoryGameGateway } from '../../gateways/InMemoryGameGateway';
 import { InMemoryPlayerGateway } from '../../gateways/InMemoryPlayerGateway';
 import { InMemoryRTCGateway } from '../../gateways/InMemoryRTCGateway';
-import { setPlayer } from '../login/login';
 
 import { connect } from './connect';
-
-const createPlayer = (nick = 'player'): Player => ({
-  id: 'id',
-  nick,
-  isConnected: false,
-});
 
 describe('connect', () => {
   it('connects to the server', async () => {
@@ -27,10 +20,8 @@ describe('connect', () => {
 
     await store.dispatch(connect());
 
-    expect(store.getState()).toEqual({
-      player: expect.objectContaining({
-        connected: true,
-      }),
+    expectPartialState(store, 'player', {
+      isConnected: true,
     });
   });
 });
