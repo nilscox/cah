@@ -77,9 +77,9 @@ export class WebsocketRTCManager implements RTCManager, Notifier {
       const game = await this.gameRepository.findGameById(player.gameId);
 
       if (game) {
-        this.publisher.publish(new PlayerConnectedEvent(game, player));
-
         this.join(game, player);
+
+        this.publisher.publish(new PlayerConnectedEvent(game, player));
       }
     }
   }

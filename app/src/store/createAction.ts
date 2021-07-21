@@ -8,7 +8,7 @@ type ActionWithPayload<Payload, Type> = Action<Type> & {
 };
 
 type PayloadActionCreator<P = void, T extends string = string> = (
-  payload?: P,
+  payload: P,
 ) => P extends void ? Action<T> : ActionWithPayload<P, T>;
 
 export function createAction<P = void, T extends string = string>(type: T): PayloadActionCreator<P, T>;

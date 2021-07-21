@@ -13,6 +13,10 @@ const redirect = (router: RouterGateway, player?: Player) => {
   if (!player && pathname !== '/login') {
     router.push('/login');
   }
+
+  if (!player?.gameId && pathname.startsWith('/game')) {
+    router.push('/');
+  }
 };
 
 export const fetchMe = (): ThunkResult<Promise<void>> => {

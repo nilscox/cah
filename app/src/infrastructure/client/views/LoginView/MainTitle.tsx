@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 
 import { useTimeout } from '../../hooks/useTimeout';
 import { fontSize, fontWeight, spacing } from '../../styles/theme';
@@ -44,13 +44,16 @@ type MainTitleProps = {
 };
 
 const MainTitle: React.FC<MainTitleProps> = ({ className, onRest }) => {
-  useTimeout(onRest, 4500, []);
+  const theme = useTheme();
+  const slow = theme.transition.durations.slow;
+
+  useTimeout(onRest, 4.5 * slow, []);
 
   return (
     <h1 className={className}>
-      <Word word="Cards" delay={1000} duration={1500} />
-      <Word word="Against" delay={1500} duration={2500} />
-      <Word word="Humanity" delay={2500} duration={2500} />
+      <Word word="Cards" delay={slow} duration={1.5 * slow} />
+      <Word word="Against" delay={1.5 * slow} duration={2.5 * slow} />
+      <Word word="Humanity" delay={2 * slow} duration={2.5 * slow} />
     </h1>
   );
 };

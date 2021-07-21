@@ -8,4 +8,8 @@ export class WSAdapter {
 
     await new Promise<void>((resolve) => this.io?.on('connect', resolve));
   }
+
+  onMessage<T>(listener: (message: T) => void) {
+    this.io?.on('message', listener);
+  }
 }

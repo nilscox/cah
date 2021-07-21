@@ -7,14 +7,17 @@ import { RouterGateway } from '../interfaces/gateways/RouterGateway';
 import { RTCGateway } from '../interfaces/gateways/RTCGateway';
 
 import { configureStore } from './index';
-import { AppState as A, GameState, PlayerState } from './reducers';
+import { AppState as StoreAppState } from './reducers/appStateReducer';
+import { GameState } from './reducers/gameReducer';
+import { PlayerState } from './reducers/playerReducer';
 
 export type Nullable<T> = T | null;
+export type NotNull<T> = T extends null ? never : T;
 
 export type AppState = {
   player: PlayerState;
   game: GameState;
-  app: A;
+  app: StoreAppState;
 };
 
 export type AppAction = Actions;

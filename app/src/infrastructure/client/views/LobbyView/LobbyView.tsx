@@ -55,7 +55,6 @@ const PartContent = styled(Flex)<{ open: boolean | null }>`
   transition: ${transition('all')};
   /* transition-delay: ${ifOpen(1.5 * duration, 0)}ms; */
   overflow: hidden;
-  margin: ${spacing(4)};
 `;
 
 type PartProps = {

@@ -34,9 +34,18 @@ describe('fetchMe', () => {
     expect(routerGateway.pathname).toEqual('/login');
   });
 
-  it('redirects to the home page', async () => {
+  it('redirects to the home page when authenticated', async () => {
     playerGateway.player = createPlayer();
     routerGateway.push('/login');
+
+    await store.dispatch(fetchMe());
+
+    expect(routerGateway.pathname).toEqual('/');
+  });
+
+  it('redirects to the home page when not in a game', async () => {
+    playerGateway.player = createPlayer();
+    routerGateway.push('/game/OK42');
 
     await store.dispatch(fetchMe());
 

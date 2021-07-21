@@ -1,3 +1,17 @@
+const fast = true;
+
+const themeSpacing = (...spacings: Array<number | string>) => {
+  return spacings
+    .map((value) => {
+      if (typeof value === 'string') {
+        return value;
+      }
+
+      return 6 * value + 'px';
+    })
+    .join(' ');
+};
+
 export const theme = {
   colors: {
     background: 'black',
@@ -11,7 +25,7 @@ export const theme = {
     title: '2rem',
     big: '1.4rem',
   },
-  spacing: (...spacings: number[]) => spacings.map((value) => 6 * value + 'px').join(' '),
+  spacing: themeSpacing,
   fontWeights: {
     thin: 200,
     bold: 'bold',
@@ -19,11 +33,18 @@ export const theme = {
   transition: {
     durations: {
       default: 400,
-      slow: 2000,
+      slow: 1000,
     },
     function: 'ease',
   },
 };
+
+if (fast) {
+  theme.transition.durations = {
+    default: 100,
+    slow: 200,
+  };
+}
 
 export type Theme = typeof theme;
 

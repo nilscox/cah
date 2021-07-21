@@ -3,6 +3,7 @@ import React, { ReactElement } from 'react';
 import styled from 'styled-components';
 
 import { Player } from '../../../interfaces/entities/Player';
+import { spacing } from '../styles/theme';
 
 import Flex from './Flex';
 import Header from './Header';
@@ -14,6 +15,7 @@ const Container = styled(Flex)`
 const Content = styled(Flex)`
   flex: 1;
   overflow: auto;
+  padding: ${spacing(2)};
 `;
 
 type ViewProps = {

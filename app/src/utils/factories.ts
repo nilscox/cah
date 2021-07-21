@@ -4,7 +4,7 @@ import { Player } from '../interfaces/entities/Player';
 export const createPlayer = (overrides: Partial<Player> = {}): Player => ({
   id: 'id',
   nick: 'nick',
-  isConnected: true,
+  isConnected: false,
   ...overrides,
 });
 
