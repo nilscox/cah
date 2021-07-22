@@ -2,6 +2,7 @@ import { Player } from '../../../interfaces/entities/Player';
 import { RouterGateway } from '../../../interfaces/gateways/RouterGateway';
 import { ThunkResult } from '../../../store/createAction';
 import { setAppReady, setGame, setPlayer } from '../../actions';
+import { connect } from '../connect/connect';
 
 const redirect = (router: RouterGateway, player?: Player) => {
   const { pathname } = router;
@@ -19,18 +20,17 @@ const redirect = (router: RouterGateway, player?: Player) => {
   }
 };
 
-export const fetchMe = (): ThunkResult<Promise<void>> => {
+export const initialize = (): ThunkResult<Promise<void>> => {
   return async (dispatch, _getState, { playerGateway, gameGateway, routerGateway }) => {
     const player = await playerGateway.fetchMe();
 
     if (player) {
       dispatch(setPlayer(player));
+      await dispatch(connect());
     }
 
     if (player?.gameId) {
-      const game = await gameGateway.fetchGame(player.gameId);
-
-      dispatch(setGame(game));
+      dispatch(setGame(await gameGateway.fetchGame(player.gameId)));
     }
 
     redirect(routerGateway, player);

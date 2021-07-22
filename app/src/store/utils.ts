@@ -1,21 +1,25 @@
 import expect from 'expect';
 
+import { FakeServerGateway } from '../domain/gateways/FakeServerGateway';
+import { FakeTimerGateway } from '../domain/gateways/FakeTimerGateway';
 import { InMemoryGameGateway } from '../domain/gateways/InMemoryGameGateway';
 import { InMemoryPlayerGateway } from '../domain/gateways/InMemoryPlayerGateway';
 import { InMemoryRouterGateway } from '../domain/gateways/InMemoryRouterGateway';
 import { InMemoryRTCGateway } from '../domain/gateways/InMemoryRTCGateway';
 
+import { configureStore } from './index';
 import { AppState, AppStore, Dependencies } from './types';
 
-import { configureStore } from '.';
-
 export const inMemoryStore = (overrides: Partial<Dependencies> = {}) => {
-  const playerGateway = new InMemoryPlayerGateway();
-  const gameGateway = new InMemoryGameGateway();
-  const rtcGateway = new InMemoryRTCGateway();
-  const routerGateway = new InMemoryRouterGateway();
-
-  return configureStore({ playerGateway, gameGateway, rtcGateway, routerGateway, ...overrides });
+  return configureStore({
+    playerGateway: new InMemoryPlayerGateway(),
+    gameGateway: new InMemoryGameGateway(),
+    rtcGateway: new InMemoryRTCGateway(),
+    routerGateway: new InMemoryRouterGateway(),
+    timerGateway: new FakeTimerGateway(),
+    serverGateway: new FakeServerGateway(),
+    ...overrides,
+  });
 };
 
 export const expectState = <S extends keyof AppState>(store: AppStore, state: S, expected: AppState[S]) => {

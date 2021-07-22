@@ -3,43 +3,40 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Route, Switch } from 'react-router-dom';
 
-import { connect } from '../../domain/player/connect/connect';
-import { fetchMe } from '../../domain/player/fetchMe/fetchMe';
+import { initialize } from '../../domain/player/initialize/initialize';
+import { ServerStatus } from '../../store/reducers/appStateReducer';
 import { AppState } from '../../store/types';
 
+import { Center } from './components/Center';
+import { Debounced } from './components/Debounced';
+import { FullScreen } from './components/FullScreen';
 import GameView from './views/GameView/GameView';
 import LobbyView from './views/LobbyView/LobbyView';
 import LoginView from './views/LoginView/LoginView';
 
-const playerSelector = (state: AppState) => state.player;
+const ServerDownFallback: React.FC = () => (
+  <FullScreen>
+    <Center padding={4}>Le serveur est down. Merci de patienter, ça devrait revenir...</Center>
+  </FullScreen>
+);
+
 const appReadySelector = (state: AppState) => state.app.ready;
-
-const useFetchMe = () => {
-  const dispatch = useDispatch();
-
-  useEffect(() => void dispatch(fetchMe()), [dispatch]);
-
-  return useSelector(appReadySelector);
-};
-
-const useConnect = () => {
-  const player = useSelector(playerSelector);
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    if (player && !player.isConnected) {
-      dispatch(connect());
-    }
-  }, [player, dispatch]);
-};
+const serverStatusSelector = (state: AppState) => state.app.server;
 
 const App: React.FC = () => {
-  const ready = useFetchMe();
+  const dispatch = useDispatch();
 
-  useConnect();
+  const server = useSelector(serverStatusSelector);
+  const ready = useSelector(appReadySelector);
+
+  useEffect(() => void dispatch(initialize()), [dispatch]);
+
+  if (server === ServerStatus.down) {
+    return <ServerDownFallback />;
+  }
 
   if (!ready) {
-    return null;
+    return <Debounced delay={1000}>Chargement...</Debounced>;
   }
 
   return (

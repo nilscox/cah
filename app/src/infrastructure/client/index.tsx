@@ -6,16 +6,20 @@ import { createBrowserHistory } from 'history';
 import { Provider as ReduxProvider } from 'react-redux';
 import { Router } from 'react-router-dom';
 
+import { handleServerDown } from '../../domain/server/handleServerDown/handleServerDown';
 import { configureStore } from '../../store';
 import { Dependencies } from '../../store/types';
 import { HTTPAdapter } from '../gateways/HTTPAdapter';
 import { HTTPGameGateway } from '../gateways/HTTPGameGateway';
 import { HTTPPlayerGateway } from '../gateways/HTTPPlayerGateway';
+import { HTTPServerGateway } from '../gateways/HTTPServerGateway';
 import { ReactRouterGateway } from '../gateways/ReactRouterGateway';
+import { RealTimerGateway } from '../gateways/RealTimerGateway';
 import { WSAdapter } from '../gateways/WSAdapter';
 import { WSRTCGateway } from '../gateways/WSRTCGateway';
 
 import App from './App';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { GlobalStyles } from './styles/GlobalStyles';
 import ThemeProvider from './styles/ThemeProvider';
 
@@ -39,18 +43,24 @@ const dependencies: Dependencies = {
   playerGateway: new HTTPPlayerGateway(httpAdapter),
   rtcGateway: new WSRTCGateway(wsAdapter),
   routerGateway: new ReactRouterGateway(history),
+  serverGateway: new HTTPServerGateway(httpAdapter),
+  timerGateway: new RealTimerGateway(),
 };
 
 const store = configureStore(dependencies);
 
+httpAdapter.onServerDown = () => store.dispatch(handleServerDown());
+
 ReactDOM.render(
   <ThemeProvider>
     <GlobalStyles />
-    <Router history={history}>
-      <ReduxProvider store={store}>
-        <App />
-      </ReduxProvider>
-    </Router>
+    <ErrorBoundary>
+      <Router history={history}>
+        <ReduxProvider store={store}>
+          <App />
+        </ReduxProvider>
+      </Router>
+    </ErrorBoundary>
   </ThemeProvider>,
   document.getElementById('app'),
 );

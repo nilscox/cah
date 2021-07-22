@@ -41,20 +41,14 @@ const NickInput: React.FC<NickInputProps> = ({ onSubmit }) => {
   );
 };
 
-const useLogin = () => {
-  const dispatch = useDispatch();
-
-  return (nick: string) => dispatch(login(nick));
-};
-
 const LoginView: React.FC = () => {
+  const dispatch = useDispatch();
   const [showNickInput, setShowNickInput] = useState(false);
-  const onLogin = useLogin();
 
   return (
     <Container>
       <StyledMainTitle onRest={() => setShowNickInput(true)} />
-      {showNickInput && <NickInput onSubmit={onLogin} />}
+      {showNickInput && <NickInput onSubmit={(nick) => dispatch(login(nick))} />}
     </Container>
   );
 };

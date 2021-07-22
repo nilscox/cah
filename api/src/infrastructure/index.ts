@@ -178,6 +178,9 @@ export const bootstrapServer = async (config: Config) => {
       .use(...authPlayerContext)
       .use(handler(new NextTurnHandler(gameService, gameRepository))),
 
+    new Route('get', '/healthcheck')
+      .use((req, res) => res.end()),
+
     new FallbackRoute()
       .use(errorHandler(new ErrorHandler()))
       .use((req, res) => res.status(404).end()),

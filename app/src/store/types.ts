@@ -5,6 +5,8 @@ import { GameGateway } from '../interfaces/gateways/GameGateway';
 import { PlayerGateway } from '../interfaces/gateways/PlayerGateway';
 import { RouterGateway } from '../interfaces/gateways/RouterGateway';
 import { RTCGateway } from '../interfaces/gateways/RTCGateway';
+import { ServerGateway } from '../interfaces/gateways/ServerGateway';
+import { TimerGateway } from '../interfaces/gateways/TimerGateway';
 
 import { configureStore } from './index';
 import { AppState as StoreAppState } from './reducers/appStateReducer';
@@ -27,6 +29,8 @@ export type Dependencies = {
   gameGateway: GameGateway;
   rtcGateway: RTCGateway;
   routerGateway: RouterGateway;
+  timerGateway: TimerGateway;
+  serverGateway: ServerGateway;
 };
 
 export type AppStore = ReturnType<typeof configureStore>;

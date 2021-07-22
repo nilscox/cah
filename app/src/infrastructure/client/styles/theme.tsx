@@ -22,8 +22,8 @@ export const theme = {
   fontSizes: {
     small: '12px',
     default: '16px',
-    title: '2rem',
     big: '1.4rem',
+    title: '2rem',
   },
   spacing: themeSpacing,
   fontWeights: {
@@ -69,7 +69,23 @@ export const spacing = (...args: Parameters<Theme['spacing']>) => (props: { them
   return props.theme.spacing(...args);
 };
 
+type TransitionOptions = {
+  duration: keyof Theme['transition']['durations'] | number;
+  delay: number;
+};
+
 // prettier-ignore
-export const transition = (property: string, duration: keyof Theme['transition']['durations'] = 'default') => (props: { theme: Theme }) => {
-  return `${property} ${props.theme.transition.durations[duration]}ms ${theme.transition.function}`
+export const transition = (property: string, options: TransitionOptions = { duration: 'default', delay: 0 }) => (props: { theme: Theme }) => {
+  const { duration, delay } = options;
+  const { transition } = props.theme;
+
+  const getDuration = () => {
+    if (typeof duration === 'string') {
+      return transition.durations[duration];
+    }
+
+    return duration
+  }
+
+  return `${property} ${getDuration()}ms ${transition.function} ${delay}ms`;
 };

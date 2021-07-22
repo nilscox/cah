@@ -3,16 +3,21 @@ import React, { useState } from 'react';
 import styled, { useTheme } from 'styled-components';
 
 import { useTimeout } from '../../hooks/useTimeout';
-import { fontSize, fontWeight, spacing } from '../../styles/theme';
+import { fontSize, fontWeight, spacing, transition } from '../../styles/theme';
 
-const StyledWord = styled.div`
+type StyledWordProps = {
+  opacity: number;
+  delay: number;
+  duration: number;
+};
+
+const StyledWord = styled.div<StyledWordProps>`
   font-size: ${fontSize('title')};
   font-weight: ${fontWeight('thin')};
   line-height: 2.2rem;
   letter-spacing: ${spacing(0.8)};
-  transition-property: opacity;
-  transition-timing-function: ease-in-out;
-  opacity: 0;
+  transition: ${({ delay, duration }) => transition('opacity', { duration, delay })};
+  opacity: ${({ opacity }) => opacity};
 `;
 
 const WordFirstLetter = styled.span`
@@ -31,7 +36,7 @@ const Word: React.FC<WordProps> = ({ word, delay, duration }) => {
   useTimeout(() => setOpacity(1), 0);
 
   return (
-    <StyledWord style={{ opacity, transitionDelay: `${delay}ms`, transitionDuration: `${duration}ms` }}>
+    <StyledWord opacity={opacity} delay={delay} duration={duration}>
       <WordFirstLetter>{word[0]}</WordFirstLetter>
       {word.slice(1)}
     </StyledWord>
