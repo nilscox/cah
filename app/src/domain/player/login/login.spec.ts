@@ -1,35 +1,31 @@
 import expect from 'expect';
 
-import { AppStore } from '../../../store/types';
-import { expectPartialState, inMemoryStore } from '../../../store/utils';
-import { InMemoryRouterGateway } from '../../gateways/InMemoryRouterGateway';
+import { InMemoryStore } from '../../../store/utils';
 
 import { login } from './login';
 
 describe('login', () => {
-  let routerGateway: InMemoryRouterGateway;
-
-  let store: AppStore;
+  let store: InMemoryStore;
 
   beforeEach(() => {
-    routerGateway = new InMemoryRouterGateway();
-
-    store = inMemoryStore({ routerGateway });
+    store = new InMemoryStore();
   });
 
   it('logs in', async () => {
     await store.dispatch(login('Toto'));
 
-    expectPartialState(store, 'player', {
+    store.expectPartialState('player', {
+      id: 'id',
+      isConnected: false,
       nick: 'Toto',
     });
   });
 
   it('redirects to the home page', async () => {
-    routerGateway.push('/login');
+    store.routerGateway.push('/login');
 
     await store.dispatch(login('Tata'));
 
-    expect(routerGateway.pathname).toEqual('/');
+    expect(store.routerGateway.pathname).toEqual('/');
   });
 });

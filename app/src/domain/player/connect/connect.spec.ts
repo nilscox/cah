@@ -1,28 +1,25 @@
-import { AppStore } from '../../../store/types';
-import { expectPartialState, inMemoryStore } from '../../../store/utils';
+import { InMemoryStore } from '../../../store/utils';
 import { createGame, createPlayer } from '../../../utils/factories';
 import { setGame, setPlayer } from '../../actions';
-import { InMemoryRTCGateway } from '../../gateways/InMemoryRTCGateway';
 
 import { connect } from './connect';
 
 describe('connect', () => {
-  let rtcGateway: InMemoryRTCGateway;
-
-  let store: AppStore;
+  let store: InMemoryStore;
 
   beforeEach(() => {
-    rtcGateway = new InMemoryRTCGateway();
+    store = new InMemoryStore();
+  });
 
-    store = inMemoryStore({ rtcGateway });
-
+  beforeEach(() => {
     store.dispatch(setPlayer(createPlayer()));
+    store.snapshot();
   });
 
   it('connects to the server', async () => {
     await store.dispatch(connect());
 
-    expectPartialState(store, 'player', {
+    store.expectPartialState('player', {
       isConnected: true,
     });
   });
@@ -32,11 +29,12 @@ describe('connect', () => {
     const player2 = createPlayer({ nick: 'floup' });
 
     store.dispatch(setGame(createGame({ players: [player1, player2] })));
+    store.snapshot();
 
     await store.dispatch(connect());
-    rtcGateway.triggerMessage({ type: 'PlayerConnected', player: 'plouf' });
+    store.rtcGateway.triggerMessage({ type: 'PlayerConnected', player: 'plouf' });
 
-    expectPartialState(store, 'game', {
+    store.expectPartialState('game', {
       players: [
         {
           ...player1,

@@ -1,5 +1,6 @@
 import expect from 'expect';
 
+import { rtcMessage } from '../domain/actions';
 import { FakeServerGateway } from '../domain/gateways/FakeServerGateway';
 import { FakeTimerGateway } from '../domain/gateways/FakeTimerGateway';
 import { InMemoryGameGateway } from '../domain/gateways/InMemoryGameGateway';
@@ -10,26 +11,43 @@ import { InMemoryRTCGateway } from '../domain/gateways/InMemoryRTCGateway';
 import { configureStore } from './index';
 import { AppState, AppStore, Dependencies } from './types';
 
-export const inMemoryStore = (overrides: Partial<Dependencies> = {}) => {
-  return configureStore({
-    playerGateway: new InMemoryPlayerGateway(),
-    gameGateway: new InMemoryGameGateway(),
-    rtcGateway: new InMemoryRTCGateway(),
-    routerGateway: new InMemoryRouterGateway(),
-    timerGateway: new FakeTimerGateway(),
-    serverGateway: new FakeServerGateway(),
-    ...overrides,
-  });
-};
+export class InMemoryStore {
+  store: AppStore;
+  state: AppState;
 
-export const expectState = <S extends keyof AppState>(store: AppStore, state: S, expected: AppState[S]) => {
-  expect(store.getState()[state]).toEqual(expected);
-};
+  get dispatch() {
+    return this.store.dispatch;
+  }
 
-export const expectPartialState = <S extends keyof AppState>(
-  store: AppStore,
-  state: S,
-  expected: Partial<AppState[S]>,
-) => {
-  expectState(store, state, expect.objectContaining(expected) as AppState[S]);
-};
+  get getState() {
+    return this.store.getState;
+  }
+
+  rtcGateway = new InMemoryRTCGateway();
+  playerGateway = new InMemoryPlayerGateway();
+  gameGateway = new InMemoryGameGateway(this.rtcGateway);
+  routerGateway = new InMemoryRouterGateway();
+  timerGateway = new FakeTimerGateway();
+  serverGateway = new FakeServerGateway();
+
+  constructor(overrides: Partial<Dependencies> = {}) {
+    this.store = configureStore({ ...this, ...overrides });
+    this.state = this.store.getState();
+  }
+
+  listenRTCMessages(rtcGateway = this.rtcGateway) {
+    rtcGateway.onMessage((message) => this.store.dispatch(rtcMessage(message)));
+  }
+
+  snapshot() {
+    this.state = this.store.getState();
+  }
+
+  expectState<S extends keyof AppState>(state: S, expected: AppState[S]) {
+    expect(this.store.getState()[state]).toEqual(expected);
+  }
+
+  expectPartialState<S extends keyof AppState>(state: S, expected: Partial<AppState[S]>) {
+    expect(this.store.getState()[state]).toEqual({ ...this.state[state], ...expected });
+  }
+}

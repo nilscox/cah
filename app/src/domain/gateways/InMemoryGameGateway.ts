@@ -1,11 +1,15 @@
 import { Answer } from '../../interfaces/entities/Answer';
 import { Choice } from '../../interfaces/entities/Choice';
-import { Game } from '../../interfaces/entities/Game';
+import { Game, PlayState } from '../../interfaces/entities/Game';
 import { Player } from '../../interfaces/entities/Player';
 import { GameGateway } from '../../interfaces/gateways/GameGateway';
-import { createGame } from '../../utils/factories';
+import { createGame, createQuestion } from '../../utils/factories';
+
+import { InMemoryRTCGateway } from './InMemoryRTCGateway';
 
 export class InMemoryGameGateway implements GameGateway {
+  constructor(private readonly rtcGateway: InMemoryRTCGateway) {}
+
   async fetchGame(gameId: string): Promise<Game> {
     return createGame({ id: gameId });
   }
@@ -18,8 +22,15 @@ export class InMemoryGameGateway implements GameGateway {
     return createGame({ code: gameCode });
   }
 
-  startGame(_questionMaster: Player, _turns: number): Promise<void> {
-    throw new Error('Method not implemented.');
+  async startGame(questionMaster: Player, _turns: number): Promise<void> {
+    this.rtcGateway.triggerMessage({ type: 'GameStarted' });
+
+    this.rtcGateway.triggerMessage({
+      type: 'TurnStarted',
+      playState: PlayState.playersAnswer,
+      question: createQuestion(),
+      questionMaster: questionMaster.nick,
+    });
   }
 
   answer(_choices: Choice[]): Promise<void> {

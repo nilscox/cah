@@ -1,6 +1,7 @@
+import expect from 'expect';
+
 import { ServerStatus } from '../../../store/reducers/appStateReducer';
-import { AppStore } from '../../../store/types';
-import { expectPartialState, inMemoryStore } from '../../../store/utils';
+import { InMemoryStore } from '../../../store/utils';
 import { serverStatusChanged } from '../../actions';
 import { FakeServerGateway } from '../../gateways/FakeServerGateway';
 import { FakeTimerGateway } from '../../gateways/FakeTimerGateway';
@@ -8,25 +9,25 @@ import { FakeTimerGateway } from '../../gateways/FakeTimerGateway';
 import { handleServerDown } from './handleServerDown';
 
 describe('handleServerDown', () => {
+  let store: InMemoryStore;
+
   let timerGateway: FakeTimerGateway;
   let serverGateway: FakeServerGateway;
 
-  let store: AppStore;
-
   beforeEach(() => {
-    timerGateway = new FakeTimerGateway();
-    serverGateway = new FakeServerGateway();
-
-    store = inMemoryStore({ timerGateway, serverGateway });
+    store = new InMemoryStore();
+    ({ timerGateway, serverGateway } = store);
   });
 
   const expectServerStatus = (status: ServerStatus) => {
-    expectPartialState(store, 'app', { server: status });
+    expect(store.getState().app.server).toEqual(status);
   };
 
   it('does not do anything when the server is already down', async () => {
     serverGateway.serverStatus = ServerStatus.up;
+
     store.dispatch(serverStatusChanged(ServerStatus.down));
+    store.snapshot();
 
     await store.dispatch(handleServerDown());
 
@@ -50,7 +51,7 @@ describe('handleServerDown', () => {
     await timerGateway.invokeInterval();
 
     expectServerStatus(ServerStatus.up);
-    expectPartialState(store, 'app', { ready: true });
+    store.expectPartialState('app', { ready: true });
 
     serverGateway.serverStatus = ServerStatus.down;
     await timerGateway.invokeInterval();
