@@ -6,11 +6,11 @@ import { FullScreen } from './FullScreen';
 export class ErrorBoundary extends React.PureComponent<unknown, { hasError: boolean }> {
   state = { hasError: false };
 
-  static getDerivedStateFromError(error) {
+  static getDerivedStateFromError(_error: unknown) {
     return { hasError: true };
   }
 
-  componentDidCatch(error: Error, info: ErrorInfo) {
+  componentDidCatch(error: Error, _info: ErrorInfo) {
     console.log(error);
   }
 

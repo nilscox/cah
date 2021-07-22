@@ -1,15 +1,14 @@
-import { Action } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { ThunkResult } from './createAction';
-import { AppState, Dependencies } from './types';
+import { AppAction, AppState, Dependencies } from './types';
 
 type ThunkOpts = {
-  dispatch: ThunkDispatch<AppState, Dependencies, Action<any>>;
+  dispatch: ThunkDispatch<AppState, Dependencies, AppAction>;
   getState: () => AppState;
 } & Dependencies;
 
-export const createThunk = <T, A extends any[]>(
+export const createThunk = <T, A extends unknown[]>(
   thunk: (opts: ThunkOpts, ...args: A) => T,
 ): ((...args: A) => ThunkResult<T>) => {
   return (...args) => {

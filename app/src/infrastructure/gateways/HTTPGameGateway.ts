@@ -27,15 +27,15 @@ export class HTTPGameGateway implements GameGateway {
     return body;
   }
 
-  startGame(questionMaster: Player, turns: number): Promise<void> {
+  startGame(_questionMaster: Player, _turns: number): Promise<void> {
     throw new Error('Method not implemented.');
   }
 
-  answer(choices: Choice[]): Promise<void> {
+  answer(_choices: Choice[]): Promise<void> {
     throw new Error('Method not implemented.');
   }
 
-  selectWinningAnswer(answer: Answer): Promise<void> {
+  selectWinningAnswer(_answer: Answer): Promise<void> {
     throw new Error('Method not implemented.');
   }
 

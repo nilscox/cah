@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { action } from '@storybook/addon-actions';
+import { Meta } from '@storybook/react';
 
 import Button from '../infrastructure/client/components/Button';
 import { Input } from '../infrastructure/client/components/Input';
@@ -8,7 +9,7 @@ import SubmittableInput from '../infrastructure/client/components/SubmittableInp
 
 export default {
   title: 'Form',
-};
+} as Meta;
 
 export const ButtonStory = () => <Button onClick={action('click')}>Click me!</Button>;
 

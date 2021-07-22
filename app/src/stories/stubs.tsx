@@ -6,11 +6,11 @@ import { Game } from '../interfaces/entities/Game';
 import { Player } from '../interfaces/entities/Player';
 import { GameGateway } from '../interfaces/gateways/GameGateway';
 import { PlayerGateway } from '../interfaces/gateways/PlayerGateway';
-import { RTCGateway } from '../interfaces/gateways/RTCGateway';
+import { RTCGateway, RTCListener } from '../interfaces/gateways/RTCGateway';
 import { createGame, createPlayer } from '../utils/factories';
 
 export class StubGameGateway implements GameGateway {
-  fetchGame(gameId: string): Promise<Game> {
+  fetchGame(_gameId: string): Promise<Game> {
     throw new Error('Method not implemented.');
   }
 
@@ -24,20 +24,20 @@ export class StubGameGateway implements GameGateway {
     return createGame({ code: gameCode });
   }
 
-  startGame(questionMaster: Player, turns: number): Promise<void> {
-    throw new Error('Method not implemented.');
+  async startGame(questionMaster: Player, turns: number): Promise<void> {
+    action('start game')({ questionMaster, turns });
   }
 
-  answer(choices: Choice[]): Promise<void> {
-    throw new Error('Method not implemented.');
+  async answer(choices: Choice[]): Promise<void> {
+    action('answer')({ choices });
   }
 
-  selectWinningAnswer(answer: Answer): Promise<void> {
-    throw new Error('Method not implemented.');
+  async selectWinningAnswer(answer: Answer): Promise<void> {
+    action('selectWinningAnswer')({ answer });
   }
 
-  endCurrentTurn(): Promise<void> {
-    throw new Error('Method not implemented.');
+  async endCurrentTurn(): Promise<void> {
+    action('endCurrentTurn')({});
   }
 }
 
@@ -54,6 +54,10 @@ export class StubPlayerGateway implements PlayerGateway {
 
 export class StubRTCGateway implements RTCGateway {
   connect(): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+
+  onMessage(_listener: RTCListener): void {
     throw new Error('Method not implemented.');
   }
 }
