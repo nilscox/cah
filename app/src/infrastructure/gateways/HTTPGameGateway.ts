@@ -27,8 +27,11 @@ export class HTTPGameGateway implements GameGateway {
     return body;
   }
 
-  startGame(_questionMaster: Player, _turns: number): Promise<void> {
-    throw new Error('Method not implemented.');
+  async startGame(questionMaster: Player, turns: number): Promise<void> {
+    await this.http.post('/start', {
+      questionMasterId: questionMaster.id,
+      turns,
+    });
   }
 
   answer(_choices: Choice[]): Promise<void> {

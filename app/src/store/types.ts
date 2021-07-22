@@ -29,6 +29,7 @@ export type Dependencies = {
   gameGateway: GameGateway;
   rtcGateway: RTCGateway;
   routerGateway: RouterGateway;
+  gameRouterGateway: RouterGateway;
   timerGateway: TimerGateway;
   serverGateway: ServerGateway;
 };

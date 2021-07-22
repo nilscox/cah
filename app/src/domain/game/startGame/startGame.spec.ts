@@ -1,3 +1,5 @@
+import expect from 'expect';
+
 import { GameState, PlayState } from '../../../interfaces/entities/Game';
 import { InMemoryStore } from '../../../store/utils';
 import { createGame, createPlayer, createQuestion } from '../../../utils/factories';
@@ -28,5 +30,15 @@ describe('startGame', () => {
       questionMaster: player,
       question: createQuestion(),
     });
+  });
+
+  it('redirects to the started game view', async () => {
+    const player = createPlayer({ nick: 'wat' });
+
+    store.dispatch(setGame(createGame({ code: '1234' })));
+
+    await store.dispatch(startGame(player, 3));
+
+    expect(store.gameRouterGateway.pathname).toEqual('/game/1234/started');
   });
 });

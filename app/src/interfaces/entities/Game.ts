@@ -23,7 +23,7 @@ export interface Game {
 
 export interface StartedGame extends Game {
   playState: PlayState;
-  questionMaster: string;
+  questionMaster: Player;
   question: Question;
   answers: Answer[];
   winner?: string;

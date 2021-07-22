@@ -9,6 +9,8 @@ export const setConnected = createAction('player/set-connected');
 
 export const setGame = createAction<Game, 'game/set'>('game/set');
 
+export const gameStarted = createAction('game/started');
+
 export const setAppReady = createAction('app/ready');
 export const serverStatusChanged = createAction<ServerStatus, 'server/status'>('server/status');
 

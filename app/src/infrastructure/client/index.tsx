@@ -22,6 +22,7 @@ import App from './App';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { GlobalStyles } from './styles/GlobalStyles';
 import ThemeProvider from './styles/ThemeProvider';
+import { gameRouterHistory } from './views/GameView/GameView';
 
 import 'jetbrains-mono';
 import 'normalize.css';
@@ -43,6 +44,7 @@ const dependencies: Dependencies = {
   playerGateway: new HTTPPlayerGateway(httpAdapter),
   rtcGateway: new WSRTCGateway(wsAdapter),
   routerGateway: new ReactRouterGateway(history),
+  gameRouterGateway: new ReactRouterGateway(gameRouterHistory),
   serverGateway: new HTTPServerGateway(httpAdapter),
   timerGateway: new RealTimerGateway(),
 };
