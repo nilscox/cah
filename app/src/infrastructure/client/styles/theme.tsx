@@ -40,43 +40,47 @@ export const theme = {
 };
 
 if (fast) {
-  theme.transition.durations = {
-    default: 100,
-    slow: 200,
-  };
+  theme.transition.durations.default /= 4;
+  theme.transition.durations.slow /= 4;
 }
 
 export type Theme = typeof theme;
 
-export const color = (color: keyof Theme['colors']) => (props: { theme: Theme }) => {
+type Props = { theme: Theme };
+
+export const color = (color: keyof Theme['colors']) => (props: Props) => {
   return props.theme.colors[color];
 };
 
-export const font = () => (props: { theme: Theme }) => {
+export const font = () => (props: Props) => {
   return props.theme.font;
 };
 
-export const fontSize = (fontSize: keyof Theme['fontSizes']) => (props: { theme: Theme }) => {
+export const fontSize = (fontSize: keyof Theme['fontSizes']) => (props: Props) => {
   return props.theme.fontSizes[fontSize];
 };
 
-export const fontWeight = (weight: keyof Theme['fontWeights']) => (props: { theme: Theme }) => {
+export const fontWeight = (weight: keyof Theme['fontWeights']) => (props: Props) => {
   return props.theme.fontWeights[weight];
 };
 
 // prettier-ignore
-export const spacing = (...args: Parameters<Theme['spacing']>) => (props: { theme: Theme }) => {
+export const spacing = (...args: Parameters<Theme['spacing']>) => (props: Props) => {
   return props.theme.spacing(...args);
 };
 
-type TransitionOptions = {
+type TransitionOptions = Partial<{
   duration: keyof Theme['transition']['durations'] | number;
   delay: number;
+}>;
+
+const defaultTransitionOptions: TransitionOptions = {
+  duration: 'default',
+  delay: 0,
 };
 
-// prettier-ignore
-export const transition = (property: string, options: TransitionOptions = { duration: 'default', delay: 0 }) => (props: { theme: Theme }) => {
-  const { duration, delay } = options;
+export const transition = (property: string, options?: TransitionOptions) => (props: Props) => {
+  const { duration, delay } = { ...defaultTransitionOptions, ...options };
   const { transition } = props.theme;
 
   const getDuration = () => {
@@ -84,8 +88,8 @@ export const transition = (property: string, options: TransitionOptions = { dura
       return transition.durations[duration];
     }
 
-    return duration
-  }
+    return duration;
+  };
 
   return `${property} ${getDuration()}ms ${transition.function} ${delay}ms`;
 };

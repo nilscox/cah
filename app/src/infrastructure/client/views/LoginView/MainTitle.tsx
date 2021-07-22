@@ -58,7 +58,7 @@ const MainTitle: React.FC<MainTitleProps> = ({ className, onRest }) => {
     <h1 className={className}>
       <Word word="Cards" delay={slow} duration={1.5 * slow} />
       <Word word="Against" delay={1.5 * slow} duration={2.5 * slow} />
-      <Word word="Humanity" delay={2 * slow} duration={2.5 * slow} />
+      <Word word="Humanity" delay={2 * slow} duration={3.5 * slow} />
     </h1>
   );
 };

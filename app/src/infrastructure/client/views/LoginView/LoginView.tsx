@@ -30,7 +30,7 @@ const NickInput: React.FC<NickInputProps> = ({ onSubmit }) => {
   useTimeout(() => setShow(true), 0);
 
   return (
-    <Fade show={show} speed="slow">
+    <Fade show={show} duration="slow">
       <SubmittableInput
         placeholder="Entrez votre pseudo..."
         value={nick}
