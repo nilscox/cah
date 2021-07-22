@@ -1,11 +1,9 @@
-import { ThunkResult } from '../../../store/createAction';
+import { createThunk } from '../../../store/createThunk';
 import { setGame } from '../../actions';
 
-export const joinGame = (gameCode: string): ThunkResult<Promise<void>> => {
-  return async (dispatch, _getState, { gameGateway, routerGateway }) => {
-    const game = await gameGateway.joinGame(gameCode);
+export const joinGame = createThunk(async ({ dispatch, gameGateway, routerGateway }, gameCode: string) => {
+  const game = await gameGateway.joinGame(gameCode);
 
-    dispatch(setGame(game));
-    routerGateway.push(`/game/${game.code}`);
-  };
-};
+  dispatch(setGame(game));
+  routerGateway.push(`/game/${game.code}`);
+});
