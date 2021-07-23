@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { createBrowserHistory, createMemoryHistory } from 'history';
 import { useDispatch } from 'react-redux';
 import { Redirect, Route, Router, Switch } from 'react-router-dom';
@@ -12,8 +11,8 @@ import { useGame } from '../../hooks/useGame';
 import { usePlayer } from '../../hooks/usePlayer';
 import Menu from '../../icons/menu.svg';
 
-import { GameIdle } from './GameIdle';
-import { GameStarted } from './GameStarted';
+import { GameIdleView } from './GameIdleView';
+import { GameStartedView } from './GameStartedView';
 
 const memoryRouter = true;
 export const gameRouterHistory = memoryRouter ? createMemoryHistory() : createBrowserHistory();
@@ -30,8 +29,8 @@ const GameView: React.FC = () => {
     <View player={player} icon={<Icon as={Menu} />}>
       <Router history={gameRouterHistory}>
         <Switch>
-          <Route path="/game/:gameCode/idle" component={GameIdle} />
-          <Route path="/game/:gameCode/started" component={GameStarted} />
+          <Route path="/game/:gameCode/idle" component={GameIdleView} />
+          <Route path="/game/:gameCode/started" component={GameStartedView} />
           <Route>
             <Redirect to={`/game/${game.code}/idle`} />
           </Route>

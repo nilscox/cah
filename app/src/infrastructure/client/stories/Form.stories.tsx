@@ -4,11 +4,22 @@ import { action } from '@storybook/addon-actions';
 import { Meta } from '@storybook/react';
 
 import Button from '../components/Button';
+import { Center } from '../components/Center';
+import { FullScreen } from '../components/FullScreen';
 import { Input } from '../components/Input';
 import SubmittableInput from '../components/SubmittableInput';
 
 export default {
   title: 'Form',
+  decorators: [
+    (Story) => (
+      <FullScreen>
+        <Center padding={4}>
+          <Story />
+        </Center>
+      </FullScreen>
+    ),
+  ],
 } as Meta;
 
 export const ButtonStory = () => <Button onClick={action('click')}>Click me!</Button>;

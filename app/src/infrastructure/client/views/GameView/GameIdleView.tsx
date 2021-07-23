@@ -22,7 +22,7 @@ const PlayerItem = styled.li<{ connected: boolean }>`
   opacity: ${({ connected }) => (connected ? 1 : 0.7)};
 `;
 
-export const GameIdle: React.FC = () => {
+export const GameIdleView: React.FC = () => {
   const dispatch = useDispatch();
   const game = useGame();
   const player = usePlayer();

@@ -1,5 +1,5 @@
 import React from 'react';
 
-export const GameStarted: React.FC = () => {
+export const GameStartedView: React.FC = () => {
   return <>La partie est démarrée !</>;
 };
