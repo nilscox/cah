@@ -3,8 +3,8 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
-import { createGame } from '../../../../domain/game/createGame/createGame';
-import { joinGame } from '../../../../domain/game/joinGame/joinGame';
+import { createGame } from '../../../../domain/usecases/game/createGame/createGame';
+import { joinGame } from '../../../../domain/usecases/game/joinGame/joinGame';
 import Button from '../../components/Button';
 import { Center } from '../../components/Center';
 import { Fade } from '../../components/Fade';
@@ -12,7 +12,7 @@ import Flex from '../../components/Flex';
 import { Icon } from '../../components/Icon';
 import SubmittableInput from '../../components/SubmittableInput';
 import { View } from '../../components/View';
-import { usePlayer } from '../../hooks/player';
+import { usePlayer } from '../../hooks/usePlayer';
 import ChevronRight from '../../icons/chevron-right.svg';
 import { color, spacing, transition } from '../../styles/theme';
 

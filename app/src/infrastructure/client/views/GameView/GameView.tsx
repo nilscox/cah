@@ -5,11 +5,11 @@ import { createBrowserHistory, createMemoryHistory } from 'history';
 import { useDispatch } from 'react-redux';
 import { Redirect, Route, Router, Switch } from 'react-router-dom';
 
-import { redirectToGameView } from '../../../../domain/game/redirectToGameView/redirectToGameView';
+import { redirectToGameView } from '../../../../domain/usecases/game/redirectToGameView/redirectToGameView';
 import { Icon } from '../../components/Icon';
 import { View } from '../../components/View';
-import { usePlayer } from '../../hooks/player';
 import { useGame } from '../../hooks/useGame';
+import { usePlayer } from '../../hooks/usePlayer';
 import Menu from '../../icons/menu.svg';
 
 import { GameIdle } from './GameIdle';

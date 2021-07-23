@@ -2,7 +2,7 @@ import React, { ReactElement } from 'react';
 
 import styled from 'styled-components';
 
-import { Player } from '../../../interfaces/entities/Player';
+import { Player } from '../../../domain/entities/Player';
 import { fontSize, fontWeight, spacing } from '../styles/theme';
 
 import Flex from './Flex';

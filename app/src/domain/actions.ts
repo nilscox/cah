@@ -1,8 +1,9 @@
-import { Game } from '../interfaces/entities/Game';
-import { Player } from '../interfaces/entities/Player';
-import { RTCMessage } from '../interfaces/gateways/RTCGateway';
 import { createAction } from '../store/createAction';
 import { ServerStatus } from '../store/reducers/appStateReducer';
+
+import { Game } from './entities/Game';
+import { Player } from './entities/Player';
+import { RTCMessage } from './gateways/RTCGateway';
 
 export const setPlayer = createAction<Player, 'player/set'>('player/set');
 export const setConnected = createAction('player/set-connected');

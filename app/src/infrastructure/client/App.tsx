@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Route, Switch } from 'react-router-dom';
 
-import { initialize } from '../../domain/player/initialize/initialize';
+import { initialize } from '../../domain/usecases/player/initialize/initialize';
 import { ServerStatus } from '../../store/reducers/appStateReducer';
 import { AppState } from '../../store/types';
 

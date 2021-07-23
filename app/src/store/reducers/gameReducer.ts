@@ -1,7 +1,8 @@
-import { Game, GameState as GS, PlayState, StartedGame } from '../../interfaces/entities/Game';
-import { RTCMessage } from '../../interfaces/gateways/RTCGateway';
-import { replace } from '../../utils/tools';
+import { Game, GameState as GS, PlayState, StartedGame } from '../../domain/entities/Game';
+import { RTCMessage } from '../../domain/gateways/RTCGateway';
 import { AppAction, NotNull, Nullable } from '../types';
+
+import { replace } from './helpers';
 
 export type GameState = Nullable<Game | StartedGame>;
 

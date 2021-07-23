@@ -3,11 +3,11 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
-import { startGame } from '../../../../domain/game/startGame/startGame';
+import { startGame } from '../../../../domain/usecases/game/startGame/startGame';
 import Button from '../../components/Button';
 import { Center } from '../../components/Center';
-import { usePlayer } from '../../hooks/player';
 import { useGame } from '../../hooks/useGame';
+import { usePlayer } from '../../hooks/usePlayer';
 import { fontSize, spacing } from '../../styles/theme';
 
 const GameCode = styled.div`

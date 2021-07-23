@@ -1,4 +1,4 @@
-import { TimerGateway } from '../../interfaces/gateways/TimerGateway';
+import { TimerGateway } from '../../domain/gateways/TimerGateway';
 
 export class RealTimerGateway implements TimerGateway {
   setInterval(callback: () => void, ms: number): NodeJS.Timer {

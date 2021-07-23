@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
-import { login } from '../../../../domain/player/login/login';
+import { login } from '../../../../domain/usecases/player/login/login';
 import { Fade } from '../../components/Fade';
 import SubmittableInput from '../../components/SubmittableInput';
 import { useTimeout } from '../../hooks/useTimeout';

@@ -3,12 +3,13 @@ import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { createGlobalStyle } from 'styled-components';
 
+import { setPlayer } from '../src/domain/actions';
 import ThemeProvider from '../src/infrastructure/client/styles/ThemeProvider';
 import { GlobalStyles } from '../src/infrastructure/client/styles/GlobalStyles';
-import { StubGameGateway, StubPlayerGateway, StubRTCGateway } from '../src/stories/stubs';
-import { configureStore } from '../src/store';
-import { setPlayer } from '../src/domain/actions';
-import { createPlayer } from '../src/utils/factories';
+import { configureStore } from '../src/store/configureStore';
+import { createPlayer } from '../src/tests/factories';
+
+import { StubGameGateway, StubPlayerGateway, StubRTCGateway } from './stubs';
 
 import 'normalize.css';
 import 'jetbrains-mono';

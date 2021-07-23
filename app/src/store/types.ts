@@ -1,14 +1,14 @@
 import { ThunkMiddleware } from 'redux-thunk';
 
 import { Actions } from '../domain/actions';
-import { GameGateway } from '../interfaces/gateways/GameGateway';
-import { PlayerGateway } from '../interfaces/gateways/PlayerGateway';
-import { RouterGateway } from '../interfaces/gateways/RouterGateway';
-import { RTCGateway } from '../interfaces/gateways/RTCGateway';
-import { ServerGateway } from '../interfaces/gateways/ServerGateway';
-import { TimerGateway } from '../interfaces/gateways/TimerGateway';
+import { GameGateway } from '../domain/gateways/GameGateway';
+import { PlayerGateway } from '../domain/gateways/PlayerGateway';
+import { RouterGateway } from '../domain/gateways/RouterGateway';
+import { RTCGateway } from '../domain/gateways/RTCGateway';
+import { ServerGateway } from '../domain/gateways/ServerGateway';
+import { TimerGateway } from '../domain/gateways/TimerGateway';
 
-import { configureStore } from './index';
+import { configureStore } from './configureStore';
 import { AppState as StoreAppState } from './reducers/appStateReducer';
 import { GameState } from './reducers/gameReducer';
 import { PlayerState } from './reducers/playerReducer';

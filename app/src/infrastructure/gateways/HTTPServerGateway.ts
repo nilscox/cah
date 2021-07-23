@@ -1,4 +1,4 @@
-import { ServerGateway } from '../../interfaces/gateways/ServerGateway';
+import { ServerGateway } from '../../domain/gateways/ServerGateway';
 import { ServerStatus } from '../../store/reducers/appStateReducer';
 
 import { HTTPAdapter } from './HTTPAdapter';

@@ -1,4 +1,4 @@
-import { RTCGateway, RTCListener } from '../../interfaces/gateways/RTCGateway';
+import { RTCGateway, RTCListener } from '../../domain/gateways/RTCGateway';
 
 import { WSAdapter } from './WSAdapter';
 

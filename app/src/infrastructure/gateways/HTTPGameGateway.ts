@@ -1,9 +1,9 @@
 import { GameDto } from '../../../../shared/dtos';
-import { Answer } from '../../interfaces/entities/Answer';
-import { Choice } from '../../interfaces/entities/Choice';
-import { Game } from '../../interfaces/entities/Game';
-import { Player } from '../../interfaces/entities/Player';
-import { GameGateway } from '../../interfaces/gateways/GameGateway';
+import { Answer } from '../../domain/entities/Answer';
+import { Choice } from '../../domain/entities/Choice';
+import { Game } from '../../domain/entities/Game';
+import { Player } from '../../domain/entities/Player';
+import { GameGateway } from '../../domain/gateways/GameGateway';
 
 import { HTTPAdapter } from './HTTPAdapter';
 

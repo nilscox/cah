@@ -1,6 +1,6 @@
 import { History } from 'history';
 
-import { RouterGateway } from '../../interfaces/gateways/RouterGateway';
+import { RouterGateway } from '../../domain/gateways/RouterGateway';
 
 export class ReactRouterGateway implements RouterGateway {
   constructor(private readonly history: History) {}
