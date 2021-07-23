@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 
-import { PlayState } from '../../domain/enums/PlayState';
+import { PlayState } from '../../../../shared/enums';
 import { AllPlayersAnsweredEvent } from '../../domain/events/AllPlayersAnsweredEvent';
 import { GameFinishedEvent } from '../../domain/events/GameFinishedEvent';
 import { GameJoinedEvent } from '../../domain/events/GameJoinedEvent';

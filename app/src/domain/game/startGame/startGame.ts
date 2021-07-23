@@ -7,6 +7,6 @@ export const startGame = createThunk(
 
     await gameGateway.startGame(questionMaster, turns);
 
-    gameRouterGateway.push(`/game/${game!.code}/started`);
+    gameRouterGateway.push(`/game/${game?.code}/started`);
   },
 );

@@ -1,4 +1,4 @@
-import { PlayState } from '../domain/enums/PlayState';
+import { PlayState } from '../../../shared/enums';
 import { ExternalData } from '../domain/interfaces/ExternalData';
 import { GameRepository } from '../domain/interfaces/GameRepository';
 import { PlayerRepository } from '../domain/interfaces/PlayerRepository';
@@ -17,6 +17,15 @@ export class GameBuilder<G extends Game = Game> {
 
   private register(func: () => Promise<void>) {
     this.functions.push(func);
+  }
+
+  addPlayer(player = new Player('player')): GameBuilder<G> {
+    this.register(async () => {
+      await this.playerRepository.save(player);
+      this.game.addPlayer(player);
+    });
+
+    return this;
   }
 
   addPlayers(count = 3): GameBuilder<G> {

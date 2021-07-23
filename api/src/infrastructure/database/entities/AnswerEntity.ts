@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn } from 'typeorm';
+import { Entity, ManyToOne, OneToMany, PrimaryColumn } from 'typeorm';
 
 import { Answer } from '../../../domain/models/Answer';
 

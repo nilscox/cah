@@ -1,5 +1,5 @@
+import { PlayState } from '../../../../shared/enums';
 import { EventHandler } from '../../ddd/EventHandler';
-import { PlayState } from '../../domain/enums/PlayState';
 import { GameEvent } from '../../domain/events';
 import { Game, StartedGame } from '../../domain/models/Game';
 import { Notifier } from '../interfaces/Notifier';

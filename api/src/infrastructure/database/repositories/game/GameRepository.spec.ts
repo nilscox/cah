@@ -2,8 +2,7 @@ import { expect } from 'chai';
 import { Connection, createConnection } from 'typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
-import { GameState } from '../../../../domain/enums/GameState';
-import { PlayState } from '../../../../domain/enums/PlayState';
+import { GameState, PlayState } from '../../../../../../shared/enums';
 import { GameRepository } from '../../../../domain/interfaces/GameRepository';
 import { PlayerRepository } from '../../../../domain/interfaces/PlayerRepository';
 import { Answer } from '../../../../domain/models/Answer';

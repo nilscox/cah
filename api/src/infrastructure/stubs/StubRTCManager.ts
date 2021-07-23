@@ -9,7 +9,7 @@ export class StubRTCManager implements RTCManager {
     return this.games.get(game) ?? [];
   }
 
-  isConnected(player: Player) {
+  isConnected(_player: Player) {
     return false;
   }
 

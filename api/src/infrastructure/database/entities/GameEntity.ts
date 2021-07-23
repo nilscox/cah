@@ -1,7 +1,6 @@
 import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryColumn } from 'typeorm';
 
-import { GameState } from '../../../domain/enums/GameState';
-import { PlayState } from '../../../domain/enums/PlayState';
+import { GameState, PlayState } from '../../../../../shared/enums';
 import { Game } from '../../../domain/models/Game';
 
 import { AnswerEntity } from './AnswerEntity';

@@ -1,4 +1,4 @@
-import { PlayState } from '../enums/PlayState';
+import { PlayState } from '../../../../shared/enums';
 
 import { DomainError } from './DomainError';
 

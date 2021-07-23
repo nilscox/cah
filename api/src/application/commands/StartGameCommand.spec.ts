@@ -1,7 +1,6 @@
 import { expect } from 'chai';
 
-import { GameState } from '../../domain/enums/GameState';
-import { PlayState } from '../../domain/enums/PlayState';
+import { GameState, PlayState } from '../../../../shared/enums';
 import { InvalidGameStateError } from '../../domain/errors/InvalidGameStateError';
 import { NotEnoughPlayersError } from '../../domain/errors/NotEnoughPlayersError';
 import { createBlanks } from '../../domain/models/Blank';

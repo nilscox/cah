@@ -1,6 +1,5 @@
+import { GameState, PlayState } from '../../../../shared/enums';
 import { AggregateRoot } from '../../ddd/AggregateRoot';
-import { GameState } from '../enums/GameState';
-import { PlayState } from '../enums/PlayState';
 import { AnswerNotFoundError } from '../errors/AnswerNotFoundError';
 import { InvalidGameStateError } from '../errors/InvalidGameStateError';
 import { InvalidNumberOfChoicesError } from '../errors/InvalidNumberOfChoicesError';

@@ -8,6 +8,7 @@ import { InMemoryPlayerRepository } from '../../infrastructure/database/reposito
 import { StubEventPublisher } from '../../infrastructure/stubs/StubEventPublisher';
 import { StubRTCManager } from '../../infrastructure/stubs/StubRTCManager';
 import { StubSessionStore } from '../../infrastructure/stubs/StubSessionStore';
+import { DtoMapperService } from '../services/DtoMapperService';
 import { GameService } from '../services/GameService';
 
 import { JoinGameHandler } from './JoinGameCommand';
@@ -18,6 +19,7 @@ describe('JoinGameCommand', () => {
   let gameService: GameService;
   let publisher: StubEventPublisher;
   let rtcManager: StubRTCManager;
+  let mapper: DtoMapperService;
 
   let handler: JoinGameHandler;
 
@@ -32,8 +34,9 @@ describe('JoinGameCommand', () => {
     publisher = new StubEventPublisher();
     gameService = new GameService(playerRepository, gameRepository, publisher);
     rtcManager = new StubRTCManager();
+    mapper = new DtoMapperService(rtcManager);
 
-    handler = new JoinGameHandler(gameService, gameRepository, rtcManager);
+    handler = new JoinGameHandler(gameService, gameRepository, rtcManager, mapper);
 
     game = new Game();
     await gameRepository.save(game);
@@ -47,7 +50,9 @@ describe('JoinGameCommand', () => {
   };
 
   it('joins a game', async () => {
-    await execute();
+    const { id: gameId } = await execute();
+
+    expect(gameId).to.be.a('string');
 
     expect(game.players).to.have.length(1);
     expect(publisher.events).deep.include({ type: 'GameJoined', game, player });

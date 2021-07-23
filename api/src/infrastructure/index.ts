@@ -13,6 +13,7 @@ import { PlayerEventsHandler } from '../application/handlers/PlayerEventsHandler
 import { SessionStore } from '../application/interfaces/SessionStore';
 import { GetGameHandler, GetGameQuery } from '../application/queries/GetGameQuery';
 import { GetPlayerHandler } from '../application/queries/GetPlayerQuery';
+import { DtoMapperService } from '../application/services/DtoMapperService';
 import { GameService } from '../application/services/GameService';
 import { RandomService } from '../application/services/RandomService';
 import { PlayerRepository } from '../domain/interfaces/PlayerRepository';
@@ -114,6 +115,8 @@ export const bootstrapServer = async (config: Config) => {
   const gameEventsHandler = new GameEventsHandler(rtcManager);
   const playerEventsHandler = new PlayerEventsHandler(rtcManager);
 
+  const mapper = new DtoMapperService(rtcManager);
+
   publisher.subscribe(gameEventsHandler);
   publisher.subscribe(playerEventsHandler);
 
@@ -131,33 +134,33 @@ export const bootstrapServer = async (config: Config) => {
       .use(guard(isNotAuthenticated))
       .use(dto(({ body }) => new LoginCommand(body.nick)))
       .use(status(201))
-      .use(handler(new LoginHandler(playerRepository))),
+      .use(handler(new LoginHandler(playerRepository, mapper))),
 
     new Route('get', '/player/me')
       .use(...authPlayerContext)
       .use(dto((req) => ({ playerId: req.session.playerId })))
-      .use(handler(new GetPlayerHandler(playerRepository, gameRepository))),
+      .use(handler(new GetPlayerHandler(playerRepository, mapper))),
 
     new Route('get', '/player/:playerId')
       .use(...playerContext)
       .use(dto((req) => ({ playerId: req.params.playerId })))
-      .use(handler(new GetPlayerHandler(playerRepository, gameRepository))),
+      .use(handler(new GetPlayerHandler(playerRepository, mapper))),
 
     new Route('get', '/game/:gameId')
       .use(...authPlayerContext)
       .use(dto((req) => new GetGameQuery(req.params.gameId)))
-      .use(handler(new GetGameHandler(gameService, rtcManager))),
+      .use(handler(new GetGameHandler(gameService, mapper))),
 
     new Route('post', '/game')
       .use(...authPlayerContext)
       .use(dto(() => new CreateGameCommand()))
       .use(status(201))
-      .use(handler(new CreateGameHandler(gameService, gameRepository, rtcManager))),
+      .use(handler(new CreateGameHandler(gameService, gameRepository, rtcManager, mapper))),
 
     new Route('post', '/game/:gameCode/join')
       .use(...authPlayerContext)
       .use(dto((req) => new JoinGameCommand(req.params.gameCode)))
-      .use(handler(new JoinGameHandler(gameService, gameRepository, rtcManager))),
+      .use(handler(new JoinGameHandler(gameService, gameRepository, rtcManager, mapper))),
 
     new Route('post', '/start')
       .use(...authPlayerContext)

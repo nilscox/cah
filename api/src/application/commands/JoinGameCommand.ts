@@ -1,20 +1,23 @@
+import { GameDto } from '../../../../shared/dtos';
 import { CommandHandler } from '../../ddd/CommandHandler';
+import { GameNotFoundError } from '../../domain/errors/GameNotFoundError';
 import { PlayerIsAlreadyInGameError } from '../../domain/errors/PlayerIsAlreadyInGameError';
 import { GameRepository } from '../../domain/interfaces/GameRepository';
-import { Game } from '../../domain/models/Game';
 import { RTCManager } from '../interfaces/RTCManager';
 import { SessionStore } from '../interfaces/SessionStore';
+import { DtoMapperService } from '../services/DtoMapperService';
 import { GameService } from '../services/GameService';
 
 export class JoinGameCommand {
   constructor(public readonly gameCode: string) {}
 }
 
-export class JoinGameHandler implements CommandHandler<JoinGameCommand, Game | undefined, SessionStore> {
+export class JoinGameHandler implements CommandHandler<JoinGameCommand, GameDto, SessionStore> {
   constructor(
     private readonly gameService: GameService,
     private readonly gameRepository: GameRepository,
     private readonly rtcManager: RTCManager,
+    private readonly mapper: DtoMapperService,
   ) {}
 
   async execute({ gameCode }: JoinGameCommand, session: SessionStore) {
@@ -27,7 +30,7 @@ export class JoinGameHandler implements CommandHandler<JoinGameCommand, Game | u
     const game = await this.gameRepository.findGameByCode(gameCode);
 
     if (!game) {
-      return;
+      throw new GameNotFoundError();
     }
 
     game.addPlayer(player);
@@ -35,6 +38,6 @@ export class JoinGameHandler implements CommandHandler<JoinGameCommand, Game | u
 
     await this.gameService.saveAndPublish(game);
 
-    return game;
+    return this.mapper.gameToDto(game);
   }
 }

@@ -1,9 +1,11 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 
+import { FullPlayerDto } from '../../../../shared/dtos';
 import { CommandHandler } from '../../ddd/CommandHandler';
 import { PlayerRepository } from '../../domain/interfaces/PlayerRepository';
 import { Player } from '../../domain/models/Player';
 import { SessionStore } from '../interfaces/SessionStore';
+import { DtoMapperService } from '../services/DtoMapperService';
 
 export class LoginCommand {
   @IsString()
@@ -15,8 +17,8 @@ export class LoginCommand {
   }
 }
 
-export class LoginHandler implements CommandHandler<LoginCommand, Player, SessionStore> {
-  constructor(private readonly playerRepository: PlayerRepository) {}
+export class LoginHandler implements CommandHandler<LoginCommand, FullPlayerDto, SessionStore> {
+  constructor(private readonly playerRepository: PlayerRepository, private readonly mapper: DtoMapperService) {}
 
   async execute({ nick }: LoginCommand, session: SessionStore) {
     const player = new Player(nick);
@@ -25,6 +27,6 @@ export class LoginHandler implements CommandHandler<LoginCommand, Player, Sessio
 
     session.player = player;
 
-    return player;
+    return this.mapper.toFullPlayerDto(player);
   }
 }

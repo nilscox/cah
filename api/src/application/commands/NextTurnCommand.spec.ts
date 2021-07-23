@@ -1,7 +1,6 @@
 import { expect } from 'chai';
 
-import { GameState } from '../../domain/enums/GameState';
-import { PlayState } from '../../domain/enums/PlayState';
+import { GameState, PlayState } from '../../../../shared/enums';
 import { InvalidPlayStateError } from '../../domain/errors/InvalidPlayStateError';
 import { Player } from '../../domain/models/Player';
 import { InMemoryGameRepository } from '../../infrastructure/database/repositories/game/InMemoryGameRepository';

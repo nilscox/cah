@@ -1,8 +1,7 @@
 import { expect } from 'chai';
 import _ from 'lodash';
 
-import { GameState } from '../../domain/enums/GameState';
-import { PlayState } from '../../domain/enums/PlayState';
+import { GameState, PlayState } from '../../../../shared/enums';
 import { GameNotFoundError } from '../../domain/errors/GameNotFoundError';
 import { InvalidChoicesSelectionError } from '../../domain/errors/InvalidChoicesSelectionError';
 import { InvalidGameStateError } from '../../domain/errors/InvalidGameStateError';

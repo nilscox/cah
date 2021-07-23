@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 
-import { PlayState } from '../../domain/enums/PlayState';
+import { PlayState } from '../../../../shared/enums';
 import { AnswerNotFoundError } from '../../domain/errors/AnswerNotFoundError';
 import { InvalidPlayStateError } from '../../domain/errors/InvalidPlayStateError';
 import { PlayerIsNotQuestionMasterError } from '../../domain/errors/PlayerIsNotQuestionMasterError';

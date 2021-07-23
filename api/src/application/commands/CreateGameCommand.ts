@@ -4,6 +4,7 @@ import { GameRepository } from '../../domain/interfaces/GameRepository';
 import { Game } from '../../domain/models/Game';
 import { RTCManager } from '../interfaces/RTCManager';
 import { SessionStore } from '../interfaces/SessionStore';
+import { DtoMapperService } from '../services/DtoMapperService';
 import { GameService } from '../services/GameService';
 
 export class CreateGameCommand {}
@@ -17,6 +18,7 @@ export class CreateGameHandler implements CommandHandler<CreateGameCommand, Crea
     private readonly gameService: GameService,
     private readonly gameRepository: GameRepository,
     private readonly rtcManager: RTCManager,
+    private readonly mapper: DtoMapperService,
   ) {}
 
   async execute(_: CreateGameCommand, session: SessionStore) {
@@ -33,6 +35,6 @@ export class CreateGameHandler implements CommandHandler<CreateGameCommand, Crea
 
     await this.gameService.saveAndPublish(game);
 
-    return game;
+    return this.mapper.gameToDto(game);
   }
 }

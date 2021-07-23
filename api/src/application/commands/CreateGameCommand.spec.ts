@@ -8,6 +8,7 @@ import { InMemoryPlayerRepository } from '../../infrastructure/database/reposito
 import { StubEventPublisher } from '../../infrastructure/stubs/StubEventPublisher';
 import { StubRTCManager } from '../../infrastructure/stubs/StubRTCManager';
 import { StubSessionStore } from '../../infrastructure/stubs/StubSessionStore';
+import { DtoMapperService } from '../services/DtoMapperService';
 import { GameService } from '../services/GameService';
 
 import { CreateGameHandler } from './CreateGameCommand';
@@ -18,6 +19,7 @@ describe('CreateGameCommand', () => {
   let gameService: GameService;
   let publisher: StubEventPublisher;
   let rtcManager: StubRTCManager;
+  let mapper: DtoMapperService;
 
   let handler: CreateGameHandler;
 
@@ -30,8 +32,9 @@ describe('CreateGameCommand', () => {
     publisher = new StubEventPublisher();
     gameService = new GameService(playerRepository, gameRepository, publisher);
     rtcManager = new StubRTCManager();
+    mapper = new DtoMapperService(rtcManager);
 
-    handler = new CreateGameHandler(gameService, gameRepository, rtcManager);
+    handler = new CreateGameHandler(gameService, gameRepository, rtcManager, mapper);
 
     session = new StubSessionStore();
     player = session.player = new Player('player');
@@ -42,7 +45,9 @@ describe('CreateGameCommand', () => {
   };
 
   it('creates a game', async () => {
-    await execute();
+    const { id: gameId } = await execute();
+
+    expect(gameId).to.be.a('string');
 
     const games = await gameRepository.findAll();
 
