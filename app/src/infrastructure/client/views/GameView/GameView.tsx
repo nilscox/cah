@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { createBrowserHistory, createMemoryHistory } from 'history';
-import { Redirect, Route, RouteComponentProps, Router, Switch } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { Redirect, Route, Router, Switch } from 'react-router-dom';
 
+import { redirectToGameView } from '../../../../domain/game/redirectToGameView/redirectToGameView';
 import { Icon } from '../../components/Icon';
 import { View } from '../../components/View';
 import { usePlayer } from '../../hooks/player';
@@ -12,20 +15,16 @@ import Menu from '../../icons/menu.svg';
 import { GameIdle } from './GameIdle';
 import { GameStarted } from './GameStarted';
 
-export const gameRouterHistory = createMemoryHistory();
-// export const gameRouterHistory = createBrowserHistory();
+const memoryRouter = true;
+export const gameRouterHistory = memoryRouter ? createMemoryHistory() : createBrowserHistory();
 
-type RouteParams = {
-  gameCode: string;
-};
+const GameView: React.FC = () => {
+  const dispatch = useDispatch();
 
-const GameView: React.FC<RouteComponentProps<RouteParams>> = ({ match: { params } }) => {
   const player = usePlayer();
   const game = useGame();
 
-  if (params.gameCode !== game.code) {
-    return <Redirect to={`/game/${game.code}`} />;
-  }
+  useEffect(() => void dispatch(redirectToGameView()), [dispatch, game.state, game.playState]);
 
   return (
     <View player={player} icon={<Icon as={Menu} />}>

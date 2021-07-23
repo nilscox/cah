@@ -11,7 +11,7 @@ export class InMemoryGameGateway implements GameGateway {
   constructor(private readonly rtcGateway: InMemoryRTCGateway) {}
 
   async fetchGame(gameId: string): Promise<Game> {
-    return createGame({ id: gameId });
+    return createGame({ id: gameId, code: 'OK42' });
   }
 
   async createGame(): Promise<Game> {

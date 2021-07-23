@@ -26,29 +26,29 @@ describe('initialize', () => {
     store.expectState('app', { server: ServerStatus.up, ready: true });
   });
 
-  it('redirects to the login page', async () => {
-    await store.dispatch(initialize());
+  describe('redirections', () => {
+    const expectRedirections = async (expected: string) => {
+      for (const before of ['/', '/login', '/game', '/elsewhere']) {
+        routerGateway.push(before);
 
-    expect(routerGateway.pathname).toEqual('/login');
-  });
+        await store.dispatch(initialize());
 
-  it('redirects to the home page when authenticated', async () => {
-    playerGateway.player = createPlayer();
-    routerGateway.push('/login');
-    store.snapshot();
+        expect(routerGateway.pathname).toEqual(expected);
+      }
+    };
 
-    await store.dispatch(initialize());
+    it('no player => login view', async () => {
+      await expectRedirections('/login');
+    });
 
-    expect(routerGateway.pathname).toEqual('/');
-  });
+    it('player, no game => lobby view', async () => {
+      playerGateway.player = createPlayer();
+      await expectRedirections('/');
+    });
 
-  it('redirects to the home page when not in a game', async () => {
-    playerGateway.player = createPlayer();
-    routerGateway.push('/game/OK42');
-    store.snapshot();
-
-    await store.dispatch(initialize());
-
-    expect(routerGateway.pathname).toEqual('/');
+    it('player, game => game view', async () => {
+      playerGateway.player = createPlayer({ gameId: 'gameId' });
+      await expectRedirections('/game/OK42');
+    });
   });
 });

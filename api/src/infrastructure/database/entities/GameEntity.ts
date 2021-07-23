@@ -14,7 +14,7 @@ export class GameEntity {
   @PrimaryColumn({ type: 'uuid' })
   id!: string;
 
-  @Column()
+  @Column({ unique: true })
   code!: string;
 
   @Column({ type: 'simple-enum', enum: GameState })

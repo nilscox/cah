@@ -1,9 +1,9 @@
 import { useSelector } from 'react-redux';
 
+import { StartedGame } from '../../../interfaces/entities/Game';
 import { AppState } from '../../../store/types';
 
-// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-const gameSelector = (state: AppState) => state.game!;
+const gameSelector = (state: AppState) => state.game as StartedGame;
 
 export const useGame = () => {
   return useSelector(gameSelector);

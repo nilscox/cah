@@ -9,6 +9,7 @@ export class GetPlayerQuery {
 }
 
 export type GetPlayerResult = {
+  id: string;
   nick: string;
   gameId?: string;
   cards?: Array<{
@@ -29,9 +30,17 @@ export class GetPlayerHandler implements QueryHandler<GetPlayerQuery, GetPlayerR
     }
 
     if (!session.player?.equals(player)) {
-      return { nick: player.nick };
+      return {
+        id: player.id,
+        nick: player.nick,
+      };
     }
 
-    return { nick: player.nick, gameId: game?.id, cards: player.getCards() };
+    return {
+      id: player.id,
+      nick: player.nick,
+      gameId: game?.id,
+      cards: player.getCards(),
+    };
   }
 }
