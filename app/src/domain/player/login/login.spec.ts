@@ -16,7 +16,7 @@ describe('login', () => {
 
     store.expectPartialState('player', {
       id: 'id',
-      isConnected: false,
+      isConnected: true,
       nick: 'Toto',
     });
   });
