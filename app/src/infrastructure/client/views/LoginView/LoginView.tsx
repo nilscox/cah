@@ -4,8 +4,8 @@ import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
 import { login } from '../../../../domain/usecases/player/login/login';
-import { Fade } from '../../components/Fade';
-import SubmittableInput from '../../components/SubmittableInput';
+import SubmittableInput from '../../components/elements/SubmittableInput';
+import { Fade } from '../../components/layout/Fade';
 import { useTimeout } from '../../hooks/useTimeout';
 import { spacing } from '../../styles/theme';
 

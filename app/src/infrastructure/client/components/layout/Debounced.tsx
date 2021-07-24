@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { useTimeout } from '../hooks/useTimeout';
+import { useTimeout } from '../../hooks/useTimeout';
 
 type DebouncedProps = {
   delay: number;

@@ -1,7 +1,7 @@
 import React, { ErrorInfo } from 'react';
 
-import { Center } from './Center';
-import { FullScreen } from './FullScreen';
+import { Center } from '../layout/Center';
+import { FullScreen } from '../layout/FullScreen';
 
 export class ErrorBoundary extends React.PureComponent<unknown, { hasError: boolean }> {
   state = { hasError: false };

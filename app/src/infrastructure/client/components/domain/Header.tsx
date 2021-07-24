@@ -2,10 +2,9 @@ import React, { ReactElement } from 'react';
 
 import styled from 'styled-components';
 
-import { Player } from '../../../domain/entities/Player';
-import { fontSize, fontWeight, spacing } from '../styles/theme';
-
-import Flex from './Flex';
+import { Player } from '../../../../domain/entities/Player';
+import { fontSize, fontWeight, spacing } from '../../styles/theme';
+import Flex from '../layout/Flex';
 
 const Container = styled(Flex)`
   padding: ${spacing(2)};

@@ -3,11 +3,11 @@ import React, { useEffect, useState } from 'react';
 import { action } from '@storybook/addon-actions';
 import { Meta } from '@storybook/react';
 
-import Button from '../components/Button';
-import { Center } from '../components/Center';
-import { FullScreen } from '../components/FullScreen';
-import { Input } from '../components/Input';
-import SubmittableInput from '../components/SubmittableInput';
+import Button from '../components/elements/Button';
+import { Input } from '../components/elements/Input';
+import SubmittableInput from '../components/elements/SubmittableInput';
+import { Center } from '../components/layout/Center';
+import { FullScreen } from '../components/layout/FullScreen';
 
 export default {
   title: 'Form',

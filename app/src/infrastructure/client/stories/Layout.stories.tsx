@@ -3,7 +3,7 @@ import React from 'react';
 import { Meta } from '@storybook/react';
 
 import { createPlayer } from '../../../tests/factories';
-import Header from '../components/Header';
+import Header from '../components/domain/Header';
 
 export default {
   title: 'Layout',

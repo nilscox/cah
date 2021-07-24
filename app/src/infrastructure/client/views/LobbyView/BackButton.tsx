@@ -1,9 +1,9 @@
 import React from 'react';
 
-import { Fade } from '../../components/Fade';
-import { Icon } from '../../components/Icon';
-import { IconButton } from '../../components/IconButton';
-import { Rotate } from '../../components/Rotate';
+import { Icon } from '../../components/elements/Icon';
+import { IconButton } from '../../components/elements/IconButton';
+import { Fade } from '../../components/layout/Fade';
+import { Rotate } from '../../components/layout/Rotate';
 import Back from '../../icons/back.svg';
 
 type BackButtonProps = {

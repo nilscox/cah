@@ -2,7 +2,7 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { color } from '../styles/theme';
+import { color } from '../../styles/theme';
 
 const StyledInput = styled.input`
   background-color: transparent;

@@ -3,8 +3,8 @@ import React from 'react';
 import styled from 'styled-components';
 
 import Check from '../icons/check.svg';
+import Flex from '../layout/Flex';
 
-import Flex from './Flex';
 import { Icon } from './Icon';
 import { IconButton } from './IconButton';
 import { Input } from './Input';

@@ -2,10 +2,10 @@ import React, { ReactElement } from 'react';
 
 import styled from 'styled-components';
 
-import { Player } from '../../../domain/entities/Player';
-import { spacing } from '../styles/theme';
+import { Player } from '../../../../domain/entities/Player';
+import { spacing } from '../../styles/theme';
+import Flex from '../layout/Flex';
 
-import Flex from './Flex';
 import Header from './Header';
 
 const Container = styled(Flex)`

@@ -18,8 +18,8 @@ import { RealTimerGateway } from '../gateways/RealTimerGateway';
 import { WSAdapter } from '../gateways/WSAdapter';
 import { WSRTCGateway } from '../gateways/WSRTCGateway';
 
-import App from './App';
-import { ErrorBoundary } from './components/ErrorBoundary';
+import CAHApp from './App';
+import { ErrorBoundary } from './components/domain/ErrorBoundary';
 import { GlobalStyles } from './styles/GlobalStyles';
 import ThemeProvider from './styles/ThemeProvider';
 import { gameRouterHistory } from './views/GameView/GameView';
@@ -59,7 +59,7 @@ ReactDOM.render(
     <ErrorBoundary>
       <Router history={history}>
         <ReduxProvider store={store}>
-          <App />
+          <CAHApp />
         </ReduxProvider>
       </Router>
     </ErrorBoundary>

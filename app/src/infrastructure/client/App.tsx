@@ -7,9 +7,9 @@ import { initialize } from '../../domain/usecases/player/initialize/initialize';
 import { ServerStatus } from '../../store/reducers/appStateReducer';
 import { AppState } from '../../store/types';
 
-import { Center } from './components/Center';
-import { Debounced } from './components/Debounced';
-import { FullScreen } from './components/FullScreen';
+import { Center } from './components/layout/Center';
+import { Debounced } from './components/layout/Debounced';
+import { FullScreen } from './components/layout/FullScreen';
 import GameView from './views/GameView/GameView';
 import LobbyView from './views/LobbyView/LobbyView';
 import LoginView from './views/LoginView/LoginView';
@@ -23,7 +23,7 @@ const ServerDownFallback: React.FC = () => (
 const appReadySelector = (state: AppState) => state.app.ready;
 const serverStatusSelector = (state: AppState) => state.app.server;
 
-const App: React.FC = () => {
+const CAHApp: React.FC = () => {
   const dispatch = useDispatch();
 
   const server = useSelector(serverStatusSelector);
@@ -49,4 +49,4 @@ const App: React.FC = () => {
   );
 };
 
-export default App;
+export default CAHApp;

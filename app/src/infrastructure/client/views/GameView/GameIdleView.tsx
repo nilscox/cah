@@ -4,8 +4,8 @@ import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
 import { startGame } from '../../../../domain/usecases/game/startGame/startGame';
-import Button from '../../components/Button';
-import { Center } from '../../components/Center';
+import Button from '../../components/elements/Button';
+import { Center } from '../../components/layout/Center';
 import { useGame } from '../../hooks/useGame';
 import { usePlayer } from '../../hooks/usePlayer';
 import { fontSize, spacing } from '../../styles/theme';

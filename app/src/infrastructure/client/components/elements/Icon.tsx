@@ -2,7 +2,7 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { spacing } from '../styles/theme';
+import { spacing } from '../../styles/theme';
 
 type IconProps = React.SVGProps<SVGSVGElement> & {
   as: React.ComponentType;

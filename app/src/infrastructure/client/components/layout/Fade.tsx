@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { Theme, transition } from '../styles/theme';
+import { Theme, transition } from '../../styles/theme';
 
 type FadeProps = {
   show: boolean;

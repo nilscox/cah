@@ -5,14 +5,14 @@ import { useDispatch } from 'react-redux';
 import { Redirect, Route, Router, Switch } from 'react-router-dom';
 
 import { redirectToGameView } from '../../../../domain/usecases/game/redirectToGameView/redirectToGameView';
-import { Icon } from '../../components/Icon';
-import { View } from '../../components/View';
+import { View } from '../../components/domain/View';
+import { Icon } from '../../components/elements/Icon';
 import { useGame } from '../../hooks/useGame';
 import { usePlayer } from '../../hooks/usePlayer';
 import Menu from '../../icons/menu.svg';
 
 import { GameIdleView } from './GameIdleView';
-import { GameStartedView } from './GameStartedView';
+import { GameStartedView } from './GameStartedView/GameStartedView';
 
 const memoryRouter = true;
 export const gameRouterHistory = memoryRouter ? createMemoryHistory() : createBrowserHistory();

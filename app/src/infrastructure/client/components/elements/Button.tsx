@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { color, fontWeight } from '../styles/theme';
+import { color, fontWeight } from '../../styles/theme';
 
 type ButtonProps = {
   size?: 'big';

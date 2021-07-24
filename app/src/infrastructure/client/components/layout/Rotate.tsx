@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { transition } from '../styles/theme';
+import { transition } from '../../styles/theme';
 
 type RotateProps = {
   show: boolean;
