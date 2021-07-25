@@ -20,6 +20,7 @@ describe('login', () => {
       nick: 'Toto',
       cards: [],
       selection: [],
+      selectionValidated: false,
     });
   });
 

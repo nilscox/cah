@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 
+import { action } from '@storybook/addon-actions';
 import { Meta, Story } from '@storybook/react';
 
 import { Choice } from '../../../domain/entities/Choice';
@@ -91,7 +92,16 @@ const ChoicesListTemplate: Story<ChoiceCardsListProps> = ({ choices }) => {
     }
   };
 
-  return <ChoicesList choices={choices} selection={selection} onChoiceClick={handleChoiceClick} />;
+  return (
+    <ChoicesList
+      choices={choices}
+      selection={selection}
+      validateOpen={false}
+      onSelectChoice={handleChoiceClick}
+      onOrderChange={action('order change')}
+      onValidateSelection={action('validate selection')}
+    />
+  );
 };
 
 export const choicesList = ChoicesListTemplate.bind({});

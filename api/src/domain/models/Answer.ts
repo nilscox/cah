@@ -29,7 +29,7 @@ export class Answer extends Entity {
     return {
       id: this.id,
       ...(!anonymous && { player: this._player.nick }),
-      choices: this._choices.map(({ text }) => text),
+      choices: this._choices.map((choice) => choice.toJSON()),
       formatted: this._question.toString(this._choices),
     };
   }

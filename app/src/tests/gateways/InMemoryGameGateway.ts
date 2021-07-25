@@ -35,8 +35,24 @@ export class InMemoryGameGateway implements GameGateway {
     });
   }
 
-  answer(_choices: Choice[]): Promise<void> {
-    throw new Error('Method not implemented.');
+  answers?: Answer[];
+  answered?: Choice[];
+
+  async answer(choices: Choice[]): Promise<void> {
+    this.answered = choices;
+
+    // todo
+    this.rtcGateway.triggerMessage({
+      type: 'PlayerAnswered',
+      player: 'player',
+    });
+
+    if (this.answers) {
+      this.rtcGateway.triggerMessage({
+        type: 'AllPlayersAnswered',
+        answers: this.answers,
+      });
+    }
   }
 
   selectWinningAnswer(_answer: Answer): Promise<void> {

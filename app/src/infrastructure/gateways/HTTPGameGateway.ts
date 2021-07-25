@@ -1,7 +1,7 @@
 import { GameDto } from '../../../../shared/dtos';
 import { Answer } from '../../domain/entities/Answer';
 import { Choice } from '../../domain/entities/Choice';
-import { Game } from '../../domain/entities/Game';
+import { Game, StartedGame } from '../../domain/entities/Game';
 import { Player } from '../../domain/entities/Player';
 import { GameGateway } from '../../domain/gateways/GameGateway';
 
@@ -10,10 +10,11 @@ import { HTTPAdapter } from './HTTPAdapter';
 export class HTTPGameGateway implements GameGateway {
   constructor(private readonly http: HTTPAdapter) {}
 
-  private dtoToGame(dto: GameDto) {
+  private dtoToGame(dto: GameDto): Game | StartedGame {
     return {
       ...dto,
       state: dto.gameState,
+      questionMaster: dto.players.find(({ nick }) => nick === dto.questionMaster),
     };
   }
 
@@ -42,8 +43,8 @@ export class HTTPGameGateway implements GameGateway {
     });
   }
 
-  answer(_choices: Choice[]): Promise<void> {
-    throw new Error('Method not implemented.');
+  async answer(choices: Choice[]): Promise<void> {
+    await this.http.post('/answer', { choicesIds: choices.map(({ id }) => id) });
   }
 
   selectWinningAnswer(_answer: Answer): Promise<void> {

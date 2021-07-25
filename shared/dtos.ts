@@ -25,7 +25,7 @@ export interface QuestionDto {
 
 export interface AnonymousAnswerDto {
   id: string;
-  choices: string[];
+  choices: ChoiceDto[];
   formatted: string;
 }
 

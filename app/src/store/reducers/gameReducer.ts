@@ -42,6 +42,14 @@ const rtcMessageReducer = (state: NotNull<GameState>, message: RTCMessage): Game
     };
   }
 
+  if (message.type === 'AllPlayersAnswered') {
+    return {
+      ...state,
+      playState: PlayState.questionMasterSelection,
+      answers: message.answers,
+    };
+  }
+
   return state;
 };
 

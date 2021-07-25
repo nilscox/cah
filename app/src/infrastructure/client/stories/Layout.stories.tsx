@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import { createPlayer } from '../../../tests/factories';
 import Header from '../components/domain/Header';
-import { RenderItemFunction, SortableList } from '../components/elements/SortableList';
+import { DragHandle, RenderItemFunction, SortableList } from '../components/elements/SortableList';
 
 export default {
   title: 'Layout',
@@ -31,7 +31,13 @@ type ItemType = {
   text: string;
 };
 
-const Item: React.FC<SortableComponentProps<ItemType>> = ({ item, dragHandle, ...props }) => (
+type ItemProps = {
+  item: ItemType;
+  isSelected: boolean;
+  dragHandle: DragHandle;
+};
+
+const Item: React.FC<ItemProps> = ({ item, dragHandle, ...props }) => (
   <ItemContainer {...props} tall={['2', '5', '11'].includes(item.id)}>
     <div style={{ flex: 1 }}>{item.text}</div>
     <div {...dragHandle}>Drag me!</div>

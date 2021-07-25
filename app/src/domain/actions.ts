@@ -9,6 +9,7 @@ import { RTCMessage } from './gateways/RTCGateway';
 export const setPlayer = createAction<FullPlayer, 'player/set'>('player/set');
 export const setConnected = createAction('player/set-connected');
 export const setPlayerCards = createAction<Choice[], 'player/set-cards'>('player/set-cards');
+export const selectionValidated = createAction('player/selection-validated');
 
 export const setGame = createAction<Game, 'game/set'>('game/set');
 
@@ -28,6 +29,7 @@ export type Actions = ReturnType<
   | typeof setPlayer
   | typeof setConnected
   | typeof setPlayerCards
+  | typeof selectionValidated
   | typeof setGame
   | typeof setAppReady
   | typeof serverStatusChanged

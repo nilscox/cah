@@ -18,6 +18,9 @@ export const Button = styled.button<ButtonProps>`
   border: none;
   outline: none;
   -webkit-tap-highlight-color: transparent;
+  &:disabled {
+    color: ${color('disabled')};
+  }
 `;
 
 export default Button;

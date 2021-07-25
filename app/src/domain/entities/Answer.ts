@@ -1,8 +1,9 @@
+import { Choice } from './Choice';
 import { Player } from './Player';
 
 export interface Answer {
   id: string;
   player?: Player;
-  choices: string[];
+  choices: Choice[];
   formatted: string;
 }

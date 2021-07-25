@@ -16,6 +16,7 @@ export const theme = {
   colors: {
     background: 'black',
     text: '#DDD',
+    disabled: '#999',
     border: '#CCC',
   },
   font: "'JetBrains Mono', 'Courier New', Courier, monospace",

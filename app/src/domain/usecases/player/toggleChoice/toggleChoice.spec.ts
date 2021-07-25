@@ -1,5 +1,11 @@
-import { GameState, PlayState } from '../../../../../../shared/enums';
-import { createChoice, createFullPlayer, createGame, createQuestion } from '../../../../tests/factories';
+import { PlayState } from '../../../../../../shared/enums';
+import {
+  createChoice,
+  createFullPlayer,
+  createGame,
+  createQuestion,
+  createStartedGame,
+} from '../../../../tests/factories';
 import { InMemoryStore } from '../../../../tests/InMemoryStore';
 import { setGame, setPlayer } from '../../../actions';
 import { Choice } from '../../../entities/Choice';
@@ -26,7 +32,7 @@ describe('toggleChoice', () => {
   };
 
   const setQuestion = (question: Question) => {
-    store.dispatch(setGame(createGame({ state: GameState.started, question })));
+    store.dispatch(setGame(createStartedGame({ question })));
     store.snapshot();
   };
 

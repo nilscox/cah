@@ -1,6 +1,6 @@
 import { Answer } from '../domain/entities/Answer';
 import { Choice } from '../domain/entities/Choice';
-import { Game, GameState, StartedGame } from '../domain/entities/Game';
+import { Game, GameState, PlayState, StartedGame } from '../domain/entities/Game';
 import { FullPlayer, Player } from '../domain/entities/Player';
 import { Question } from '../domain/entities/Question';
 
@@ -19,12 +19,22 @@ export const createFullPlayer = (overrides: Partial<FullPlayer> = {}): FullPlaye
   ...overrides,
 });
 
-export const createGame = (overrides: Partial<Game | StartedGame> = {}): Game => ({
+export const createGame = (overrides: Partial<Game> = {}): Game => ({
   id: createId(),
   code: 'code',
   state: GameState.idle,
   players: [],
   ...overrides,
+});
+
+export const createStartedGame = (overrides: Partial<StartedGame> = {}): StartedGame => ({
+  ...createGame(),
+  playState: PlayState.playersAnswer,
+  questionMaster: createPlayer(),
+  question: createQuestion(),
+  answers: [],
+  ...overrides,
+  state: GameState.started,
 });
 
 export const createQuestion = (overrides: Partial<Question> = {}): Question => ({

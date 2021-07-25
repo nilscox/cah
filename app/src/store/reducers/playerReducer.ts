@@ -11,6 +11,7 @@ export type PlayerState = Nullable<{
   isConnected: boolean;
   cards: Choice[];
   selection: Array<Choice | null>;
+  selectionValidated: boolean;
 }>;
 
 export const playerReducer = (state: PlayerState = null, action: AppAction): PlayerState => {
@@ -18,6 +19,7 @@ export const playerReducer = (state: PlayerState = null, action: AppAction): Pla
     return {
       ...action.payload,
       selection: [],
+      selectionValidated: false,
     };
   }
 
@@ -75,6 +77,13 @@ export const playerReducer = (state: PlayerState = null, action: AppAction): Pla
     return {
       ...state,
       selection: replace(state.selection, findById(action.payload.id), null),
+    };
+  }
+
+  if (action.type === 'player/selection-validated') {
+    return {
+      ...state,
+      selectionValidated: true,
     };
   }
 
