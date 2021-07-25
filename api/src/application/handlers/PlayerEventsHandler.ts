@@ -1,3 +1,4 @@
+import { EventDto } from '../../../../shared/events';
 import { EventHandler } from '../../ddd/EventHandler';
 import { PlayerEvent } from '../../domain/events';
 import { Player } from '../../domain/models/Player';
@@ -15,7 +16,7 @@ export class PlayerEventsHandler implements EventHandler<PlayerEvent> {
     }
   }
 
-  notify(player: Player, event: unknown) {
+  notify(player: Player, event: EventDto) {
     this.notifier.notifyPlayer(player, event);
   }
 }

@@ -10,7 +10,10 @@ export class DtoMapperService {
   constructor(private readonly rtcManager: RTCManager) {}
 
   toChoiceDto(choice: Choice): ChoiceDto {
-    return { text: choice.text };
+    return {
+      id: choice.id,
+      text: choice.text,
+    };
   }
 
   toPlayerDto(player: Player): PlayerDto {

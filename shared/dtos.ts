@@ -1,6 +1,7 @@
 import { GameState, PlayState } from "./enums";
 
 export interface ChoiceDto {
+  id: string;
   text: string;
 }
 
@@ -22,11 +23,14 @@ export interface QuestionDto {
   formatted: string;
 }
 
-export interface AnswerDto {
+export interface AnonymousAnswerDto {
   id: string;
-  player?: string;
   choices: string[];
   formatted: string;
+}
+
+export interface AnswerDto extends AnonymousAnswerDto {
+  player: string;
 }
 
 export interface GameDto {
@@ -37,6 +41,6 @@ export interface GameDto {
   playState?: PlayState;
   questionMaster?: string;
   question?: QuestionDto;
-  answers?: AnswerDto[];
+  answers?: Array<AnonymousAnswerDto | AnswerDto>;
   winner?: string;
 }

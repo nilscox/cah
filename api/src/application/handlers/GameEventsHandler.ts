@@ -1,4 +1,6 @@
+import { AnswerDto } from '../../../../shared/dtos';
 import { PlayState } from '../../../../shared/enums';
+import { EventDto } from '../../../../shared/events';
 import { EventHandler } from '../../ddd/EventHandler';
 import { GameEvent } from '../../domain/events';
 import { Game, StartedGame } from '../../domain/models/Game';
@@ -63,8 +65,8 @@ export class GameEventsHandler implements EventHandler<GameEvent> {
 
         this.notify(event.game, {
           type: event.type,
-          winner: winner?.nick,
-          answers: answers.map((answer) => answer.toJSON()),
+          winner: winner!.nick,
+          answers: answers.map((answer) => answer.toJSON() as AnswerDto),
         });
 
         break;
@@ -80,7 +82,7 @@ export class GameEventsHandler implements EventHandler<GameEvent> {
     }
   }
 
-  private notify(game: Game, event: unknown) {
+  private notify(game: Game, event: EventDto) {
     this.notifier.notifyGamePlayers(game, event);
   }
 }
