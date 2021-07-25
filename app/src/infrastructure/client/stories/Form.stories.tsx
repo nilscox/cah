@@ -26,26 +26,31 @@ export const ButtonStory = () => <Button onClick={action('click')}>Click me!</Bu
 
 ButtonStory.storyName = 'Button';
 
-export const InputStory = () => {
+/* eslint-disable react-hooks/rules-of-hooks */
+
+export const input = () => {
   const [value, setValue] = useState('');
 
   useEffect(() => {
     action('change')(value);
   });
 
-  return <Input value={value} onTextChange={setValue} />;
+  return <Input placeholder="Type something..." value={value} onTextChange={setValue} />;
 };
 
-InputStory.storyName = 'Input';
-
-export const SubmittableInputStory = () => {
+export const submittableInput = () => {
   const [value, setValue] = useState('');
 
   useEffect(() => {
     action('change')(value);
   });
 
-  return <SubmittableInput value={value} onTextChange={setValue} onSubmit={action('submit')} />;
+  return (
+    <SubmittableInput
+      placeholder="Type and submit..."
+      value={value}
+      onTextChange={setValue}
+      onSubmit={action('submit')}
+    />
+  );
 };
-
-SubmittableInputStory.storyName = 'SubmittableInput';

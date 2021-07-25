@@ -36,12 +36,17 @@ export class InMemoryStore {
     this.state = this.store.getState();
   }
 
-  listenRTCMessages(rtcGateway = this.rtcGateway) {
+  listenRTCMessages = (rtcGateway = this.rtcGateway) => {
     rtcGateway.onMessage((message) => this.store.dispatch(rtcMessage(message)));
-  }
+  };
 
-  snapshot() {
+  snapshot = () => {
     this.state = this.store.getState();
+  };
+
+  setup(cb: (store: InMemoryStore) => void) {
+    cb(this);
+    this.snapshot();
   }
 
   expectState<S extends keyof AppState>(state: S, expected: AppState[S]) {

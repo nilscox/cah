@@ -2,14 +2,14 @@ import { Game, GameState as GS, PlayState, StartedGame } from '../../domain/enti
 import { RTCMessage } from '../../domain/gateways/RTCGateway';
 import { AppAction, NotNull, Nullable } from '../types';
 
-import { replace } from './helpers';
+import { upsert } from './helpers';
 
 export type GameState = Nullable<Game | StartedGame>;
 
 const setPlayerConnected = (state: NotNull<GameState>, nick: string, isConnected: boolean): GameState => {
   return {
     ...state,
-    players: replace(state.players, (player) => player.nick === nick, { isConnected }),
+    players: upsert(state.players, (player) => player.nick === nick, { isConnected }),
   };
 };
 

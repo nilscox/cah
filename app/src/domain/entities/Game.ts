@@ -28,3 +28,7 @@ export interface StartedGame extends Game {
   answers: Answer[];
   winner?: string;
 }
+
+export const isStarted = (game: Game): game is StartedGame => {
+  return game.state === GameState.started;
+};

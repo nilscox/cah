@@ -18,6 +18,8 @@ describe('login', () => {
       id: 'id',
       isConnected: true,
       nick: 'Toto',
+      cards: [],
+      selection: [],
     });
   });
 

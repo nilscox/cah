@@ -1,5 +1,5 @@
 import { FullPlayerDto } from '../../../../shared/dtos';
-import { Player } from '../../domain/entities/Player';
+import { FullPlayer } from '../../domain/entities/Player';
 import { PlayerGateway } from '../../domain/gateways/PlayerGateway';
 
 import { HTTPAdapter } from './HTTPAdapter';
@@ -7,7 +7,7 @@ import { HTTPAdapter } from './HTTPAdapter';
 export class HTTPPlayerGateway implements PlayerGateway {
   constructor(private readonly http: HTTPAdapter) {}
 
-  async fetchMe(): Promise<Player | undefined> {
+  async fetchMe(): Promise<FullPlayer | undefined> {
     const { body, status } = await this.http.get<FullPlayerDto>('/player/me', {
       expectedStatus: [200, 401],
     });
@@ -17,7 +17,7 @@ export class HTTPPlayerGateway implements PlayerGateway {
     }
   }
 
-  async login(nick: string): Promise<Player> {
+  async login(nick: string): Promise<FullPlayer> {
     const { body } = await this.http.post<FullPlayerDto>('/login', {
       nick,
     });

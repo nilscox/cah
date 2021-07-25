@@ -1,7 +1,7 @@
 import expect from 'expect';
 
 import { ServerStatus } from '../../../../store/reducers/appStateReducer';
-import { createPlayer } from '../../../../tests/factories';
+import { createFullPlayer } from '../../../../tests/factories';
 import { InMemoryPlayerGateway } from '../../../../tests/gateways/InMemoryPlayerGateway';
 import { InMemoryRouterGateway } from '../../../../tests/gateways/InMemoryRouterGateway';
 import { InMemoryStore } from '../../../../tests/InMemoryStore';
@@ -42,12 +42,12 @@ describe('initialize', () => {
     });
 
     it('player, no game => lobby view', async () => {
-      playerGateway.player = createPlayer();
+      playerGateway.player = createFullPlayer();
       await expectRedirections('/');
     });
 
     it('player, game => game view', async () => {
-      playerGateway.player = createPlayer({ gameId: 'gameId' });
+      playerGateway.player = createFullPlayer({ gameId: 'gameId' });
       await expectRedirections('/game/OK42');
     });
   });

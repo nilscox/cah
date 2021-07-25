@@ -2,7 +2,7 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import Check from '../icons/check.svg';
+import Check from '../../icons/check.svg';
 import Flex from '../layout/Flex';
 
 import { Icon } from './Icon';

@@ -1,6 +1,6 @@
 import { Answer } from '../../domain/entities/Answer';
 import { Choice } from '../../domain/entities/Choice';
-import { Game, PlayState } from '../../domain/entities/Game';
+import { Game, PlayState, StartedGame } from '../../domain/entities/Game';
 import { Player } from '../../domain/entities/Player';
 import { GameGateway } from '../../domain/gateways/GameGateway';
 import { createGame, createQuestion } from '../factories';
@@ -10,16 +10,18 @@ import { InMemoryRTCGateway } from './InMemoryRTCGateway';
 export class InMemoryGameGateway implements GameGateway {
   constructor(private readonly rtcGateway: InMemoryRTCGateway) {}
 
+  game?: Game | StartedGame;
+
   async fetchGame(gameId: string): Promise<Game> {
-    return createGame({ id: gameId, code: 'OK42' });
+    return this.game ?? createGame({ id: gameId, code: 'OK42' });
   }
 
   async createGame(): Promise<Game> {
-    return createGame({ code: 'OK42' });
+    return this.game ?? createGame({ code: 'OK42' });
   }
 
   async joinGame(gameCode: string): Promise<Game> {
-    return createGame({ code: gameCode });
+    return this.game ?? createGame({ code: gameCode });
   }
 
   async startGame(questionMaster: Player, _turns: number): Promise<void> {

@@ -1,17 +1,18 @@
-import { Player } from '../../domain/entities/Player';
+import { FullPlayer } from '../../domain/entities/Player';
 import { PlayerGateway } from '../../domain/gateways/PlayerGateway';
 
 export class InMemoryPlayerGateway implements PlayerGateway {
-  player?: Player;
+  player?: FullPlayer;
 
-  async fetchMe(): Promise<Player | undefined> {
+  async fetchMe(): Promise<FullPlayer | undefined> {
     return this.player;
   }
 
-  async login(nick: string): Promise<Player> {
+  async login(nick: string): Promise<FullPlayer> {
     return {
       id: 'id',
       nick,
+      cards: [],
       isConnected: false,
     };
   }

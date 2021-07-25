@@ -10,7 +10,7 @@ type IconProps = React.SVGProps<SVGSVGElement> & {
 
 const IconComponent: React.FC<IconProps> = ({ as: Component }) => <Component />;
 
-export const Icon = styled(IconComponent)`
-  width: ${spacing(4)};
-  height: ${spacing(4)};
+export const Icon = styled(IconComponent)<{ size?: number }>`
+  width: ${({ size = 4 }) => spacing(size)};
+  height: ${({ size = 4 }) => spacing(size)};
 `;

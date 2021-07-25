@@ -4,8 +4,10 @@
     "strict": true,
     "target": "es2020",
     "moduleResolution": "node",
+    "skipLibCheck": true,
     "esModuleInterop": true,
     "jsx": "preserve"
   },
-  "include": ["../shared", "src"]
+  "include": ["../shared", "src"],
+  "exclude": ["node_modules"]
 }

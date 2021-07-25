@@ -1,6 +1,6 @@
-import { Player } from '../entities/Player';
+import { FullPlayer } from '../entities/Player';
 
 export interface PlayerGateway {
-  fetchMe(): Promise<Player | undefined>;
-  login(nick: string): Promise<Player>;
+  fetchMe(): Promise<FullPlayer | undefined>;
+  login(nick: string): Promise<FullPlayer>;
 }

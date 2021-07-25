@@ -1,6 +1,12 @@
+import { Choice } from './Choice';
+
 export interface Player {
   id: string;
   nick: string;
-  gameId?: string;
   isConnected: boolean;
+}
+
+export interface FullPlayer extends Player {
+  gameId?: string;
+  cards: Choice[];
 }

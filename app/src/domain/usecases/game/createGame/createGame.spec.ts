@@ -1,5 +1,6 @@
 import expect from 'expect';
 
+import { createGame as createGameFactory } from '../../../../tests/factories';
 import { InMemoryStore } from '../../../../tests/InMemoryStore';
 import { GameState } from '../../../entities/Game';
 
@@ -13,10 +14,12 @@ describe('createGame', () => {
   });
 
   it('creates a game', async () => {
+    const game = (store.gameGateway.game = createGameFactory({ code: 'OK42' }));
+
     await store.dispatch(createGame());
 
     store.expectState('game', {
-      id: 'id',
+      id: game.id,
       code: 'OK42',
       state: GameState.idle,
       players: [],

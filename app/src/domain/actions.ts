@@ -1,11 +1,12 @@
 import { createAction } from '../store/createAction';
 import { ServerStatus } from '../store/reducers/appStateReducer';
 
+import { Choice } from './entities/Choice';
 import { Game } from './entities/Game';
-import { Player } from './entities/Player';
+import { FullPlayer } from './entities/Player';
 import { RTCMessage } from './gateways/RTCGateway';
 
-export const setPlayer = createAction<Player, 'player/set'>('player/set');
+export const setPlayer = createAction<FullPlayer, 'player/set'>('player/set');
 export const setConnected = createAction('player/set-connected');
 
 export const setGame = createAction<Game, 'game/set'>('game/set');
@@ -17,6 +18,9 @@ export const serverStatusChanged = createAction<ServerStatus, 'server/status'>('
 
 export const rtcMessage = createAction<RTCMessage, 'rtc/message'>('rtc/message');
 
+export const choiceSelected = createAction<Choice, 'choice/selected'>('choice/selected');
+export const choiceUnselected = createAction<Choice, 'choice/unselected'>('choice/unselected');
+
 export const log = createAction<unknown, 'debug/log'>('debug/log');
 
 export type Actions = ReturnType<
@@ -26,5 +30,7 @@ export type Actions = ReturnType<
   | typeof serverStatusChanged
   | typeof setConnected
   | typeof rtcMessage
+  | typeof choiceSelected
+  | typeof choiceUnselected
   | typeof log
 >;

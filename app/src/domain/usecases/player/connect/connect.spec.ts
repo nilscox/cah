@@ -1,4 +1,4 @@
-import { createGame, createPlayer } from '../../../../tests/factories';
+import { createFullPlayer, createGame, createPlayer } from '../../../../tests/factories';
 import { InMemoryStore } from '../../../../tests/InMemoryStore';
 import { setGame, setPlayer } from '../../../actions';
 
@@ -12,7 +12,7 @@ describe('connect', () => {
   });
 
   beforeEach(() => {
-    store.dispatch(setPlayer(createPlayer()));
+    store.dispatch(setPlayer(createFullPlayer()));
     store.snapshot();
   });
 
@@ -28,8 +28,9 @@ describe('connect', () => {
     const player1 = createPlayer({ nick: 'plouf' });
     const player2 = createPlayer({ nick: 'floup' });
 
-    store.dispatch(setGame(createGame({ players: [player1, player2] })));
-    store.snapshot();
+    store.setup(({ dispatch }) => {
+      dispatch(setGame(createGame({ players: [player1, player2] })));
+    });
 
     await store.dispatch(connect());
     store.rtcGateway.triggerMessage({ type: 'PlayerConnected', player: 'plouf' });

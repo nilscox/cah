@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import { Redirect, Route, Router, Switch } from 'react-router-dom';
 
 import { redirectToGameView } from '../../../../domain/usecases/game/redirectToGameView/redirectToGameView';
-import { View } from '../../components/domain/View';
+import Header from '../../components/domain/Header';
 import { Icon } from '../../components/elements/Icon';
 import { useGame } from '../../hooks/useGame';
 import { usePlayer } from '../../hooks/usePlayer';
@@ -26,7 +26,8 @@ const GameView: React.FC = () => {
   useEffect(() => void dispatch(redirectToGameView()), [dispatch, game.state, game.playState]);
 
   return (
-    <View player={player} icon={<Icon as={Menu} />}>
+    <>
+      <Header icon={<Icon as={Menu} />} title="CAH" player={player} />
       <Router history={gameRouterHistory}>
         <Switch>
           <Route path="/game/:gameCode/idle" component={GameIdleView} />
@@ -36,7 +37,7 @@ const GameView: React.FC = () => {
           </Route>
         </Switch>
       </Router>
-    </View>
+    </>
   );
 };
 

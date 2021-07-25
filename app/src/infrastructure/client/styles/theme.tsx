@@ -21,7 +21,7 @@ export const theme = {
   font: "'JetBrains Mono', 'Courier New', Courier, monospace",
   fontSizes: {
     small: '12px',
-    default: '16px',
+    default: '14px',
     big: '1.4rem',
     title: '2rem',
   },
