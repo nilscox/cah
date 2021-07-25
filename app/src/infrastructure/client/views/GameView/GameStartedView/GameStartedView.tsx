@@ -2,6 +2,7 @@ import React from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
 
+import { setChoices } from '../../../../../domain/actions';
 import { GameState } from '../../../../../domain/entities/Game';
 import { toggleChoice } from '../../../../../domain/usecases/player/toggleChoice/toggleChoice';
 import { ChoicesList } from '../../../components/domain/ChoicesList';
@@ -27,6 +28,7 @@ export const GameStartedView: React.FC = () => {
         choices={player.cards}
         selection={selection}
         onChoiceClick={(choice) => dispatch(toggleChoice(choice))}
+        onOrderChange={(choices) => dispatch(setChoices(choices))}
       />
     </>
   );

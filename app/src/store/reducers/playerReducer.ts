@@ -57,6 +57,13 @@ export const playerReducer = (state: PlayerState = null, action: AppAction): Pla
     };
   }
 
+  if (action.type === 'player/set-cards') {
+    return {
+      ...state,
+      cards: action.payload,
+    };
+  }
+
   if (action.type === 'choice/selected') {
     return {
       ...state,
