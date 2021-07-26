@@ -137,7 +137,12 @@ describe('GetGameQuery', () => {
       answers: [
         {
           id: game.answers[0].id,
-          choices: ['Who who'],
+          choices: [
+            {
+              id: choices[0].id,
+              text: 'Who who',
+            },
+          ],
           formatted: 'Who are you? Who who',
         },
       ],
@@ -163,7 +168,7 @@ describe('GetGameQuery', () => {
       answers: [
         {
           id: game.answers[0].id,
-          choices: ['yeah', '!'],
+          choices: choices.map(({ id, text }) => ({ id, text })),
           formatted: 'hell yeah low !?',
           player: 'joyeux',
         },

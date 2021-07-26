@@ -100,7 +100,7 @@ describe('GameEventsHandler', () => {
       answers: [
         {
           id: answer.id,
-          choices: ['you'],
+          choices: answer.choices.map(({ id, text }) => ({ id, text })),
           formatted: 'Hello you!',
         },
       ],
@@ -125,7 +125,7 @@ describe('GameEventsHandler', () => {
         {
           id: answer.id,
           player: 'player',
-          choices: ['who who'],
+          choices: answer.choices.map(({ id, text }) => ({ id, text })),
           formatted: 'Who are you? who who',
         },
       ],

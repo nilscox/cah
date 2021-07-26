@@ -67,7 +67,7 @@ describe('GetPlayerQuery', () => {
       gameId: game.id,
       nick: player.nick,
       isConnected: false,
-      cards: [{ text: 'text' }],
+      cards: [{ id: player.cards[0].id, text: 'text' }],
     });
   });
 });

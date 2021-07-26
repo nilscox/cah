@@ -26,7 +26,7 @@ export class SQLPlayerRepository implements PlayerRepository {
   }
 
   async findPlayerByNick(nick: string): Promise<Player | undefined> {
-    const entity = await this.repository.findOne({ nick });
+    const entity = await this.repository.findOne({ nick }, { relations: ['cards'] });
 
     if (entity) {
       return PlayerEntity.toDomain(entity);

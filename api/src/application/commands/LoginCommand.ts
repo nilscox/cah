@@ -21,9 +21,12 @@ export class LoginHandler implements CommandHandler<LoginCommand, FullPlayerDto,
   constructor(private readonly playerRepository: PlayerRepository, private readonly mapper: DtoMapperService) {}
 
   async execute({ nick }: LoginCommand, session: SessionStore) {
-    const player = new Player(nick);
+    let player = await this.playerRepository.findPlayerByNick(nick);
 
-    await this.playerRepository.save(player);
+    if (!player) {
+      player = new Player(nick);
+      await this.playerRepository.save(player);
+    }
 
     session.player = player;
 
