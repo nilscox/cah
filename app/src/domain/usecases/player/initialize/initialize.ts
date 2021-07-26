@@ -1,23 +1,10 @@
 import { createThunk } from '../../../../store/createThunk';
 import { setAppReady, setGame, setPlayer } from '../../../actions';
 import { Game } from '../../../entities/Game';
-import { Player } from '../../../entities/Player';
-import { RouterGateway } from '../../../gateways/RouterGateway';
+import { redirect } from '../../game/redirect/redirect';
 import { connect } from '../connect/connect';
 
-const redirect = (router: RouterGateway, player?: Player, game?: Game) => {
-  if (!player) {
-    return router.push('/login');
-  }
-
-  if (game) {
-    return router.push('/game/' + game.code);
-  }
-
-  return router.push('/');
-};
-
-export const initialize = createThunk(async ({ dispatch, playerGateway, gameGateway, routerGateway }) => {
+export const initialize = createThunk(async ({ dispatch, playerGateway, gameGateway }) => {
   const player = await playerGateway.fetchMe();
   let game: Game | undefined;
 
@@ -31,6 +18,6 @@ export const initialize = createThunk(async ({ dispatch, playerGateway, gameGate
     dispatch(setGame(game));
   }
 
-  redirect(routerGateway, player, game);
+  dispatch(redirect());
   dispatch(setAppReady());
 });

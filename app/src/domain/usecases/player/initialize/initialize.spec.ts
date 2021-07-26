@@ -1,9 +1,7 @@
 import expect from 'expect';
 
 import { ServerStatus } from '../../../../store/reducers/appStateReducer';
-import { createFullPlayer } from '../../../../tests/factories';
-import { InMemoryPlayerGateway } from '../../../../tests/gateways/InMemoryPlayerGateway';
-import { InMemoryRouterGateway } from '../../../../tests/gateways/InMemoryRouterGateway';
+import { createFullPlayer, createGame } from '../../../../tests/factories';
 import { InMemoryStore } from '../../../../tests/InMemoryStore';
 
 import { initialize } from './initialize';
@@ -11,12 +9,8 @@ import { initialize } from './initialize';
 describe('initialize', () => {
   let store: InMemoryStore;
 
-  let routerGateway: InMemoryRouterGateway;
-  let playerGateway: InMemoryPlayerGateway;
-
   beforeEach(() => {
     store = new InMemoryStore();
-    ({ routerGateway, playerGateway } = store);
   });
 
   it('initializes with no player logged in', async () => {
@@ -26,29 +20,25 @@ describe('initialize', () => {
     store.expectState('app', { server: ServerStatus.up, ready: true });
   });
 
-  describe('redirections', () => {
-    const expectRedirections = async (expected: string) => {
-      for (const before of ['/', '/login', '/game', '/elsewhere']) {
-        routerGateway.push(before);
+  it('initializes with a player who is not in game', async () => {
+    const player = createFullPlayer();
 
-        await store.dispatch(initialize());
+    store.playerGateway.player = player;
 
-        expect(routerGateway.pathname).toEqual(expected);
-      }
-    };
+    await store.dispatch(initialize());
 
-    it('no player => login view', async () => {
-      await expectRedirections('/login');
-    });
+    expect(store.getState().player).toHaveProperty('id', player.id);
+  });
 
-    it('player, no game => lobby view', async () => {
-      playerGateway.player = createFullPlayer();
-      await expectRedirections('/');
-    });
+  it('initializes with a player who is in game', async () => {
+    const game = createGame();
+    const player = createFullPlayer({ gameId: game.id });
 
-    it('player, game => game view', async () => {
-      playerGateway.player = createFullPlayer({ gameId: 'gameId' });
-      await expectRedirections('/game/OK42');
-    });
+    store.playerGateway.player = player;
+    store.gameGateway.game = game;
+
+    await store.dispatch(initialize());
+
+    expect(store.getState().game).toHaveProperty('id', game.id);
   });
 });
