@@ -1,4 +1,4 @@
-import { main } from './main';
+import { main } from './infrastructure';
 
 const hostname = process.env.HOST ?? '0.0.0.0';
 const port = Number.parseInt(process.env.PORT ?? '4242');

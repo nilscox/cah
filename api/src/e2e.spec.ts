@@ -8,13 +8,13 @@ import { Connection, createConnection } from 'typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 import { Choice } from './domain/models/Choice';
+import { main } from './infrastructure';
 import { AnswerEntity } from './infrastructure/database/entities/AnswerEntity';
 import { ChoiceEntity } from './infrastructure/database/entities/ChoiceEntity';
 import { GameEntity } from './infrastructure/database/entities/GameEntity';
 import { PlayerEntity } from './infrastructure/database/entities/PlayerEntity';
 import { QuestionEntity } from './infrastructure/database/entities/QuestionEntity';
 import { TurnEntity } from './infrastructure/database/entities/TurnEntity';
-import { main } from './main';
 
 const port = 1222;
 const log = false;
