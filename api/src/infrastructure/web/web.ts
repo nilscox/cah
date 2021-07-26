@@ -2,8 +2,7 @@ import * as http from 'http';
 
 import cors from 'cors';
 import express, { ErrorRequestHandler, Express } from 'express';
-import expressSession from 'express-session';
-import sessionFileStore from 'session-file-store';
+import expressSession, { Store as SessionStore } from 'express-session';
 
 import { errorHandler } from './middlewaresCreators';
 import { FallbackRoute } from './Route';
@@ -21,11 +20,9 @@ class FallbackErrorHandler {
 
 const fallbackErrorHandler = new FallbackRoute().use(errorHandler(new FallbackErrorHandler()));
 
-export const createServer = (routes: Route[], wss: WebsocketServer) => {
-  const FileStore = sessionFileStore(expressSession);
-
+export const createServer = (routes: Route[], wss: WebsocketServer, sessionStore?: SessionStore) => {
   const session = expressSession({
-    store: new FileStore(),
+    store: sessionStore,
     secret: 'secret',
     resave: false,
     saveUninitialized: true,

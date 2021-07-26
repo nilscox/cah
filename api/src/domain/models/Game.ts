@@ -27,10 +27,6 @@ import { Question } from './Question';
 import { Turn } from './Turn';
 
 export class Game extends AggregateRoot<GameEvent> {
-  static cardPerPlayer = 11;
-  static minimumPlayersToStart = 3;
-
-  public code = Math.random().toString(36).slice(-4);
   public state = GameState.idle;
   public players: Player[] = [];
 
@@ -40,7 +36,7 @@ export class Game extends AggregateRoot<GameEvent> {
   public answers?: Answer[];
   public winner?: Player;
 
-  constructor() {
+  constructor(readonly code = '0000', readonly cardsPerPlayer = 11, readonly minimumPlayersToStart = 3) {
     super();
 
     this.addEvent(new GameCreatedEvent(this));
@@ -76,12 +72,12 @@ export class Game extends AggregateRoot<GameEvent> {
     const totalNeededChoices = questions.map(({ numberOfBlanks }) => numberOfBlanks).reduce(sum, 0);
     const playersCount = this.players.length;
 
-    return Game.cardPerPlayer * playersCount + totalNeededChoices * (playersCount - 1);
+    return this.cardsPerPlayer * playersCount + totalNeededChoices * (playersCount - 1);
   }
 
   dealCards(availableChoices: Choice[]) {
     for (const player of this.players) {
-      const needed = Game.cardPerPlayer - player.cards.length;
+      const needed = this.cardsPerPlayer - player.cards.length;
 
       if (needed > availableChoices.length) {
         throw new NoMoreChoiceError();
@@ -114,8 +110,8 @@ export class Game extends AggregateRoot<GameEvent> {
   start(questionMaster: Player, firstQuestion: Question) {
     this.ensureGameState(GameState.idle);
 
-    if (this.players.length < Game.minimumPlayersToStart) {
-      throw new NotEnoughPlayersError(Game.minimumPlayersToStart, this.players.length);
+    if (this.players.length < this.minimumPlayersToStart) {
+      throw new NotEnoughPlayersError(this.minimumPlayersToStart, this.players.length);
     }
 
     this.state = GameState.started;

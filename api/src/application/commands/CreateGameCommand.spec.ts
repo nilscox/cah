@@ -1,19 +1,19 @@
 import { expect } from 'chai';
-
 import { PlayerIsAlreadyInGameError } from '../../domain/errors/PlayerIsAlreadyInGameError';
 import { Game } from '../../domain/models/Game';
 import { Player } from '../../domain/models/Player';
 import { InMemoryGameRepository } from '../../infrastructure/database/repositories/game/InMemoryGameRepository';
 import { InMemoryPlayerRepository } from '../../infrastructure/database/repositories/player/InMemoryPlayerRepository';
+import { StubConfigService } from '../../infrastructure/stubs/StubConfigService';
 import { StubEventPublisher } from '../../infrastructure/stubs/StubEventPublisher';
 import { StubRTCManager } from '../../infrastructure/stubs/StubRTCManager';
 import { StubSessionStore } from '../../infrastructure/stubs/StubSessionStore';
 import { DtoMapperService } from '../services/DtoMapperService';
 import { GameService } from '../services/GameService';
-
 import { CreateGameHandler } from './CreateGameCommand';
 
 describe('CreateGameCommand', () => {
+  let config: StubConfigService;
   let gameRepository: InMemoryGameRepository;
   let playerRepository: InMemoryPlayerRepository;
   let gameService: GameService;
@@ -27,6 +27,7 @@ describe('CreateGameCommand', () => {
   let player: Player;
 
   beforeEach(() => {
+    config = new StubConfigService();
     gameRepository = new InMemoryGameRepository();
     playerRepository = new InMemoryPlayerRepository();
     publisher = new StubEventPublisher();
@@ -34,7 +35,7 @@ describe('CreateGameCommand', () => {
     rtcManager = new StubRTCManager();
     mapper = new DtoMapperService(rtcManager);
 
-    handler = new CreateGameHandler(gameService, gameRepository, rtcManager, mapper);
+    handler = new CreateGameHandler(config, gameService, gameRepository, rtcManager, mapper);
 
     session = new StubSessionStore();
     player = session.player = new Player('player');
@@ -45,9 +46,12 @@ describe('CreateGameCommand', () => {
   };
 
   it('creates a game', async () => {
-    const { id: gameId } = await execute();
+    config.set('GAME_CODE', 'CAFE');
 
-    expect(gameId).to.be.a('string');
+    const game = await execute();
+
+    expect(game.id).to.be.a('string');
+    expect(game.code).to.eql('CAFE');
 
     const games = await gameRepository.findAll();
 

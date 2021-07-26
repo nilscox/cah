@@ -4,6 +4,7 @@ import { GameRepository } from '../../domain/interfaces/GameRepository';
 import { Game } from '../../domain/models/Game';
 import { RTCManager } from '../interfaces/RTCManager';
 import { SessionStore } from '../interfaces/SessionStore';
+import { ConfigService } from '../../domain/interfaces/ConfigService';
 import { DtoMapperService } from '../services/DtoMapperService';
 import { GameService } from '../services/GameService';
 
@@ -15,6 +16,7 @@ export type CreateGameResult = {
 
 export class CreateGameHandler implements CommandHandler<CreateGameCommand, CreateGameResult, SessionStore> {
   constructor(
+    private readonly configService: ConfigService,
     private readonly gameService: GameService,
     private readonly gameRepository: GameRepository,
     private readonly rtcManager: RTCManager,
@@ -28,7 +30,8 @@ export class CreateGameHandler implements CommandHandler<CreateGameCommand, Crea
       throw new PlayerIsAlreadyInGameError(player);
     }
 
-    const game = new Game();
+    const code = this.configService.get('GAME_CODE');
+    const game = new Game(code);
 
     game.addPlayer(player);
     this.rtcManager.join(game, player);

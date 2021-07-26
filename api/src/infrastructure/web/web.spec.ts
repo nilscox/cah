@@ -8,13 +8,13 @@ import { StubEventPublisher } from '../stubs/StubEventPublisher';
 import { HttpUnauthorizedError } from './errors';
 import { context, dto, errorHandler, guard, handler, middleware, status } from './middlewaresCreators';
 import { FallbackRoute, Route } from './Route';
-import { createServer, Route as IRoute } from './web';
+import { createServer, Route as RouteInterface } from './web';
 import { WebsocketServer } from './websocket';
 
 describe('web', () => {
   const defaultHandler = handler({ execute: () => {} });
 
-  const createAgent = (routes: IRoute[]) => {
+  const createAgent = (routes: RouteInterface[]) => {
     return request.agent(createServer(routes, new WebsocketServer()));
   };
 

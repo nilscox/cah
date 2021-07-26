@@ -1,5 +1,6 @@
 import { ErrorRequestHandler, Request } from 'express';
 import { Connection } from 'typeorm';
+import { Store as SessionStoreBackend } from 'express-session';
 
 import { CreateAnswerCommand, CreateAnswerHandler } from '../application/commands/CreateAnswerCommand';
 import { CreateGameCommand, CreateGameHandler } from '../application/commands/CreateGameCommand';
@@ -29,6 +30,7 @@ import { context, dto, errorHandler, guard, handler, middleware, status } from '
 import { FallbackRoute, InputDto, Route } from './web/Route';
 import { createServer } from './web/web';
 import { WebsocketRTCManager, WebsocketServer } from './web/websocket';
+import { ConfigService, ConfigurationVariable } from '../domain/interfaces/ConfigService';
 
 declare module 'express-session' {
   export interface SessionData {
@@ -67,6 +69,12 @@ class ExpressSessionStore implements SessionStore {
   }
 }
 
+class EnvConfigService implements ConfigService {
+  get(key: ConfigurationVariable) {
+    return process.env[key];
+  }
+}
+
 class ErrorHandler {
   execute: ErrorRequestHandler = (error, req, res) => {
     const { status, message, ...err } = error;
@@ -95,11 +103,14 @@ const isNotAuthenticated = (req: Request) => {
 
 export type Config = {
   connection?: Connection;
+  sessionStore?: SessionStoreBackend;
   dataDir: string;
 };
 
 export const bootstrapServer = async (config: Config) => {
   const { connection, dataDir } = config;
+
+  const configService = new EnvConfigService();
 
   const playerRepository = connection ? new SQLPlayerRepository(connection) : new InMemoryPlayerRepository();
   const gameRepository = connection ? new SQLGameRepository(connection) : new InMemoryGameRepository();
@@ -155,7 +166,7 @@ export const bootstrapServer = async (config: Config) => {
       .use(...authPlayerContext)
       .use(dto(() => new CreateGameCommand()))
       .use(status(201))
-      .use(handler(new CreateGameHandler(gameService, gameRepository, rtcManager, mapper))),
+      .use(handler(new CreateGameHandler(configService, gameService, gameRepository, rtcManager, mapper))),
 
     new Route('post', '/game/:gameCode/join')
       .use(...authPlayerContext)
@@ -189,5 +200,5 @@ export const bootstrapServer = async (config: Config) => {
       .use((req, res) => res.status(404).end()),
   ];
 
-  return createServer(routes, wss);
+  return createServer(routes, wss, config.sessionStore);
 };
