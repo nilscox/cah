@@ -11,7 +11,7 @@ import { Icon } from '../../components/elements/Icon';
 import SubmittableInput from '../../components/elements/SubmittableInput';
 import { Center } from '../../components/layout/Center';
 import { Fade } from '../../components/layout/Fade';
-import Flex from '../../components/layout/Flex';
+import { Flex } from '../../components/layout/Flex';
 import { usePlayer } from '../../hooks/usePlayer';
 import ChevronRight from '../../icons/chevron-right.svg';
 import { color, spacing, transition } from '../../styles/theme';

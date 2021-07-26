@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import { startGame } from '../../../../domain/usecases/game/startGame/startGame';
 import Button from '../../components/elements/Button';
 import { Center } from '../../components/layout/Center';
+import { Flex } from '../../components/layout/Flex';
 import { useGame } from '../../hooks/useGame';
 import { usePlayer } from '../../hooks/usePlayer';
 import { fontSize, spacing } from '../../styles/theme';
@@ -24,11 +25,12 @@ const PlayerItem = styled.li<{ connected: boolean }>`
 
 export const GameIdleView: React.FC = () => {
   const dispatch = useDispatch();
+
   const game = useGame();
   const player = usePlayer();
 
   return (
-    <>
+    <Flex padding={2}>
       <GameCode>{game.code}</GameCode>
       <p>Attendez que tous les joueurs soient listés ci-dessous, et cliquez sur démarrer pour lancer la partie.</p>
       <PlayersList>
@@ -41,6 +43,6 @@ export const GameIdleView: React.FC = () => {
       <Center>
         <Button onClick={() => dispatch(startGame(player, 10))}>Démarrer</Button>
       </Center>
-    </>
+    </Flex>
   );
 };

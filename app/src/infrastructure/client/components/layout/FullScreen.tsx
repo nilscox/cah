@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import Flex from './Flex';
+import { Flex } from './Flex';
 
 export const FullScreen = styled(Flex)`
   position: absolute;

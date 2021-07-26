@@ -16,6 +16,7 @@ const ChoiceText = styled.span`
   color: white;
   /* font-weight: ${fontWeight('bold')}; */
   text-decoration: underline;
+  text-decoration-color: #999;
 `;
 
 const getChoiceText = (choice: Choice | null) => {
@@ -46,12 +47,8 @@ const getChunks = (question: Question, choices: (Choice | null)[]) => {
 };
 
 const StyledQuestionCard = styled.div`
-  padding: ${spacing(2)};
-  min-height: ${spacing(22)};
+  padding: ${spacing(1, 2)};
   line-height: 1.4rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 `;
 
 export type QuestionCardProps = {

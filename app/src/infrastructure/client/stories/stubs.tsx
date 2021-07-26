@@ -1,10 +1,9 @@
 import { action } from '@storybook/addon-actions';
-import { createMemoryHistory } from 'history';
-
+import { createMemoryHistory, History } from 'history';
 import { Answer } from '../../../domain/entities/Answer';
 import { Choice } from '../../../domain/entities/Choice';
-import { Game } from '../../../domain/entities/Game';
-import { Player } from '../../../domain/entities/Player';
+import { Game, StartedGame } from '../../../domain/entities/Game';
+import { FullPlayer, Player } from '../../../domain/entities/Player';
 import { GameGateway } from '../../../domain/gateways/GameGateway';
 import { PlayerGateway } from '../../../domain/gateways/PlayerGateway';
 import { RouterGateway } from '../../../domain/gateways/RouterGateway';
@@ -12,69 +11,109 @@ import { RTCGateway, RTCListener } from '../../../domain/gateways/RTCGateway';
 import { ServerGateway } from '../../../domain/gateways/ServerGateway';
 import { TimerGateway } from '../../../domain/gateways/TimerGateway';
 import { ServerStatus } from '../../../store/reducers/appStateReducer';
-import { Dependencies } from '../../../store/types';
-import { createGame, createPlayer } from '../../../tests/factories';
+import { createFullPlayer, createGame } from '../../../tests/factories';
 import { ReactRouterGateway } from '../../gateways/ReactRouterGateway';
 import { gameRouterHistory } from '../views/GameView/GameView';
 
-export class StubGameGateway implements GameGateway {
-  fetchGame(_gameId: string): Promise<Game> {
-    throw new Error('Method not implemented.');
+const log = false;
+
+class ActionLogger {
+  log(name: string, ...args: any[]) {
+    if (log) {
+      action(name)(args);
+    }
+  }
+}
+
+export class StubGameGateway extends ActionLogger implements GameGateway {
+  game?: Game | StartedGame;
+
+  async fetchGame(gameId: string): Promise<Game | undefined> {
+    this.log('fetch game', gameId, '=>', this.game);
+    return this.game;
   }
 
   async createGame(): Promise<Game> {
-    action('create game')({});
+    this.log('create game');
     return createGame();
   }
 
   async joinGame(gameCode: string): Promise<Game> {
-    action('join game')(gameCode);
+    this.log('join game', { gameCode });
     return createGame({ code: gameCode });
   }
 
   async startGame(questionMaster: Player, turns: number): Promise<void> {
-    action('start game')({ questionMaster, turns });
+    this.log('start game', { questionMaster, turns });
   }
 
   async answer(choices: Choice[]): Promise<void> {
-    action('answer')({ choices });
+    this.log('answer', { choices });
   }
 
   async selectWinningAnswer(answer: Answer): Promise<void> {
-    action('selectWinningAnswer')({ answer });
+    this.log('selectWinningAnswer', { answer });
   }
 
   async endCurrentTurn(): Promise<void> {
-    action('endCurrentTurn')({});
+    this.log('endCurrentTurn');
   }
 }
 
-export class StubPlayerGateway implements PlayerGateway {
-  fetchMe(): Promise<Player | undefined> {
-    throw new Error('Method not implemented.');
+export class StubPlayerGateway extends ActionLogger implements PlayerGateway {
+  player?: FullPlayer;
+
+  async fetchMe(): Promise<FullPlayer | undefined> {
+    this.log('fetch me', '=>', this.player);
+    return this.player;
   }
 
-  async login(nick: string): Promise<Player> {
-    action('login')(nick);
-    return createPlayer({ nick });
-  }
-}
-
-export class StubRTCGateway implements RTCGateway {
-  connect(): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
-
-  onMessage(_listener: RTCListener): void {
-    throw new Error('Method not implemented.');
+  async login(nick: string): Promise<FullPlayer> {
+    this.log('login', { nick });
+    return createFullPlayer({ nick });
   }
 }
 
-export class StubRouterGateway implements RouterGateway {
+export class StubRTCGateway extends ActionLogger implements RTCGateway {
+  async connect(): Promise<void> {
+    this.log('connect');
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  onMessage(_listener: RTCListener): void {}
+}
+
+export interface StubHistory extends History {
+  goto(pathname: string): void;
+}
+
+export function createStubHistory(): StubHistory {
+  const memoryHistory = createMemoryHistory();
+
+  const onEvent =
+    (event: string) =>
+    (...args: any[]) => {
+      log && action(event)(args);
+    };
+
+  const { replace, ...rest } = memoryHistory;
+
+  return {
+    ...rest,
+    goto: replace.bind(memoryHistory),
+    push: onEvent('push'),
+    replace: onEvent('replace'),
+    go: onEvent('go'),
+    goBack: onEvent('goBack'),
+    goForward: onEvent('goForward'),
+  };
+}
+
+export class StubRouterGateway extends ActionLogger implements RouterGateway {
   pathname = '/';
 
   push(to: string): void {
-    action('history.push')(to);
+    this.log('history.push', { to });
   }
 }
 
@@ -94,14 +133,15 @@ export class StubServerGateway implements ServerGateway {
   }
 }
 
+// export const storiesRouterHistory = createStubHistory();
 export const storiesRouterHistory = createMemoryHistory();
 
-export const dependencies: Dependencies = {
+export const stubDependencies = () => ({
   gameGateway: new StubGameGateway(),
   playerGateway: new StubPlayerGateway(),
   rtcGateway: new StubRTCGateway(),
-  routerGateway: new StubRouterGateway(),
-  gameRouterGateway: new StubRouterGateway(),
+  routerGateway: new ReactRouterGateway(storiesRouterHistory),
+  gameRouterGateway: new ReactRouterGateway(gameRouterHistory),
   timerGateway: new StubTimerGateway(),
   serverGateway: new StubServerGateway(),
-};
+});

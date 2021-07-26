@@ -9,6 +9,8 @@ import { ChoiceCard, ChoiceCardProps } from '../components/domain/ChoiceCard';
 import { ChoiceCardsListProps, ChoicesList } from '../components/domain/ChoicesList';
 import { QuestionCard, QuestionCardProps } from '../components/domain/QuestionCard';
 
+import { choices } from './fixtures';
+
 const createId = () => Math.random().toString(36).slice(-6);
 
 const createChoice = (overrides: Partial<Choice>): Choice => ({
@@ -66,20 +68,6 @@ choiceCard.args = {
   selected: false,
 };
 
-const choices = [
-  createChoice({ text: 'Bravo' }),
-  createChoice({ text: 'Charlie' }),
-  createChoice({ text: "S'étouffer avec une carrote cuite" }),
-  createChoice({ text: "Un coussin d'air" }),
-  createChoice({ text: 'Ta soeur' }),
-  createChoice({ text: 'Conduire une grue sous LSD' }),
-  createChoice({ text: 'Gros con' }),
-  createChoice({ text: "Les chaussettes de l'archiduchesse" }),
-  createChoice({ text: 'Aller au cinémas' }),
-  createChoice({ text: 'Nicolas Sarkozy' }),
-  createChoice({ text: 'La chasse aux sorcières' }),
-];
-
 const ChoicesListTemplate: Story<ChoiceCardsListProps> = ({ choices }) => {
   const [selection, setSelection] = useState<Choice[]>([]);
 
@@ -96,7 +84,7 @@ const ChoicesListTemplate: Story<ChoiceCardsListProps> = ({ choices }) => {
     <ChoicesList
       choices={choices}
       selection={selection}
-      validateOpen={false}
+      validateButtonVisible={false}
       onSelectChoice={handleChoiceClick}
       onOrderChange={action('order change')}
       onValidateSelection={action('validate selection')}

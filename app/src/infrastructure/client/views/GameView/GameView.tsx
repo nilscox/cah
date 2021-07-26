@@ -6,7 +6,7 @@ import styled from 'styled-components';
 
 import Header from '../../components/domain/Header';
 import { Icon } from '../../components/elements/Icon';
-import Flex from '../../components/layout/Flex';
+import { Flex } from '../../components/layout/Flex';
 import { useGame } from '../../hooks/useGame';
 import { usePlayer } from '../../hooks/usePlayer';
 import Menu from '../../icons/menu.svg';

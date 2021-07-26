@@ -1,110 +1,127 @@
 import React from 'react';
 
-import { Meta } from '@storybook/react';
-import { StoryFnReactReturnType } from '@storybook/react/dist/ts3.9/client/preview/types';
+import {} from '@storybook/addon-controls';
+import { Meta, Story } from '@storybook/react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { Router } from 'react-router-dom';
 
-import { setGame, setPlayer } from '../../../domain/actions';
-import { Game, GameState, PlayState, StartedGame } from '../../../domain/entities/Game';
+import { Game, GameState, isStarted, PlayState, StartedGame } from '../../../domain/entities/Game';
+import { FullPlayer } from '../../../domain/entities/Player';
 import { configureStore } from '../../../store/configureStore';
-import { createAnswer, createGame, createPlayer, createQuestion } from '../../../tests/factories';
-import GameView, { gameRouterHistory } from '../views/GameView/GameView';
-import LobbyView from '../views/LobbyView/LobbyView';
-import LoginView from '../views/LoginView/LoginView';
+import { createGame } from '../../../tests/factories';
+import CAHApp from '../App';
+import { gameRouterHistory } from '../views/GameView/GameView';
 
-import { dependencies, storiesRouterHistory } from './stubs';
+import { answers, mano, player, players, questions, startedGame } from './fixtures';
+import { storiesRouterHistory, stubDependencies } from './stubs';
 
-const store = configureStore(dependencies);
-
-store.dispatch(setPlayer(createPlayer()));
-store.dispatch(setGame(createGame()));
-
-const reduxProviderDecorator = (Story: () => StoryFnReactReturnType) => (
-  <ReduxProvider store={store}>
-    <Story />
-  </ReduxProvider>
-);
-
-const storiesRouterProvider = (Story: any) => (
-  <Router history={storiesRouterHistory}>
-    <Story />
-  </Router>
-);
+const questionOptions = ['no blanks', 'one blank', 'multiple blanks'] as const;
 
 export default {
   title: 'Views',
-  decorators: [reduxProviderDecorator, storiesRouterProvider],
+  component: CAHApp,
+  argTypes: {
+    question: {
+      options: questionOptions,
+      control: { type: 'radio' },
+      defaultValue: 'one blank',
+    },
+  },
 } as Meta;
 
-export const Login = () => <LoginView />;
-export const Lobby = () => <LobbyView />;
+type TemplateProps = {
+  pathname: string;
+  player?: FullPlayer;
+  game?: Game | StartedGame;
+  question: typeof questionOptions[number];
+};
 
-const createGameStory = (pathname: string, game: Game | StartedGame) => {
-  const store = configureStore(dependencies);
+const Template: Story<TemplateProps> = ({ pathname, player, game, question }) => {
+  const deps = stubDependencies();
+  const store = configureStore(deps);
 
-  store.dispatch(setPlayer(createPlayer()));
-  store.dispatch(setGame(game));
+  if (game && isStarted(game)) {
+    game.question = questions[['no blanks', 'one blank', 'multiple blanks'].indexOf(question)];
+  }
 
-  gameRouterHistory.push('/game/code' + pathname);
+  deps.playerGateway.player = player;
+  deps.gameGateway.game = game;
+
+  // @ts-expect-error the reference gets lost somehow
+  deps.routerGateway.history = storiesRouterHistory;
+  // storiesRouterHistory.push(pathname);
+
+  // @ts-expect-error the reference gets lost somehow
+  deps.gameRouterGateway.history = gameRouterHistory;
 
   return (
-    <ReduxProvider store={store}>
-      <GameView />
-    </ReduxProvider>
+    <Router history={storiesRouterHistory}>
+      <ReduxProvider store={store}>
+        <CAHApp />
+      </ReduxProvider>
+    </Router>
   );
 };
 
-const players = ['nils', 'tom', 'jeanne', ' vio'].map((nick) => createPlayer({ nick }));
+export const Login = Template.bind({});
+Login.args = {
+  pathname: '/login',
+};
 
-const questionMaster = players[0];
+export const Lobby = Template.bind({});
+Lobby.args = {
+  pathname: '/',
+  player: mano,
+};
 
-const question = createQuestion({ text: "J'ai envie de .", blanks: [14] });
+export const GameIdle = Template.bind({});
+GameIdle.args = {
+  pathname: '/game/code/idle',
+  player,
+  game: createGame({
+    state: GameState.idle,
+    players,
+  }),
+};
 
-const answers = [
-  createAnswer({ choices: ['avoir de la merde dans les yeux'], player: players[1] }),
-  createAnswer({ choices: ['toi'], player: players[2] }),
-  createAnswer({ choices: ['péter et rôter en même temps'], player: players[3] }),
-];
+export const PlayersAnswer = Template.bind({});
+PlayersAnswer.args = {
+  pathname: '/game/code/started',
+  player,
+  game: {
+    ...startedGame,
+    playState: PlayState.playersAnswer,
+  },
+};
 
-const gameIdle = createGame({
-  state: GameState.idle,
-  players,
-});
+export const QuestionMasterSelection = Template.bind({});
+QuestionMasterSelection.args = {
+  pathname: '/game/code/started',
+  player,
+  game: {
+    ...startedGame,
+    playState: PlayState.questionMasterSelection,
+    answers,
+  },
+};
 
-const gamePlayersAnswer = createGame({
-  state: GameState.started,
-  playState: PlayState.playersAnswer,
-  players,
-  questionMaster,
-  question,
-});
+export const EndOfTurn = Template.bind({});
+EndOfTurn.args = {
+  pathname: '/game/code/started',
+  player,
+  game: {
+    ...startedGame,
+    playState: PlayState.endOfTurn,
+    answers,
+  },
+};
 
-const gameQuestionMasterSelection = createGame({
-  state: GameState.started,
-  playState: PlayState.questionMasterSelection,
-  players,
-  questionMaster,
-  question,
-  answers,
-});
-
-const gameEndOfTurn = createGame({
-  state: GameState.started,
-  playState: PlayState.endOfTurn,
-  players,
-  questionMaster,
-  question,
-  answers,
-});
-
-const gameFinished = createGame({
-  state: GameState.finished,
-  players,
-});
-
-export const GameIdle = () => createGameStory('/idle', gameIdle);
-export const PlayersAnswer = () => createGameStory('/started', gamePlayersAnswer);
-export const QuestionMasterSelection = () => createGameStory('/started', gameQuestionMasterSelection);
-export const EndOfTurn = () => createGameStory('/started', gameEndOfTurn);
-export const GameFinished = () => createGameStory('/started', gameFinished);
+export const Finished = Template.bind({});
+Finished.args = {
+  pathname: '/game/code/finished',
+  player,
+  game: createGame({
+    state: GameState.finished,
+    players,
+  }),
+};

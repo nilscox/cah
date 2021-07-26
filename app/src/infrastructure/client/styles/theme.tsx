@@ -27,6 +27,7 @@ export const theme = {
     title: '2rem',
   },
   spacing: themeSpacing,
+  space: Array(8).fill(0).map((_, n) => themeSpacing(n)),
   fontWeights: {
     thin: 200,
     bold: 'bold',

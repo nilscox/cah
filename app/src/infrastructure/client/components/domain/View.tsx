@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { Player } from '../../../../domain/entities/Player';
 import { spacing } from '../../styles/theme';
-import Flex from '../layout/Flex';
+import { Flex } from '../layout/Flex';
 
 import Header from './Header';
 

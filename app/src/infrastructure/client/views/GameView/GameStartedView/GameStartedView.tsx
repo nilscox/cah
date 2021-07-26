@@ -5,8 +5,8 @@ import { Route, Switch } from 'react-router-dom';
 import { GameState } from '../../../../../domain/entities/Game';
 import { useGame } from '../../../hooks/useGame';
 
+import { AnswersList } from './AnswersList';
 import { PlayersAnswer } from './PlayersAnswer';
-import { QuestionMasterSelection } from './QuestionMasterSelection';
 
 const routePrefix = '/game/:code/started';
 
@@ -20,7 +20,8 @@ export const GameStartedView: React.FC = () => {
   return (
     <Switch>
       <Route path={`${routePrefix}/players-answer`} component={PlayersAnswer} />
-      <Route path={`${routePrefix}/question-master-selection`} component={QuestionMasterSelection} />
+      <Route path={`${routePrefix}/question-master-selection`} component={AnswersList} />
+      <Route path={`${routePrefix}/end-of-turn`} component={AnswersList} />
     </Switch>
   );
 };

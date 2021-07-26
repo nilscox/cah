@@ -6,7 +6,8 @@
     "moduleResolution": "node",
     "skipLibCheck": true,
     "esModuleInterop": true,
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "sourceMap": true
   },
   "include": ["../shared", "src"],
   "exclude": ["node_modules"]

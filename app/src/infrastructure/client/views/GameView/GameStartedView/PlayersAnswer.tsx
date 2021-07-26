@@ -11,6 +11,7 @@ import { ThunkResult } from '../../../../../store/createAction';
 import { AppState } from '../../../../../store/types';
 import { ChoicesList } from '../../../components/domain/ChoicesList';
 import { QuestionCard } from '../../../components/domain/QuestionCard';
+import { Center } from '../../../components/layout/Center';
 import { gameSelector, useGame } from '../../../hooks/useGame';
 import { choicesSelectionSelector, playerSelector, usePlayer } from '../../../hooks/usePlayer';
 
@@ -66,7 +67,9 @@ export const PlayersAnswer: React.FC = () => {
 
   return (
     <>
-      <QuestionCard question={game.question} choices={selection} />
+      <Center minHeight={24}>
+        <QuestionCard question={game.question} choices={selection} />
+      </Center>
       <ChoicesList
         choices={player.cards}
         selection={selection}

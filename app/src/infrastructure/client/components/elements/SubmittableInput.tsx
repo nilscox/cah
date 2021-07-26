@@ -3,7 +3,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import Check from '../../icons/check.svg';
-import Flex from '../layout/Flex';
+import { Flex } from '../layout/Flex';
 
 import { Icon } from './Icon';
 import { IconButton } from './IconButton';
@@ -33,7 +33,7 @@ const SubmittableInput: React.FC<SubmittableInputProps> = ({ onSubmit, ...props 
   };
 
   return (
-    <Flex as="form" direction="row" onSubmit={handleSubmit}>
+    <Flex as="form" flexDirection="row" onSubmit={handleSubmit}>
       <Input {...props} />
       <SubmitButton type="submit" disabled={value === ''} show={value !== ''}>
         <Icon as={Check} />

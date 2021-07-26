@@ -1,10 +1,19 @@
 import styled from 'styled-components';
 
-import Flex from './Flex';
+import { Flex, FlexProps } from './Flex';
 
-export const Center = styled(Flex)<{ padding?: number }>`
-  flex: 1;
-  justify-content: center;
-  align-items: center;
-  padding: ${({ theme, padding }) => theme.spacing(padding ?? 0)};
+type CenterProps = FlexProps & {
+  horizontal?: boolean;
+  vertical?: boolean;
+};
+
+export const Center = styled(Flex)<CenterProps>`
+  justify-content: ${({ vertical }) => (vertical ? 'center' : undefined)};
+  align-items: ${({ horizontal }) => (horizontal ? 'center' : undefined)};
 `;
+
+Center.defaultProps = {
+  flexDirection: 'column',
+  horizontal: true,
+  vertical: true,
+};

@@ -21,6 +21,7 @@ export const redirect = createThunk(({ getState, routerGateway, gameRouterGatewa
   }
 
   routerGateway.push(`/game/${game.code}/${game.state}`);
+  gameRouterGateway.push(`/game/${game.code}/${game.state}`);
 
   if (isStarted(game)) {
     gameRouterGateway.push(`/game/${game.code}/${game.state}/${playStateMap[game.playState]}`);
