@@ -1,5 +1,4 @@
 import { ErrorRequestHandler, Request } from 'express';
-import { Connection } from 'typeorm';
 import { Store as SessionStoreBackend } from 'express-session';
 
 import { CreateAnswerCommand, CreateAnswerHandler } from '../application/commands/CreateAnswerCommand';
@@ -9,28 +8,22 @@ import { LoginCommand, LoginHandler } from '../application/commands/LoginCommand
 import { NextTurnHandler } from '../application/commands/NextTurnCommand';
 import { SelectWinnerCommand, SelectWinnerHandler } from '../application/commands/SelectWinnerCommand';
 import { StartGameCommand, StartGameHandler } from '../application/commands/StartGameCommand';
-import { GameEventsHandler } from '../application/handlers/GameEventsHandler';
-import { PlayerEventsHandler } from '../application/handlers/PlayerEventsHandler';
 import { SessionStore } from '../application/interfaces/SessionStore';
 import { GetGameHandler, GetGameQuery } from '../application/queries/GetGameQuery';
 import { GetPlayerHandler } from '../application/queries/GetPlayerQuery';
 import { DtoMapperService } from '../application/services/DtoMapperService';
 import { GameService } from '../application/services/GameService';
 import { RandomService } from '../application/services/RandomService';
+import { ConfigService } from '../domain/interfaces/ConfigService';
+import { ExternalData } from '../domain/interfaces/ExternalData';
+import { GameRepository } from '../domain/interfaces/GameRepository';
 import { PlayerRepository } from '../domain/interfaces/PlayerRepository';
 import { Player } from '../domain/models/Player';
 
-import { InMemoryGameRepository } from './database/repositories/game/InMemoryGameRepository';
-import { SQLGameRepository } from './database/repositories/game/SQLGameRepository';
-import { InMemoryPlayerRepository } from './database/repositories/player/InMemoryPlayerRepository';
-import { SQLPlayerRepository } from './database/repositories/player/SQLPlayerRepository';
-import { FilesystemExternalData } from './FilesystemExternalData';
-import { PubSub } from './PubSub';
 import { context, dto, errorHandler, guard, handler, middleware, status } from './web/middlewaresCreators';
 import { FallbackRoute, InputDto, Route } from './web/Route';
 import { createServer } from './web/web';
 import { WebsocketRTCManager, WebsocketServer } from './web/websocket';
-import { ConfigService, ConfigurationVariable } from '../domain/interfaces/ConfigService';
 
 declare module 'express-session' {
   export interface SessionData {
@@ -69,12 +62,6 @@ class ExpressSessionStore implements SessionStore {
   }
 }
 
-class EnvConfigService implements ConfigService {
-  get(key: ConfigurationVariable) {
-    return process.env[key];
-  }
-}
-
 class ErrorHandler {
   execute: ErrorRequestHandler = (error, req, res) => {
     const { status, message, ...err } = error;
@@ -101,38 +88,47 @@ const isNotAuthenticated = (req: Request) => {
   }
 };
 
-export type Config = {
-  connection?: Connection;
+export interface Dependencies {
+  configService: ConfigService;
+  playerRepository: PlayerRepository;
+  gameRepository: GameRepository;
+  gameService: GameService;
+  randomService: RandomService;
+  externalData: ExternalData;
+  wss: WebsocketServer;
+  rtcManager: WebsocketRTCManager;
   sessionStore?: SessionStoreBackend;
-  dataDir: string;
-};
+  mapper: DtoMapperService;
+}
 
-export const bootstrapServer = async (config: Config) => {
-  const { connection, dataDir } = config;
+export const bootstrapServer = async (deps: Dependencies) => {
+  const {
+    configService,
+    playerRepository,
+    gameRepository,
+    gameService,
+    randomService,
+    externalData,
+    wss,
+    rtcManager,
+    sessionStore,
+    mapper,
+  } = deps;
 
-  const configService = new EnvConfigService();
-
-  const playerRepository = connection ? new SQLPlayerRepository(connection) : new InMemoryPlayerRepository();
-  const gameRepository = connection ? new SQLGameRepository(connection) : new InMemoryGameRepository();
-
-  const publisher = new PubSub();
-  const gameService = new GameService(playerRepository, gameRepository, publisher);
-  const randomService = new RandomService();
-  const externalData = new FilesystemExternalData(dataDir, randomService);
-
-  const wss = new WebsocketServer();
-  const rtcManager = new WebsocketRTCManager(playerRepository, gameRepository, wss, publisher);
-
-  const gameEventsHandler = new GameEventsHandler(rtcManager);
-  const playerEventsHandler = new PlayerEventsHandler(rtcManager);
-
-  const mapper = new DtoMapperService(rtcManager);
-
-  publisher.subscribe(gameEventsHandler);
-  publisher.subscribe(playerEventsHandler);
+  const handlers = {
+    getPlayer: new GetPlayerHandler(playerRepository, mapper),
+    getGame: new GetGameHandler(gameService, mapper),
+    login: new LoginHandler(playerRepository, mapper),
+    createGame: new CreateGameHandler(configService, gameService, gameRepository, rtcManager, mapper),
+    joinGame: new JoinGameHandler(gameService, gameRepository, rtcManager, mapper),
+    startGame: new StartGameHandler(gameService, gameRepository, externalData),
+    createAnswer: new CreateAnswerHandler(gameService, randomService),
+    selectWinner: new SelectWinnerHandler(gameService),
+    nextTurn: new NextTurnHandler(gameService, gameRepository),
+  };
 
   const playerContext = [
-    middleware(new PlayerProvider(playerRepository)),
+    middleware(new PlayerProvider(deps.playerRepository)),
     context((req) => new ExpressSessionStore(req)),
   ];
 
@@ -140,57 +136,58 @@ export const bootstrapServer = async (config: Config) => {
 
   // prettier-ignore
   const routes = [
+
+    new Route('get', '/player/me')
+      .use(...authPlayerContext)
+      .use(dto((req) => ({ playerId: req.session.playerId })))
+      .use(handler(handlers.getPlayer)),
+
+    new Route('get', '/player/:playerId')
+      .use(...playerContext)
+      .use(dto((req) => ({ playerId: req.params.playerId })))
+      .use(handler(handlers.getPlayer)),
+
     new Route('post', '/login')
       .use(...playerContext)
       .use(guard(isNotAuthenticated))
       .use(dto(({ body }) => new LoginCommand(body.nick)))
       .use(status(201))
-      .use(handler(new LoginHandler(playerRepository, mapper))),
-
-    new Route('get', '/player/me')
-      .use(...authPlayerContext)
-      .use(dto((req) => ({ playerId: req.session.playerId })))
-      .use(handler(new GetPlayerHandler(playerRepository, mapper))),
-
-    new Route('get', '/player/:playerId')
-      .use(...playerContext)
-      .use(dto((req) => ({ playerId: req.params.playerId })))
-      .use(handler(new GetPlayerHandler(playerRepository, mapper))),
+      .use(handler(handlers.login)),
 
     new Route('get', '/game/:gameId')
       .use(...authPlayerContext)
       .use(dto((req) => new GetGameQuery(req.params.gameId)))
-      .use(handler(new GetGameHandler(gameService, mapper))),
+      .use(handler(handlers.getGame)),
 
     new Route('post', '/game')
       .use(...authPlayerContext)
       .use(dto(() => new CreateGameCommand()))
       .use(status(201))
-      .use(handler(new CreateGameHandler(configService, gameService, gameRepository, rtcManager, mapper))),
+      .use(handler(handlers.createGame)),
 
     new Route('post', '/game/:gameCode/join')
       .use(...authPlayerContext)
       .use(dto((req) => new JoinGameCommand(req.params.gameCode)))
-      .use(handler(new JoinGameHandler(gameService, gameRepository, rtcManager, mapper))),
+      .use(handler(handlers.joinGame)),
 
     new Route('post', '/start')
       .use(...authPlayerContext)
       .use(dto(({ body }) => new StartGameCommand(body.questionMasterId, body.turns)))
-      .use(handler(new StartGameHandler(gameService, gameRepository, externalData))),
+      .use(handler(handlers.startGame)),
 
     new Route('post', '/answer')
       .use(...authPlayerContext)
       .use(dto(({ body }) => new CreateAnswerCommand(body.choicesIds)))
-      .use(handler(new CreateAnswerHandler(gameService, randomService))),
+      .use(handler(handlers.createAnswer)),
 
     new Route('post', '/select')
       .use(...authPlayerContext)
       .use(dto(({ body }) => new SelectWinnerCommand(body.answerId)))
-      .use(handler(new SelectWinnerHandler(gameService))),
+      .use(handler(handlers.selectWinner)),
 
     new Route('post', '/next')
       .use(...authPlayerContext)
-      .use(handler(new NextTurnHandler(gameService, gameRepository))),
+      .use(handler(handlers.nextTurn)),
 
     new Route('get', '/healthcheck')
       .use((req, res) => res.end()),
@@ -200,5 +197,5 @@ export const bootstrapServer = async (config: Config) => {
       .use((req, res) => res.status(404).end()),
   ];
 
-  return createServer(routes, wss, config.sessionStore);
+  return createServer(routes, wss, sessionStore);
 };

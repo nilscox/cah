@@ -1,19 +1,20 @@
 import { Server } from 'http';
 import path from 'path';
 
+import Knex from 'knex';
 import { io, Socket } from 'socket.io-client';
 import request from 'supertest';
 import { Connection, createConnection } from 'typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 import { Choice } from './domain/models/Choice';
-import { bootstrapServer } from './infrastructure';
 import { AnswerEntity } from './infrastructure/database/entities/AnswerEntity';
 import { ChoiceEntity } from './infrastructure/database/entities/ChoiceEntity';
 import { GameEntity } from './infrastructure/database/entities/GameEntity';
 import { PlayerEntity } from './infrastructure/database/entities/PlayerEntity';
 import { QuestionEntity } from './infrastructure/database/entities/QuestionEntity';
 import { TurnEntity } from './infrastructure/database/entities/TurnEntity';
+import { main } from './main';
 
 const port = 1222;
 const log = false;
@@ -229,11 +230,19 @@ describe('e2e', () => {
   });
 
   before(async () => {
-    server = await bootstrapServer({
+    server = await main({
       connection: inMemory ? undefined : connection,
       dataDir: path.resolve(__dirname, '..', 'data'),
+      knex: Knex({
+        useNullAsDefault: true,
+        client: 'sqlite3',
+        connection: {
+          filename: './db.sqlite',
+        },
+      }),
     });
 
+    // required for websockets
     await new Promise<void>((resolve) => server.listen(port, resolve));
   });
 
@@ -252,11 +261,7 @@ describe('e2e', () => {
   });
 
   after((done) => {
-    if (server) {
-      server?.close(done);
-    } else {
-      done();
-    }
+    server?.close(done) ?? done();
   });
 
   after(async () => {
@@ -285,7 +290,7 @@ describe('e2e', () => {
       await player.joinGame(game.code);
     }
 
-    await tom.startGame(jeanne, 12);
+    await tom.startGame(jeanne, 8);
 
     let turn = 1;
 

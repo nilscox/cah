@@ -1,60 +1,93 @@
-import { createConnection } from 'typeorm';
+import { Connection, createConnection } from 'typeorm';
+import path from 'path';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import knexFactory from 'knex';
 import connectSessionKnex from 'connect-session-knex';
 import expressSession from 'express-session';
 
-import { bootstrapServer } from './infrastructure';
+import { bootstrapServer, Dependencies } from './infrastructure';
 import { entities } from './infrastructure/database/entities';
+import { GameEventsHandler } from './application/handlers/GameEventsHandler';
+import { PlayerEventsHandler } from './application/handlers/PlayerEventsHandler';
+import { DtoMapperService } from './application/services/DtoMapperService';
+import { GameService } from './application/services/GameService';
+import { RandomService } from './application/services/RandomService';
+import { InMemoryGameRepository } from './infrastructure/database/repositories/game/InMemoryGameRepository';
+import { SQLGameRepository } from './infrastructure/database/repositories/game/SQLGameRepository';
+import { InMemoryPlayerRepository } from './infrastructure/database/repositories/player/InMemoryPlayerRepository';
+import { SQLPlayerRepository } from './infrastructure/database/repositories/player/SQLPlayerRepository';
+import { FilesystemExternalData } from './infrastructure/FilesystemExternalData';
+import { PubSub } from './infrastructure/PubSub';
+import { WebsocketServer, WebsocketRTCManager } from './infrastructure/web/websocket';
+import { EnvConfigService } from './infrastructure/EnvConfigService';
 
-const { PORT = '4242', HOST = '0.0.0.0', DATA_DIR = './data' } = process.env;
+type Config = {
+  dataDir?: string;
+  connection?: Connection;
+  knex?: ReturnType<typeof knexFactory>;
+};
 
-const hostname = HOST;
-const port = Number.parseInt(PORT);
-const dataDir = DATA_DIR;
-
-export const main = async () => {
-  const connection = await createConnection({
-    type: 'sqlite',
-    database: './db.sqlite',
-    entities,
-    synchronize: true,
-    namingStrategy: new SnakeNamingStrategy(),
-  });
-
-  const knex = knexFactory({
-    useNullAsDefault: true,
-    client: 'sqlite3',
-    connection: {
-      filename: 'db.sqlite',
-    },
-  });
+export const main = async (config: Config = {}) => {
+  const {
+    dataDir = path.resolve(__dirname, '..', 'data'),
+    connection = await createConnection({
+      type: 'sqlite',
+      database: './db.sqlite',
+      entities,
+      synchronize: true,
+      namingStrategy: new SnakeNamingStrategy(),
+    }),
+    knex = knexFactory({
+      useNullAsDefault: true,
+      client: 'sqlite3',
+      connection: {
+        filename: './db.sqlite',
+      },
+    }),
+  } = config;
 
   const KnexSessionStore = connectSessionKnex(expressSession);
 
   const knexSessionStore = new KnexSessionStore({
     tablename: 'sessions',
     createtable: true,
-    knex: knex as any,
+    // @ts-expect-error hmm...
+    knex: knex,
   });
 
-  const server = await bootstrapServer({
-    connection,
+  const configService = new EnvConfigService();
+
+  const playerRepository = connection ? new SQLPlayerRepository(connection) : new InMemoryPlayerRepository();
+  const gameRepository = connection ? new SQLGameRepository(connection) : new InMemoryGameRepository();
+
+  const publisher = new PubSub();
+  const gameService = new GameService(playerRepository, gameRepository, publisher);
+  const randomService = new RandomService();
+  const externalData = new FilesystemExternalData(dataDir, randomService);
+
+  const wss = new WebsocketServer();
+  const rtcManager = new WebsocketRTCManager(playerRepository, gameRepository, wss, publisher);
+
+  const gameEventsHandler = new GameEventsHandler(rtcManager);
+  const playerEventsHandler = new PlayerEventsHandler(rtcManager);
+
+  const mapper = new DtoMapperService(rtcManager);
+
+  publisher.subscribe(gameEventsHandler);
+  publisher.subscribe(playerEventsHandler);
+
+  const deps: Dependencies = {
+    configService,
+    playerRepository,
+    gameRepository,
+    gameService,
+    randomService,
+    externalData,
+    wss,
+    rtcManager,
     sessionStore: knexSessionStore,
-    dataDir,
-  });
-
-  if (isNaN(port) || port <= 0) {
-    throw new Error(`process.env.PORT = "${PORT}" is not a positive integer`);
-  }
-
-  await new Promise<void>((resolve) => server.listen(port, hostname, resolve));
-  console.info(`server started on port ${port}`);
-
-  const close = server.close;
-
-  server.close = (cb) => {
-    knex.destroy();
-    return close.call(server, cb);
+    mapper,
   };
+
+  return bootstrapServer(deps);
 };
