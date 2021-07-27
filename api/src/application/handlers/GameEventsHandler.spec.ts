@@ -15,24 +15,31 @@ import { Choice } from '../../domain/models/Choice';
 import { Game } from '../../domain/models/Game';
 import { Player } from '../../domain/models/Player';
 import { createQuestion } from '../../domain/models/Question';
+import { StubLogger } from '../../infrastructure/stubs/StubLogger';
 import { StubNotifier } from '../../infrastructure/stubs/StubNotifier';
 
 import { GameEventsHandler } from './GameEventsHandler';
 
 describe('GameEventsHandler', () => {
+  let logger: StubLogger;
   let notifier: StubNotifier;
   let handler: GameEventsHandler;
 
   beforeEach(() => {
+    logger = new StubLogger();
     notifier = new StubNotifier();
-    handler = new GameEventsHandler(notifier);
+    handler = new GameEventsHandler(logger, notifier);
   });
 
-  const lastEvent = (game: Game) => {
-    const events = notifier.gameMessages(game);
+  it('logs the events', () => {
+    const game = new Game();
+    const player = new Player('player');
 
-    return events[events.length - 1];
-  };
+    handler.execute(new GameJoinedEvent(game, player));
+
+    expect(logger.last('info')).to.eql(['notify', game.code, 'GameJoined']);
+    expect(logger.last('verbose')).to.eql(['notify', { type: 'GameJoined', player: 'player' }]);
+  });
 
   it('GameJoined event', () => {
     const game = new Game();
@@ -40,7 +47,7 @@ describe('GameEventsHandler', () => {
 
     handler.execute(new GameJoinedEvent(game, player));
 
-    expect(lastEvent(game)).to.eql({ type: 'GameJoined', player: 'player' });
+    expect(notifier.lastGameMessage(game)).to.eql({ type: 'GameJoined', player: 'player' });
   });
 
   it('GameStarted event', () => {
@@ -48,7 +55,7 @@ describe('GameEventsHandler', () => {
 
     handler.execute(new GameStartedEvent(game));
 
-    expect(lastEvent(game)).to.eql({
+    expect(notifier.lastGameMessage(game)).to.eql({
       type: 'GameStarted',
     });
   });
@@ -61,7 +68,7 @@ describe('GameEventsHandler', () => {
 
     handler.execute(new TurnStartedEvent(game));
 
-    expect(lastEvent(game)).to.eql({
+    expect(notifier.lastGameMessage(game)).to.eql({
       type: 'TurnStarted',
       playState: PlayState.playersAnswer,
       questionMaster: 'question master',
@@ -80,7 +87,7 @@ describe('GameEventsHandler', () => {
 
     handler.execute(new PlayerAnsweredEvent(game, player));
 
-    expect(lastEvent(game)).to.eql({
+    expect(notifier.lastGameMessage(game)).to.eql({
       type: 'PlayerAnswered',
       player: player.nick,
     });
@@ -95,7 +102,7 @@ describe('GameEventsHandler', () => {
 
     handler.execute(new AllPlayersAnsweredEvent(game));
 
-    expect(lastEvent(game)).to.eql({
+    expect(notifier.lastGameMessage(game)).to.eql({
       type: 'AllPlayersAnswered',
       answers: [
         {
@@ -118,7 +125,7 @@ describe('GameEventsHandler', () => {
 
     handler.execute(new WinnerSelectedEvent(game));
 
-    expect(lastEvent(game)).to.eql({
+    expect(notifier.lastGameMessage(game)).to.eql({
       type: 'WinnerSelected',
       winner: 'winner',
       answers: [
@@ -137,7 +144,7 @@ describe('GameEventsHandler', () => {
 
     handler.execute(new TurnFinishedEvent(game));
 
-    expect(lastEvent(game)).to.eql({
+    expect(notifier.lastGameMessage(game)).to.eql({
       type: 'TurnFinished',
     });
   });
@@ -147,7 +154,7 @@ describe('GameEventsHandler', () => {
 
     handler.execute(new GameFinishedEvent(game));
 
-    expect(lastEvent(game)).to.eql({
+    expect(notifier.lastGameMessage(game)).to.eql({
       type: 'GameFinished',
     });
   });

@@ -6,24 +6,30 @@ import { createKnexConnection, createKnexSessionStore, main } from './infrastruc
 import { bootstrapServer } from './infrastructure/web';
 import { WebsocketServer } from './infrastructure/web/websocket';
 
-const hostname = process.env.HOST ?? '0.0.0.0';
-const port = Number.parseInt(process.env.PORT ?? '4242');
-
 const start = async () => {
-  const deps = await main();
-
   const wss = new WebsocketServer();
   const sessionStore = await createKnexSessionStore(createKnexConnection());
 
-  const server = await bootstrapServer(deps, wss, sessionStore);
+  const deps = await main({ wss });
 
-  if (isNaN(port) || port <= 0) {
-    throw new Error(`process.env.PORT = "${port}" is not a positive integer`);
+  const logger = deps.logger();
+
+  try {
+    const server = await bootstrapServer(deps, wss, sessionStore);
+
+    const port = Number(deps.configService.get('LISTEN_PORT') ?? '4242');
+    const hostname = deps.configService.get('LISTEN_HOST') ?? 'localhost';
+
+    if (isNaN(port) || port <= 0) {
+      throw new Error(`LISTEN_PORT = "${port}" is not a positive integer`);
+    }
+
+    await new Promise<void>((resolve) => server.listen(port, hostname, resolve));
+
+    logger.info(`server listening on ${hostname}:${port}`);
+  } catch (error) {
+    logger.error(error);
   }
-
-  await new Promise<void>((resolve) => server.listen(port, hostname, resolve));
-
-  console.info(`server started on port ${port}`);
 };
 
 start().catch(console.error);

@@ -9,6 +9,12 @@ export class StubNotifier implements Notifier {
     return this.playersMessages.get(player) ?? [];
   }
 
+  lastPlayerMessage(player: Player) {
+    const messages = this.playerMessages(player);
+
+    return messages[messages.length - 1];
+  }
+
   notifyPlayer<Message>(player: Player, message: Message): void {
     this.playersMessages.set(player, [...this.playerMessages(player), message]);
   }
@@ -17,6 +23,12 @@ export class StubNotifier implements Notifier {
 
   gameMessages(game: Game) {
     return this.gamesMessages.get(game) ?? [];
+  }
+
+  lastGameMessage(game: Game) {
+    const messages = this.gameMessages(game);
+
+    return messages[messages.length - 1];
   }
 
   notifyGamePlayers<Message>(game: Game, message: Message): void {

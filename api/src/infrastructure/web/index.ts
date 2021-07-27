@@ -10,6 +10,7 @@ import { SelectWinnerCommand, SelectWinnerHandler } from '../../application/comm
 import { StartGameCommand, StartGameHandler } from '../../application/commands/StartGameCommand';
 import { ConfigService } from '../../application/interfaces/ConfigService';
 import { GameRepository } from '../../application/interfaces/GameRepository';
+import { Logger } from '../../application/interfaces/Logger';
 import { PlayerRepository } from '../../application/interfaces/PlayerRepository';
 import { RTCManager } from '../../application/interfaces/RTCManager';
 import { SessionStore } from '../../application/interfaces/SessionStore';
@@ -18,6 +19,7 @@ import { GetPlayerHandler } from '../../application/queries/GetPlayerQuery';
 import { DtoMapperService } from '../../application/services/DtoMapperService';
 import { GameService } from '../../application/services/GameService';
 import { RandomService } from '../../application/services/RandomService';
+import { DomainError } from '../../domain/errors/DomainError';
 import { Player } from '../../domain/models/Player';
 import { ExternalData } from '../ExternalData';
 
@@ -90,6 +92,7 @@ const isNotAuthenticated = (req: Request) => {
 };
 
 export interface Dependencies {
+  logger: () => Logger;
   configService: ConfigService;
   playerRepository: PlayerRepository;
   gameRepository: GameRepository;
@@ -102,6 +105,7 @@ export interface Dependencies {
 
 export const bootstrapServer = (deps: Dependencies, wss: WebsocketServer, sessionStore?: SessionStoreBackend) => {
   const {
+    logger,
     configService,
     playerRepository,
     gameRepository,
@@ -190,7 +194,7 @@ export const bootstrapServer = (deps: Dependencies, wss: WebsocketServer, sessio
       .use((req, res) => res.end()),
 
     new FallbackRoute()
-      .use(errorHandler(new ErrorHandler()))
+      .use(errorHandler(new ErrorHandler(logger())))
       .use((req, res) => res.status(404).end()),
   ];
 

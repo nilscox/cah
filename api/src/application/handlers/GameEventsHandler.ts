@@ -4,10 +4,13 @@ import { EventDto } from '../../../../shared/events';
 import { EventHandler } from '../../ddd/EventHandler';
 import { GameEvent } from '../../domain/events';
 import { Game, StartedGame } from '../../domain/models/Game';
+import { Logger } from '../interfaces/Logger';
 import { Notifier } from '../interfaces/Notifier';
 
 export class GameEventsHandler implements EventHandler<GameEvent> {
-  constructor(private readonly notifier: Notifier) {}
+  constructor(private readonly logger: Logger, private readonly notifier: Notifier) {
+    this.logger.setContext('GameEvent');
+  }
 
   execute(event: GameEvent) {
     switch (event.type) {
@@ -83,6 +86,9 @@ export class GameEventsHandler implements EventHandler<GameEvent> {
   }
 
   private notify(game: Game, event: EventDto) {
+    this.logger.info('notify', game.code, event.type);
+    this.logger.verbose('notify', event);
+
     this.notifier.notifyGamePlayers(game, event);
   }
 }

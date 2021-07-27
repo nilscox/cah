@@ -1,7 +1,7 @@
 const configurationVariables = [
   // Env
 
-  'LISTEN_IP',
+  'LISTEN_HOST',
   'LISTEN_PORT',
 
   'LOG_LEVEL',

@@ -1,12 +1,14 @@
 import { Server } from 'http';
 import path from 'path';
 
+import { expect } from 'chai';
 import { Knex } from 'knex';
 import { io, Socket } from 'socket.io-client';
 import request from 'supertest';
 import { Connection, createConnection } from 'typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
+import { ConfigService, ConfigurationVariable } from './application/interfaces/ConfigService';
 import { Choice } from './domain/models/Choice';
 import { createKnexConnection, createKnexSessionStore, main } from './infrastructure';
 import { AnswerEntity } from './infrastructure/database/entities/AnswerEntity';
@@ -65,13 +67,13 @@ class StubPlayer {
 
   private log(message: string) {
     if (log) {
-      console.log(`${this.nick} ${message}`);
+      console.log(`* ${this.nick} ${message}`);
     }
   }
 
   private logEvent(type: string) {
     if (log && this.nick === 'nils') {
-      console.log(`event: ${type}`);
+      console.log(`* event: ${type}`);
     }
   }
 
@@ -212,6 +214,24 @@ class StubPlayer {
   }
 }
 
+class E2eConfigService implements ConfigService {
+  values: Record<ConfigurationVariable, string> = {
+    LISTEN_IP: '',
+    LISTEN_PORT: '',
+    LOG_LEVEL: log ? 'info' : 'error',
+    REFLECT_ORIGIN: '',
+    DB_FILE: '',
+    DB_LOGS: '',
+    SESSION_SECRET: '',
+    DATA_DIR: path.resolve(__dirname, '..', 'data'),
+    GAME_CODE: '0000',
+  };
+
+  get(key: ConfigurationVariable): string | undefined {
+    return this.values[key];
+  }
+}
+
 describe('e2e', () => {
   let connection: Connection;
   let knex: Knex;
@@ -235,14 +255,17 @@ describe('e2e', () => {
   });
 
   before(async () => {
+    const wss = new WebsocketServer();
+
     const deps = await main({
       connection: inMemory ? undefined : connection,
-      dataDir: path.resolve(__dirname, '..', 'data'),
+      configService: new E2eConfigService(),
+      wss,
     });
 
     const sessionStore = await createKnexSessionStore(knex);
 
-    server = bootstrapServer(deps, new WebsocketServer(), sessionStore);
+    server = bootstrapServer(deps, wss, sessionStore);
 
     // required for websockets
     await new Promise<void>((resolve) => server.listen(port, resolve));
@@ -294,6 +317,8 @@ describe('e2e', () => {
     }
 
     await tom.startGame(jeanne, 8);
+
+    expect(questionMaster()).to.eq(jeanne, 'the question master should be jeanne');
 
     let turn = 1;
 

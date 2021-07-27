@@ -1,5 +1,3 @@
-import path from 'path';
-
 import connectSessionKnex from 'connect-session-knex';
 import expressSession from 'express-session';
 import knexFactory, { Knex } from 'knex';
@@ -8,10 +6,12 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 import { GameEventsHandler } from '../application/handlers/GameEventsHandler';
 import { PlayerEventsHandler } from '../application/handlers/PlayerEventsHandler';
+import { ConfigService } from '../application/interfaces/ConfigService';
 import { DtoMapperService } from '../application/services/DtoMapperService';
 import { GameService } from '../application/services/GameService';
 import { RandomService } from '../application/services/RandomService';
 
+import { ConsoleLoggerService } from './ConsoleLoggerService';
 import { entities } from './database/entities';
 import { InMemoryGameRepository } from './database/repositories/game/InMemoryGameRepository';
 import { SQLGameRepository } from './database/repositories/game/SQLGameRepository';
@@ -20,6 +20,7 @@ import { SQLPlayerRepository } from './database/repositories/player/SQLPlayerRep
 import { EnvConfigService } from './EnvConfigService';
 import { FilesystemExternalData } from './FilesystemExternalData';
 import { PubSub } from './PubSub';
+import { StubExternalData } from './stubs/StubExternalData';
 import { Dependencies } from './web';
 import { WebsocketRTCManager, WebsocketServer } from './web/websocket';
 
@@ -55,32 +56,34 @@ export const createKnexSessionStore = (knex: Knex) => {
 };
 
 type Config = Partial<{
-  dataDir: string;
   connection: Connection;
   wss: WebsocketServer;
+  configService: ConfigService;
 }>;
 
 export const main = async (config: Config = {}): Promise<Dependencies> => {
   const {
-    dataDir = path.resolve(__dirname, '..', 'data'),
     connection = await createTypeormConnection(),
     wss = new WebsocketServer(),
+    configService = new EnvConfigService(),
   } = config;
 
-  const configService = new EnvConfigService();
+  const dataDir = configService.get('DATA_DIR');
+
+  const logger = () => new ConsoleLoggerService(configService);
 
   const playerRepository = connection ? new SQLPlayerRepository(connection) : new InMemoryPlayerRepository();
   const gameRepository = connection ? new SQLGameRepository(connection) : new InMemoryGameRepository();
 
-  const publisher = new PubSub();
+  const publisher = new PubSub(logger());
   const gameService = new GameService(playerRepository, gameRepository, publisher);
   const randomService = new RandomService();
-  const externalData = new FilesystemExternalData(dataDir, randomService);
+  const externalData = dataDir ? new FilesystemExternalData(dataDir, randomService) : new StubExternalData();
 
   const rtcManager = new WebsocketRTCManager(playerRepository, gameRepository, wss, publisher);
 
-  const gameEventsHandler = new GameEventsHandler(rtcManager);
-  const playerEventsHandler = new PlayerEventsHandler(rtcManager);
+  const gameEventsHandler = new GameEventsHandler(logger(), rtcManager);
+  const playerEventsHandler = new PlayerEventsHandler(logger(), rtcManager);
 
   const mapper = new DtoMapperService(rtcManager);
 
@@ -88,6 +91,7 @@ export const main = async (config: Config = {}): Promise<Dependencies> => {
   publisher.subscribe(playerEventsHandler);
 
   return {
+    logger,
     configService,
     playerRepository,
     gameRepository,
