@@ -1,10 +1,10 @@
 import { CommandHandler } from '../../ddd/CommandHandler';
 import { PlayerIsAlreadyInGameError } from '../../domain/errors/PlayerIsAlreadyInGameError';
+import { ConfigService } from '../../domain/interfaces/ConfigService';
 import { GameRepository } from '../../domain/interfaces/GameRepository';
 import { Game } from '../../domain/models/Game';
 import { RTCManager } from '../interfaces/RTCManager';
 import { SessionStore } from '../interfaces/SessionStore';
-import { ConfigService } from '../../domain/interfaces/ConfigService';
 import { DtoMapperService } from '../services/DtoMapperService';
 import { GameService } from '../services/GameService';
 
@@ -31,7 +31,7 @@ export class CreateGameHandler implements CommandHandler<CreateGameCommand, Crea
     }
 
     const code = this.configService.get('GAME_CODE');
-    const game = new Game(code);
+    const game = new Game(undefined, code);
 
     game.addPlayer(player);
     this.rtcManager.join(game, player);

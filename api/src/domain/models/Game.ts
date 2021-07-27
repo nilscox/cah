@@ -36,8 +36,8 @@ export class Game extends AggregateRoot<GameEvent> {
   public answers?: Answer[];
   public winner?: Player;
 
-  constructor(readonly code = '0000', readonly cardsPerPlayer = 11, readonly minimumPlayersToStart = 3) {
-    super();
+  constructor(id?: string, readonly code = '0000', readonly cardsPerPlayer = 11, readonly minimumPlayersToStart = 3) {
+    super(id);
 
     this.addEvent(new GameCreatedEvent(this));
   }

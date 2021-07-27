@@ -66,12 +66,8 @@ export class GameEntity {
   }
 
   static toDomain(entity: GameEntity): Game {
-    const game = new Game();
+    const game = new Game(entity.id, entity.code);
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    game.id = entity.id;
-    game.code = entity.code;
     game.players = entity.players.map(PlayerEntity.toDomain);
     game.state = entity.state;
     game.playState = entity.playState;

@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+
 import { PlayerIsAlreadyInGameError } from '../../domain/errors/PlayerIsAlreadyInGameError';
 import { Game } from '../../domain/models/Game';
 import { Player } from '../../domain/models/Player';
@@ -10,6 +11,7 @@ import { StubRTCManager } from '../../infrastructure/stubs/StubRTCManager';
 import { StubSessionStore } from '../../infrastructure/stubs/StubSessionStore';
 import { DtoMapperService } from '../services/DtoMapperService';
 import { GameService } from '../services/GameService';
+
 import { CreateGameHandler } from './CreateGameCommand';
 
 describe('CreateGameCommand', () => {
