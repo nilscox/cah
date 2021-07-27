@@ -2,6 +2,7 @@ import { AnonymousAnswer, Answer } from '../../domain/entities/Answer';
 import { Choice } from '../../domain/entities/Choice';
 import { Game, PlayState, StartedGame } from '../../domain/entities/Game';
 import { Player } from '../../domain/entities/Player';
+import { Question } from '../../domain/entities/Question';
 import { GameGateway } from '../../domain/gateways/GameGateway';
 import { createGame, createQuestion } from '../factories';
 
@@ -79,7 +80,28 @@ export class InMemoryGameGateway implements GameGateway {
     });
   }
 
-  endCurrentTurn(): Promise<void> {
-    throw new Error('Method not implemented.');
+  nextQuestionMaster?: Player;
+  nextQuestion?: Question;
+  turnEnded = false;
+
+  async endCurrentTurn(): Promise<void> {
+    this.turnEnded = true;
+
+    this.rtcGateway.triggerMessage({
+      type: 'TurnFinished',
+    });
+
+    if (this.nextQuestionMaster && this.nextQuestion) {
+      this.rtcGateway.triggerMessage({
+        type: 'TurnStarted',
+        playState: PlayState.playersAnswer,
+        questionMaster: this.nextQuestionMaster.nick,
+        question: this.nextQuestion,
+      });
+    } else {
+      this.rtcGateway.triggerMessage({
+        type: 'GameFinished',
+      });
+    }
   }
 }

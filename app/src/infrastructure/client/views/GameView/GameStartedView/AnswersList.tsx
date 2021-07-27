@@ -5,13 +5,15 @@ import styled from 'styled-components';
 
 import { PlayState } from '../../../../../../../shared/enums';
 import { AnonymousAnswer, Answer as AnswerType } from '../../../../../domain/entities/Answer';
+import { nextTurn } from '../../../../../domain/usecases/game/nextTurn/nextTurn';
 import { selectWinner } from '../../../../../domain/usecases/game/selectWinner/selectWinner';
 import { AppState } from '../../../../../store/types';
 import { QuestionCard } from '../../../components/domain/QuestionCard';
+import Button from '../../../components/elements/Button';
 import { Center } from '../../../components/layout/Center';
 import { useAction } from '../../../hooks/useAction';
 import { gameSelector, useGame } from '../../../hooks/useGame';
-import { playerSelector } from '../../../hooks/usePlayer';
+import { isQuestionMasterSelector } from '../../../hooks/usePlayer';
 import { fontSize, spacing } from '../../../styles/theme';
 
 const Answer = styled.div`
@@ -26,10 +28,17 @@ const PlayerNick = styled.div`
 `;
 
 const canSelectAnswerSelector = (state: AppState) => {
-  const player = playerSelector(state);
   const game = gameSelector(state);
+  const isQuestionMaster = isQuestionMasterSelector(state);
 
-  return game.playState === PlayState.questionMasterSelection && game.questionMaster.nick === player.nick;
+  return game.playState === PlayState.questionMasterSelection && isQuestionMaster;
+};
+
+const canEndTurnSelector = (state: AppState) => {
+  const game = gameSelector(state);
+  const isQuestionMaster = isQuestionMasterSelector(state);
+
+  return game.playState === PlayState.endOfTurn && isQuestionMaster;
 };
 
 const isAnswer = (answer: AnonymousAnswer | AnswerType): answer is AnswerType => {
@@ -40,18 +49,30 @@ export const AnswersList: React.FC = () => {
   const game = useGame();
 
   const handleAnswerClick = useAction(canSelectAnswerSelector, selectWinner);
+  const handleNextTurn = useAction(canEndTurnSelector, nextTurn);
 
   return (
-    <Center flex={1} padding={2} horizontal={false}>
-      {game.answers.map((answer) => (
-        <Answer key={answer.id} role="button" onClick={handleAnswerClick ? () => handleAnswerClick(answer) : undefined}>
-          <PlayerNick>
-            <Route path="/game/:code/started/end-of-turn">{isAnswer(answer) && answer.player.nick}</Route>
-            <>&nbsp;</>
-          </PlayerNick>
-          <QuestionCard question={game.question} choices={answer.choices} />
-        </Answer>
-      ))}
-    </Center>
+    <>
+      <Center flex={1} padding={2} horizontal={false}>
+        {game.answers.map((answer) => (
+          <Answer
+            key={answer.id}
+            role="button"
+            onClick={handleAnswerClick ? () => handleAnswerClick(answer) : undefined}
+          >
+            <PlayerNick>
+              <Route path="/game/:code/started/end-of-turn">{isAnswer(answer) && answer.player.nick}</Route>
+              <>&nbsp;</>
+            </PlayerNick>
+            <QuestionCard question={game.question} choices={answer.choices} />
+          </Answer>
+        ))}
+      </Center>
+      <Center minHeight={24}>
+        <Route path="/game/:code/started/end-of-turn">
+          {handleNextTurn && <Button onClick={handleNextTurn}>Next turn</Button>}
+        </Route>
+      </Center>
+    </>
   );
 };

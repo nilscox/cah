@@ -103,6 +103,7 @@ EndOfTurn.args = {
   player,
   game: {
     ...startedGame,
+    questionMaster: player,
     playState: PlayState.endOfTurn,
     answers,
   },

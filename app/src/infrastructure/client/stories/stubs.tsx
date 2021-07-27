@@ -16,7 +16,7 @@ import { createFullPlayer, createGame } from '../../../tests/factories';
 import { ReactRouterGateway } from '../../gateways/ReactRouterGateway';
 import { gameRouterHistory } from '../views/GameView/GameView';
 
-const log = false;
+const log = true;
 
 class ActionLogger {
   log(name: string, ...args: unknown[]) {

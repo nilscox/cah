@@ -22,7 +22,7 @@ describe('selectWinner', () => {
 
     store.setup(({ dispatch, listenRTCMessages, rtcGateway }) => {
       dispatch(setPlayer(createFullPlayer()));
-      dispatch(setGame(createStartedGame({ players: [winner] })));
+      dispatch(setGame(createStartedGame({ playState: PlayState.questionMasterSelection, players: [winner] })));
 
       listenRTCMessages();
       rtcGateway.triggerMessage({ type: 'AllPlayersAnswered', answers: [answer] });

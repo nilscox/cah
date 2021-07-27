@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { createBrowserHistory, createMemoryHistory } from 'history';
+import { useDispatch } from 'react-redux';
 import { Redirect, Route, Router, Switch } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { redirect } from '../../../../domain/usecases/game/redirect/redirect';
 import Header from '../../components/domain/Header';
 import { Icon } from '../../components/elements/Icon';
 import { Flex } from '../../components/layout/Flex';
@@ -27,8 +29,12 @@ const memoryRouter = true;
 export const gameRouterHistory = memoryRouter ? createMemoryHistory() : createBrowserHistory();
 
 const GameView: React.FC = () => {
+  const dispatch = useDispatch();
+
   const player = usePlayer();
   const game = useGame();
+
+  useEffect(() => void dispatch(redirect()), [dispatch, game.state, game.playState]);
 
   return (
     <Container>

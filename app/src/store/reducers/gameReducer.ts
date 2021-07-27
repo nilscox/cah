@@ -1,3 +1,4 @@
+import { GameState as GameStateEnum } from '../../../../shared/enums';
 import { Game, GameState as GS, PlayState, StartedGame } from '../../domain/entities/Game';
 import { RTCMessage } from '../../domain/gateways/RTCGateway';
 import { AppAction, NotNull, Nullable } from '../types';
@@ -59,6 +60,25 @@ const rtcMessageReducer = (state: NotNull<GameState>, message: RTCMessage): Game
         player: findPlayer(state, answer.player),
       })),
       winner: findPlayer(state, message.winner),
+    };
+  }
+
+  if (message.type === 'TurnFinished') {
+    return {
+      ...state,
+      answers: [],
+      winner: undefined,
+    };
+  }
+
+  if (message.type === 'GameFinished') {
+    return {
+      ...state,
+      state: GameStateEnum.finished,
+      playState: undefined,
+      questionMaster: undefined,
+      question: undefined,
+      answers: undefined,
     };
   }
 

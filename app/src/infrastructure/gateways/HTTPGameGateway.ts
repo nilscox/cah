@@ -8,7 +8,10 @@ import { GameGateway } from '../../domain/gateways/GameGateway';
 import { HTTPAdapter } from './HTTPAdapter';
 
 class DtoMapper {
-  private static toAnswer(dto: AnonymousAnswerDto | AnswerDto, findPlayer: (nick: string) => Player): AnonymousAnswer | Answer {
+  private static toAnswer(
+    dto: AnonymousAnswerDto | AnswerDto,
+    findPlayer: (nick: string) => Player,
+  ): AnonymousAnswer | Answer {
     const answer: Answer = { ...dto } as Answer;
 
     if ('player' in dto) {
@@ -28,7 +31,7 @@ class DtoMapper {
 
     if (isStarted(game)) {
       game.questionMaster = findPlayer(dto.questionMaster!);
-      game.answers = dto.answers?.map(answer => DtoMapper.toAnswer(answer, findPlayer)) ?? [];
+      game.answers = dto.answers?.map((answer) => DtoMapper.toAnswer(answer, findPlayer)) ?? [];
     }
 
     return game;
@@ -71,7 +74,7 @@ export class HTTPGameGateway implements GameGateway {
     await this.http.post('/select', { answerId: answer.id });
   }
 
-  endCurrentTurn(): Promise<void> {
-    throw new Error('Method not implemented.');
+  async endCurrentTurn(): Promise<void> {
+    await this.http.post('/next');
   }
 }

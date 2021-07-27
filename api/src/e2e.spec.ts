@@ -216,7 +216,7 @@ class StubPlayer {
 
 class E2eConfigService implements ConfigService {
   values: Record<ConfigurationVariable, string> = {
-    LISTEN_IP: '',
+    LISTEN_HOST: 'localhost',
     LISTEN_PORT: '',
     LOG_LEVEL: log ? 'info' : 'error',
     REFLECT_ORIGIN: '',
