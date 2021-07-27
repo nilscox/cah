@@ -1,20 +1,22 @@
 import { Server } from 'http';
 import path from 'path';
 
-import Knex from 'knex';
+import { Knex } from 'knex';
 import { io, Socket } from 'socket.io-client';
 import request from 'supertest';
 import { Connection, createConnection } from 'typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 import { Choice } from './domain/models/Choice';
-import { main } from './infrastructure';
+import { createKnexConnection, createKnexSessionStore, main } from './infrastructure';
 import { AnswerEntity } from './infrastructure/database/entities/AnswerEntity';
 import { ChoiceEntity } from './infrastructure/database/entities/ChoiceEntity';
 import { GameEntity } from './infrastructure/database/entities/GameEntity';
 import { PlayerEntity } from './infrastructure/database/entities/PlayerEntity';
 import { QuestionEntity } from './infrastructure/database/entities/QuestionEntity';
 import { TurnEntity } from './infrastructure/database/entities/TurnEntity';
+import { bootstrapServer } from './infrastructure/web';
+import { WebsocketServer } from './infrastructure/web/websocket';
 
 const port = 1222;
 const log = false;
@@ -212,6 +214,7 @@ class StubPlayer {
 
 describe('e2e', () => {
   let connection: Connection;
+  let knex: Knex;
   let server: Server;
 
   const nicks = ['nils', 'tom', 'jeanne', 'vio'] as const;
@@ -227,20 +230,19 @@ describe('e2e', () => {
       logging,
       namingStrategy: new SnakeNamingStrategy(),
     });
+
+    knex = createKnexConnection();
   });
 
   before(async () => {
-    server = await main({
+    const deps = await main({
       connection: inMemory ? undefined : connection,
       dataDir: path.resolve(__dirname, '..', 'data'),
-      knex: Knex({
-        useNullAsDefault: true,
-        client: 'sqlite3',
-        connection: {
-          filename: './db.sqlite',
-        },
-      }),
     });
+
+    const sessionStore = await createKnexSessionStore(knex);
+
+    server = bootstrapServer(deps, new WebsocketServer(), sessionStore);
 
     // required for websockets
     await new Promise<void>((resolve) => server.listen(port, resolve));
@@ -265,6 +267,7 @@ describe('e2e', () => {
   });
 
   after(async () => {
+    await knex.destroy();
     await connection?.close();
   });
 

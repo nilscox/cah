@@ -2,7 +2,7 @@ import path from 'path';
 
 import connectSessionKnex from 'connect-session-knex';
 import expressSession from 'express-session';
-import knexFactory from 'knex';
+import knexFactory, { Knex } from 'knex';
 import { Connection, createConnection } from 'typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
@@ -20,42 +20,52 @@ import { SQLPlayerRepository } from './database/repositories/player/SQLPlayerRep
 import { EnvConfigService } from './EnvConfigService';
 import { FilesystemExternalData } from './FilesystemExternalData';
 import { PubSub } from './PubSub';
-import { bootstrapServer, Dependencies } from './web';
+import { Dependencies } from './web';
 import { WebsocketRTCManager, WebsocketServer } from './web/websocket';
 
-type Config = {
-  dataDir?: string;
-  connection?: Connection;
-  knex?: ReturnType<typeof knexFactory>;
+export const createTypeormConnection = () => {
+  return createConnection({
+    type: 'sqlite',
+    database: './db.sqlite',
+    entities,
+    synchronize: true,
+    namingStrategy: new SnakeNamingStrategy(),
+  });
 };
 
-export const main = async (config: Config = {}) => {
-  const {
-    dataDir = path.resolve(__dirname, '..', 'data'),
-    connection = await createConnection({
-      type: 'sqlite',
-      database: './db.sqlite',
-      entities,
-      synchronize: true,
-      namingStrategy: new SnakeNamingStrategy(),
-    }),
-    knex = knexFactory({
-      useNullAsDefault: true,
-      client: 'sqlite3',
-      connection: {
-        filename: './db.sqlite',
-      },
-    }),
-  } = config;
+export const createKnexConnection = () => {
+  return knexFactory({
+    useNullAsDefault: true,
+    client: 'sqlite3',
+    connection: {
+      filename: './db.sqlite',
+    },
+  });
+};
 
+export const createKnexSessionStore = (knex: Knex) => {
   const KnexSessionStore = connectSessionKnex(expressSession);
 
-  const knexSessionStore = new KnexSessionStore({
+  return new KnexSessionStore({
     tablename: 'sessions',
     createtable: true,
-    // @ts-expect-error hmm...
-    knex: knex,
+    // @ts-expect-error knex version issue
+    knex,
   });
+};
+
+type Config = Partial<{
+  dataDir: string;
+  connection: Connection;
+  wss: WebsocketServer;
+}>;
+
+export const main = async (config: Config = {}): Promise<Dependencies> => {
+  const {
+    dataDir = path.resolve(__dirname, '..', 'data'),
+    connection = await createTypeormConnection(),
+    wss = new WebsocketServer(),
+  } = config;
 
   const configService = new EnvConfigService();
 
@@ -67,7 +77,6 @@ export const main = async (config: Config = {}) => {
   const randomService = new RandomService();
   const externalData = new FilesystemExternalData(dataDir, randomService);
 
-  const wss = new WebsocketServer();
   const rtcManager = new WebsocketRTCManager(playerRepository, gameRepository, wss, publisher);
 
   const gameEventsHandler = new GameEventsHandler(rtcManager);
@@ -78,18 +87,14 @@ export const main = async (config: Config = {}) => {
   publisher.subscribe(gameEventsHandler);
   publisher.subscribe(playerEventsHandler);
 
-  const deps: Dependencies = {
+  return {
     configService,
     playerRepository,
     gameRepository,
     gameService,
     randomService,
     externalData,
-    wss,
     rtcManager,
-    sessionStore: knexSessionStore,
     mapper,
   };
-
-  return bootstrapServer(deps);
 };

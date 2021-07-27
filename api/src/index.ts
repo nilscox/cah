@@ -1,10 +1,17 @@
-import { main } from './infrastructure';
+import { createKnexConnection, createKnexSessionStore, main } from './infrastructure';
+import { bootstrapServer } from './infrastructure/web';
+import { WebsocketServer } from './infrastructure/web/websocket';
 
 const hostname = process.env.HOST ?? '0.0.0.0';
 const port = Number.parseInt(process.env.PORT ?? '4242');
 
 const start = async () => {
-  const server = await main();
+  const deps = await main();
+
+  const wss = new WebsocketServer();
+  const sessionStore = await createKnexSessionStore(createKnexConnection());
+
+  const server = await bootstrapServer(deps, wss, sessionStore);
 
   if (isNaN(port) || port <= 0) {
     throw new Error(`process.env.PORT = "${port}" is not a positive integer`);

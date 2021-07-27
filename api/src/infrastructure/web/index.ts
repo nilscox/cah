@@ -8,6 +8,7 @@ import { LoginCommand, LoginHandler } from '../../application/commands/LoginComm
 import { NextTurnHandler } from '../../application/commands/NextTurnCommand';
 import { SelectWinnerCommand, SelectWinnerHandler } from '../../application/commands/SelectWinnerCommand';
 import { StartGameCommand, StartGameHandler } from '../../application/commands/StartGameCommand';
+import { RTCManager } from '../../application/interfaces/RTCManager';
 import { SessionStore } from '../../application/interfaces/SessionStore';
 import { GetGameHandler, GetGameQuery } from '../../application/queries/GetGameQuery';
 import { GetPlayerHandler } from '../../application/queries/GetPlayerQuery';
@@ -23,7 +24,7 @@ import { Player } from '../../domain/models/Player';
 import { context, dto, errorHandler, guard, handler, middleware, status } from './middlewaresCreators';
 import { FallbackRoute, InputDto, Route } from './Route';
 import { createServer } from './web';
-import { WebsocketRTCManager, WebsocketServer } from './websocket';
+import { WebsocketServer } from './websocket';
 
 declare module 'express-session' {
   export interface SessionData {
@@ -95,13 +96,11 @@ export interface Dependencies {
   gameService: GameService;
   randomService: RandomService;
   externalData: ExternalData;
-  wss: WebsocketServer;
-  rtcManager: WebsocketRTCManager;
-  sessionStore?: SessionStoreBackend;
+  rtcManager: RTCManager;
   mapper: DtoMapperService;
 }
 
-export const bootstrapServer = async (deps: Dependencies) => {
+export const bootstrapServer = (deps: Dependencies, wss: WebsocketServer, sessionStore?: SessionStoreBackend) => {
   const {
     configService,
     playerRepository,
@@ -109,9 +108,7 @@ export const bootstrapServer = async (deps: Dependencies) => {
     gameService,
     randomService,
     externalData,
-    wss,
     rtcManager,
-    sessionStore,
     mapper,
   } = deps;
 
