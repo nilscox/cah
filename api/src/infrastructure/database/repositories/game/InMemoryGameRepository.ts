@@ -1,4 +1,4 @@
-import { GameRepository } from '../../../../domain/interfaces/GameRepository';
+import { GameRepository } from '../../../../application/interfaces/GameRepository';
 import { Choice } from '../../../../domain/models/Choice';
 import { Game } from '../../../../domain/models/Game';
 import { Question } from '../../../../domain/models/Question';

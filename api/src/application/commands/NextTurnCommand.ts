@@ -1,5 +1,5 @@
 import { CommandHandler } from '../../ddd/CommandHandler';
-import { GameRepository } from '../../domain/interfaces/GameRepository';
+import { GameRepository } from '../interfaces/GameRepository';
 import { SessionStore } from '../interfaces/SessionStore';
 import { GameService } from '../services/GameService';
 

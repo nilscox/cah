@@ -6,14 +6,14 @@ import sharedsession from 'express-socket.io-session';
 import { Server as SocketIOServer, Socket } from 'socket.io';
 import { EventEmitter } from 'stream';
 
+import { GameRepository } from '../../application/interfaces/GameRepository';
 import { Notifier } from '../../application/interfaces/Notifier';
+import { PlayerRepository } from '../../application/interfaces/PlayerRepository';
 import { RTCManager } from '../../application/interfaces/RTCManager';
 import { EventPublisher } from '../../ddd/EventPublisher';
 import { DomainEvent } from '../../domain/events';
 import { PlayerConnectedEvent } from '../../domain/events/PlayerConnectedEvent';
 import { PlayerDisconnectedEvent } from '../../domain/events/PlayerDisconnectedEvent';
-import { GameRepository } from '../../domain/interfaces/GameRepository';
-import { PlayerRepository } from '../../domain/interfaces/PlayerRepository';
 import { Game } from '../../domain/models/Game';
 import { Player } from '../../domain/models/Player';
 

@@ -1,7 +1,7 @@
 import { FullPlayerDto, PlayerDto } from '../../../../shared/dtos';
 import { QueryHandler } from '../../ddd/QueryHandler';
 import { PlayerNotFoundError } from '../../domain/errors/PlayerNotFoundError';
-import { PlayerRepository } from '../../domain/interfaces/PlayerRepository';
+import { PlayerRepository } from '../interfaces/PlayerRepository';
 import { SessionStore } from '../interfaces/SessionStore';
 import { DtoMapperService } from '../services/DtoMapperService';
 

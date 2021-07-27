@@ -3,10 +3,11 @@ import path from 'path';
 import { promisify } from 'util';
 
 import { RandomService } from '../application/services/RandomService';
-import { ExternalData } from '../domain/interfaces/ExternalData';
 import { Blank } from '../domain/models/Blank';
 import { Choice } from '../domain/models/Choice';
 import { Question } from '../domain/models/Question';
+
+import { ExternalData } from './ExternalData';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Data = any;

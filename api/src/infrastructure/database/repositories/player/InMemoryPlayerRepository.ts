@@ -1,4 +1,4 @@
-import { PlayerRepository } from '../../../../domain/interfaces/PlayerRepository';
+import { PlayerRepository } from '../../../../application/interfaces/PlayerRepository';
 import { Player } from '../../../../domain/models/Player';
 
 export class InMemoryPlayerRepository implements PlayerRepository {

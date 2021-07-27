@@ -1,9 +1,9 @@
 import { IsInt, IsUUID, Min } from 'class-validator';
 
 import { CommandHandler } from '../../ddd/CommandHandler';
-import { ExternalData } from '../../domain/interfaces/ExternalData';
-import { GameRepository } from '../../domain/interfaces/GameRepository';
 import { Game } from '../../domain/models/Game';
+import { ExternalData } from '../../infrastructure/ExternalData';
+import { GameRepository } from '../interfaces/GameRepository';
 import { SessionStore } from '../interfaces/SessionStore';
 import { GameService } from '../services/GameService';
 

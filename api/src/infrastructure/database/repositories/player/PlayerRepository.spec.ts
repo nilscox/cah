@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { Connection, createConnection } from 'typeorm';
 
-import { PlayerRepository } from '../../../../domain/interfaces/PlayerRepository';
+import { PlayerRepository } from '../../../../application/interfaces/PlayerRepository';
 import { Player } from '../../../../domain/models/Player';
 import { entities } from '../../entities';
 

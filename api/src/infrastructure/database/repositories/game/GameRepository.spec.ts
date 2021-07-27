@@ -3,8 +3,8 @@ import { Connection, createConnection } from 'typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 import { GameState, PlayState } from '../../../../../../shared/enums';
-import { GameRepository } from '../../../../domain/interfaces/GameRepository';
-import { PlayerRepository } from '../../../../domain/interfaces/PlayerRepository';
+import { GameRepository } from '../../../../application/interfaces/GameRepository';
+import { PlayerRepository } from '../../../../application/interfaces/PlayerRepository';
 import { Answer } from '../../../../domain/models/Answer';
 import { createChoice, createChoices } from '../../../../domain/models/Choice';
 import { Game } from '../../../../domain/models/Game';

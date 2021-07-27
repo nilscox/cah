@@ -1,8 +1,8 @@
 import { CommandHandler } from '../../ddd/CommandHandler';
 import { PlayerIsAlreadyInGameError } from '../../domain/errors/PlayerIsAlreadyInGameError';
-import { ConfigService } from '../../domain/interfaces/ConfigService';
-import { GameRepository } from '../../domain/interfaces/GameRepository';
 import { Game } from '../../domain/models/Game';
+import { ConfigService } from '../interfaces/ConfigService';
+import { GameRepository } from '../interfaces/GameRepository';
 import { RTCManager } from '../interfaces/RTCManager';
 import { SessionStore } from '../interfaces/SessionStore';
 import { DtoMapperService } from '../services/DtoMapperService';

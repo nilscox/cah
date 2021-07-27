@@ -1,7 +1,7 @@
-import { Choice } from '../models/Choice';
-import { Game } from '../models/Game';
-import { Question } from '../models/Question';
-import { Turn } from '../models/Turn';
+import { Choice } from '../../domain/models/Choice';
+import { Game } from '../../domain/models/Game';
+import { Question } from '../../domain/models/Question';
+import { Turn } from '../../domain/models/Turn';
 
 export interface GameRepository {
   findAll(): Promise<Game[]>;

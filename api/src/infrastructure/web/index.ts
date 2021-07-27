@@ -8,6 +8,9 @@ import { LoginCommand, LoginHandler } from '../../application/commands/LoginComm
 import { NextTurnHandler } from '../../application/commands/NextTurnCommand';
 import { SelectWinnerCommand, SelectWinnerHandler } from '../../application/commands/SelectWinnerCommand';
 import { StartGameCommand, StartGameHandler } from '../../application/commands/StartGameCommand';
+import { ConfigService } from '../../application/interfaces/ConfigService';
+import { GameRepository } from '../../application/interfaces/GameRepository';
+import { PlayerRepository } from '../../application/interfaces/PlayerRepository';
 import { RTCManager } from '../../application/interfaces/RTCManager';
 import { SessionStore } from '../../application/interfaces/SessionStore';
 import { GetGameHandler, GetGameQuery } from '../../application/queries/GetGameQuery';
@@ -15,11 +18,8 @@ import { GetPlayerHandler } from '../../application/queries/GetPlayerQuery';
 import { DtoMapperService } from '../../application/services/DtoMapperService';
 import { GameService } from '../../application/services/GameService';
 import { RandomService } from '../../application/services/RandomService';
-import { ConfigService } from '../../domain/interfaces/ConfigService';
-import { ExternalData } from '../../domain/interfaces/ExternalData';
-import { GameRepository } from '../../domain/interfaces/GameRepository';
-import { PlayerRepository } from '../../domain/interfaces/PlayerRepository';
 import { Player } from '../../domain/models/Player';
+import { ExternalData } from '../ExternalData';
 
 import { context, dto, errorHandler, guard, handler, middleware, status } from './middlewaresCreators';
 import { FallbackRoute, InputDto, Route } from './Route';

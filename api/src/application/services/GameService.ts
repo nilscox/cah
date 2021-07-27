@@ -2,10 +2,10 @@ import { EventPublisher } from '../../ddd/EventPublisher';
 import { GameNotFoundError } from '../../domain/errors/GameNotFoundError';
 import { PlayerNotFoundError } from '../../domain/errors/PlayerNotFoundError';
 import { DomainEvent } from '../../domain/events';
-import { GameRepository } from '../../domain/interfaces/GameRepository';
-import { PlayerRepository } from '../../domain/interfaces/PlayerRepository';
 import { Game } from '../../domain/models/Game';
 import { Player } from '../../domain/models/Player';
+import { GameRepository } from '../interfaces/GameRepository';
+import { PlayerRepository } from '../interfaces/PlayerRepository';
 
 export class GameService {
   constructor(

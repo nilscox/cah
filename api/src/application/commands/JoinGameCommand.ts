@@ -2,7 +2,7 @@ import { GameDto } from '../../../../shared/dtos';
 import { CommandHandler } from '../../ddd/CommandHandler';
 import { GameNotFoundError } from '../../domain/errors/GameNotFoundError';
 import { PlayerIsAlreadyInGameError } from '../../domain/errors/PlayerIsAlreadyInGameError';
-import { GameRepository } from '../../domain/interfaces/GameRepository';
+import { GameRepository } from '../interfaces/GameRepository';
 import { RTCManager } from '../interfaces/RTCManager';
 import { SessionStore } from '../interfaces/SessionStore';
 import { DtoMapperService } from '../services/DtoMapperService';

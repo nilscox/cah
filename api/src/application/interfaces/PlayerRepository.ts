@@ -1,4 +1,4 @@
-import { Player } from '../models/Player';
+import { Player } from '../../domain/models/Player';
 
 export interface PlayerRepository {
   findAll(): Promise<Player[]>;
