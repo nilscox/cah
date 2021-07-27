@@ -1,3 +1,7 @@
+import dotenv from 'dotenv';
+
+dotenv.config();
+
 import { createKnexConnection, createKnexSessionStore, main } from './infrastructure';
 import { bootstrapServer } from './infrastructure/web';
 import { WebsocketServer } from './infrastructure/web/websocket';
