@@ -8,13 +8,16 @@ import { Blank } from '../domain/models/Blank';
 import { Choice } from '../domain/models/Choice';
 import { Question } from '../domain/models/Question';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type Data = any;
+
 export class FilesystemExternalData implements ExternalData {
   constructor(private readonly dataDir: string, private readonly randomService: RandomService) {}
 
   async pickRandomQuestions(count: number): Promise<Question[]> {
     const data = await this.loadJsonFile('fr', 'questions.json');
     const questions: Question[] = data.map(
-      (data: any) =>
+      (data: Data) =>
         new Question(
           data.text,
           data.blanks?.map((place: number) => new Blank(place)),
@@ -26,7 +29,7 @@ export class FilesystemExternalData implements ExternalData {
 
   async pickRandomChoices(count: number): Promise<Choice[]> {
     const data = await this.loadJsonFile('fr', 'choices.json');
-    const choices: Choice[] = data.map((data: any) => new Choice(data.text));
+    const choices: Choice[] = data.map((data: Data) => new Choice(data.text));
 
     return this.randomService.randomize(choices).slice(0, count);
   }

@@ -18,6 +18,7 @@ const configurationVariables = [
 
   // Game
 
+  'DATA_DIR',
   'GAME_CODE',
 ] as const;
 

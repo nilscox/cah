@@ -1,33 +1,37 @@
-import { createConnection } from 'typeorm';
-import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
+import yargs from 'yargs';
+import { hideBin } from 'yargs/helpers';
 
-import { log } from '../../utils/log';
-import { entities } from '../database/entities';
-import { SQLGameRepository } from '../database/repositories/game/SQLGameRepository';
-import { SQLPlayerRepository } from '../database/repositories/player/SQLPlayerRepository';
+import { createTypeormConnection } from '../index';
 
-const main = async () => {
-  const connection = await createConnection({
-    type: 'sqlite',
-    database: './db.sqlite',
-    entities,
-    synchronize: true,
-    namingStrategy: new SnakeNamingStrategy(),
-  });
+import { CahCli } from './CahCli';
 
-  const playerRepository = new SQLPlayerRepository(connection);
-  const gameRepository = new SQLGameRepository(connection);
+const parser = yargs(hideBin(process.argv))
+  .demandCommand(1, 1, 'missing command') // min, max
+  .command('serve', 'start the server')
+  .command('info [player]', 'log information about the server')
+  .command('reset', 'reset the server')
+  .command('create-player <nick>', 'create a new player')
+  .command('create-game', 'create a new game')
+  .command('join <code>', 'join an existing game')
+  .command('start <questionMaster> <turns>', 'start a game')
+  .command('answer <choices...>', 'answer a set of choices')
+  .command('select <answer>', 'select a winning answer')
+  .command('next', 'end the current turn')
+  .option('as', { alias: 'a', type: 'string', description: 'execute the command as a player' })
+  .option('quiet', { alias: 'q', type: 'boolean', description: 'disable logging' })
+  .option('verbose', { alias: 'v', type: 'boolean', description: 'verbose logging' });
 
-  const players = await playerRepository.findAll();
-  const games = await gameRepository.findAll();
+const cli = async () => {
+  const argv = await parser.argv;
+  const cli = new CahCli(await createTypeormConnection());
+  const command = String(argv._[0]);
 
-  console.log('players:');
-  log(players);
-
-  console.log('\n\n');
-
-  console.log('games:');
-  log(games);
+  try {
+    process.exitCode = await cli.run(command, argv);
+  } catch (error) {
+    console.error(error);
+    process.exitCode = 1;
+  }
 };
 
-main().catch(console.error);
+cli().catch(console.error);
