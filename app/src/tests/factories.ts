@@ -1,4 +1,4 @@
-import { Answer } from '../domain/entities/Answer';
+import { AnonymousAnswer, Answer } from '../domain/entities/Answer';
 import { Choice } from '../domain/entities/Choice';
 import { Game, GameState, PlayState, StartedGame } from '../domain/entities/Game';
 import { FullPlayer, Player } from '../domain/entities/Player';
@@ -50,9 +50,15 @@ export const createChoice = (overrides: Partial<Choice> = {}): Choice => ({
   ...overrides,
 });
 
-export const createAnswer = (overrides: Partial<Answer> = {}): Answer => ({
+export const createAnonymousAnswer = (overrides: Partial<AnonymousAnswer> = {}): AnonymousAnswer => ({
   id: createId(),
   formatted: 'answer',
   choices: [],
+  ...overrides,
+});
+
+export const createAnswer = (overrides: Partial<Answer> = {}): Answer => ({
+  ...createAnonymousAnswer(),
+  player: createPlayer(),
   ...overrides,
 });

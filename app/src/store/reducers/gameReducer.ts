@@ -50,6 +50,18 @@ const rtcMessageReducer = (state: NotNull<GameState>, message: RTCMessage): Game
     };
   }
 
+  if (message.type === 'WinnerSelected') {
+    return {
+      ...state,
+      playState: PlayState.endOfTurn,
+      answers: message.answers.map((answer) => ({
+        ...answer,
+        player: findPlayer(state, answer.player),
+      })),
+      winner: findPlayer(state, message.winner),
+    };
+  }
+
   return state;
 };
 

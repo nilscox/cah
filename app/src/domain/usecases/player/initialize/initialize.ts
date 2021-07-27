@@ -15,7 +15,10 @@ export const initialize = createThunk(async ({ dispatch, playerGateway, gameGate
 
   if (player?.gameId) {
     game = await gameGateway.fetchGame(player.gameId);
-    dispatch(setGame(game));
+
+    if (game) {
+      dispatch(setGame(game));
+    }
   }
 
   dispatch(redirect());

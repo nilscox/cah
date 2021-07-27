@@ -1,4 +1,4 @@
-import { Answer } from './Answer';
+import { AnonymousAnswer, Answer } from './Answer';
 import { Player } from './Player';
 import { Question } from './Question';
 
@@ -25,8 +25,8 @@ export interface StartedGame extends Game {
   playState: PlayState;
   questionMaster: Player;
   question: Question;
-  answers: Answer[];
-  winner?: string;
+  answers: AnonymousAnswer[] | Answer[];
+  winner?: Player;
 }
 
 export const isStarted = (game: Game): game is StartedGame => {

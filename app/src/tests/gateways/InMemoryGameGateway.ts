@@ -1,4 +1,4 @@
-import { Answer } from '../../domain/entities/Answer';
+import { AnonymousAnswer, Answer } from '../../domain/entities/Answer';
 import { Choice } from '../../domain/entities/Choice';
 import { Game, PlayState, StartedGame } from '../../domain/entities/Game';
 import { Player } from '../../domain/entities/Player';
@@ -55,8 +55,28 @@ export class InMemoryGameGateway implements GameGateway {
     }
   }
 
-  selectWinningAnswer(_answer: Answer): Promise<void> {
-    throw new Error('Method not implemented.');
+  winningAnswer?: AnonymousAnswer;
+  winner?: Player;
+
+  async selectWinningAnswer(answer: AnonymousAnswer): Promise<void> {
+    if (!this.winner) {
+      throw new Error('winner is not set');
+    }
+
+    this.winningAnswer = answer;
+
+    this.rtcGateway.triggerMessage({
+      type: 'WinnerSelected',
+      winner: this.winner.nick,
+      answers: [
+        {
+          id: answer.id,
+          choices: answer.choices,
+          formatted: answer.formatted,
+          player: this.winner.nick,
+        },
+      ],
+    });
   }
 
   endCurrentTurn(): Promise<void> {

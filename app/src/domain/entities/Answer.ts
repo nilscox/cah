@@ -1,9 +1,12 @@
 import { Choice } from './Choice';
 import { Player } from './Player';
 
-export interface Answer {
+export interface AnonymousAnswer {
   id: string;
-  player?: Player;
   choices: Choice[];
   formatted: string;
+}
+
+export interface Answer extends AnonymousAnswer {
+  player: Player;
 }

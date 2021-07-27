@@ -56,7 +56,7 @@ export interface CardsDealtEvent {
   cards: ChoiceDto[];
 }
 
-export type EventDto =
+export type GameEventDto =
   | PlayerConnectedEvent
   | PlayerDisconnectedEvent
   | GameJoinedEvent
@@ -66,5 +66,8 @@ export type EventDto =
   | AllPlayersAnsweredEvent
   | WinnerSelectedEvent
   | TurnFinishedEvent
-  | GameFinishedEvent
-  | CardsDealtEvent;
+  | GameFinishedEvent;
+
+export type PlayerEventDto = CardsDealtEvent;
+
+export type EventDto = GameEventDto | PlayerEventDto;

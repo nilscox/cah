@@ -1,17 +1,16 @@
 import React from 'react';
 
-import { useDispatch, useSelector } from 'react-redux';
-import { Action } from 'redux';
+import { useSelector } from 'react-redux';
 
 import { setPlayerCards } from '../../../../../domain/actions';
 import { GameState } from '../../../../../domain/entities/Game';
+import { validateChoicesSelection } from '../../../../../domain/usecases/game/validateChoicesSelection/validateChoicesSelection';
 import { toggleChoice } from '../../../../../domain/usecases/player/toggleChoice/toggleChoice';
-import { validateChoicesSelection } from '../../../../../domain/usecases/player/validateChoicesSelection/validateChoicesSelection';
-import { ThunkResult } from '../../../../../store/createAction';
 import { AppState } from '../../../../../store/types';
 import { ChoicesList } from '../../../components/domain/ChoicesList';
 import { QuestionCard } from '../../../components/domain/QuestionCard';
 import { Center } from '../../../components/layout/Center';
+import { useAction } from '../../../hooks/useAction';
 import { gameSelector, useGame } from '../../../hooks/useGame';
 import { choicesSelectionSelector, playerSelector, usePlayer } from '../../../hooks/usePlayer';
 
@@ -36,19 +35,7 @@ const canValidateSelectionSelector = (state: AppState) => {
   return !player.selectionValidated;
 };
 
-type GuardSelector = (state: AppState) => boolean;
-
-const useAction = <Args extends unknown[]>(
-  guardSelector: GuardSelector,
-  action: (...args: Args) => ThunkResult<unknown> | Action,
-) => {
-  const dispatch = useDispatch();
-  const canPerform = useSelector(guardSelector);
-
-  if (canPerform) {
-    return (...args: Args) => dispatch(action(...args));
-  }
-};
+export type GuardSelector = (state: AppState) => boolean;
 
 export const PlayersAnswer: React.FC = () => {
   const game = useGame();

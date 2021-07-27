@@ -11,7 +11,10 @@ export const login = createThunk(async ({ dispatch, gameGateway, playerGateway }
 
   if (player.gameId) {
     const game = await gameGateway.fetchGame(player.gameId);
-    dispatch(setGame(game));
+
+    if (game) {
+      dispatch(setGame(game));
+    }
   }
 
   dispatch(redirect());
