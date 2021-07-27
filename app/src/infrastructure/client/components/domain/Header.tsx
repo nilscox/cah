@@ -3,7 +3,7 @@ import React, { ReactElement } from 'react';
 import styled from 'styled-components';
 
 import { Player } from '../../../../domain/entities/Player';
-import { fontSize, fontWeight, spacing } from '../../styles/theme';
+import { fontSize, fontWeight } from '../../styles/theme';
 import { Flex } from '../layout/Flex';
 
 const Title = styled.div`

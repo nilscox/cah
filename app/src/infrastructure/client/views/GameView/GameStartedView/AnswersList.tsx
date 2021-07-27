@@ -2,8 +2,8 @@ import React from 'react';
 
 import { Route } from 'react-router-dom';
 import styled from 'styled-components';
-import { Answer as AnswerType } from '../../../../../domain/entities/Answer';
 
+import { Answer as AnswerType } from '../../../../../domain/entities/Answer';
 import { QuestionCard } from '../../../components/domain/QuestionCard';
 import { Center } from '../../../components/layout/Center';
 import { useGame } from '../../../hooks/useGame';

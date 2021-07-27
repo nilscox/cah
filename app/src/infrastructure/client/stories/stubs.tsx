@@ -1,5 +1,6 @@
 import { action } from '@storybook/addon-actions';
 import { createMemoryHistory, History } from 'history';
+
 import { Answer } from '../../../domain/entities/Answer';
 import { Choice } from '../../../domain/entities/Choice';
 import { Game, StartedGame } from '../../../domain/entities/Game';
@@ -18,7 +19,7 @@ import { gameRouterHistory } from '../views/GameView/GameView';
 const log = false;
 
 class ActionLogger {
-  log(name: string, ...args: any[]) {
+  log(name: string, ...args: unknown[]) {
     if (log) {
       action(name)(args);
     }
@@ -92,7 +93,7 @@ export function createStubHistory(): StubHistory {
 
   const onEvent =
     (event: string) =>
-    (...args: any[]) => {
+    (...args: unknown[]) => {
       log && action(event)(args);
     };
 
@@ -118,11 +119,11 @@ export class StubRouterGateway extends ActionLogger implements RouterGateway {
 }
 
 export class StubTimerGateway implements TimerGateway {
-  setInterval(callback: () => void, ms: number): NodeJS.Timer {
+  setInterval(_callback: () => void, _ms: number): NodeJS.Timer {
     throw new Error('Method not implemented.');
   }
 
-  clearInterval(interval: NodeJS.Timer): void {
+  clearInterval(_interval: NodeJS.Timer): void {
     throw new Error('Method not implemented.');
   }
 }

@@ -30,13 +30,12 @@ export default {
 } as Meta;
 
 type TemplateProps = {
-  pathname: string;
   player?: FullPlayer;
   game?: Game | StartedGame;
   question: typeof questionOptions[number];
 };
 
-const Template: Story<TemplateProps> = ({ pathname, player, game, question }) => {
+const Template: Story<TemplateProps> = ({ player, game, question }) => {
   const deps = stubDependencies();
   const store = configureStore(deps);
 
@@ -64,19 +63,15 @@ const Template: Story<TemplateProps> = ({ pathname, player, game, question }) =>
 };
 
 export const Login = Template.bind({});
-Login.args = {
-  pathname: '/login',
-};
+Login.args = {};
 
 export const Lobby = Template.bind({});
 Lobby.args = {
-  pathname: '/',
   player: mano,
 };
 
 export const GameIdle = Template.bind({});
 GameIdle.args = {
-  pathname: '/game/code/idle',
   player,
   game: createGame({
     state: GameState.idle,
@@ -86,7 +81,6 @@ GameIdle.args = {
 
 export const PlayersAnswer = Template.bind({});
 PlayersAnswer.args = {
-  pathname: '/game/code/started',
   player,
   game: {
     ...startedGame,
@@ -96,7 +90,6 @@ PlayersAnswer.args = {
 
 export const QuestionMasterSelection = Template.bind({});
 QuestionMasterSelection.args = {
-  pathname: '/game/code/started',
   player,
   game: {
     ...startedGame,
@@ -107,7 +100,6 @@ QuestionMasterSelection.args = {
 
 export const EndOfTurn = Template.bind({});
 EndOfTurn.args = {
-  pathname: '/game/code/started',
   player,
   game: {
     ...startedGame,
@@ -118,7 +110,6 @@ EndOfTurn.args = {
 
 export const Finished = Template.bind({});
 Finished.args = {
-  pathname: '/game/code/finished',
   player,
   game: createGame({
     state: GameState.finished,
