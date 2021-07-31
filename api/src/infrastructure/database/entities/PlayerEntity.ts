@@ -32,6 +32,8 @@ export class PlayerEntity {
 
     if (gameId && player.cards) {
       entity.cards = player.cards.map((choice) => ChoiceEntity.toPersistence(choice, gameId));
+    } else {
+      entity.cards = [];
     }
 
     return entity;

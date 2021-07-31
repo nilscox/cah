@@ -2,13 +2,16 @@ import { Connection, Repository } from 'typeorm';
 
 import { PlayerRepository } from '../../../../application/interfaces/PlayerRepository';
 import { Player } from '../../../../domain/models/Player';
+import { ChoiceEntity } from '../../entities/ChoiceEntity';
 import { PlayerEntity } from '../../entities/PlayerEntity';
 
 export class SQLPlayerRepository implements PlayerRepository {
   private readonly repository: Repository<PlayerEntity>;
+  private readonly choiceRepository: Repository<ChoiceEntity>;
 
   constructor(connection: Connection) {
     this.repository = connection.getRepository(PlayerEntity);
+    this.choiceRepository = connection.getRepository(ChoiceEntity);
   }
 
   async findAll(): Promise<Player[]> {
@@ -35,7 +38,13 @@ export class SQLPlayerRepository implements PlayerRepository {
 
   async save(player: Player | Player[]): Promise<void> {
     const players = Array.isArray(player) ? player : [player];
+    const entities = players.map(PlayerEntity.toPersistence);
+    const allCards = entities.map(({ cards }) => cards).flat();
 
-    await this.repository.save(players.map(PlayerEntity.toPersistence));
+    if (allCards.length > 0) {
+      await this.choiceRepository.save(allCards);
+    }
+
+    await this.repository.save(entities);
   }
 }

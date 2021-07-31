@@ -14,6 +14,9 @@ export class ChoiceEntity {
   @Column()
   text!: string;
 
+  @Column({ default: true })
+  available!: boolean;
+
   @ManyToOne(() => AnswerEntity, (answer) => answer.choices)
   answer!: AnswerEntity[];
 
@@ -31,6 +34,7 @@ export class ChoiceEntity {
 
     entity.id = choice.id;
     entity.text = choice.text;
+    entity.available = choice.available;
     entity.gameId = gameId;
 
     return entity;
@@ -42,6 +46,7 @@ export class ChoiceEntity {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     choice.id = entity.id;
+    choice.available = entity.available;
 
     return choice;
   }

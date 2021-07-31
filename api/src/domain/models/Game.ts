@@ -72,7 +72,9 @@ export class Game extends AggregateRoot<GameEvent> {
     const totalNeededChoices = questions.map(({ numberOfBlanks }) => numberOfBlanks).reduce(sum, 0);
     const playersCount = this.players.length;
 
-    return this.cardsPerPlayer * playersCount + totalNeededChoices * (playersCount - 1);
+    return (
+      this.cardsPerPlayer * playersCount + totalNeededChoices * (playersCount - 1) + playersCount * this.cardsPerPlayer
+    );
   }
 
   dealCards(availableChoices: Choice[]) {
@@ -85,6 +87,10 @@ export class Game extends AggregateRoot<GameEvent> {
 
       if (needed > 0) {
         const cards = availableChoices.splice(0, needed);
+
+        for (const card of cards) {
+          card.available = false;
+        }
 
         player.addCards(cards);
       }

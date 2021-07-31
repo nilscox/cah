@@ -35,10 +35,10 @@ export class StartGameHandler implements CommandHandler<StartGameCommand, void, 
     // todo: check that the question master is in the game
     const questionMaster = await this.gameService.getPlayer(questionMasterId);
 
-    const [questions, choices] = await this.getCards(game, turns);
+    const [questions] = await this.getCards(game, turns);
 
     game.start(questionMaster, questions[0]);
-    game.dealCards([...choices]);
+    await this.gameService.dealCards(game);
 
     await this.gameService.saveAndPublish(game);
   }

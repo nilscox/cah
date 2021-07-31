@@ -12,6 +12,7 @@ export interface GameRepository {
   findNextAvailableQuestion(gameId: string): Promise<Question | undefined>;
   addChoices(gameId: string, choices: Choice[]): Promise<void>;
   findAvailableChoices(gameId: string): Promise<Choice[]>;
+  markChoicesUnavailable(choiceIds: string[]): Promise<void>;
   addTurn(gameId: string, turn: Turn): Promise<void>;
   findTurns(gameId: string): Promise<Turn[]>;
   save(game: Game): Promise<void>;

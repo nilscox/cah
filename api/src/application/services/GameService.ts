@@ -44,12 +44,22 @@ export class GameService {
     return game;
   }
 
+  async dealCards(game: Game) {
+    const availableChoices = await this.gameRepository.findAvailableChoices(game.id);
+
+    game.dealCards(availableChoices.slice());
+
+    const unavailableChoices = availableChoices.filter((choice) => !choice.available);
+
+    await this.gameRepository.markChoicesUnavailable(unavailableChoices.map((choice) => choice.id));
+  }
+
   async saveAndPublish(game: Game, player?: Player) {
     await this.gameRepository.save(game);
     await this.playerRepository.save(game.players);
 
     if (player) {
-      this.playerRepository.save(player);
+      await this.playerRepository.save(player);
     }
 
     game.publishEvents(this.publisher);

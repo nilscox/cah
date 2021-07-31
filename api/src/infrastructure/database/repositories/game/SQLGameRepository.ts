@@ -147,63 +147,18 @@ export class SQLGameRepository implements GameRepository {
   }
 
   async findAvailableChoices(gameId: string): Promise<Choice[]> {
-    // const entities = await this.choiceRepository
-    //   .createQueryBuilder('choice')
-    //   .leftJoin('choice.game', 'game')
-    //   .leftJoin('game.players', 'players')
-    //   .leftJoin('players.cards', 'cards')
-    //   .leftJoin('game.currentAnswers', 'currentAnswers')
-    //   .leftJoin('currentAnswers.choices', 'currentAnswersChoices')
-    //   .leftJoin('game.turns', 'turns')
-    //   .leftJoin('turns.answers', 'turnsAnswers')
-    //   .leftJoin('turnsAnswers.choices', 'turnsAnswersChoices')
-    //   .where('game.id = :gameId', { gameId })
-    //   .andWhere('cards.id <> choice.id')
-    //   .andWhere('currentAnswersChoices.id <> choice.id')
-    //   .andWhere('turnsAnswersChoices.id <> choice.id')
-    //   .getMany();
-
     const game = await this.repository.findOneOrFail(gameId, { relations: ['question'] });
     const entities = await this.choiceRepository
       .createQueryBuilder('choice')
       .where('choice.gameId = :gameId', { gameId: game.id })
-      .andWhere(
-        (qb) =>
-          'choice.id NOT IN ' +
-          qb
-            .subQuery()
-            .select('card.id')
-            .from(PlayerEntity, 'player')
-            .innerJoin('player.cards', 'card')
-            .where('player.gameId = :gameId', { gameId: game.id })
-            .getQuery(),
-      )
-      .andWhere(
-        (qb) =>
-          'choice.id NOT IN ' +
-          qb
-            .subQuery()
-            .select('choice.id')
-            .from(AnswerEntity, 'answer')
-            .innerJoin('answer.choices', 'choice')
-            .where('answer.current_of_game = :gameId', { gameId: game.id })
-            .getQuery(),
-      )
-      .andWhere(
-        (qb) =>
-          'choice.id NOT IN ' +
-          qb
-            .subQuery()
-            .select('choice.id')
-            .from(TurnEntity, 'turn')
-            .innerJoin('turn.answers', 'answer')
-            .innerJoin('answer.choices', 'choice')
-            .where('turn.gameId = :gameId', { gameId: game.id })
-            .getQuery(),
-      )
+      .andWhere('choice.available = true')
       .getMany();
 
     return entities.map(ChoiceEntity.toDomain);
+  }
+
+  async markChoicesUnavailable(choiceIds: string[]): Promise<void> {
+    await this.choiceRepository.update(choiceIds, { available: false });
   }
 
   async addTurn(gameId: string, turn: Turn): Promise<void> {

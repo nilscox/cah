@@ -53,21 +53,15 @@ export class InMemoryGameRepository implements GameRepository {
   }
 
   async findAvailableChoices(gameId: string): Promise<Choice[]> {
-    const game = this.games.get(gameId);
+    return this.getChoices(gameId).filter((choice) => choice.available);
+  }
 
-    const isAvailable = (choice: Choice) => {
-      if (game?.players?.some((player) => player.getCards().some((card) => card.equals(choice)))) {
-        return false;
+  async markChoicesUnavailable(choiceIds: string[]): Promise<void> {
+    for (const choice of Array.from(this.choices.values()).flat()) {
+      if (choiceIds.includes(choice.id)) {
+        choice.available = false;
       }
-
-      if (game?.answers?.some((answer) => answer.hasChoice(choice))) {
-        return false;
-      }
-
-      return !this.getTurns(gameId).some((turn) => turn.answers.some((answer) => answer.hasChoice(choice)));
-    };
-
-    return this.getChoices(gameId).filter(isAvailable);
+    }
   }
 
   async addTurn(gameId: string, turn: Turn): Promise<void> {

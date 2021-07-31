@@ -152,7 +152,7 @@ const specs = (getRepository: () => GameRepository, getPlayerRepository: () => P
     });
   });
 
-  describe('findAvailableChoices', () => {
+  describe('choices availability', () => {
     it('finds all the choices', async () => {
       const game = new Game();
       await repository.save(game);
@@ -166,86 +166,16 @@ const specs = (getRepository: () => GameRepository, getPlayerRepository: () => P
       expect(choices[0].id).to.eql(choice.id);
     });
 
-    it("excludes the choices that are in a players's hands", async () => {
-      const choices = createChoices(2);
+    it('excludes unavailable choices', async () => {
       const game = new Game();
-      const player = new Player('player');
-
-      game.addPlayer(player);
-      await repository.save(game);
-      await repository.addChoices(game.id, choices);
-
-      player.addCards([choices[0]]);
-      await playerRepository.save(player);
-
-      const availablehoices = await repository.findAvailableChoices(game.id);
-
-      expect(availablehoices).to.have.length(1);
-      expect(availablehoices[0]?.id).to.eql(choices[1].id);
-    });
-
-    it('excludes the choices that are part of an answer for the current turn', async () => {
-      const choices = createChoices(2);
-      const question = createQuestion();
-
-      const game = new Game();
-      const player = new Player('player');
-      const answer = new Answer(player, question, [choices[0]]);
-
-      game.players = [player];
-
-      await playerRepository.save(player);
-      await repository.save(game);
-      await repository.addQuestions(game.id, [question]);
-      await repository.addChoices(game.id, choices);
-
-      game.state = GameState.started;
-      game.playState = PlayState.endOfTurn;
-      game.questionMaster = player;
-      game.question = question;
-      game.answers = [answer];
-      game.winner = player;
-
       await repository.save(game);
 
-      const availablehoices = await repository.findAvailableChoices(game.id);
+      const choice = createChoice({ available: false });
+      await repository.addChoices(game.id, [choice]);
 
-      expect(availablehoices).to.have.length(1);
-      expect(availablehoices[0]?.id).to.eql(choices[1].id);
-    });
+      const choices = await repository.findAvailableChoices(game.id);
 
-    it('excludes the choices that were part of an answer for a previous turn', async () => {
-      const choices = createChoices(2);
-      const question = createQuestion();
-
-      const game = new Game();
-      const player = new Player('player');
-      const answer = new Answer(player, question, [choices[0]]);
-
-      game.players = [player];
-
-      await playerRepository.save(player);
-      await repository.save(game);
-      await repository.addQuestions(game.id, [question]);
-      await repository.addChoices(game.id, choices);
-
-      game.state = GameState.started;
-      game.playState = PlayState.endOfTurn;
-      game.questionMaster = player;
-      game.question = question;
-      game.answers = [answer];
-      game.winner = player;
-
-      await repository.save(game);
-      await repository.addTurn(game.id, game.currentTurn);
-
-      game.answers = [];
-      await repository.save(game);
-
-      const availableChoices = await repository.findAvailableChoices(game.id);
-
-      expect(availableChoices).to.have.length(1);
-      expect(availableChoices[0]?.id).to.eql(choices[1].id);
+      expect(choices).to.have.length(0);
     });
 
     it('resolves an empty array when there is no more choice', async () => {
@@ -256,6 +186,18 @@ const specs = (getRepository: () => GameRepository, getPlayerRepository: () => P
       const availableChoices = await repository.findAvailableChoices(game.id);
 
       expect(availableChoices).to.have.length(0);
+    });
+
+    it('marks choices as unavailable', async () => {
+      const game = new Game();
+      await repository.save(game);
+
+      const choice = createChoice();
+      await repository.addChoices(game.id, [choice]);
+
+      await repository.markChoicesUnavailable([choice.id]);
+
+      expect(await repository.findAvailableChoices(game.id)).to.have.length(0);
     });
   });
 };

@@ -11,7 +11,7 @@ export class Player extends AggregateRoot<PlayerEvent> {
   // todo: optional?
   public cards: Choice[] = [];
 
-  constructor(public readonly nick: string) {
+  constructor(public nick: string) {
     super();
   }
 

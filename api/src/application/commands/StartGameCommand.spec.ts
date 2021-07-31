@@ -67,7 +67,7 @@ describe('StartGameCommand', () => {
       expect(game.question?.id).to.eql(questions[0].id);
 
       expect(questions).to.have.length(2);
-      expect(choices).to.have.length(50);
+      expect(choices).to.have.length(94);
     });
 
     it('computes the number of cards', async () => {
@@ -85,12 +85,18 @@ describe('StartGameCommand', () => {
       await execute(questionMaster, 4);
 
       expect(gameRepository.getQuestions(game.id)).to.have.length(4);
-      expect(gameRepository.getChoices(game.id)).to.have.length(91);
+      expect(gameRepository.getChoices(game.id)).to.have.length(146);
     });
 
     it('deals the cards to all players', () => {
       for (const player of game.players) {
-        expect(player.getCards()).to.have.length(11);
+        const cards = player.getCards();
+
+        for (const card of cards) {
+          expect(card.available).to.be.false;
+        }
+
+        expect(cards).to.have.length(11);
         expect(publisher.events).to.deep.include({ type: 'CardsDealt', player, cards: player.getCards() });
       }
     });

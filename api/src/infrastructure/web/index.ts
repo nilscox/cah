@@ -3,6 +3,7 @@ import { Store as SessionStoreBackend } from 'express-session';
 
 import { CreateAnswerCommand, CreateAnswerHandler } from '../../application/commands/CreateAnswerCommand';
 import { CreateGameCommand, CreateGameHandler } from '../../application/commands/CreateGameCommand';
+import { FlushCardsHandler } from '../../application/commands/FlushCardsCommand';
 import { JoinGameCommand, JoinGameHandler } from '../../application/commands/JoinGameCommand';
 import { LoginCommand, LoginHandler } from '../../application/commands/LoginCommand';
 import { NextTurnHandler } from '../../application/commands/NextTurnCommand';
@@ -139,6 +140,7 @@ export const bootstrapServer = (deps: Dependencies, wss: WebsocketServer, sessio
     createAnswer: new CreateAnswerHandler(gameService, randomService),
     selectWinner: new SelectWinnerHandler(gameService),
     nextTurn: new NextTurnHandler(gameService, gameRepository),
+    flushCards: new FlushCardsHandler(playerRepository, gameService),
   };
 
   const playerContext = [
@@ -207,6 +209,11 @@ export const bootstrapServer = (deps: Dependencies, wss: WebsocketServer, sessio
     new Route('post', '/next')
       .use(...authPlayerContext)
       .use(handler(handlers.nextTurn)),
+
+    new Route('post', '/flush-cards')
+      .use(...authPlayerContext)
+      .use(status(204))
+      .use(handler(handlers.flushCards)),
 
     new Route('get', '/healthcheck')
       .use((req, res) => res.end()),

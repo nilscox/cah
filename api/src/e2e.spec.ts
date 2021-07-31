@@ -122,7 +122,7 @@ class StubPlayer {
         break;
 
       default:
-        throw new Error('Unknown event recieved: ' + JSON.stringify(event));
+        throw new Error('Unknown event received: ' + JSON.stringify(event));
     }
 
     this.events.push(event);
@@ -209,6 +209,14 @@ class StubPlayer {
     await this.agent.post(`/select`).send({ answerId: answer.id }).expect(200);
   }
 
+  async flushCards() {
+    this.log('flushes his cards');
+
+    this.cards = [];
+
+    await this.agent.post('/flush-cards').send().expect(204);
+  }
+
   async endCurrentTurn() {
     this.log(`ends the current turn`);
 
@@ -249,6 +257,7 @@ describe('e2e', () => {
       database: keepDatabase ? './db.sqlite' : ':memory:',
       entities: [PlayerEntity, GameEntity, QuestionEntity, ChoiceEntity, AnswerEntity, TurnEntity],
       synchronize: true,
+      dropSchema: true,
       logging,
       namingStrategy: new SnakeNamingStrategy(),
     });
@@ -326,7 +335,11 @@ describe('e2e', () => {
 
     while (questionMaster()) {
       if (log) {
-        console.log(`\nturn #${turn++}\n`);
+        console.log(`\nturn #${turn}\n`);
+      }
+
+      if (turn === 3) {
+        await tom.flushCards();
       }
 
       for (const player of playersExcludingQM()) {
@@ -335,6 +348,8 @@ describe('e2e', () => {
 
       await questionMaster()?.pickRandomAnswer();
       await questionMaster()?.endCurrentTurn();
+
+      turn++;
     }
 
     // console.log({ nils, tom, jeanne });
