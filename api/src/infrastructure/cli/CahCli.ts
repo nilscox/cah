@@ -11,6 +11,7 @@ import { EnvConfigService } from '../EnvConfigService';
 import { FilesystemExternalData } from '../FilesystemExternalData';
 import { StubEventPublisher } from '../stubs/StubEventPublisher';
 import { StubExternalData } from '../stubs/StubExternalData';
+import { StubLogger } from '../stubs/StubLogger';
 import { StubRandomService } from '../stubs/StubRandomService';
 import { StubRTCManager } from '../stubs/StubRTCManager';
 import { Dependencies } from '../web';
@@ -51,6 +52,7 @@ export class CahCli {
 
   constructor(readonly connection: Connection) {
     const configService = new EnvConfigService();
+    const logger = () => new StubLogger();
 
     const dataDir = configService.get('DATA_DIR');
 
@@ -67,6 +69,7 @@ export class CahCli {
     const mapper = new DtoMapperService(rtcManager);
 
     this.deps = {
+      logger,
       configService,
       playerRepository,
       gameRepository,
