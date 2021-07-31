@@ -60,7 +60,9 @@ module.exports = {
     dev && new ReactRefreshWebpackPlugin(),
     new HtmlWebpackPlugin(),
     new DefinePlugin({ process: { env: {} } }),
-    new EnvironmentPlugin(),
+    new EnvironmentPlugin({
+      API_URL: 'http://localhost:4242',
+    }),
   ].filter(Boolean),
 
   devServer: {

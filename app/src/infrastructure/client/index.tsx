@@ -28,7 +28,7 @@ import 'jetbrains-mono';
 import 'normalize.css';
 
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:4242',
+  baseURL: process.env.API_URL,
   withCredentials: true,
 });
 
