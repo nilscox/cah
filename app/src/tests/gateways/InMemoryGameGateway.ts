@@ -3,6 +3,7 @@ import { Choice } from '../../domain/entities/Choice';
 import { Game, PlayState, StartedGame } from '../../domain/entities/Game';
 import { Player } from '../../domain/entities/Player';
 import { Question } from '../../domain/entities/Question';
+import { Turn } from '../../domain/entities/Turn';
 import { GameGateway } from '../../domain/gateways/GameGateway';
 import { createGame, createQuestion } from '../factories';
 
@@ -17,12 +18,22 @@ export class InMemoryGameGateway implements GameGateway {
     return this.game ?? createGame({ id: gameId, code: 'OK42' });
   }
 
+  turns?: Turn[];
+
+  async fetchTurns(_gameId: string): Promise<Turn[]> {
+    return this.turns ?? [];
+  }
+
   async createGame(): Promise<Game> {
     return this.game ?? createGame({ code: 'OK42' });
   }
 
   async joinGame(gameCode: string): Promise<Game> {
     return this.game ?? createGame({ code: gameCode });
+  }
+
+  async leaveGame(): Promise<void> {
+    //
   }
 
   async startGame(questionMaster: Player, _turns: number): Promise<void> {

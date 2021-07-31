@@ -5,6 +5,7 @@ import { color, font, fontSize } from './theme';
 export const GlobalStyles = createGlobalStyle`
   html {
     font-size: ${fontSize('default')};
+    line-height: 1.5;
   }
 
   body {

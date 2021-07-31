@@ -6,31 +6,33 @@ import { setPlayerCards } from '../../../../../domain/actions';
 import { GameState } from '../../../../../domain/entities/Game';
 import { validateChoicesSelection } from '../../../../../domain/usecases/game/validateChoicesSelection/validateChoicesSelection';
 import { toggleChoice } from '../../../../../domain/usecases/player/toggleChoice/toggleChoice';
+import { selectGame } from '../../../../../store/selectors/gameSelectors';
+import { selectChoicesSelection, selectPlayer } from '../../../../../store/selectors/playerSelectors';
 import { AppState } from '../../../../../store/types';
 import { ChoicesList } from '../../../components/domain/ChoicesList';
 import { QuestionCard } from '../../../components/domain/QuestionCard';
 import { Center } from '../../../components/layout/Center';
 import { useAction } from '../../../hooks/useAction';
-import { gameSelector, useGame } from '../../../hooks/useGame';
-import { choicesSelectionSelector, playerSelector, usePlayer } from '../../../hooks/usePlayer';
+import { useGame } from '../../../hooks/useGame';
+import { usePlayer } from '../../../hooks/usePlayer';
 
 const validateButtonVisibleSelector = (state: AppState) => {
-  const game = gameSelector(state);
-  const selection = choicesSelectionSelector(state);
+  const game = selectGame(state);
+  const selection = selectChoicesSelection(state);
 
   return selection.length === game.question.numberOfBlanks;
 };
 
 const canSelectChoicesSelector = (state: AppState) => {
-  const player = playerSelector(state);
-  const game = gameSelector(state);
+  const player = selectPlayer(state);
+  const game = selectGame(state);
   const canValidateSelection = canValidateSelectionSelector(state);
 
   return canValidateSelection && game.questionMaster.nick !== player.nick;
 };
 
 const canValidateSelectionSelector = (state: AppState) => {
-  const player = playerSelector(state);
+  const player = selectPlayer(state);
 
   return !player.selectionValidated;
 };
@@ -40,7 +42,7 @@ export type GuardSelector = (state: AppState) => boolean;
 export const PlayersAnswer: React.FC = () => {
   const game = useGame();
   const player = usePlayer();
-  const selection = useSelector(choicesSelectionSelector);
+  const selection = useSelector(selectChoicesSelection);
 
   const validateButtonVisible = useSelector(validateButtonVisibleSelector);
 

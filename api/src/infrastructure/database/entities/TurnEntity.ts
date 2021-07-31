@@ -29,7 +29,7 @@ export class TurnEntity {
   answers!: AnswerEntity[];
 
   @ManyToOne(() => PlayerEntity, { nullable: false })
-  winner?: PlayerEntity;
+  winner!: PlayerEntity;
 
   static toPersistence(turn: Turn, gameId: string): TurnEntity {
     const entity = new TurnEntity();
@@ -42,5 +42,14 @@ export class TurnEntity {
     entity.gameId = gameId;
 
     return entity;
+  }
+
+  static toDomain(entity: TurnEntity): Turn {
+    return new Turn(
+      PlayerEntity.toDomain(entity.questionMaster),
+      QuestionEntity.toDomain(entity.question),
+      entity.answers.map((answer) => AnswerEntity.toDomain(answer)),
+      PlayerEntity.toDomain(entity.winner),
+    );
   }
 }

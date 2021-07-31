@@ -94,6 +94,10 @@ export const gameReducer = (state: GameState = null, action: AppAction): GameSta
     return state;
   }
 
+  if (action.type === 'game/set-turns') {
+    return { ...state, turns: action.payload };
+  }
+
   if (action.type === 'rtc/message') {
     return rtcMessageReducer(state, action.payload);
   }

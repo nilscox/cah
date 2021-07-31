@@ -23,6 +23,7 @@ describe('joinGame', () => {
       code: 'OK42',
       state: GameState.idle,
       players: [],
+      turns: [],
     });
   });
 

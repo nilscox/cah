@@ -86,6 +86,10 @@ export class InMemoryGameRepository implements GameRepository {
     return this.turns.get(gameId) ?? [];
   }
 
+  async findTurns(gameId: string): Promise<Turn[]> {
+    return this.getTurns(gameId);
+  }
+
   async save(game: Game): Promise<void> {
     this.games.set(game.id, game);
   }

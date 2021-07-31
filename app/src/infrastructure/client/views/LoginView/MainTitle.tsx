@@ -1,23 +1,16 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import styled, { useTheme } from 'styled-components';
 
+import { FadeIn } from '../../components/layout/FadeIn';
 import { useTimeout } from '../../hooks/useTimeout';
-import { fontSize, fontWeight, spacing, transition } from '../../styles/theme';
+import { fontSize, fontWeight, spacing } from '../../styles/theme';
 
-type StyledWordProps = {
-  opacity: number;
-  delay: number;
-  duration: number;
-};
-
-const StyledWord = styled.div<StyledWordProps>`
+const StyledWord = styled(FadeIn)`
   font-size: ${fontSize('title')};
   font-weight: ${fontWeight('thin')};
   line-height: 2.2rem;
   letter-spacing: ${spacing(0.8)};
-  transition: ${({ delay, duration }) => transition('opacity', { duration, delay })};
-  opacity: ${({ opacity }) => opacity};
 `;
 
 const WordFirstLetter = styled.span`
@@ -30,18 +23,12 @@ type WordProps = {
   duration: number;
 };
 
-const Word: React.FC<WordProps> = ({ word, delay, duration }) => {
-  const [opacity, setOpacity] = useState(0);
-
-  useTimeout(() => setOpacity(1), 0);
-
-  return (
-    <StyledWord opacity={opacity} delay={delay} duration={duration}>
-      <WordFirstLetter>{word[0]}</WordFirstLetter>
-      {word.slice(1)}
-    </StyledWord>
-  );
-};
+const Word: React.FC<WordProps> = ({ word, delay, duration }) => (
+  <StyledWord speed="slow" delay={delay} factor={duration}>
+    <WordFirstLetter>{word[0]}</WordFirstLetter>
+    {word.slice(1)}
+  </StyledWord>
+);
 
 type MainTitleProps = {
   className?: string;
@@ -50,15 +37,15 @@ type MainTitleProps = {
 
 const MainTitle: React.FC<MainTitleProps> = ({ className, onRest }) => {
   const theme = useTheme();
-  const slow = theme.transition.durations.slow;
+  const duration = theme.animations.durations.slow;
 
-  useTimeout(onRest, 4.5 * slow, []);
+  useTimeout(onRest, 3.5 * duration, []);
 
   return (
     <h1 className={className}>
-      <Word word="Cards" delay={slow} duration={1.5 * slow} />
-      <Word word="Against" delay={1.5 * slow} duration={2.5 * slow} />
-      <Word word="Humanity" delay={2 * slow} duration={3.5 * slow} />
+      <Word word="Cards" delay={0} duration={1.5} />
+      <Word word="Against" delay={0.5} duration={2.5} />
+      <Word word="Humanity" delay={1} duration={3.5} />
     </h1>
   );
 };

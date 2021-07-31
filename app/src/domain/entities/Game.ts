@@ -1,6 +1,7 @@
 import { AnonymousAnswer, Answer } from './Answer';
 import { Player } from './Player';
 import { Question } from './Question';
+import { Turn } from './Turn';
 
 export enum GameState {
   idle = 'idle',
@@ -19,6 +20,7 @@ export interface Game {
   code: string;
   state: GameState;
   players: Player[];
+  turns: Turn[];
 }
 
 export interface StartedGame extends Game {

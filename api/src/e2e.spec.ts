@@ -155,6 +155,8 @@ class StubPlayer {
 
     const { body: game } = await this.agent.post('/game').expect(201);
 
+    this.gameId = game.id;
+
     return game;
   }
 
@@ -336,5 +338,6 @@ describe('e2e', () => {
     }
 
     // console.log({ nils, tom, jeanne });
+    // console.log((await nils.agent.get('/game/' + nils.gameId + '/turns').expect(200)).body);
   });
 });

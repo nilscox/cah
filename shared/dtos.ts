@@ -44,3 +44,10 @@ export interface GameDto {
   answers?: Array<AnonymousAnswerDto | AnswerDto>;
   winner?: string;
 }
+
+export interface TurnDto {
+  number: number;
+  question: QuestionDto;
+  winner: string;
+  answers: AnswerDto[];
+}

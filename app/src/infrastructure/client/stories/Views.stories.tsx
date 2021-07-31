@@ -7,12 +7,13 @@ import { Router } from 'react-router-dom';
 
 import { Game, GameState, isStarted, PlayState, StartedGame } from '../../../domain/entities/Game';
 import { FullPlayer } from '../../../domain/entities/Player';
+import { Turn } from '../../../domain/entities/Turn';
 import { configureStore } from '../../../store/configureStore';
 import { createGame } from '../../../tests/factories';
 import CAHApp from '../App';
 import { gameRouterHistory } from '../views/GameView/GameView';
 
-import { answers, mano, player, players, questions, startedGame } from './fixtures';
+import { answers, mano, player, players, questions, startedGame, turns } from './fixtures';
 import { storiesRouterHistory, stubDependencies } from './stubs';
 
 const questionOptions = ['no blanks', 'one blank', 'multiple blanks'] as const;
@@ -33,9 +34,10 @@ type TemplateProps = {
   player?: FullPlayer;
   game?: Game | StartedGame;
   question: typeof questionOptions[number];
+  turns?: Turn[];
 };
 
-const Template: Story<TemplateProps> = ({ player, game, question }) => {
+const Template: Story<TemplateProps> = ({ player, game, question, turns }) => {
   const deps = stubDependencies();
   const store = configureStore(deps);
 
@@ -45,6 +47,7 @@ const Template: Story<TemplateProps> = ({ player, game, question }) => {
 
   deps.playerGateway.player = player;
   deps.gameGateway.game = game;
+  deps.gameGateway.turns = turns;
 
   // @ts-expect-error the reference gets lost somehow
   deps.routerGateway.history = storiesRouterHistory;
@@ -116,4 +119,5 @@ Finished.args = {
     state: GameState.finished,
     players,
   }),
+  turns,
 };

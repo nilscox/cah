@@ -1,24 +1,33 @@
 import { createThunk } from '../../../../store/createThunk';
-import { setAppReady, setGame, setPlayer } from '../../../actions';
-import { Game } from '../../../entities/Game';
+import { setAppReady, setGame, setPlayer, setTurns } from '../../../actions';
 import { redirect } from '../../game/redirect/redirect';
 import { connect } from '../connect/connect';
 
-export const initialize = createThunk(async ({ dispatch, playerGateway, gameGateway }) => {
+const fetchPlayer = createThunk(async ({ dispatch, playerGateway }) => {
   const player = await playerGateway.fetchMe();
-  let game: Game | undefined;
 
   if (player) {
     dispatch(setPlayer(player));
     await dispatch(connect());
   }
 
-  if (player?.gameId) {
-    game = await gameGateway.fetchGame(player.gameId);
+  return player;
+});
 
-    if (game) {
-      dispatch(setGame(game));
-    }
+const fetchGame = createThunk(async ({ dispatch, gameGateway }, gameId: string) => {
+  const game = await gameGateway.fetchGame(gameId);
+
+  if (game) {
+    dispatch(setGame(game));
+    dispatch(setTurns(await gameGateway.fetchTurns(game.id)));
+  }
+});
+
+export const initialize = createThunk(async ({ dispatch }) => {
+  const player = await dispatch(fetchPlayer());
+
+  if (player?.gameId) {
+    await dispatch(fetchGame(player.gameId));
   }
 
   dispatch(redirect());

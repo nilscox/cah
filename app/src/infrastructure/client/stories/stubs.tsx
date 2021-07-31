@@ -5,6 +5,7 @@ import { Answer } from '../../../domain/entities/Answer';
 import { Choice } from '../../../domain/entities/Choice';
 import { Game, StartedGame } from '../../../domain/entities/Game';
 import { FullPlayer, Player } from '../../../domain/entities/Player';
+import { Turn } from '../../../domain/entities/Turn';
 import { GameGateway } from '../../../domain/gateways/GameGateway';
 import { PlayerGateway } from '../../../domain/gateways/PlayerGateway';
 import { RouterGateway } from '../../../domain/gateways/RouterGateway';
@@ -34,6 +35,12 @@ export class StubGameGateway extends ActionLogger implements GameGateway {
     return this.game;
   }
 
+  turns?: Turn[];
+
+  async fetchTurns(_gameId: string): Promise<Turn[]> {
+    return this.turns ?? [];
+  }
+
   async createGame(): Promise<Game> {
     this.log('create game');
     return createGame();
@@ -42,6 +49,10 @@ export class StubGameGateway extends ActionLogger implements GameGateway {
   async joinGame(gameCode: string): Promise<Game> {
     this.log('join game', { gameCode });
     return createGame({ code: gameCode });
+  }
+
+  async leaveGame(): Promise<void> {
+    this.log('leave game');
   }
 
   async startGame(questionMaster: Player, turns: number): Promise<void> {

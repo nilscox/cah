@@ -7,13 +7,14 @@ import { PlayState } from '../../../../../../../shared/enums';
 import { AnonymousAnswer, Answer as AnswerType } from '../../../../../domain/entities/Answer';
 import { nextTurn } from '../../../../../domain/usecases/game/nextTurn/nextTurn';
 import { selectWinner } from '../../../../../domain/usecases/game/selectWinner/selectWinner';
+import { selectGame } from '../../../../../store/selectors/gameSelectors';
+import { selectIsQuestionMaster } from '../../../../../store/selectors/playerSelectors';
 import { AppState } from '../../../../../store/types';
 import { QuestionCard } from '../../../components/domain/QuestionCard';
 import Button from '../../../components/elements/Button';
 import { Center } from '../../../components/layout/Center';
 import { useAction } from '../../../hooks/useAction';
-import { gameSelector, useGame } from '../../../hooks/useGame';
-import { isQuestionMasterSelector } from '../../../hooks/usePlayer';
+import { useGame } from '../../../hooks/useGame';
 import { fontSize, spacing } from '../../../styles/theme';
 
 const Answer = styled.div`
@@ -28,15 +29,15 @@ const PlayerNick = styled.div`
 `;
 
 const canSelectAnswerSelector = (state: AppState) => {
-  const game = gameSelector(state);
-  const isQuestionMaster = isQuestionMasterSelector(state);
+  const game = selectGame(state);
+  const isQuestionMaster = selectIsQuestionMaster(state);
 
   return game.playState === PlayState.questionMasterSelection && isQuestionMaster;
 };
 
 const canEndTurnSelector = (state: AppState) => {
-  const game = gameSelector(state);
-  const isQuestionMaster = isQuestionMasterSelector(state);
+  const game = selectGame(state);
+  const isQuestionMaster = selectIsQuestionMaster(state);
 
   return game.playState === PlayState.endOfTurn && isQuestionMaster;
 };
@@ -70,7 +71,7 @@ export const AnswersList: React.FC = () => {
       </Center>
       <Center minHeight={24}>
         <Route path="/game/:code/started/end-of-turn">
-          {handleNextTurn && <Button onClick={handleNextTurn}>Next turn</Button>}
+          {handleNextTurn && <Button onClick={handleNextTurn}>Prochaine question</Button>}
         </Route>
       </Center>
     </>

@@ -4,6 +4,7 @@ import { ServerStatus } from '../store/reducers/appStateReducer';
 import { Choice } from './entities/Choice';
 import { Game } from './entities/Game';
 import { FullPlayer } from './entities/Player';
+import { Turn } from './entities/Turn';
 import { RTCMessage } from './gateways/RTCGateway';
 
 export const setPlayer = createAction<FullPlayer, 'player/set'>('player/set');
@@ -11,7 +12,8 @@ export const setConnected = createAction('player/set-connected');
 export const setPlayerCards = createAction<Choice[], 'player/set-cards'>('player/set-cards');
 export const selectionValidated = createAction('player/selection-validated');
 
-export const setGame = createAction<Game, 'game/set'>('game/set');
+export const setGame = createAction<Game | null, 'game/set'>('game/set');
+export const setTurns = createAction<Turn[], 'game/set-turns'>('game/set-turns');
 
 export const gameStarted = createAction('game/started');
 
@@ -31,6 +33,7 @@ export type Actions = ReturnType<
   | typeof setPlayerCards
   | typeof selectionValidated
   | typeof setGame
+  | typeof setTurns
   | typeof setAppReady
   | typeof serverStatusChanged
   | typeof rtcMessage

@@ -13,8 +13,10 @@ import { useGame } from '../../hooks/useGame';
 import { usePlayer } from '../../hooks/usePlayer';
 import Menu from '../../icons/menu.svg';
 
+import { GameFinishedView } from './GameFinishedView';
 import { GameIdleView } from './GameIdleView';
-import { GameStartedView } from './GameStartedView/GameStartedView';
+import { AnswersList } from './GameStartedView/AnswersList';
+import { PlayersAnswer } from './GameStartedView/PlayersAnswer';
 
 const Container = styled(Flex)`
   height: 100%;
@@ -27,6 +29,8 @@ const Content = styled(Flex)`
 
 const memoryRouter = true;
 export const gameRouterHistory = memoryRouter ? createMemoryHistory() : createBrowserHistory();
+
+const routePrefix = '/game/:code';
 
 const GameView: React.FC = () => {
   const dispatch = useDispatch();
@@ -42,8 +46,11 @@ const GameView: React.FC = () => {
       <Content>
         <Router history={gameRouterHistory}>
           <Switch>
-            <Route path="/game/:gameCode/idle" component={GameIdleView} />
-            <Route path="/game/:gameCode/started" component={GameStartedView} />
+            <Route path={`${routePrefix}/idle`} component={GameIdleView} />
+            <Route path={`${routePrefix}/finished`} component={GameFinishedView} />
+            <Route path={`${routePrefix}/started/players-answer`} component={PlayersAnswer} />
+            <Route path={`${routePrefix}/started/question-master-selection`} component={AnswersList} />
+            <Route path={`${routePrefix}/started/end-of-turn`} component={AnswersList} />
             <Route>
               <Redirect to={`/game/${game.code}/idle`} />
             </Route>

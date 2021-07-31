@@ -3,18 +3,19 @@ import {
   createAnswer,
   createChoice,
   createFullPlayer,
-  createPlayer,
+  createPlayers,
   createQuestion,
   createStartedGame,
+  createTurns,
 } from '../../../tests/factories';
 
 export const mano = createFullPlayer({ nick: 'mano' });
 
-export const players = ['nilsou', 'tominou', 'janette', ' Grââlandin'].map((nick) =>
-  createPlayer({ nick, isConnected: true }),
-);
-
-players[2].isConnected = false;
+const nicks = ['nilsou', 'tominou', 'jeanette', ' Grââlandin', 'Croûtard', 'Fanny'];
+export const players = createPlayers(nicks.length, {
+  nick: nicks,
+  isConnected: (index) => index !== 2,
+});
 
 export const choices = [
   createChoice({ text: 'Bravo' }),
@@ -30,7 +31,7 @@ export const choices = [
   createChoice({ text: 'La chasse aux sorcières' }),
 ];
 
-export const player = createFullPlayer({ nick: players[0].nick, cards: choices });
+export const player = createFullPlayer({ ...players[0], cards: choices });
 export const questionMaster = players[1];
 
 export const questions = [
@@ -53,3 +54,11 @@ export const startedGame = createStartedGame({
 });
 
 player.gameId = startedGame.id;
+
+export const turns = [
+  ...createTurns(7, { winner: players[0] }),
+  ...createTurns(6, { winner: players[4] }),
+  ...createTurns(5, { winner: players[1] }),
+  ...createTurns(5, { winner: players[3] }),
+  ...createTurns(4, { winner: players[2] }),
+];

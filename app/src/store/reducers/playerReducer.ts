@@ -42,13 +42,19 @@ export const playerReducer = (state: PlayerState = null, action: AppAction): Pla
   }
 
   if (action.type === 'game/set') {
-    if (!isStarted(action.payload)) {
+    const game = action.payload;
+
+    if (game === null) {
+      return null;
+    }
+
+    if (!isStarted(game)) {
       return state;
     }
 
     return {
       ...state,
-      selection: Array(action.payload.question.numberOfBlanks).fill(null),
+      selection: Array(game.question.numberOfBlanks).fill(null),
     };
   }
 

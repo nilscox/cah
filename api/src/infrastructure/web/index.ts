@@ -16,6 +16,7 @@ import { RTCManager } from '../../application/interfaces/RTCManager';
 import { SessionStore } from '../../application/interfaces/SessionStore';
 import { GetGameHandler, GetGameQuery } from '../../application/queries/GetGameQuery';
 import { GetPlayerHandler } from '../../application/queries/GetPlayerQuery';
+import { GetTurnsHandler, GetTurnsQuery } from '../../application/queries/GetTurnsQuery';
 import { DtoMapperService } from '../../application/services/DtoMapperService';
 import { GameService } from '../../application/services/GameService';
 import { RandomService } from '../../application/services/RandomService';
@@ -66,10 +67,21 @@ class ExpressSessionStore implements SessionStore {
 }
 
 class ErrorHandler {
+  constructor(private readonly logger: Logger) {
+    logger.setContext('ErrorHandler');
+  }
+
   execute: ErrorRequestHandler = (error, req, res) => {
     const { status, message, ...err } = error;
 
-    console.log(error);
+    this.logger.verbose(error.message, error.meta);
+
+    if (error instanceof DomainError) {
+      this.logger.debug('', error);
+    } else {
+      this.logger.error(error);
+    }
+
     res.status(status ?? 500);
 
     return {
@@ -119,6 +131,7 @@ export const bootstrapServer = (deps: Dependencies, wss: WebsocketServer, sessio
   const handlers = {
     getPlayer: new GetPlayerHandler(playerRepository, mapper),
     getGame: new GetGameHandler(gameService, mapper),
+    getTurns: new GetTurnsHandler(gameRepository, mapper),
     login: new LoginHandler(playerRepository, mapper),
     createGame: new CreateGameHandler(configService, gameService, gameRepository, rtcManager, mapper),
     joinGame: new JoinGameHandler(gameService, gameRepository, rtcManager, mapper),
@@ -159,6 +172,11 @@ export const bootstrapServer = (deps: Dependencies, wss: WebsocketServer, sessio
       .use(...authPlayerContext)
       .use(dto((req) => new GetGameQuery(req.params.gameId)))
       .use(handler(handlers.getGame)),
+
+    new Route('get', '/game/:gameId/turns')
+      .use(...authPlayerContext)
+      .use(dto((req) => new GetTurnsQuery(req.params.gameId)))
+      .use(handler(handlers.getTurns)),
 
     new Route('post', '/game')
       .use(...authPlayerContext)

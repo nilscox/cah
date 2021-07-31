@@ -4,7 +4,7 @@ import { Theme, transition } from '../../styles/theme';
 
 type FadeProps = {
   show: boolean;
-  duration?: keyof Theme['transition']['durations'];
+  duration?: keyof Theme['animations']['durations'];
 };
 
 export const Fade = styled.div<FadeProps>`

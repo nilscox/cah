@@ -1,9 +1,10 @@
-import { ChoiceDto, FullPlayerDto, GameDto, PlayerDto } from '../../../../shared/dtos';
+import { AnswerDto, ChoiceDto, FullPlayerDto, GameDto, PlayerDto, TurnDto } from '../../../../shared/dtos';
 import { PlayState } from '../../../../shared/enums';
 import { Answer } from '../../domain/models/Answer';
 import { Choice } from '../../domain/models/Choice';
 import { Game } from '../../domain/models/Game';
 import { Player } from '../../domain/models/Player';
+import { Turn } from '../../domain/models/Turn';
 import { RTCManager } from '../interfaces/RTCManager';
 
 export class DtoMapperService {
@@ -63,6 +64,15 @@ export class DtoMapperService {
       question: game.question.toJSON(),
       answers: answers.map((answer) => answer.toJSON(game.playState !== PlayState.endOfTurn)),
       winner: game.winner?.nick,
+    };
+  }
+
+  turnToDto(turn: Turn): TurnDto {
+    return {
+      number: 0,
+      question: turn.question.toJSON(),
+      answers: turn.answers.map((answer) => answer.toJSON() as AnswerDto),
+      winner: turn.winner.nick,
     };
   }
 }

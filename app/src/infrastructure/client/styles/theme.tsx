@@ -1,4 +1,4 @@
-const fast = true;
+const fast = false;
 
 const themeSpacing = (...spacings: Array<number | string>) => {
   return spacings
@@ -27,12 +27,14 @@ export const theme = {
     title: '2rem',
   },
   spacing: themeSpacing,
-  space: Array(8).fill(0).map((_, n) => themeSpacing(n)),
+  space: Array(8)
+    .fill(0)
+    .map((_, n) => themeSpacing(n)),
   fontWeights: {
     thin: 200,
     bold: 'bold',
   },
-  transition: {
+  animations: {
     durations: {
       default: 400,
       slow: 1000,
@@ -42,8 +44,8 @@ export const theme = {
 };
 
 if (fast) {
-  theme.transition.durations.default /= 4;
-  theme.transition.durations.slow /= 4;
+  theme.animations.durations.default /= 4;
+  theme.animations.durations.slow /= 4;
 }
 
 export type Theme = typeof theme;
@@ -72,7 +74,7 @@ export const spacing = (...args: Parameters<Theme['spacing']>) => (props: Props)
 };
 
 type TransitionOptions = Partial<{
-  duration: keyof Theme['transition']['durations'] | number;
+  duration: keyof Theme['animations']['durations'] | number;
   delay: number;
 }>;
 
@@ -83,15 +85,15 @@ const defaultTransitionOptions: TransitionOptions = {
 
 export const transition = (property: string, options?: TransitionOptions) => (props: Props) => {
   const { duration, delay } = { ...defaultTransitionOptions, ...options };
-  const { transition } = props.theme;
+  const { animations } = props.theme;
 
   const getDuration = () => {
     if (typeof duration === 'string') {
-      return transition.durations[duration];
+      return animations.durations[duration];
     }
 
     return duration;
   };
 
-  return `${property} ${getDuration()}ms ${transition.function} ${delay}ms`;
+  return `${property} ${getDuration()}ms ${animations.function} ${delay}ms`;
 };

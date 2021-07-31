@@ -27,7 +27,7 @@ const checkServerStatus = createThunk(async ({ dispatch, timerGateway }) => {
 
     if (status === ServerStatus.up) {
       timerGateway.clearInterval(interval);
-      dispatch(initialize());
+      await dispatch(initialize());
     }
   }, checkInterval);
 });

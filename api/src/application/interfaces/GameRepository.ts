@@ -13,5 +13,6 @@ export interface GameRepository {
   addChoices(gameId: string, choices: Choice[]): Promise<void>;
   findAvailableChoices(gameId: string): Promise<Choice[]>;
   addTurn(gameId: string, turn: Turn): Promise<void>;
+  findTurns(gameId: string): Promise<Turn[]>;
   save(game: Game): Promise<void>;
 }

@@ -1,7 +1,7 @@
 import expect from 'expect';
 
 import { ServerStatus } from '../../../../store/reducers/appStateReducer';
-import { createFullPlayer, createGame } from '../../../../tests/factories';
+import { createFullPlayer, createGame, createTurns } from '../../../../tests/factories';
 import { InMemoryStore } from '../../../../tests/InMemoryStore';
 
 import { initialize } from './initialize';
@@ -32,13 +32,16 @@ describe('initialize', () => {
 
   it('initializes with a player who is in game', async () => {
     const game = createGame();
+    const turns = createTurns(2);
     const player = createFullPlayer({ gameId: game.id });
 
     store.playerGateway.player = player;
     store.gameGateway.game = game;
+    store.gameGateway.turns = turns;
 
     await store.dispatch(initialize());
 
     expect(store.getState().game).toHaveProperty('id', game.id);
+    expect(store.getState().game).toHaveProperty('turns', turns);
   });
 });

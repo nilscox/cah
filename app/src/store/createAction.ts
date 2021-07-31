@@ -14,7 +14,7 @@ type PayloadActionCreator<P = void, T extends string = string> = (
 export function createAction<P = void, T extends string = string>(type: T): PayloadActionCreator<P, T>;
 export function createAction<P, T extends string>(type: T) {
   return (payload?: P) => {
-    if (payload) {
+    if (payload !== undefined) {
       return { type, payload };
     } else {
       return { type };

@@ -210,6 +210,23 @@ export class SQLGameRepository implements GameRepository {
     await this.turnRepository.save(TurnEntity.toPersistence(turn, gameId));
   }
 
+  async findTurns(gameId: string): Promise<Turn[]> {
+    const turns = await this.turnRepository.find({
+      where: { gameId },
+      relations: [
+        'question',
+        'questionMaster',
+        'answers',
+        'answers.question',
+        'answers.choices',
+        'answers.player',
+        'winner',
+      ],
+    });
+
+    return turns.map(TurnEntity.toDomain);
+  }
+
   async save(game: Game): Promise<void> {
     const entity = GameEntity.toPersistence(game);
 

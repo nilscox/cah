@@ -54,6 +54,8 @@ export class InMemoryStore {
   }
 
   expectPartialState<S extends keyof AppState>(state: S, expected: Partial<AppState[S]>) {
+    // console.log(this.store.getState()[state]);
+    // console.log({ ...this.state[state], ...expected });
     expect(this.store.getState()[state]).toEqual({ ...this.state[state], ...expected });
   }
 }

@@ -1,8 +1,9 @@
-import { AnonymousAnswerDto, AnswerDto, GameDto } from '../../../../shared/dtos';
+import { AnonymousAnswerDto, AnswerDto, GameDto, TurnDto } from '../../../../shared/dtos';
 import { AnonymousAnswer, Answer } from '../../domain/entities/Answer';
 import { Choice } from '../../domain/entities/Choice';
 import { Game, isStarted, StartedGame } from '../../domain/entities/Game';
 import { Player } from '../../domain/entities/Player';
+import { Turn } from '../../domain/entities/Turn';
 import { GameGateway } from '../../domain/gateways/GameGateway';
 
 import { HTTPAdapter } from './HTTPAdapter';
@@ -27,6 +28,7 @@ class DtoMapper {
     const game: Game = {
       ...dto,
       state: dto.gameState,
+      turns: [],
     };
 
     if (isStarted(game)) {
@@ -35,6 +37,15 @@ class DtoMapper {
     }
 
     return game;
+  }
+
+  static toTurn(dto: TurnDto): Turn {
+    return {
+      number: dto.number,
+      question: dto.question,
+      answers: dto.answers.map((answer) => ({ ...answer, player: { nick: answer.player } as Player })),
+      winner: { nick: dto.winner } as Player,
+    };
   }
 }
 
@@ -47,6 +58,12 @@ export class HTTPGameGateway implements GameGateway {
     return DtoMapper.toGame(body);
   }
 
+  async fetchTurns(gameId: string): Promise<Turn[]> {
+    const { body } = await this.http.get<TurnDto[]>(`/game/${gameId}/turns`);
+
+    return body.map(DtoMapper.toTurn);
+  }
+
   async createGame(): Promise<Game> {
     const { body } = await this.http.post<GameDto>('/game');
 
@@ -57,6 +74,10 @@ export class HTTPGameGateway implements GameGateway {
     const { body } = await this.http.post<GameDto>(`/game/${code}/join`);
 
     return DtoMapper.toGame(body);
+  }
+
+  async leaveGame(): Promise<void> {
+    // todo
   }
 
   async startGame(questionMaster: Player, turns: number): Promise<void> {

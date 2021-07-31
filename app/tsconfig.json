@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "outDir": "dist",
+    "incremental": true,
     "strict": true,
     "target": "es2020",
     "moduleResolution": "node",
