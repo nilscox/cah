@@ -1,7 +1,7 @@
 import React from 'react';
 
+import styled from '@emotion/styled';
 import { Route } from 'react-router-dom';
-import styled from 'styled-components';
 
 import { PlayState } from '../../../../../../../shared/enums';
 import { AnonymousAnswer, Answer as AnswerType } from '../../../../../domain/entities/Answer';

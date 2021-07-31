@@ -1,15 +1,23 @@
-import { createGlobalStyle } from 'styled-components';
+import React from 'react';
 
-import { color, font, fontSize } from './theme';
+import { css, Global, useTheme } from '@emotion/react';
 
-export const GlobalStyles = createGlobalStyle`
-  html {
-    font-size: ${fontSize('default')};
-    line-height: 1.5;
-  }
+export const GlobalStyles: React.FC = () => {
+  const theme = useTheme();
 
-  body {
-    color: ${color('text')};
-    font-family: ${font()};
-  }
-`;
+  return (
+    <Global
+      styles={css`
+        html {
+          font-size: ${theme.fontSizes.default};
+          line-height: 1.5;
+        }
+
+        body {
+          color: ${theme.colors.text};
+          font-family: ${theme.font};
+        }
+      `}
+    />
+  );
+};

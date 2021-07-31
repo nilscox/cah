@@ -1,3 +1,5 @@
+import { Theme } from '@emotion/react';
+
 const fast = false;
 
 const themeSpacing = (...spacings: Array<number | string>) => {
@@ -12,7 +14,7 @@ const themeSpacing = (...spacings: Array<number | string>) => {
     .join(' ');
 };
 
-export const theme = {
+export const theme: Theme = {
   colors: {
     background: 'black',
     text: '#DDD',
@@ -47,8 +49,6 @@ if (fast) {
   theme.animations.durations.default /= 4;
   theme.animations.durations.slow /= 4;
 }
-
-export type Theme = typeof theme;
 
 type Props = { theme: Theme };
 

@@ -1,8 +1,8 @@
 import React from 'react';
 
+import styled from '@emotion/styled';
 import { useDispatch, useSelector } from 'react-redux';
 import { Box } from 'reflexbox';
-import styled from 'styled-components';
 
 import { leaveGame } from '../../../../domain/usecases/game/leaveGame/leaveGame';
 import { selectGameWinners, selectScoresExcludingWinners } from '../../../../store/selectors/gameSelectors';

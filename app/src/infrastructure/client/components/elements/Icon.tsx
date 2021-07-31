@@ -1,16 +1,8 @@
-import React from 'react';
-
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 
 import { spacing } from '../../styles/theme';
 
-type IconProps = React.SVGProps<SVGSVGElement> & {
-  as: React.ComponentType;
-};
-
-const IconComponent: React.FC<IconProps> = ({ as: Component }) => <Component />;
-
-export const Icon = styled(IconComponent)<{ size?: number }>`
+export const Icon = styled.svg<{ size?: number }>`
   width: ${({ size = 4 }) => spacing(size)};
   height: ${({ size = 4 }) => spacing(size)};
 `;

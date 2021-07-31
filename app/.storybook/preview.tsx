@@ -1,34 +1,38 @@
 import React from 'react';
 
-import { createGlobalStyle } from 'styled-components';
+import { css, Global, ThemeProvider } from '@emotion/react';
+import { withThemes } from '@react-theming/storybook-addon';
 
 import { GlobalStyles } from '../src/infrastructure/client/styles/GlobalStyles';
-import ThemeProvider from '../src/infrastructure/client/styles/ThemeProvider';
+import { theme } from '../src/infrastructure/client/styles/theme';
 
 import 'jetbrains-mono';
 import 'normalize.css';
 
-export const StorybookGlobalStyles = createGlobalStyle`
-  #root {
-    height: 100vh;
-  }
-`;
+const themingDecorator = withThemes(ThemeProvider, [theme]);
 
-const themeProviderDecorator = (Story) => (
-  <ThemeProvider>
+export const StorybookGlobalStyles: React.FC = () => (
+  <Global
+    styles={css`
+      #root {
+        height: 100vh;
+        background-color: black;
+      }
+    `}
+  />
+);
+
+const globalStylesDecorator = (Story) => (
+  <>
     <GlobalStyles />
     <StorybookGlobalStyles />
     <Story />
-  </ThemeProvider>
+  </>
 );
 
-export const decorators = [themeProviderDecorator];
+export const decorators = [globalStylesDecorator, themingDecorator];
 
 export const parameters = {
-  backgrounds: {
-    default: 'black',
-    values: [{ name: 'black', value: 'black' }],
-  },
   layout: 'fullscreen',
   viewport: {
     defaultViewport: 'mobile1',

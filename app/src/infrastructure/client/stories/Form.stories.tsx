@@ -14,7 +14,7 @@ export default {
   decorators: [
     (Story) => (
       <FullScreen>
-        <Center padding={4}>
+        <Center flex={1} padding={4}>
           <Story />
         </Center>
       </FullScreen>
@@ -22,9 +22,7 @@ export default {
   ],
 } as Meta;
 
-export const ButtonStory = () => <Button onClick={action('click')}>Click me!</Button>;
-
-ButtonStory.storyName = 'Button';
+export const button = () => <Button onClick={action('click')}>Click me!</Button>;
 
 /* eslint-disable react-hooks/rules-of-hooks */
 

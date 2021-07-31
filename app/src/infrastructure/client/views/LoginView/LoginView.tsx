@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
+import styled from '@emotion/styled';
 import { useDispatch } from 'react-redux';
-import styled from 'styled-components';
 
 import { login } from '../../../../domain/usecases/player/login/login';
 import SubmittableInput from '../../components/elements/SubmittableInput';

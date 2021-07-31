@@ -1,5 +1,5 @@
-import { Box as ReflexBox, BoxProps as ReflexBoxProps } from 'reflexbox/styled-components';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
+import { Box as ReflexBox, BoxProps as ReflexBoxProps } from 'reflexbox';
 
 import { spacing } from '../../styles/theme';
 

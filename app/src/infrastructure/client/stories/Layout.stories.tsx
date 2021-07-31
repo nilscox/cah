@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 
+import styled from '@emotion/styled';
 import { Meta } from '@storybook/react';
-import styled from 'styled-components';
 
 import { createPlayer } from '../../../tests/factories';
 import Header from '../components/domain/Header';
 import { DragHandle, RenderItemFunction, SortableList } from '../components/elements/SortableList';
+import { FadeIn } from '../components/layout/FadeIn';
 
 export default {
   title: 'Layout',
@@ -64,4 +65,8 @@ export const sortableList = () => {
   );
 };
 
-HeaderStory.storyName = 'Header';
+export const fadeIn = () => (
+  <FadeIn speed="slow" delay={1}>
+    Hello !
+  </FadeIn>
+);

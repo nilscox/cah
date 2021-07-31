@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
 
+import styled from '@emotion/styled';
 import { createBrowserHistory, createMemoryHistory } from 'history';
 import { useDispatch } from 'react-redux';
 import { Redirect, Route, Router, Switch } from 'react-router-dom';
-import styled from 'styled-components';
 
 import { redirect } from '../../../../domain/usecases/game/redirect/redirect';
 import Header from '../../components/domain/Header';

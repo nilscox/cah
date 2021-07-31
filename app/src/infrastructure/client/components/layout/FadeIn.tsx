@@ -1,6 +1,5 @@
-import styled, { keyframes } from 'styled-components';
-
-import { Theme } from '../../styles/theme';
+import { keyframes, Theme } from '@emotion/react';
+import styled from '@emotion/styled';
 
 const appear = keyframes`
   0% {

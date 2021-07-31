@@ -1,8 +1,32 @@
-import { Theme } from './theme';
+import '@emotion/react';
 
-import 'styled-components';
-
-declare module 'styled-components' {
-  // eslint-disable-next-line @typescript-eslint/no-empty-interface
-  export interface DefaultTheme extends Theme {}
+declare module '@emotion/react' {
+  export interface Theme {
+    colors: {
+      background: string;
+      text: string;
+      disabled: string;
+      border: string;
+    };
+    font: string;
+    fontSizes: {
+      small: string;
+      default: string;
+      big: string;
+      title: string;
+    };
+    spacing: themeSpacing;
+    space: string[];
+    fontWeights: {
+      thin: number;
+      bold: string;
+    };
+    animations: {
+      durations: {
+        default: number;
+        slow: number;
+      };
+      function: string;
+    };
+  }
 }

@@ -1,12 +1,10 @@
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 
 import { Box, BoxProps } from './Box';
 
 export type FlexProps = BoxProps;
 
-export const Flex = styled(Box)<FlexProps>``;
-
-Flex.defaultProps = {
-  display: 'flex',
-  flexDirection: 'column',
-};
+export const Flex = styled(Box)<FlexProps>`
+  display: ${({ display }) => display ?? 'flex'};
+  flex-direction: ${({ flexDirection }) => flexDirection ?? 'column'};
+`;

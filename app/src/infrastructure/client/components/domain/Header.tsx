@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react';
 
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 
 import { Player } from '../../../../domain/entities/Player';
 import { fontSize, fontWeight } from '../../styles/theme';

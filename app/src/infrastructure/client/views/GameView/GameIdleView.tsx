@@ -1,7 +1,7 @@
 import React from 'react';
 
+import styled from '@emotion/styled';
 import { useDispatch } from 'react-redux';
-import styled from 'styled-components';
 
 import { startGame } from '../../../../domain/usecases/game/startGame/startGame';
 import Button from '../../components/elements/Button';
@@ -9,10 +9,9 @@ import { Center } from '../../components/layout/Center';
 import { Flex } from '../../components/layout/Flex';
 import { useGame } from '../../hooks/useGame';
 import { usePlayer } from '../../hooks/usePlayer';
-import { fontSize, spacing } from '../../styles/theme';
+import { fontSize } from '../../styles/theme';
 
-const GameCode = styled.div`
-  margin: ${spacing(4, 'auto', 6)};
+const GameCode = styled(Center)`
   font-size: ${fontSize('title')};
 `;
 
@@ -30,19 +29,21 @@ export const GameIdleView: React.FC = () => {
   const player = usePlayer();
 
   return (
-    <Flex padding={2}>
-      <GameCode>{game.code}</GameCode>
-      <p>Attendez que tous les joueurs soient listés ci-dessous, et cliquez sur démarrer pour lancer la partie.</p>
-      <PlayersList>
-        {game.players.map((player) => (
-          <PlayerItem key={player.nick} connected={player.isConnected}>
-            {player.nick}
-          </PlayerItem>
-        ))}
-      </PlayersList>
-      <Center>
+    <>
+      <Flex flex={1} padding={2}>
+        <GameCode minHeight={12}>{game.code}</GameCode>
+        <p>Attendez que tous les joueurs soient listés ci-dessous, et cliquez sur démarrer pour lancer la partie.</p>
+        <PlayersList>
+          {game.players.map((player) => (
+            <PlayerItem key={player.nick} connected={player.isConnected}>
+              {player.nick}
+            </PlayerItem>
+          ))}
+        </PlayersList>
+      </Flex>
+      <Center minHeight={24}>
         <Button onClick={() => dispatch(startGame(player, 10))}>Démarrer</Button>
       </Center>
-    </Flex>
+    </>
   );
 };

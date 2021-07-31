@@ -1,12 +1,12 @@
 import React from 'react';
 
-import { ThemeProvider as SCThemeProvider } from 'styled-components';
+import { ThemeProvider as EmotionThemeProvider } from '@emotion/react';
 
 import { theme } from './theme';
 
 const ThemeProvider: React.FC = ({ children }) => (
   <>
-    <SCThemeProvider theme={theme}>{children}</SCThemeProvider>
+    <EmotionThemeProvider theme={theme}>{children}</EmotionThemeProvider>
   </>
 );
 

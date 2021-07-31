@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
+import styled from '@emotion/styled';
 import { useDispatch } from 'react-redux';
-import styled from 'styled-components';
 
 import { createGame } from '../../../../domain/usecases/game/createGame/createGame';
 import { joinGame } from '../../../../domain/usecases/game/joinGame/joinGame';
@@ -80,7 +80,7 @@ const JoinGame: React.FC = () => {
     <>
       <p>Entrez le code de la partie à rejoindre.</p>
       <p>Si vous n'avez pas de code, l'un des joueur doit créer une partie.</p>
-      <Center>
+      <Center flex={1}>
         <SubmittableInput
           placeholder="Code de partie"
           value={code}
@@ -99,7 +99,7 @@ const CreateGame: React.FC = () => {
     <>
       <p>En cliquant sur continuer, vous allez créer une partie de Cards Against Humanity.</p>
       <p>Un code sera généré pour que les autres joueurs puissent vous rejoindre.</p>
-      <Center>
+      <Center flex={1}>
         <Button onClick={() => dispatch(createGame())}>
           Continuer <Icon as={ChevronRight} />
         </Button>

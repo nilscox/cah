@@ -1,6 +1,7 @@
 import React from 'react';
 
-import styled, { useTheme } from 'styled-components';
+import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
 
 import { FadeIn } from '../../components/layout/FadeIn';
 import { useTimeout } from '../../hooks/useTimeout';

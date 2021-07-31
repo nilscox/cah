@@ -1,6 +1,7 @@
-import styled from 'styled-components';
+import { Theme } from '@emotion/react';
+import styled from '@emotion/styled';
 
-import { Theme, transition } from '../../styles/theme';
+import { transition } from '../../styles/theme';
 
 type FadeProps = {
   show: boolean;

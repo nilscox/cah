@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 
 import { Flex, FlexProps } from './Flex';
 
@@ -8,12 +8,6 @@ type CenterProps = FlexProps & {
 };
 
 export const Center = styled(Flex)<CenterProps>`
-  justify-content: ${({ vertical }) => (vertical ? 'center' : undefined)};
-  align-items: ${({ horizontal }) => (horizontal ? 'center' : undefined)};
+  justify-content: ${({ vertical = true }) => (vertical ? 'center' : undefined)};
+  align-items: ${({ horizontal = true }) => (horizontal ? 'center' : undefined)};
 `;
-
-Center.defaultProps = {
-  flexDirection: 'column',
-  horizontal: true,
-  vertical: true,
-};
