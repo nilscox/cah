@@ -76,6 +76,7 @@ describe('GetGameQuery', () => {
     const game = await builder.addPlayers().start().play(PlayState.endOfTurn).get();
 
     game.finish();
+    await gameRepository.save(game);
 
     const result = await handler.execute({ gameId: game.id });
 
@@ -94,6 +95,7 @@ describe('GetGameQuery', () => {
 
     game.question = question;
     game.answers = [new Answer(player, question, choices)];
+    await gameRepository.save(game);
 
     const result = await handler.execute({ gameId: game.id });
 
@@ -122,6 +124,7 @@ describe('GetGameQuery', () => {
 
     game.question = question;
     game.answers = [new Answer(player, question, choices)];
+    await gameRepository.save(game);
 
     const result = await handler.execute({ gameId: game.id });
 
@@ -159,6 +162,7 @@ describe('GetGameQuery', () => {
     game.question = question;
     game.answers = [new Answer(player, question, choices)];
     game.winner = player;
+    await gameRepository.save(game);
 
     const result = await handler.execute({ gameId: game.id });
 

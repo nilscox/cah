@@ -54,6 +54,8 @@ describe('StartGameCommand', () => {
       questionMaster = game.players[1];
 
       await execute(questionMaster, 2);
+
+      gameRepository.reload(game);
     });
 
     it("initializes a started game's properties", () => {

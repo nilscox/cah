@@ -5,6 +5,10 @@ export class StubEventPublisher implements EventPublisher<DomainEvent> {
   events: DomainEvent[] = [];
   publish = this.events.push.bind(this.events);
 
+  get firstEvent() {
+    return this.events[0];
+  }
+
   get lastEvent() {
     return this.events[this.events.length - 1];
   }

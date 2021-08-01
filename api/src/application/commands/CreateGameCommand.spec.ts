@@ -58,7 +58,7 @@ describe('CreateGameCommand', () => {
     const games = await gameRepository.findAll();
 
     expect(games).to.have.length(1);
-    expect(publisher.events).deep.include({ type: 'GameCreated', game: games[0] });
+    expect(publisher.firstEvent).to.eql({ type: 'GameCreated', game: games[0] });
   });
 
   it('adds the player to the created game', async () => {
@@ -68,7 +68,7 @@ describe('CreateGameCommand', () => {
 
     expect(game).not.to.be.undefined;
     expect(player.gameId).to.eql(game!.id);
-    expect(publisher.events).deep.include({ type: 'GameJoined', game, player });
+    expect(publisher.lastEvent).to.eql({ type: 'GameJoined', game, player });
     expect(rtcManager.has(game!, player)).to.be.true;
   });
 

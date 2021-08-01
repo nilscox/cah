@@ -8,7 +8,6 @@ import { Turn } from '../../../../domain/models/Turn';
 import { AnswerEntity } from '../../entities/AnswerEntity';
 import { ChoiceEntity } from '../../entities/ChoiceEntity';
 import { GameEntity } from '../../entities/GameEntity';
-import { PlayerEntity } from '../../entities/PlayerEntity';
 import { QuestionEntity } from '../../entities/QuestionEntity';
 import { TurnEntity } from '../../entities/TurnEntity';
 

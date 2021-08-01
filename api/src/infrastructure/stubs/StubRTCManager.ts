@@ -3,11 +3,11 @@ import { Game } from '../../domain/models/Game';
 import { Player } from '../../domain/models/Player';
 
 export class StubRTCManager implements RTCManager {
-  private games = new Map<Game, Player[]>();
+  private games = new Map<string, Player[]>();
   private connectedPlayers = new Set<Player>();
 
   private get(game: Game) {
-    return this.games.get(game) ?? [];
+    return this.games.get(game.code) ?? [];
   }
 
   setConnected(player: Player) {
@@ -23,10 +23,10 @@ export class StubRTCManager implements RTCManager {
   }
 
   join(game: Game, player: Player): void {
-    this.games.set(game, [...this.get(game), player]);
+    this.games.set(game.code, [...this.get(game), player]);
   }
 
   leave(game: Game, player: Player): void {
-    this.games.set(game, [...this.get(game).filter((p) => !p.equals(player))]);
+    this.games.set(game.code, [...this.get(game).filter((p) => !p.equals(player))]);
   }
 }

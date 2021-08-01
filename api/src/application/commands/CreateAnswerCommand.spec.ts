@@ -11,6 +11,7 @@ import { PlayerAlreadyAnsweredError } from '../../domain/errors/PlayerAlreadyAns
 import { PlayerIsQuestionMasterError } from '../../domain/errors/PlayerIsQuestionMasterError';
 import { Blank } from '../../domain/models/Blank';
 import { Choice } from '../../domain/models/Choice';
+import { Game } from '../../domain/models/Game';
 import { Player } from '../../domain/models/Player';
 import { Question } from '../../domain/models/Question';
 import { InMemoryGameRepository } from '../../infrastructure/database/repositories/game/InMemoryGameRepository';
@@ -50,11 +51,13 @@ describe('CreateAnswerCommand', () => {
     builder = new GameBuilder(gameRepository, playerRepository, externalData);
   });
 
-  const execute = (player: Player, choices: Choice[]) => {
+  const execute = async (game: Game | undefined, player: Player, choices: Choice[]) => {
     const choicesIds = _.map(choices, 'id');
     const command = new CreateAnswerCommand(choicesIds);
 
-    return handler.execute(command, { player });
+    await handler.execute(command, { player });
+
+    gameRepository.reload(game);
   };
 
   it('creates an answer for the current turn', async () => {
@@ -62,7 +65,7 @@ describe('CreateAnswerCommand', () => {
     const player = game.playersExcludingQM[0];
     const choices = player.getFirstCards(1);
 
-    await execute(player, choices);
+    await execute(game, player, choices);
 
     expect(game.answers).to.have.length(1);
     expect(game.answers[0]).to.have.nested.property('player.id', player.id);
@@ -71,7 +74,7 @@ describe('CreateAnswerCommand', () => {
 
     expect(player.getCards()).to.have.length(10);
 
-    expect(publisher.events).to.deep.include({ type: 'PlayerAnswered', game, player });
+    expect(publisher.lastEvent).to.shallowDeepEqual({ type: 'PlayerAnswered', game, player });
   });
 
   it('creates an answer with multiple choices', async () => {
@@ -80,8 +83,9 @@ describe('CreateAnswerCommand', () => {
     const choices = player.getFirstCards(2);
 
     game.question = new Question('question', [new Blank(1), new Blank(2)]);
+    await gameRepository.save(game);
 
-    await execute(player, choices);
+    await execute(game, player, choices);
 
     expect(game.answers).to.have.length(1);
     expect(game.answers[0]).to.have.property('choices').that.have.length(2);
@@ -93,7 +97,7 @@ describe('CreateAnswerCommand', () => {
     const game = await builder.addPlayers().start().get();
 
     for (const player of game.playersExcludingQM) {
-      await execute(player, player.getFirstCards(1));
+      await execute(game, player, player.getFirstCards(1));
     }
 
     expect(game.playState).to.eql(PlayState.questionMasterSelection);
@@ -108,7 +112,7 @@ describe('CreateAnswerCommand', () => {
     randomService.randomize = (array) => array.reverse();
 
     for (const player of players) {
-      await execute(player, player.getFirstCards(1));
+      await execute(game, player, player.getFirstCards(1));
     }
 
     expect(game.answers.map((answer) => answer.player.id)).to.eql(players.reverse().map((player) => player.id));
@@ -121,7 +125,7 @@ describe('CreateAnswerCommand', () => {
     player.addCards(choices);
     await playerRepository.save(player);
 
-    await expect(execute(player, choices)).to.be.rejectedWith(GameNotFoundError);
+    await expect(execute(undefined, player, choices)).to.be.rejectedWith(GameNotFoundError);
   });
 
   it('does not create an answer when the game is not started', async () => {
@@ -132,7 +136,7 @@ describe('CreateAnswerCommand', () => {
     player.addCards(choices);
     await playerRepository.save(player);
 
-    const error = await expect(execute(player, choices)).to.be.rejectedWith(InvalidGameStateError);
+    const error = await expect(execute(game, player, choices)).to.be.rejectedWith(InvalidGameStateError);
     expect(error).to.shallowDeepEqual({ expected: GameState.started, actual: GameState.idle });
   });
 
@@ -142,7 +146,7 @@ describe('CreateAnswerCommand', () => {
       const player = game.playersExcludingQM[0];
       const choices = player.getFirstCards(1);
 
-      const error = await expect(execute(player, choices)).to.be.rejectedWith(InvalidPlayStateError);
+      const error = await expect(execute(game, player, choices)).to.be.rejectedWith(InvalidPlayStateError);
       expect(error).to.shallowDeepEqual({ expected: PlayState.playersAnswer, actual: playState });
     }
   });
@@ -152,7 +156,7 @@ describe('CreateAnswerCommand', () => {
     const player = game.questionMaster;
     const choices = player.getFirstCards(1);
 
-    const error = await expect(execute(player, choices)).to.be.rejectedWith(PlayerIsQuestionMasterError);
+    const error = await expect(execute(game, player, choices)).to.be.rejectedWith(PlayerIsQuestionMasterError);
     expect(error).to.have.nested.property('player.id', player.id);
   });
 
@@ -160,9 +164,11 @@ describe('CreateAnswerCommand', () => {
     const game = await builder.addPlayers().start().get();
     const player = game.playersExcludingQM[0];
 
-    await expect(execute(player, player.getFirstCards(1))).to.be.fulfilled;
+    await expect(execute(game, player, player.getFirstCards(1))).to.be.fulfilled;
 
-    const error = await expect(execute(player, player.getFirstCards(1))).to.be.rejectedWith(PlayerAlreadyAnsweredError);
+    const error = await expect(execute(game, player, player.getFirstCards(1))).to.be.rejectedWith(
+      PlayerAlreadyAnsweredError,
+    );
     expect(error).to.have.nested.property('player.id', player.id);
   });
 
@@ -171,7 +177,7 @@ describe('CreateAnswerCommand', () => {
     const player = game.playersExcludingQM[0];
     const choices = game.playersExcludingQM[1].getFirstCards(1);
 
-    const error = await expect(execute(player, choices)).to.be.rejectedWith(InvalidChoicesSelectionError);
+    const error = await expect(execute(game, player, choices)).to.be.rejectedWith(InvalidChoicesSelectionError);
     expect(error).to.shallowDeepEqual({ player: { id: player.id }, choicesIds: _.map(choices, 'id') });
   });
 
@@ -180,10 +186,10 @@ describe('CreateAnswerCommand', () => {
     const player = game.playersExcludingQM[0];
     const choices = player.getFirstCards(2);
 
-    let error = await expect(execute(player, [])).to.be.rejectedWith(InvalidNumberOfChoicesError);
+    let error = await expect(execute(game, player, [])).to.be.rejectedWith(InvalidNumberOfChoicesError);
     expect(error).to.shallowDeepEqual({ expected: 1, actual: 0 });
 
-    error = await expect(execute(player, choices)).to.be.rejectedWith(InvalidNumberOfChoicesError);
+    error = await expect(execute(game, player, choices)).to.be.rejectedWith(InvalidNumberOfChoicesError);
     expect(error).to.shallowDeepEqual({ expected: 1, actual: 2 });
   });
 });

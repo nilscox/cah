@@ -53,6 +53,8 @@ describe('SelectWinnerCommand', () => {
 
     await execute(game.questionMaster, answer);
 
+    gameRepository.reload(game);
+
     expect(game.playState).to.eql(PlayState.endOfTurn);
     expect(game.winner).to.eql(winner);
 

@@ -54,6 +54,8 @@ describe('JoinGameCommand', () => {
 
     expect(gameId).to.be.a('string');
 
+    gameRepository.reload(game);
+
     expect(game.players).to.have.length(1);
     expect(publisher.events).deep.include({ type: 'GameJoined', game, player });
   });
@@ -63,7 +65,6 @@ describe('JoinGameCommand', () => {
 
     const game = await gameRepository.findGameForPlayer(player.id);
 
-    expect(game).not.to.be.undefined;
     expect(rtcManager.has(game!, player)).to.be.true;
   });
 
@@ -71,7 +72,6 @@ describe('JoinGameCommand', () => {
     const otherGame = new Game();
 
     otherGame.addPlayer(player);
-
     await gameRepository.save(otherGame);
 
     const error = await expect(execute()).to.be.rejectedWith(PlayerIsAlreadyInGameError);

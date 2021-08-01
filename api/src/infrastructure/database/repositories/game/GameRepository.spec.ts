@@ -1,14 +1,13 @@
 import { expect } from 'chai';
+import _ from 'lodash';
 import { Connection, createConnection } from 'typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 import { GameState, PlayState } from '../../../../../../shared/enums';
 import { GameRepository } from '../../../../application/interfaces/GameRepository';
 import { PlayerRepository } from '../../../../application/interfaces/PlayerRepository';
-import { Answer } from '../../../../domain/models/Answer';
-import { createChoice, createChoices } from '../../../../domain/models/Choice';
+import { createChoice } from '../../../../domain/models/Choice';
 import { Game } from '../../../../domain/models/Game';
-import { Player } from '../../../../domain/models/Player';
 import { createQuestion, createQuestions } from '../../../../domain/models/Question';
 import { GameBuilder } from '../../../../utils/GameBuilder';
 import { StubExternalData } from '../../../stubs/StubExternalData';
@@ -207,6 +206,22 @@ describe('InMemoryGameRepository', () => {
     () => new InMemoryGameRepository(),
     () => new InMemoryPlayerRepository(),
   );
+
+  it('reloads a game', async () => {
+    const game = new Game();
+    const repo = new InMemoryGameRepository();
+
+    await repo.save(game);
+
+    const other = await repo.findGameById(game.id);
+
+    game.state = GameState.finished;
+    await repo.save(game);
+
+    repo.reload(other);
+
+    expect(other!.state).to.eql(GameState.finished);
+  });
 });
 
 describe('SQLGameRepository', () => {

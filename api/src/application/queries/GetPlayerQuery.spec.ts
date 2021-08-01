@@ -42,7 +42,7 @@ describe('GetPlayerQuery', () => {
   it('fetches a player', async () => {
     const player = new Player('tok');
 
-    playerRepository.save(player);
+    await playerRepository.save(player);
 
     const result = await handler.execute({ playerId: player.id }, session);
 
@@ -59,6 +59,7 @@ describe('GetPlayerQuery', () => {
 
     player.cards = [new Choice('text')];
     session.player = player;
+    await playerRepository.save(player);
 
     const result = await handler.execute({ playerId: player.id }, session);
 

@@ -314,6 +314,10 @@ describe('e2e', () => {
   };
 
   it('plays a full game', async function () {
+    if (!process.env.E2E) {
+      this.skip();
+    }
+
     this.slow(inMemory ? 500 : 3000);
     this.timeout(inMemory ? 2000 : 6000);
 
