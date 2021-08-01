@@ -18,20 +18,24 @@ import { createQuestion } from '../../domain/models/Question';
 import { StubLogger } from '../../infrastructure/stubs/StubLogger';
 import { StubNotifier } from '../../infrastructure/stubs/StubNotifier';
 import { StubRTCManager } from '../../infrastructure/stubs/StubRTCManager';
+import { instanciateHandler } from '../../utils/injector';
+import { instanciateStubDependencies } from '../../utils/stubDependencies';
 
 import { GameEventsHandler } from './GameEventsHandler';
 
 describe('GameEventsHandler', () => {
-  let logger: StubLogger;
+  const logger = new StubLogger();
+
   let notifier: StubNotifier;
   let rtcManager: StubRTCManager;
+
   let handler: GameEventsHandler;
 
   beforeEach(() => {
-    logger = new StubLogger();
-    notifier = new StubNotifier();
-    rtcManager = new StubRTCManager();
-    handler = new GameEventsHandler(logger, notifier, rtcManager);
+    const deps = instanciateStubDependencies();
+    ({ notifier, rtcManager } = deps);
+
+    handler = instanciateHandler(GameEventsHandler, deps, logger);
   });
 
   it('logs the events', () => {

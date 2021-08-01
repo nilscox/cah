@@ -4,42 +4,33 @@ import { PlayerIsAlreadyInGameError } from '../../domain/errors/PlayerIsAlreadyI
 import { Game } from '../../domain/models/Game';
 import { Player } from '../../domain/models/Player';
 import { InMemoryGameRepository } from '../../infrastructure/database/repositories/game/InMemoryGameRepository';
-import { InMemoryPlayerRepository } from '../../infrastructure/database/repositories/player/InMemoryPlayerRepository';
 import { StubConfigService } from '../../infrastructure/stubs/StubConfigService';
 import { StubEventPublisher } from '../../infrastructure/stubs/StubEventPublisher';
 import { StubRTCManager } from '../../infrastructure/stubs/StubRTCManager';
 import { StubSessionStore } from '../../infrastructure/stubs/StubSessionStore';
-import { DtoMapperService } from '../services/DtoMapperService';
-import { GameService } from '../services/GameService';
+import { instanciateHandler } from '../../utils/injector';
+import { instanciateStubDependencies } from '../../utils/stubDependencies';
 
 import { CreateGameHandler } from './CreateGameCommand';
 
 describe('CreateGameCommand', () => {
   let config: StubConfigService;
   let gameRepository: InMemoryGameRepository;
-  let playerRepository: InMemoryPlayerRepository;
-  let gameService: GameService;
   let publisher: StubEventPublisher;
   let rtcManager: StubRTCManager;
-  let mapper: DtoMapperService;
 
   let handler: CreateGameHandler;
 
-  let session: StubSessionStore;
   let player: Player;
 
+  const session = new StubSessionStore();
+
   beforeEach(() => {
-    config = new StubConfigService();
-    gameRepository = new InMemoryGameRepository();
-    playerRepository = new InMemoryPlayerRepository();
-    publisher = new StubEventPublisher();
-    gameService = new GameService(playerRepository, gameRepository, publisher);
-    rtcManager = new StubRTCManager();
-    mapper = new DtoMapperService(rtcManager);
+    const deps = instanciateStubDependencies();
+    ({ configService: config, gameRepository, publisher, rtcManager } = deps);
 
-    handler = new CreateGameHandler(config, gameService, gameRepository, rtcManager, mapper);
+    handler = instanciateHandler(CreateGameHandler, deps);
 
-    session = new StubSessionStore();
     player = session.player = new Player('player');
   });
 

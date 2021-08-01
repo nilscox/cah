@@ -7,14 +7,15 @@ import { Game } from '../../domain/models/Game';
 import { Player } from '../../domain/models/Player';
 import { SQLGameRepository } from '../database/repositories/game/SQLGameRepository';
 import { SQLPlayerRepository } from '../database/repositories/player/SQLPlayerRepository';
+import { Dependencies } from '../Dependencies';
 import { EnvConfigService } from '../EnvConfigService';
 import { FilesystemExternalData } from '../FilesystemExternalData';
 import { StubEventPublisher } from '../stubs/StubEventPublisher';
 import { StubExternalData } from '../stubs/StubExternalData';
 import { StubLogger } from '../stubs/StubLogger';
+import { StubNotifier } from '../stubs/StubNotifier';
 import { StubRandomService } from '../stubs/StubRandomService';
 import { StubRTCManager } from '../stubs/StubRTCManager';
-import { Dependencies } from '../web';
 
 import { Command } from './Command';
 import { Answer } from './commands/Answer';
@@ -60,6 +61,7 @@ export class CahCli {
     const gameRepository = new SQLGameRepository(this.connection);
 
     const publisher = new StubEventPublisher();
+    const notifier = new StubNotifier();
     const gameService = new GameService(playerRepository, gameRepository, publisher);
     const randomService = new StubRandomService();
     const externalData = dataDir ? new FilesystemExternalData(dataDir, randomService) : new StubExternalData();
@@ -71,6 +73,7 @@ export class CahCli {
     this.deps = {
       logger,
       configService,
+      notifier,
       playerRepository,
       gameRepository,
       gameService,

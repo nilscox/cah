@@ -10,7 +10,7 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 import { ConfigService, ConfigurationVariable } from './application/interfaces/ConfigService';
 import { Choice } from './domain/models/Choice';
-import { createKnexConnection, createKnexSessionStore, main } from './infrastructure';
+import { createKnexConnection, createKnexSessionStore, instanciateDependencies } from './infrastructure';
 import { AnswerEntity } from './infrastructure/database/entities/AnswerEntity';
 import { ChoiceEntity } from './infrastructure/database/entities/ChoiceEntity';
 import { GameEntity } from './infrastructure/database/entities/GameEntity';
@@ -268,7 +268,7 @@ describe('e2e', () => {
   before(async () => {
     const wss = new WebsocketServer();
 
-    const deps = await main({
+    const deps = await instanciateDependencies({
       connection: inMemory ? undefined : connection,
       configService: new E2eConfigService(),
       wss,

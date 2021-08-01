@@ -10,36 +10,25 @@ import { Player } from '../../domain/models/Player';
 import { createQuestion } from '../../domain/models/Question';
 import { InMemoryGameRepository } from '../../infrastructure/database/repositories/game/InMemoryGameRepository';
 import { InMemoryPlayerRepository } from '../../infrastructure/database/repositories/player/InMemoryPlayerRepository';
-import { StubEventPublisher } from '../../infrastructure/stubs/StubEventPublisher';
 import { StubExternalData } from '../../infrastructure/stubs/StubExternalData';
-import { StubRTCManager } from '../../infrastructure/stubs/StubRTCManager';
 import { GameBuilder } from '../../utils/GameBuilder';
-import { DtoMapperService } from '../services/DtoMapperService';
-import { GameService } from '../services/GameService';
+import { instanciateHandler } from '../../utils/injector';
+import { instanciateStubDependencies } from '../../utils/stubDependencies';
 
 import { GetGameHandler } from './GetGameQuery';
 
 describe('GetGameQuery', () => {
   let gameRepository: InMemoryGameRepository;
   let playerRepository: InMemoryPlayerRepository;
-  let publisher: StubEventPublisher;
-  let gameService: GameService;
   let externalData: StubExternalData;
-  let rtcManager: StubRTCManager;
-  let mapper: DtoMapperService;
 
   let handler: GetGameHandler;
 
   beforeEach(() => {
-    gameRepository = new InMemoryGameRepository();
-    playerRepository = new InMemoryPlayerRepository();
-    publisher = new StubEventPublisher();
-    gameService = new GameService(playerRepository, gameRepository, publisher);
-    externalData = new StubExternalData();
-    rtcManager = new StubRTCManager();
-    mapper = new DtoMapperService(rtcManager);
+    const deps = instanciateStubDependencies();
+    ({ gameRepository, playerRepository, externalData } = deps);
 
-    handler = new GetGameHandler(gameService, mapper);
+    handler = instanciateHandler(GetGameHandler, deps);
   });
 
   let builder: GameBuilder;

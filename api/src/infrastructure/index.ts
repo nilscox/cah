@@ -17,11 +17,11 @@ import { InMemoryGameRepository } from './database/repositories/game/InMemoryGam
 import { SQLGameRepository } from './database/repositories/game/SQLGameRepository';
 import { InMemoryPlayerRepository } from './database/repositories/player/InMemoryPlayerRepository';
 import { SQLPlayerRepository } from './database/repositories/player/SQLPlayerRepository';
+import { Dependencies } from './Dependencies';
 import { EnvConfigService } from './EnvConfigService';
 import { FilesystemExternalData } from './FilesystemExternalData';
 import { PubSub } from './PubSub';
 import { StubExternalData } from './stubs/StubExternalData';
-import { Dependencies } from './web';
 import { WebsocketRTCManager, WebsocketServer } from './web/websocket';
 
 export const createTypeormConnection = () => {
@@ -61,7 +61,7 @@ type Config = Partial<{
   configService: ConfigService;
 }>;
 
-export const main = async (config: Config = {}): Promise<Dependencies> => {
+export const instanciateDependencies = async (config: Config = {}): Promise<Dependencies> => {
   const {
     connection = await createTypeormConnection(),
     wss = new WebsocketServer(),
@@ -93,6 +93,7 @@ export const main = async (config: Config = {}): Promise<Dependencies> => {
   return {
     logger,
     configService,
+    notifier: rtcManager,
     playerRepository,
     gameRepository,
     gameService,

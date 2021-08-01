@@ -5,18 +5,22 @@ import { Choice } from '../../domain/models/Choice';
 import { Player } from '../../domain/models/Player';
 import { StubLogger } from '../../infrastructure/stubs/StubLogger';
 import { StubNotifier } from '../../infrastructure/stubs/StubNotifier';
+import { instanciateHandler } from '../../utils/injector';
+import { instanciateStubDependencies } from '../../utils/stubDependencies';
 
 import { PlayerEventsHandler } from './PlayerEventsHandler';
 
 describe('PlayerEventsHandler', () => {
-  let logger: StubLogger;
+  const logger = new StubLogger();
+
   let notifier: StubNotifier;
   let handler: PlayerEventsHandler;
 
   beforeEach(() => {
-    logger = new StubLogger();
-    notifier = new StubNotifier();
-    handler = new PlayerEventsHandler(logger, notifier);
+    const deps = instanciateStubDependencies();
+    ({ notifier } = deps);
+
+    handler = instanciateHandler(PlayerEventsHandler, deps, logger);
   });
 
   it('logs the events', () => {

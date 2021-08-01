@@ -5,37 +5,25 @@ import { InvalidPlayStateError } from '../../domain/errors/InvalidPlayStateError
 import { Game } from '../../domain/models/Game';
 import { Player } from '../../domain/models/Player';
 import { InMemoryGameRepository } from '../../infrastructure/database/repositories/game/InMemoryGameRepository';
-import { InMemoryPlayerRepository } from '../../infrastructure/database/repositories/player/InMemoryPlayerRepository';
 import { StubEventPublisher } from '../../infrastructure/stubs/StubEventPublisher';
-import { StubExternalData } from '../../infrastructure/stubs/StubExternalData';
 import { GameBuilder } from '../../utils/GameBuilder';
-import { GameService } from '../services/GameService';
+import { instanciateHandler } from '../../utils/injector';
+import { instanciateStubDependencies } from '../../utils/stubDependencies';
 
 import { NextTurnHandler } from './NextTurnCommand';
 
 describe('NextTurnCommand', () => {
   let gameRepository: InMemoryGameRepository;
-  let playerRepository: InMemoryPlayerRepository;
-  let gameService: GameService;
-  let externalData: StubExternalData;
   let publisher: StubEventPublisher;
+  let builder: GameBuilder;
 
   let handler: NextTurnHandler;
 
   beforeEach(() => {
-    gameRepository = new InMemoryGameRepository();
-    playerRepository = new InMemoryPlayerRepository();
-    publisher = new StubEventPublisher();
-    gameService = new GameService(playerRepository, gameRepository, publisher);
-    externalData = new StubExternalData();
+    const deps = instanciateStubDependencies();
+    ({ gameRepository, publisher, builder } = deps);
 
-    handler = new NextTurnHandler(gameService, gameRepository);
-  });
-
-  let builder: GameBuilder;
-
-  beforeEach(() => {
-    builder = new GameBuilder(gameRepository, playerRepository, externalData);
+    handler = instanciateHandler(NextTurnHandler, deps);
   });
 
   const execute = async (game: Game | undefined, player: Player) => {

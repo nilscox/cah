@@ -2,41 +2,27 @@ import { expect } from 'chai';
 
 import { Choice } from '../../domain/models/Choice';
 import { Player } from '../../domain/models/Player';
-import { InMemoryGameRepository } from '../../infrastructure/database/repositories/game/InMemoryGameRepository';
 import { InMemoryPlayerRepository } from '../../infrastructure/database/repositories/player/InMemoryPlayerRepository';
-import { StubExternalData } from '../../infrastructure/stubs/StubExternalData';
-import { StubRTCManager } from '../../infrastructure/stubs/StubRTCManager';
 import { StubSessionStore } from '../../infrastructure/stubs/StubSessionStore';
 import { GameBuilder } from '../../utils/GameBuilder';
-import { DtoMapperService } from '../services/DtoMapperService';
+import { instanciateHandler } from '../../utils/injector';
+import { instanciateStubDependencies } from '../../utils/stubDependencies';
 
 import { GetPlayerHandler } from './GetPlayerQuery';
 
 describe('GetPlayerQuery', () => {
-  let gameRepository: InMemoryGameRepository;
   let playerRepository: InMemoryPlayerRepository;
-  let externalData: StubExternalData;
-  let rtcManager: StubRTCManager;
-  let mapper: DtoMapperService;
-  let session: StubSessionStore;
+  let builder: GameBuilder;
 
   let handler: GetPlayerHandler;
 
-  beforeEach(() => {
-    gameRepository = new InMemoryGameRepository();
-    playerRepository = new InMemoryPlayerRepository();
-    externalData = new StubExternalData();
-    rtcManager = new StubRTCManager();
-    mapper = new DtoMapperService(rtcManager);
-    session = new StubSessionStore();
-
-    handler = new GetPlayerHandler(playerRepository, mapper);
-  });
-
-  let builder: GameBuilder;
+  const session = new StubSessionStore();
 
   beforeEach(() => {
-    builder = new GameBuilder(gameRepository, playerRepository, externalData);
+    const deps = instanciateStubDependencies();
+    ({ playerRepository, builder } = deps);
+
+    handler = instanciateHandler(GetPlayerHandler, deps);
   });
 
   it('fetches a player', async () => {

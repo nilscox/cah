@@ -9,21 +9,16 @@ import { LoginCommand, LoginHandler } from '../../application/commands/LoginComm
 import { NextTurnHandler } from '../../application/commands/NextTurnCommand';
 import { SelectWinnerCommand, SelectWinnerHandler } from '../../application/commands/SelectWinnerCommand';
 import { StartGameCommand, StartGameHandler } from '../../application/commands/StartGameCommand';
-import { ConfigService } from '../../application/interfaces/ConfigService';
-import { GameRepository } from '../../application/interfaces/GameRepository';
 import { Logger } from '../../application/interfaces/Logger';
 import { PlayerRepository } from '../../application/interfaces/PlayerRepository';
-import { RTCManager } from '../../application/interfaces/RTCManager';
 import { SessionStore } from '../../application/interfaces/SessionStore';
 import { GetGameHandler, GetGameQuery } from '../../application/queries/GetGameQuery';
 import { GetPlayerHandler } from '../../application/queries/GetPlayerQuery';
 import { GetTurnsHandler, GetTurnsQuery } from '../../application/queries/GetTurnsQuery';
-import { DtoMapperService } from '../../application/services/DtoMapperService';
-import { GameService } from '../../application/services/GameService';
-import { RandomService } from '../../application/services/RandomService';
 import { DomainError } from '../../domain/errors/DomainError';
 import { Player } from '../../domain/models/Player';
-import { ExternalData } from '../ExternalData';
+import { instanciateHandlers } from '../../utils/injector';
+import { Dependencies } from '../Dependencies';
 
 import { context, dto, errorHandler, guard, handler, middleware, status } from './middlewaresCreators';
 import { FallbackRoute, InputDto, Route } from './Route';
@@ -104,44 +99,8 @@ const isNotAuthenticated = (req: Request) => {
   }
 };
 
-export interface Dependencies {
-  logger: () => Logger;
-  configService: ConfigService;
-  playerRepository: PlayerRepository;
-  gameRepository: GameRepository;
-  gameService: GameService;
-  randomService: RandomService;
-  externalData: ExternalData;
-  rtcManager: RTCManager;
-  mapper: DtoMapperService;
-}
-
 export const bootstrapServer = (deps: Dependencies, wss: WebsocketServer, sessionStore?: SessionStoreBackend) => {
-  const {
-    logger,
-    configService,
-    playerRepository,
-    gameRepository,
-    gameService,
-    randomService,
-    externalData,
-    rtcManager,
-    mapper,
-  } = deps;
-
-  const handlers = {
-    getPlayer: new GetPlayerHandler(playerRepository, mapper),
-    getGame: new GetGameHandler(gameService, mapper),
-    getTurns: new GetTurnsHandler(gameRepository, mapper),
-    login: new LoginHandler(playerRepository, mapper),
-    createGame: new CreateGameHandler(configService, gameService, gameRepository, rtcManager, mapper),
-    joinGame: new JoinGameHandler(gameService, gameRepository, rtcManager, mapper),
-    startGame: new StartGameHandler(gameService, gameRepository, externalData),
-    createAnswer: new CreateAnswerHandler(gameService, randomService),
-    selectWinner: new SelectWinnerHandler(gameService),
-    nextTurn: new NextTurnHandler(gameService, gameRepository),
-    flushCards: new FlushCardsHandler(playerRepository, gameService),
-  };
+  const handlers = instanciateHandlers(deps);
 
   const playerContext = [
     middleware(new PlayerProvider(deps.playerRepository)),
@@ -152,75 +111,74 @@ export const bootstrapServer = (deps: Dependencies, wss: WebsocketServer, sessio
 
   // prettier-ignore
   const routes = [
-
     new Route('get', '/player/me')
       .use(...authPlayerContext)
       .use(dto((req) => ({ playerId: req.session.playerId })))
-      .use(handler(handlers.getPlayer)),
+      .use(handler(handlers.get(GetPlayerHandler))),
 
     new Route('get', '/player/:playerId')
       .use(...playerContext)
       .use(dto((req) => ({ playerId: req.params.playerId })))
-      .use(handler(handlers.getPlayer)),
+      .use(handler(handlers.get(GetPlayerHandler))),
 
     new Route('post', '/login')
       .use(...playerContext)
       .use(guard(isNotAuthenticated))
       .use(dto(({ body }) => new LoginCommand(body.nick)))
       .use(status(201))
-      .use(handler(handlers.login)),
+      .use(handler(handlers.get(LoginHandler))),
 
     new Route('get', '/game/:gameId')
       .use(...authPlayerContext)
       .use(dto((req) => new GetGameQuery(req.params.gameId)))
-      .use(handler(handlers.getGame)),
+      .use(handler(handlers.get(GetGameHandler))),
 
     new Route('get', '/game/:gameId/turns')
       .use(...authPlayerContext)
       .use(dto((req) => new GetTurnsQuery(req.params.gameId)))
-      .use(handler(handlers.getTurns)),
+      .use(handler(handlers.get(GetTurnsHandler))),
 
     new Route('post', '/game')
       .use(...authPlayerContext)
       .use(dto(() => new CreateGameCommand()))
       .use(status(201))
-      .use(handler(handlers.createGame)),
+      .use(handler(handlers.get(CreateGameHandler))),
 
     new Route('post', '/game/:gameCode/join')
       .use(...authPlayerContext)
       .use(dto((req) => new JoinGameCommand(req.params.gameCode)))
-      .use(handler(handlers.joinGame)),
+      .use(handler(handlers.get(JoinGameHandler))),
 
     new Route('post', '/start')
       .use(...authPlayerContext)
       .use(dto(({ body }) => new StartGameCommand(body.questionMasterId, body.turns)))
-      .use(handler(handlers.startGame)),
+      .use(handler(handlers.get(StartGameHandler))),
 
     new Route('post', '/answer')
       .use(...authPlayerContext)
       .use(dto(({ body }) => new CreateAnswerCommand(body.choicesIds)))
-      .use(handler(handlers.createAnswer)),
+      .use(handler(handlers.get(CreateAnswerHandler))),
 
     new Route('post', '/select')
       .use(...authPlayerContext)
       .use(dto(({ body }) => new SelectWinnerCommand(body.answerId)))
-      .use(handler(handlers.selectWinner)),
+      .use(handler(handlers.get(SelectWinnerHandler))),
 
     new Route('post', '/next')
       .use(...authPlayerContext)
-      .use(handler(handlers.nextTurn)),
+      .use(handler(handlers.get(NextTurnHandler))),
 
     new Route('post', '/flush-cards')
       .use(...authPlayerContext)
       .use(status(204))
-      .use(handler(handlers.flushCards)),
+      .use(handler(handlers.get(FlushCardsHandler))),
 
     new Route('get', '/healthcheck')
-      .use((req, res) => res.end()),
+      .use((_req, res) => res.end()),
 
     new FallbackRoute()
-      .use(errorHandler(new ErrorHandler(logger())))
-      .use((req, res) => res.status(404).end()),
+      .use(errorHandler(new ErrorHandler(deps.logger())))
+      .use((_req, res) => res.status(404).end()),
   ];
 
   return createServer(routes, wss, sessionStore);

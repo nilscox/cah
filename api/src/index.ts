@@ -2,34 +2,29 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-import { createKnexConnection, createKnexSessionStore, main } from './infrastructure';
+import { createKnexConnection, createKnexSessionStore, instanciateDependencies } from './infrastructure';
 import { bootstrapServer } from './infrastructure/web';
 import { WebsocketServer } from './infrastructure/web/websocket';
 
-const start = async () => {
+const main = async () => {
   const wss = new WebsocketServer();
   const sessionStore = await createKnexSessionStore(createKnexConnection());
 
-  const deps = await main({ wss });
+  const deps = await instanciateDependencies({ wss });
 
+  const server = await bootstrapServer(deps, wss, sessionStore);
   const logger = deps.logger();
 
-  try {
-    const server = await bootstrapServer(deps, wss, sessionStore);
+  const port = Number(deps.configService.get('LISTEN_PORT') ?? '4242');
+  const hostname = deps.configService.get('LISTEN_HOST') ?? 'localhost';
 
-    const port = Number(deps.configService.get('LISTEN_PORT') ?? '4242');
-    const hostname = deps.configService.get('LISTEN_HOST') ?? 'localhost';
-
-    if (isNaN(port) || port <= 0) {
-      throw new Error(`LISTEN_PORT = "${port}" is not a positive integer`);
-    }
-
-    await new Promise<void>((resolve) => server.listen(port, hostname, resolve));
-
-    logger.info(`server listening on ${hostname}:${port}`);
-  } catch (error) {
-    logger.error(error);
+  if (isNaN(port) || port <= 0) {
+    throw new Error(`LISTEN_PORT = "${port}" is not a positive integer`);
   }
+
+  await new Promise<void>((resolve) => server.listen(port, hostname, resolve));
+
+  logger.info(`server listening on ${hostname}:${port}`);
 };
 
-start().catch(console.error);
+main().catch(console.error);

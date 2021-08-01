@@ -17,38 +17,27 @@ import { Question } from '../../domain/models/Question';
 import { InMemoryGameRepository } from '../../infrastructure/database/repositories/game/InMemoryGameRepository';
 import { InMemoryPlayerRepository } from '../../infrastructure/database/repositories/player/InMemoryPlayerRepository';
 import { StubEventPublisher } from '../../infrastructure/stubs/StubEventPublisher';
-import { StubExternalData } from '../../infrastructure/stubs/StubExternalData';
 import { StubRandomService } from '../../infrastructure/stubs/StubRandomService';
 import { GameBuilder } from '../../utils/GameBuilder';
-import { GameService } from '../services/GameService';
+import { instanciateHandler } from '../../utils/injector';
+import { instanciateStubDependencies } from '../../utils/stubDependencies';
 
 import { CreateAnswerCommand, CreateAnswerHandler } from './CreateAnswerCommand';
 
 describe('CreateAnswerCommand', () => {
   let gameRepository: InMemoryGameRepository;
   let playerRepository: InMemoryPlayerRepository;
-  let gameService: GameService;
-  let externalData: StubExternalData;
   let randomService: StubRandomService;
   let publisher: StubEventPublisher;
+  let builder: GameBuilder;
 
   let handler: CreateAnswerHandler;
 
   beforeEach(() => {
-    gameRepository = new InMemoryGameRepository();
-    playerRepository = new InMemoryPlayerRepository();
-    publisher = new StubEventPublisher();
-    gameService = new GameService(playerRepository, gameRepository, publisher);
-    externalData = new StubExternalData();
-    randomService = new StubRandomService();
+    const deps = instanciateStubDependencies();
+    ({ gameRepository, playerRepository, randomService, publisher, builder } = deps);
 
-    handler = new CreateAnswerHandler(gameService, randomService);
-  });
-
-  let builder: GameBuilder;
-
-  beforeEach(() => {
-    builder = new GameBuilder(gameRepository, playerRepository, externalData);
+    handler = instanciateHandler(CreateAnswerHandler, deps);
   });
 
   const execute = async (game: Game | undefined, player: Player, choices: Choice[]) => {

@@ -7,37 +7,25 @@ import { PlayerIsNotQuestionMasterError } from '../../domain/errors/PlayerIsNotQ
 import { Answer } from '../../domain/models/Answer';
 import { Player } from '../../domain/models/Player';
 import { InMemoryGameRepository } from '../../infrastructure/database/repositories/game/InMemoryGameRepository';
-import { InMemoryPlayerRepository } from '../../infrastructure/database/repositories/player/InMemoryPlayerRepository';
 import { StubEventPublisher } from '../../infrastructure/stubs/StubEventPublisher';
-import { StubExternalData } from '../../infrastructure/stubs/StubExternalData';
 import { GameBuilder } from '../../utils/GameBuilder';
-import { GameService } from '../services/GameService';
+import { instanciateHandler } from '../../utils/injector';
+import { instanciateStubDependencies } from '../../utils/stubDependencies';
 
 import { SelectWinnerCommand, SelectWinnerHandler } from './SelectWinnerCommand';
 
 describe('SelectWinnerCommand', () => {
   let gameRepository: InMemoryGameRepository;
-  let playerRepository: InMemoryPlayerRepository;
-  let gameService: GameService;
-  let externalData: StubExternalData;
   let publisher: StubEventPublisher;
+  let builder: GameBuilder;
 
   let handler: SelectWinnerHandler;
 
   beforeEach(() => {
-    gameRepository = new InMemoryGameRepository();
-    playerRepository = new InMemoryPlayerRepository();
-    publisher = new StubEventPublisher();
-    gameService = new GameService(playerRepository, gameRepository, publisher);
-    externalData = new StubExternalData();
+    const deps = instanciateStubDependencies();
+    ({ gameRepository, publisher, builder } = deps);
 
-    handler = new SelectWinnerHandler(gameService);
-  });
-
-  let builder: GameBuilder;
-
-  beforeEach(() => {
-    builder = new GameBuilder(gameRepository, playerRepository, externalData);
+    handler = instanciateHandler(SelectWinnerHandler, deps);
   });
 
   const execute = (player: Player, answer: Answer) => {

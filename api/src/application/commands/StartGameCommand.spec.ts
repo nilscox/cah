@@ -8,37 +8,27 @@ import { Game } from '../../domain/models/Game';
 import { Player } from '../../domain/models/Player';
 import { createQuestion } from '../../domain/models/Question';
 import { InMemoryGameRepository } from '../../infrastructure/database/repositories/game/InMemoryGameRepository';
-import { InMemoryPlayerRepository } from '../../infrastructure/database/repositories/player/InMemoryPlayerRepository';
 import { StubEventPublisher } from '../../infrastructure/stubs/StubEventPublisher';
 import { StubExternalData } from '../../infrastructure/stubs/StubExternalData';
 import { GameBuilder } from '../../utils/GameBuilder';
-import { GameService } from '../services/GameService';
+import { instanciateHandler } from '../../utils/injector';
+import { instanciateStubDependencies } from '../../utils/stubDependencies';
 
 import { StartGameCommand, StartGameHandler } from './StartGameCommand';
 
 describe('StartGameCommand', () => {
   let gameRepository: InMemoryGameRepository;
-  let playerRepository: InMemoryPlayerRepository;
-  let gameService: GameService;
   let externalData: StubExternalData;
   let publisher: StubEventPublisher;
+  let builder: GameBuilder;
 
   let handler: StartGameHandler;
 
   beforeEach(() => {
-    gameRepository = new InMemoryGameRepository();
-    playerRepository = new InMemoryPlayerRepository();
-    publisher = new StubEventPublisher();
-    gameService = new GameService(playerRepository, gameRepository, publisher);
-    externalData = new StubExternalData();
+    const deps = instanciateStubDependencies();
+    ({ gameRepository, externalData, publisher, builder } = deps);
 
-    handler = new StartGameHandler(gameService, gameRepository, externalData);
-  });
-
-  let builder: GameBuilder;
-
-  beforeEach(() => {
-    builder = new GameBuilder(gameRepository, playerRepository, externalData);
+    handler = instanciateHandler(StartGameHandler, deps);
   });
 
   const execute = (questionMaster: Player, turns: number) => {

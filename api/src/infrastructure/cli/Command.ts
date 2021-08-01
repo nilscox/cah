@@ -2,7 +2,7 @@ import { Connection } from 'typeorm';
 
 import { Game } from '../../domain/models/Game';
 import { Player } from '../../domain/models/Player';
-import { Dependencies } from '../web';
+import { Dependencies } from '../Dependencies';
 
 export abstract class Command {
   quiet = false;

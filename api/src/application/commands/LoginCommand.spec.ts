@@ -2,29 +2,24 @@ import { expect } from 'chai';
 
 import { Player } from '../../domain/models/Player';
 import { InMemoryPlayerRepository } from '../../infrastructure/database/repositories/player/InMemoryPlayerRepository';
-import { StubRTCManager } from '../../infrastructure/stubs/StubRTCManager';
 import { StubSessionStore } from '../../infrastructure/stubs/StubSessionStore';
-import { DtoMapperService } from '../services/DtoMapperService';
+import { instanciateHandler } from '../../utils/injector';
+import { instanciateStubDependencies } from '../../utils/stubDependencies';
 
 import { LoginHandler } from './LoginCommand';
 
 describe('LoginCommand', () => {
   let playerRepository: InMemoryPlayerRepository;
-  let rtcManager: StubRTCManager;
-  let mapper: DtoMapperService;
 
   let handler: LoginHandler;
 
-  let session: StubSessionStore;
+  const session = new StubSessionStore();
 
   beforeEach(() => {
-    playerRepository = new InMemoryPlayerRepository();
-    rtcManager = new StubRTCManager();
-    mapper = new DtoMapperService(rtcManager);
+    const deps = instanciateStubDependencies();
+    ({ playerRepository } = deps);
 
-    handler = new LoginHandler(playerRepository, mapper);
-
-    session = new StubSessionStore();
+    handler = instanciateHandler(LoginHandler, deps);
   });
 
   const execute = (nick: string) => {

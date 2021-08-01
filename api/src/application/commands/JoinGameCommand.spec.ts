@@ -4,44 +4,35 @@ import { PlayerIsAlreadyInGameError } from '../../domain/errors/PlayerIsAlreadyI
 import { Game } from '../../domain/models/Game';
 import { Player } from '../../domain/models/Player';
 import { InMemoryGameRepository } from '../../infrastructure/database/repositories/game/InMemoryGameRepository';
-import { InMemoryPlayerRepository } from '../../infrastructure/database/repositories/player/InMemoryPlayerRepository';
 import { StubEventPublisher } from '../../infrastructure/stubs/StubEventPublisher';
 import { StubRTCManager } from '../../infrastructure/stubs/StubRTCManager';
 import { StubSessionStore } from '../../infrastructure/stubs/StubSessionStore';
-import { DtoMapperService } from '../services/DtoMapperService';
-import { GameService } from '../services/GameService';
+import { instanciateHandler } from '../../utils/injector';
+import { instanciateStubDependencies } from '../../utils/stubDependencies';
 
 import { JoinGameHandler } from './JoinGameCommand';
 
 describe('JoinGameCommand', () => {
   let gameRepository: InMemoryGameRepository;
-  let playerRepository: InMemoryPlayerRepository;
-  let gameService: GameService;
   let publisher: StubEventPublisher;
   let rtcManager: StubRTCManager;
-  let mapper: DtoMapperService;
 
   let handler: JoinGameHandler;
-
-  let session: StubSessionStore;
 
   let game: Game;
   let player: Player;
 
-  beforeEach(async () => {
-    gameRepository = new InMemoryGameRepository();
-    playerRepository = new InMemoryPlayerRepository();
-    publisher = new StubEventPublisher();
-    gameService = new GameService(playerRepository, gameRepository, publisher);
-    rtcManager = new StubRTCManager();
-    mapper = new DtoMapperService(rtcManager);
+  const session = new StubSessionStore();
 
-    handler = new JoinGameHandler(gameService, gameRepository, rtcManager, mapper);
+  beforeEach(async () => {
+    const deps = instanciateStubDependencies();
+    ({ gameRepository, publisher, rtcManager } = deps);
+
+    handler = instanciateHandler(JoinGameHandler, deps);
 
     game = new Game();
     await gameRepository.save(game);
 
-    session = new StubSessionStore();
     player = session.player = new Player('player');
   });
 

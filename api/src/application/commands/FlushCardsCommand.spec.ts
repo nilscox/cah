@@ -3,32 +3,29 @@ import { expect } from 'chai';
 import { InMemoryGameRepository } from '../../infrastructure/database/repositories/game/InMemoryGameRepository';
 import { InMemoryPlayerRepository } from '../../infrastructure/database/repositories/player/InMemoryPlayerRepository';
 import { StubEventPublisher } from '../../infrastructure/stubs/StubEventPublisher';
-import { StubExternalData } from '../../infrastructure/stubs/StubExternalData';
 import { GameBuilder } from '../../utils/GameBuilder';
-import { GameService } from '../services/GameService';
+import { instanciateHandler } from '../../utils/injector';
+import { instanciateStubDependencies } from '../../utils/stubDependencies';
 
 import { FlushCardsHandler } from './FlushCardsCommand';
 
 describe.skip('FlushCards', () => {
   let gameRepository: InMemoryGameRepository;
   let playerRepository: InMemoryPlayerRepository;
-  let gameService: GameService;
   let publisher: StubEventPublisher;
-  let externalData: StubExternalData;
+  let builder: GameBuilder;
+
   let flushCards: FlushCardsHandler;
 
   beforeEach(() => {
-    gameRepository = new InMemoryGameRepository();
-    playerRepository = new InMemoryPlayerRepository();
-    publisher = new StubEventPublisher();
-    gameService = new GameService(playerRepository, gameRepository, publisher);
-    externalData = new StubExternalData();
-    flushCards = new FlushCardsHandler(playerRepository, gameService);
+    const deps = instanciateStubDependencies();
+    ({ gameRepository, publisher, builder } = deps);
+
+    flushCards = instanciateHandler(FlushCardsHandler, deps);
   });
 
   it("flushes the player's cards", async () => {
-    const gameBuilder = new GameBuilder(gameRepository, playerRepository, externalData);
-    const game = await gameBuilder.addPlayers().start().get();
+    const game = await builder.addPlayers().start().get();
 
     const player = game.players[0];
     const oldCards = player.cards.slice();
@@ -47,8 +44,7 @@ describe.skip('FlushCards', () => {
   });
 
   it('notifies the player that he received the new cards', async () => {
-    const gameBuilder = new GameBuilder(gameRepository, playerRepository, externalData);
-    const game = await gameBuilder.addPlayers().start().get();
+    const game = await builder.addPlayers().start().get();
 
     const player = game.players[0];
     const session = { player };
