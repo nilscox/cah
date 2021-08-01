@@ -66,3 +66,11 @@ export const findById =
   <T extends { id: I }>(element: T | null | undefined) => {
     return element?.id === id;
   };
+
+export const filter = <T>(array: T[], predicate: (element: T) => boolean) => {
+  return array.filter(predicate);
+};
+
+export const mapIds = <T extends { id: string }>(array: T[]) => {
+  return array.map(({ id }) => id);
+};
