@@ -17,18 +17,21 @@ import { Player } from '../../domain/models/Player';
 import { createQuestion } from '../../domain/models/Question';
 import { StubLogger } from '../../infrastructure/stubs/StubLogger';
 import { StubNotifier } from '../../infrastructure/stubs/StubNotifier';
+import { StubRTCManager } from '../../infrastructure/stubs/StubRTCManager';
 
 import { GameEventsHandler } from './GameEventsHandler';
 
 describe('GameEventsHandler', () => {
   let logger: StubLogger;
   let notifier: StubNotifier;
+  let rtcManager: StubRTCManager;
   let handler: GameEventsHandler;
 
   beforeEach(() => {
     logger = new StubLogger();
     notifier = new StubNotifier();
-    handler = new GameEventsHandler(logger, notifier);
+    rtcManager = new StubRTCManager();
+    handler = new GameEventsHandler(logger, notifier, rtcManager);
   });
 
   it('logs the events', () => {
@@ -38,16 +41,28 @@ describe('GameEventsHandler', () => {
     handler.execute(new GameJoinedEvent(game, player));
 
     expect(logger.last('info')).to.eql(['notify', game.code, 'GameJoined']);
-    expect(logger.last('verbose')).to.eql(['notify', { type: 'GameJoined', player: 'player' }]);
+    expect(logger.last('verbose')).to.eql([
+      'notify',
+      { type: 'GameJoined', player: { id: player.id, nick: 'player', isConnected: false } },
+    ]);
   });
 
   it('GameJoined event', () => {
     const game = new Game();
     const player = new Player('player');
 
+    rtcManager.setConnected(player);
+
     handler.execute(new GameJoinedEvent(game, player));
 
-    expect(notifier.lastGameMessage(game)).to.eql({ type: 'GameJoined', player: 'player' });
+    expect(notifier.lastGameMessage(game)).to.eql({
+      type: 'GameJoined',
+      player: {
+        id: player.id,
+        nick: player.nick,
+        isConnected: true,
+      },
+    });
   });
 
   it('GameStarted event', () => {

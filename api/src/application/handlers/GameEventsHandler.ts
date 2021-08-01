@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 import { AnswerDto } from '../../../../shared/dtos';
 import { PlayState } from '../../../../shared/enums';
 import { EventDto } from '../../../../shared/events';
@@ -6,9 +8,14 @@ import { GameEvent } from '../../domain/events';
 import { Game, StartedGame } from '../../domain/models/Game';
 import { Logger } from '../interfaces/Logger';
 import { Notifier } from '../interfaces/Notifier';
+import { RTCManager } from '../interfaces/RTCManager';
 
 export class GameEventsHandler implements EventHandler<GameEvent> {
-  constructor(private readonly logger: Logger, private readonly notifier: Notifier) {
+  constructor(
+    private readonly logger: Logger,
+    private readonly notifier: Notifier,
+    private readonly rtcManager: RTCManager,
+  ) {
     this.logger.setContext('GameEvent');
   }
 
@@ -16,10 +23,19 @@ export class GameEventsHandler implements EventHandler<GameEvent> {
     switch (event.type) {
       case 'PlayerConnected':
       case 'PlayerDisconnected':
-      case 'GameJoined':
         this.notify(event.game, {
           type: event.type,
           player: event.player.nick,
+        });
+        break;
+
+      case 'GameJoined':
+        this.notify(event.game, {
+          type: event.type,
+          player: {
+            ..._.pick(event.player, 'id', 'nick'),
+            isConnected: this.rtcManager.isConnected(event.player),
+          },
         });
         break;
 

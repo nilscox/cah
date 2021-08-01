@@ -13,7 +13,11 @@ export interface PlayerDisconnectedEvent {
 
 export interface GameJoinedEvent {
   type: "GameJoined";
-  player: string;
+  player: {
+    id: string;
+    nick: string;
+    isConnected: boolean;
+  };
 }
 
 export interface GameStartedEvent {

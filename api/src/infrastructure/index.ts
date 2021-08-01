@@ -82,7 +82,7 @@ export const main = async (config: Config = {}): Promise<Dependencies> => {
 
   const rtcManager = new WebsocketRTCManager(playerRepository, gameRepository, wss, publisher);
 
-  const gameEventsHandler = new GameEventsHandler(logger(), rtcManager);
+  const gameEventsHandler = new GameEventsHandler(logger(), rtcManager, rtcManager);
   const playerEventsHandler = new PlayerEventsHandler(logger(), rtcManager);
 
   const mapper = new DtoMapperService(rtcManager);

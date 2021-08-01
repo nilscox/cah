@@ -4,13 +4,18 @@ import { Player } from '../../domain/models/Player';
 
 export class StubRTCManager implements RTCManager {
   private games = new Map<Game, Player[]>();
+  private connectedPlayers = new Set<Player>();
 
   private get(game: Game) {
     return this.games.get(game) ?? [];
   }
 
-  isConnected(_player: Player) {
-    return false;
+  setConnected(player: Player) {
+    this.connectedPlayers.add(player);
+  }
+
+  isConnected(player: Player) {
+    return this.connectedPlayers.has(player);
   }
 
   has(game: Game, player: Player) {
