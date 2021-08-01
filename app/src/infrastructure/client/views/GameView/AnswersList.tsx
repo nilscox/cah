@@ -3,19 +3,19 @@ import React from 'react';
 import styled from '@emotion/styled';
 import { Route } from 'react-router-dom';
 
-import { PlayState } from '../../../../../../../shared/enums';
-import { AnonymousAnswer, Answer as AnswerType } from '../../../../../domain/entities/Answer';
-import { nextTurn } from '../../../../../domain/usecases/game/nextTurn/nextTurn';
-import { selectWinner } from '../../../../../domain/usecases/game/selectWinner/selectWinner';
-import { selectGame } from '../../../../../store/selectors/gameSelectors';
-import { selectIsQuestionMaster } from '../../../../../store/selectors/playerSelectors';
-import { AppState } from '../../../../../store/types';
-import { QuestionCard } from '../../../components/domain/QuestionCard';
-import Button from '../../../components/elements/Button';
-import { Center } from '../../../components/layout/Center';
-import { useAction } from '../../../hooks/useAction';
-import { useGame } from '../../../hooks/useGame';
-import { fontSize, spacing } from '../../../styles/theme';
+import { PlayState } from '../../../../../../shared/enums';
+import { AnonymousAnswer, Answer as AnswerType } from '../../../../domain/entities/Answer';
+import { nextTurn } from '../../../../domain/usecases/game/nextTurn/nextTurn';
+import { selectWinner } from '../../../../domain/usecases/game/selectWinner/selectWinner';
+import { selectGame } from '../../../../store/selectors/gameSelectors';
+import { selectIsQuestionMaster } from '../../../../store/selectors/playerSelectors';
+import { AppState } from '../../../../store/types';
+import { QuestionCard } from '../../components/domain/QuestionCard';
+import Button from '../../components/elements/Button';
+import { Center } from '../../components/layout/Center';
+import { useAction } from '../../hooks/useAction';
+import { useGame } from '../../hooks/useGame';
+import { fontSize, spacing } from '../../styles/theme';
 
 const Answer = styled.div`
   display: flex;

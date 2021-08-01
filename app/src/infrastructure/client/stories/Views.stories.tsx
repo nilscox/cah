@@ -5,10 +5,12 @@ import { Meta, Story } from '@storybook/react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { Router } from 'react-router-dom';
 
+import { openMenu } from '../../../domain/actions';
 import { Game, GameState, isStarted, PlayState, StartedGame } from '../../../domain/entities/Game';
 import { FullPlayer } from '../../../domain/entities/Player';
 import { Turn } from '../../../domain/entities/Turn';
 import { configureStore } from '../../../store/configureStore';
+import { AppAction } from '../../../store/types';
 import { createGame } from '../../../tests/factories';
 import CAHApp from '../App';
 import { gameRouterHistory } from '../views/GameView/GameView';
@@ -35,11 +37,16 @@ type TemplateProps = {
   game?: Game | StartedGame;
   question: typeof questionOptions[number];
   turns?: Turn[];
+  action?: () => AppAction;
 };
 
-const Template: Story<TemplateProps> = ({ player, game, question, turns }) => {
+const Template: Story<TemplateProps> = ({ player, game, question, turns, action }) => {
   const deps = stubDependencies();
   const store = configureStore(deps);
+
+  if (action) {
+    store.dispatch(action());
+  }
 
   if (game && isStarted(game)) {
     game.question = questions[['no blanks', 'one blank', 'multiple blanks'].indexOf(question)];
@@ -51,7 +58,6 @@ const Template: Story<TemplateProps> = ({ player, game, question, turns }) => {
 
   // @ts-expect-error the reference gets lost somehow
   deps.routerGateway.history = storiesRouterHistory;
-  // storiesRouterHistory.push(pathname);
 
   // @ts-expect-error the reference gets lost somehow
   deps.gameRouterGateway.history = gameRouterHistory;
@@ -120,4 +126,11 @@ Finished.args = {
     players,
   }),
   turns,
+};
+
+export const GameMenu = Template.bind({});
+GameMenu.args = {
+  player,
+  game: startedGame,
+  action: openMenu,
 };

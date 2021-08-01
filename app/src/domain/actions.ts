@@ -19,6 +19,8 @@ export const gameStarted = createAction('game/started');
 
 export const setAppReady = createAction('app/ready');
 export const serverStatusChanged = createAction<ServerStatus, 'server/status'>('server/status');
+export const openMenu = createAction('app/open-menu');
+export const closeMenu = createAction('app/close-menu');
 
 export const rtcMessage = createAction<RTCMessage, 'rtc/message'>('rtc/message');
 
@@ -36,6 +38,8 @@ export type Actions = ReturnType<
   | typeof setTurns
   | typeof setAppReady
   | typeof serverStatusChanged
+  | typeof openMenu
+  | typeof closeMenu
   | typeof rtcMessage
   | typeof choiceSelected
   | typeof choiceUnselected

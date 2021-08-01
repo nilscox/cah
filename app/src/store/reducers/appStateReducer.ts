@@ -8,11 +8,13 @@ export enum ServerStatus {
 export type AppState = {
   server: ServerStatus;
   ready: boolean;
+  menuOpen: boolean;
 };
 
 const defaultAppState: AppState = {
   server: ServerStatus.up,
   ready: false,
+  menuOpen: false,
 };
 
 export const appStateReducer = (state = defaultAppState, action: AppAction): AppState => {
@@ -22,6 +24,14 @@ export const appStateReducer = (state = defaultAppState, action: AppAction): App
 
   if (action.type === 'app/ready') {
     return { ...state, ready: true };
+  }
+
+  if (action.type === 'app/open-menu') {
+    return { ...state, menuOpen: true };
+  }
+
+  if (action.type === 'app/close-menu') {
+    return { ...state, menuOpen: false };
   }
 
   return state;

@@ -2,19 +2,19 @@ import React from 'react';
 
 import { useSelector } from 'react-redux';
 
-import { setPlayerCards } from '../../../../../domain/actions';
-import { GameState } from '../../../../../domain/entities/Game';
-import { validateChoicesSelection } from '../../../../../domain/usecases/game/validateChoicesSelection/validateChoicesSelection';
-import { toggleChoice } from '../../../../../domain/usecases/player/toggleChoice/toggleChoice';
-import { selectGame } from '../../../../../store/selectors/gameSelectors';
-import { selectChoicesSelection, selectPlayer } from '../../../../../store/selectors/playerSelectors';
-import { AppState } from '../../../../../store/types';
-import { ChoicesList } from '../../../components/domain/ChoicesList';
-import { QuestionCard } from '../../../components/domain/QuestionCard';
-import { Center } from '../../../components/layout/Center';
-import { useAction } from '../../../hooks/useAction';
-import { useGame } from '../../../hooks/useGame';
-import { usePlayer } from '../../../hooks/usePlayer';
+import { setPlayerCards } from '../../../../domain/actions';
+import { GameState } from '../../../../domain/entities/Game';
+import { validateChoicesSelection } from '../../../../domain/usecases/game/validateChoicesSelection/validateChoicesSelection';
+import { toggleChoice } from '../../../../domain/usecases/player/toggleChoice/toggleChoice';
+import { selectGame } from '../../../../store/selectors/gameSelectors';
+import { selectChoicesSelection, selectPlayer } from '../../../../store/selectors/playerSelectors';
+import { AppState } from '../../../../store/types';
+import { ChoicesList } from '../../components/domain/ChoicesList';
+import { QuestionCard } from '../../components/domain/QuestionCard';
+import { Center } from '../../components/layout/Center';
+import { useAction } from '../../hooks/useAction';
+import { useGame } from '../../hooks/useGame';
+import { usePlayer } from '../../hooks/usePlayer';
 
 const validateButtonVisibleSelector = (state: AppState) => {
   const game = selectGame(state);
