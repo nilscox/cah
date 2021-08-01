@@ -16,6 +16,7 @@ import { Center } from '../../components/layout/Center';
 import { useAction } from '../../hooks/useAction';
 import { useGame } from '../../hooks/useGame';
 import { fontSize, spacing } from '../../styles/theme';
+import { conditionalCallback } from '../utils/utils';
 
 const Answer = styled.div`
   display: flex;
@@ -56,11 +57,7 @@ export const AnswersList: React.FC = () => {
     <>
       <Center flex={1} padding={2} horizontal={false}>
         {game.answers.map((answer) => (
-          <Answer
-            key={answer.id}
-            role="button"
-            onClick={handleAnswerClick ? () => handleAnswerClick(answer) : undefined}
-          >
+          <Answer key={answer.id} role="button" onClick={conditionalCallback(handleAnswerClick, answer)}>
             <PlayerNick>
               <Route path="/game/:code/started/end-of-turn">{isAnswer(answer) && answer.player.nick}</Route>
               <>&nbsp;</>

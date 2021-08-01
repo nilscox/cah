@@ -19,6 +19,7 @@ declare module '@emotion/react' {
     space: string[];
     fontWeights: {
       thin: number;
+      normal: string;
       bold: string;
     };
     animations: {

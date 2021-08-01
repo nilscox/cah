@@ -37,8 +37,6 @@ const canValidateSelectionSelector = (state: AppState) => {
   return !player.selectionValidated;
 };
 
-export type GuardSelector = (state: AppState) => boolean;
-
 export const PlayersAnswer: React.FC = () => {
   const game = useGame();
   const player = usePlayer();
@@ -62,9 +60,9 @@ export const PlayersAnswer: React.FC = () => {
       <ChoicesList
         choices={player.cards}
         selection={selection}
-        validateButtonVisible={validateButtonVisible}
         onOrderChange={handleCardsOrderChange}
         onSelectChoice={handleSelectChoices}
+        validateButtonVisible={validateButtonVisible}
         onValidateSelection={handleValidateSelection}
       />
     </>

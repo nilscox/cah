@@ -34,6 +34,7 @@ export const theme: Theme = {
     .map((_, n) => themeSpacing(n)),
   fontWeights: {
     thin: 200,
+    normal: 'normal',
     bold: 'bold',
   },
   animations: {

@@ -4,12 +4,11 @@ import styled from '@emotion/styled';
 
 import { Choice } from '../../../../domain/entities/Choice';
 import { spacing, transition } from '../../styles/theme';
+import { conditionalCallback } from '../../views/utils/utils';
 import Button from '../elements/Button';
 import { RenderItemFunction, SortableList } from '../elements/SortableList';
 
 import { ChoiceCard } from './ChoiceCard';
-
-const validateContainerSize = 14;
 
 const Container = styled.div`
   flex: 1;
@@ -18,6 +17,8 @@ const Container = styled.div`
   row-gap: 1px;
   align-content: flex-start;
 `;
+
+const validateContainerSize = 14;
 
 const ValidateContainer = styled.div<{ open: boolean }>`
   display: flex;
@@ -31,25 +32,25 @@ const ValidateContainer = styled.div<{ open: boolean }>`
 export type ChoiceCardsListProps = {
   choices: Choice[];
   selection: Choice[];
-  validateButtonVisible: boolean;
   onOrderChange?: (choices: Choice[]) => void;
   onSelectChoice?: (choice: Choice) => void;
+  validateButtonVisible: boolean;
   onValidateSelection?: () => void;
 };
 
 export const ChoicesList: React.FC<ChoiceCardsListProps> = ({
   choices,
   selection,
-  validateButtonVisible,
   onSelectChoice,
   onOrderChange,
+  validateButtonVisible,
   onValidateSelection,
 }) => {
   const renderChoice: RenderItemFunction<Choice> = (choice, isSorting, dragHandle) => (
     <ChoiceCard
       choice={choice}
       selected={selection.includes(choice)}
-      onClick={() => onSelectChoice?.(choice)}
+      onClick={conditionalCallback(onSelectChoice, choice)}
       isSorting={isSorting}
       dragHandle={dragHandle}
     />
@@ -62,7 +63,7 @@ export const ChoicesList: React.FC<ChoiceCardsListProps> = ({
       </Container>
       <ValidateContainer open={validateButtonVisible}>
         <Button disabled={!onValidateSelection} onClick={onValidateSelection}>
-          Valider
+          {onValidateSelection ? 'Valider' : 'Validé'}
         </Button>
       </ValidateContainer>
     </>
