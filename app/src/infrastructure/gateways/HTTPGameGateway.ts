@@ -87,6 +87,10 @@ export class HTTPGameGateway implements GameGateway {
     });
   }
 
+  async flushCards(): Promise<void> {
+    await this.http.post('/flush-cards');
+  }
+
   async answer(choices: Choice[]): Promise<void> {
     await this.http.post('/answer', { choicesIds: choices.map(({ id }) => id) });
   }

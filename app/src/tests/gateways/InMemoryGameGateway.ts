@@ -9,6 +9,9 @@ import { createGame, createQuestion } from '../factories';
 
 import { InMemoryRTCGateway } from './InMemoryRTCGateway';
 
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const noop = async () => {};
+
 export class InMemoryGameGateway implements GameGateway {
   constructor(private readonly rtcGateway: InMemoryRTCGateway) {}
 
@@ -46,6 +49,8 @@ export class InMemoryGameGateway implements GameGateway {
       questionMaster: questionMaster.nick,
     });
   }
+
+  flushCards = noop;
 
   answers?: Answer[];
   answered?: Choice[];

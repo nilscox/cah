@@ -17,7 +17,7 @@ describe('initialize', () => {
     await store.dispatch(initialize());
 
     store.expectState('player', null);
-    store.expectState('app', { server: ServerStatus.up, ready: true });
+    store.expectState('app', { server: ServerStatus.up, ready: true, menuOpen: false });
   });
 
   it('initializes with a player who is not in game', async () => {

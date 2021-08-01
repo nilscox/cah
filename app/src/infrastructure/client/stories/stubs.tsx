@@ -59,6 +59,10 @@ export class StubGameGateway extends ActionLogger implements GameGateway {
     this.log('start game', { questionMaster, turns });
   }
 
+  async flushCards() {
+    this.log('flush cards');
+  }
+
   async answer(choices: Choice[]): Promise<void> {
     this.log('answer', { choices });
   }

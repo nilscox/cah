@@ -17,6 +17,7 @@ export const Button = styled.button<ButtonProps>`
   cursor: pointer;
   border: none;
   outline: none;
+  padding: 0;
   -webkit-tap-highlight-color: transparent;
   &:disabled {
     color: ${color('disabled')};
