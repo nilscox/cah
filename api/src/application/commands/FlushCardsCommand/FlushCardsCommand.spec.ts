@@ -3,8 +3,8 @@ import { expect } from 'chai';
 import { Player } from '../../../domain/models/Player';
 import { InMemoryPlayerRepository } from '../../../infrastructure/database/repositories/player/InMemoryPlayerRepository';
 import { StubEventPublisher } from '../../../infrastructure/stubs/StubEventPublisher';
+import { instanciateHandler } from '../../../utils/dependencyInjection';
 import { GameBuilder } from '../../../utils/GameBuilder';
-import { instanciateHandler } from '../../../utils/injector';
 import { instanciateStubDependencies } from '../../../utils/stubDependencies';
 
 import { FlushCardsHandler } from './FlushCardsCommand';

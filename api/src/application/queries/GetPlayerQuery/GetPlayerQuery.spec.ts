@@ -4,8 +4,8 @@ import { Choice } from '../../../domain/models/Choice';
 import { Player } from '../../../domain/models/Player';
 import { InMemoryPlayerRepository } from '../../../infrastructure/database/repositories/player/InMemoryPlayerRepository';
 import { StubSessionStore } from '../../../infrastructure/stubs/StubSessionStore';
+import { instanciateHandler } from '../../../utils/dependencyInjection';
 import { GameBuilder } from '../../../utils/GameBuilder';
-import { instanciateHandler } from '../../../utils/injector';
 import { instanciateStubDependencies } from '../../../utils/stubDependencies';
 
 import { GetPlayerHandler } from './GetPlayerQuery';

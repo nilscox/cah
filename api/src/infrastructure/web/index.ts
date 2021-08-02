@@ -23,7 +23,7 @@ import { GetPlayerHandler } from '../../application/queries/GetPlayerQuery/GetPl
 import { GetTurnsHandler, GetTurnsQuery } from '../../application/queries/GetTurnsQuery/GetTurnsQuery';
 import { DomainError } from '../../domain/errors/DomainError';
 import { Player } from '../../domain/models/Player';
-import { instanciateHandlers } from '../../utils/injector';
+import { instanciateHandlers } from '../../utils/dependencyInjection';
 import { Dependencies } from '../Dependencies';
 
 import { context, dto, errorHandler, guard, handler, middleware, status } from './middlewaresCreators';

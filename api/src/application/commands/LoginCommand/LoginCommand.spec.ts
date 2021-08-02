@@ -3,7 +3,7 @@ import { expect } from 'chai';
 import { Player } from '../../../domain/models/Player';
 import { InMemoryPlayerRepository } from '../../../infrastructure/database/repositories/player/InMemoryPlayerRepository';
 import { StubSessionStore } from '../../../infrastructure/stubs/StubSessionStore';
-import { instanciateHandler } from '../../../utils/injector';
+import { instanciateHandler } from '../../../utils/dependencyInjection';
 import { instanciateStubDependencies } from '../../../utils/stubDependencies';
 
 import { LoginHandler } from './LoginCommand';

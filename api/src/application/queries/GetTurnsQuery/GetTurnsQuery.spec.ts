@@ -3,8 +3,8 @@ import { expect } from 'chai';
 import { PlayState } from '../../../../../shared/enums';
 import { InMemoryGameRepository } from '../../../infrastructure/database/repositories/game/InMemoryGameRepository';
 import { StubSessionStore } from '../../../infrastructure/stubs/StubSessionStore';
+import { instanciateHandler } from '../../../utils/dependencyInjection';
 import { GameBuilder } from '../../../utils/GameBuilder';
-import { instanciateHandler } from '../../../utils/injector';
 import { instanciateStubDependencies } from '../../../utils/stubDependencies';
 
 import { GetTurnsHandler } from './GetTurnsQuery';

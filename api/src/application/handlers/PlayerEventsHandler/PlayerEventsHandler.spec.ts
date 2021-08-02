@@ -5,7 +5,7 @@ import { Choice } from '../../../domain/models/Choice';
 import { Player } from '../../../domain/models/Player';
 import { StubLogger } from '../../../infrastructure/stubs/StubLogger';
 import { StubNotifier } from '../../../infrastructure/stubs/StubNotifier';
-import { instanciateHandler } from '../../../utils/injector';
+import { instanciateHandler } from '../../../utils/dependencyInjection';
 import { instanciateStubDependencies } from '../../../utils/stubDependencies';
 
 import { PlayerEventsHandler } from './PlayerEventsHandler';

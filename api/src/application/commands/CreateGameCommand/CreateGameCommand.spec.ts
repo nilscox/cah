@@ -9,7 +9,7 @@ import { StubConfigService } from '../../../infrastructure/stubs/StubConfigServi
 import { StubEventPublisher } from '../../../infrastructure/stubs/StubEventPublisher';
 import { StubRTCManager } from '../../../infrastructure/stubs/StubRTCManager';
 import { StubSessionStore } from '../../../infrastructure/stubs/StubSessionStore';
-import { instanciateHandler } from '../../../utils/injector';
+import { instanciateHandler } from '../../../utils/dependencyInjection';
 import { instanciateStubDependencies } from '../../../utils/stubDependencies';
 
 import { CreateGameHandler } from './CreateGameCommand';

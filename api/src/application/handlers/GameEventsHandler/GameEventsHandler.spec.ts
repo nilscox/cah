@@ -18,7 +18,7 @@ import { createQuestion } from '../../../domain/models/Question';
 import { StubLogger } from '../../../infrastructure/stubs/StubLogger';
 import { StubNotifier } from '../../../infrastructure/stubs/StubNotifier';
 import { StubRTCManager } from '../../../infrastructure/stubs/StubRTCManager';
-import { instanciateHandler } from '../../../utils/injector';
+import { instanciateHandler } from '../../../utils/dependencyInjection';
 import { instanciateStubDependencies } from '../../../utils/stubDependencies';
 
 import { GameEventsHandler } from './GameEventsHandler';

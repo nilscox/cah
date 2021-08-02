@@ -8,7 +8,7 @@ import { InMemoryPlayerRepository } from '../../../infrastructure/database/repos
 import { StubEventPublisher } from '../../../infrastructure/stubs/StubEventPublisher';
 import { StubRTCManager } from '../../../infrastructure/stubs/StubRTCManager';
 import { StubSessionStore } from '../../../infrastructure/stubs/StubSessionStore';
-import { instanciateHandler } from '../../../utils/injector';
+import { instanciateHandler } from '../../../utils/dependencyInjection';
 import { instanciateStubDependencies } from '../../../utils/stubDependencies';
 
 import { JoinGameHandler } from './JoinGameCommand';
