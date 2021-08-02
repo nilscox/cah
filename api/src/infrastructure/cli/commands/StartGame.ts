@@ -1,4 +1,4 @@
-import { StartGameHandler } from '../../../application/commands/StartGameCommand';
+import { StartGameHandler } from '../../../application/commands/StartGameCommand/StartGameCommand';
 import { PlayerNotFoundError } from '../../../domain/errors/PlayerNotFoundError';
 import { Command } from '../Command';
 

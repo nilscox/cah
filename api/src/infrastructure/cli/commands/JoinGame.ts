@@ -1,4 +1,4 @@
-import { JoinGameHandler } from '../../../application/commands/JoinGameCommand';
+import { JoinGameHandler } from '../../../application/commands/JoinGameCommand/JoinGameCommand';
 import { Command } from '../Command';
 
 export class JoinGame extends Command {

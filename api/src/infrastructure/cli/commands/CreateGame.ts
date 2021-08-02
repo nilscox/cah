@@ -1,4 +1,4 @@
-import { CreateGameHandler } from '../../../application/commands/CreateGameCommand';
+import { CreateGameHandler } from '../../../application/commands/CreateGameCommand/CreateGameCommand';
 import { Command } from '../Command';
 
 export class CreateGame extends Command {

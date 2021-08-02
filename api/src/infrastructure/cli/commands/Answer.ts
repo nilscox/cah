@@ -1,4 +1,4 @@
-import { CreateAnswerHandler } from '../../../application/commands/CreateAnswerCommand';
+import { CreateAnswerHandler } from '../../../application/commands/CreateAnswerCommand/CreateAnswerCommand';
 import { Command } from '../Command';
 
 export class Answer extends Command {

@@ -1,4 +1,4 @@
-import { NextTurnHandler } from '../../../application/commands/NextTurnCommand';
+import { NextTurnHandler } from '../../../application/commands/NextTurnCommand/NextTurnCommand';
 import { Command } from '../Command';
 
 export class NextTurn extends Command {

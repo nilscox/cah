@@ -1,20 +1,26 @@
 import { ErrorRequestHandler, Request } from 'express';
 import { Store as SessionStoreBackend } from 'express-session';
 
-import { CreateAnswerCommand, CreateAnswerHandler } from '../../application/commands/CreateAnswerCommand';
-import { CreateGameCommand, CreateGameHandler } from '../../application/commands/CreateGameCommand';
-import { FlushCardsHandler } from '../../application/commands/FlushCardsCommand';
-import { JoinGameCommand, JoinGameHandler } from '../../application/commands/JoinGameCommand';
-import { LoginCommand, LoginHandler } from '../../application/commands/LoginCommand';
-import { NextTurnHandler } from '../../application/commands/NextTurnCommand';
-import { SelectWinnerCommand, SelectWinnerHandler } from '../../application/commands/SelectWinnerCommand';
-import { StartGameCommand, StartGameHandler } from '../../application/commands/StartGameCommand';
+import {
+  CreateAnswerCommand,
+  CreateAnswerHandler,
+} from '../../application/commands/CreateAnswerCommand/CreateAnswerCommand';
+import { CreateGameCommand, CreateGameHandler } from '../../application/commands/CreateGameCommand/CreateGameCommand';
+import { FlushCardsHandler } from '../../application/commands/FlushCardsCommand/FlushCardsCommand';
+import { JoinGameCommand, JoinGameHandler } from '../../application/commands/JoinGameCommand/JoinGameCommand';
+import { LoginCommand, LoginHandler } from '../../application/commands/LoginCommand/LoginCommand';
+import { NextTurnHandler } from '../../application/commands/NextTurnCommand/NextTurnCommand';
+import {
+  SelectWinnerCommand,
+  SelectWinnerHandler,
+} from '../../application/commands/SelectWinnerCommand/SelectWinnerCommand';
+import { StartGameCommand, StartGameHandler } from '../../application/commands/StartGameCommand/StartGameCommand';
 import { Logger } from '../../application/interfaces/Logger';
 import { PlayerRepository } from '../../application/interfaces/PlayerRepository';
 import { SessionStore } from '../../application/interfaces/SessionStore';
-import { GetGameHandler, GetGameQuery } from '../../application/queries/GetGameQuery';
-import { GetPlayerHandler } from '../../application/queries/GetPlayerQuery';
-import { GetTurnsHandler, GetTurnsQuery } from '../../application/queries/GetTurnsQuery';
+import { GetGameHandler, GetGameQuery } from '../../application/queries/GetGameQuery/GetGameQuery';
+import { GetPlayerHandler } from '../../application/queries/GetPlayerQuery/GetPlayerQuery';
+import { GetTurnsHandler, GetTurnsQuery } from '../../application/queries/GetTurnsQuery/GetTurnsQuery';
 import { DomainError } from '../../domain/errors/DomainError';
 import { Player } from '../../domain/models/Player';
 import { instanciateHandlers } from '../../utils/injector';

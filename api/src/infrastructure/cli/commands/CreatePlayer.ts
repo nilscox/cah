@@ -1,4 +1,4 @@
-import { LoginHandler } from '../../../application/commands/LoginCommand';
+import { LoginHandler } from '../../../application/commands/LoginCommand/LoginCommand';
 import { Command } from '../Command';
 
 export class CreatePlayer extends Command {

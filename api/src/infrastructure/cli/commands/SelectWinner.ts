@@ -1,4 +1,4 @@
-import { SelectWinnerHandler } from '../../../application/commands/SelectWinnerCommand';
+import { SelectWinnerHandler } from '../../../application/commands/SelectWinnerCommand/SelectWinnerCommand';
 import { Command } from '../Command';
 
 export class SelectWinner extends Command {

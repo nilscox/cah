@@ -4,8 +4,8 @@ import knexFactory, { Knex } from 'knex';
 import { Connection, createConnection } from 'typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
-import { GameEventsHandler } from '../application/handlers/GameEventsHandler';
-import { PlayerEventsHandler } from '../application/handlers/PlayerEventsHandler';
+import { GameEventsHandler } from '../application/handlers/GameEventsHandler/GameEventsHandler';
+import { PlayerEventsHandler } from '../application/handlers/PlayerEventsHandler/PlayerEventsHandler';
 import { ConfigService } from '../application/interfaces/ConfigService';
 import { DtoMapperService } from '../application/services/DtoMapperService';
 import { GameService } from '../application/services/GameService';
