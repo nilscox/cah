@@ -4,10 +4,16 @@ import { action } from '@storybook/addon-actions';
 import { Meta, Story } from '@storybook/react';
 
 import { Choice } from '../../../domain/entities/Choice';
-import { createQuestion } from '../../../tests/factories';
+import { createPlayer, createQuestion } from '../../../tests/factories';
 import { ChoiceCard, ChoiceCardProps } from '../components/domain/ChoiceCard';
 import { ChoiceCardsListProps, ChoicesList } from '../components/domain/ChoicesList';
+import Header, { HeaderProps } from '../components/domain/Header';
+import { Notification } from '../components/domain/Notification';
 import { QuestionCard, QuestionCardProps } from '../components/domain/QuestionCard';
+import { Fireworks } from '../components/elements/Fireworks';
+import { Icon } from '../components/elements/Icon';
+import { IconButton } from '../components/elements/IconButton';
+import Menu from '../icons/menu.svg';
 
 import { choices } from './fixtures';
 
@@ -96,3 +102,28 @@ export const choicesList = ChoicesListTemplate.bind({});
 choicesList.args = {
   choices,
 };
+
+// const notificationText = 'Regardez !';
+const notificationText = 'Regardez, je suis une magnifique notification !';
+
+export const notification = () => <Notification text={notificationText} />;
+
+export const header: Story<HeaderProps & { showNotification: boolean }> = ({ showNotification, ...props }) => (
+  <Header
+    notification={showNotification ? notificationText : undefined}
+    {...props}
+    icon={
+      <IconButton>
+        <Icon as={Menu} />
+      </IconButton>
+    }
+  />
+);
+
+header.args = {
+  showNotification: false,
+  player: createPlayer({ nick: 'good guy' }),
+  title: 'The Title',
+};
+
+export const fireworks = () => <Fireworks />;

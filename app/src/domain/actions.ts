@@ -21,6 +21,8 @@ export const setAppReady = createAction('app/ready');
 export const serverStatusChanged = createAction<ServerStatus, 'server/status'>('server/status');
 export const openMenu = createAction('app/open-menu');
 export const closeMenu = createAction('app/close-menu');
+export const setNotification = createAction<string, 'app/set-notification'>('app/set-notification');
+export const clearNotification = createAction('app/clear-notification');
 
 export const rtcMessage = createAction<RTCMessage, 'rtc/message'>('rtc/message');
 
@@ -40,6 +42,8 @@ export type Actions = ReturnType<
   | typeof serverStatusChanged
   | typeof openMenu
   | typeof closeMenu
+  | typeof setNotification
+  | typeof clearNotification
   | typeof rtcMessage
   | typeof choiceSelected
   | typeof choiceUnselected

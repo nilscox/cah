@@ -9,6 +9,7 @@ export type AppState = {
   server: ServerStatus;
   ready: boolean;
   menuOpen: boolean;
+  notification?: string;
 };
 
 const defaultAppState: AppState = {
@@ -32,6 +33,14 @@ export const appStateReducer = (state = defaultAppState, action: AppAction): App
 
   if (action.type === 'app/close-menu') {
     return { ...state, menuOpen: false };
+  }
+
+  if (action.type === 'app/set-notification') {
+    return { ...state, notification: action.payload };
+  }
+
+  if (action.type === 'app/clear-notification') {
+    return { ...state, notification: undefined };
   }
 
   return state;

@@ -2,75 +2,21 @@ import React, { useState } from 'react';
 
 import styled from '@emotion/styled';
 import { useDispatch } from 'react-redux';
+import { Box } from 'reflexbox';
 
 import { createGame } from '../../../../domain/usecases/game/createGame/createGame';
 import { joinGame } from '../../../../domain/usecases/game/joinGame/joinGame';
-import { View } from '../../components/domain/View';
 import Button from '../../components/elements/Button';
 import { Icon } from '../../components/elements/Icon';
 import SubmittableInput from '../../components/elements/SubmittableInput';
 import { Center } from '../../components/layout/Center';
 import { Fade } from '../../components/layout/Fade';
-import { Flex } from '../../components/layout/Flex';
-import { usePlayer } from '../../hooks/usePlayer';
 import ChevronRight from '../../icons/chevron-right.svg';
 import { color, spacing, transition } from '../../styles/theme';
+import { View } from '../View';
 
-import { BackButton } from './BackButton';
-
-const duration = 400;
-
-const ifOpen = <T extends unknown>(yes: T, no: T) => {
-  return ({ open }: { open: boolean | null }): T => {
-    return open ? yes : no;
-  };
-};
-
-const height = (open: boolean | null) => {
-  if (open) {
-    return '100%';
-  }
-
-  if (open === false) {
-    return '0%';
-  }
-
-  return '50%';
-};
-
-const PartContainer = styled.div<{ open: boolean | null }>`
-  flex-grow: ${ifOpen(0, 1)};
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-  height: ${({ open }) => height(open)};
-  transition: ${transition('all')};
-`;
-
-const PartContent = styled(Flex)<{ open: boolean | null }>`
-  height: ${ifOpen('100%', '0%')};
-  opacity: ${ifOpen(1, 0)};
-  transition: ${transition('all')};
-  /* transition-delay: ${ifOpen(1.5 * duration, 0)}ms; */
-  overflow: hidden;
-`;
-
-type PartProps = {
-  open: boolean | null;
-  onOpen: () => void;
-  label: string;
-};
-
-const Part: React.FC<PartProps> = ({ open, onOpen, label, children }) => (
-  <PartContainer open={open}>
-    <Button size="big" onClick={onOpen}>
-      {label}
-    </Button>
-    <PartContent open={open}>{children}</PartContent>
-  </PartContainer>
-);
+import { Part } from './Part';
+import { ViewHeader } from './ViewHeader';
 
 const JoinGame: React.FC = () => {
   const dispatch = useDispatch();
@@ -116,25 +62,26 @@ const Separator = styled.hr<{ show: boolean }>`
 `;
 
 const LobbyView: React.FC = () => {
-  const player = usePlayer();
   const [open, setOpen] = useState<'join' | 'create' | null>(null);
 
   const joinOpen = open === null ? null : open === 'join';
   const createOpen = open === null ? null : open === 'create';
 
   return (
-    <View player={player} icon={<BackButton show={open !== null} onBack={() => setOpen(null)} />}>
-      <Part open={joinOpen} onOpen={() => setOpen('join')} label="Rejoindre une partie">
-        <JoinGame />
-      </Part>
+    <View header={<ViewHeader open={open} unsetOpen={() => setOpen(null)} />}>
+      <Box flex={1} padding={2}>
+        <Part open={joinOpen} onOpen={() => setOpen('join')} label="Rejoindre une partie">
+          <JoinGame />
+        </Part>
 
-      <Fade show={open === null}>
-        <Separator show={open === null} />
-      </Fade>
+        <Fade show={open === null}>
+          <Separator show={open === null} />
+        </Fade>
 
-      <Part open={createOpen} onOpen={() => setOpen('create')} label="Créer une partie">
-        <CreateGame />
-      </Part>
+        <Part open={createOpen} onOpen={() => setOpen('create')} label="Créer une partie">
+          <CreateGame />
+        </Part>
+      </Box>
     </View>
   );
 };

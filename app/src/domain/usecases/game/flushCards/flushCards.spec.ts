@@ -35,4 +35,19 @@ describe('flushCards', () => {
       cards: newCards,
     });
   });
+
+  it('displays a notification', async () => {
+    store.setup(({ dispatch, listenRTCMessages }) => {
+      dispatch(setPlayer(createFullPlayer()));
+      dispatch(setGame(createStartedGame()));
+
+      listenRTCMessages();
+    });
+
+    await store.dispatch(flushCards());
+
+    store.expectPartialState('app', {
+      notification: 'Nouvelles cartes reçues !',
+    });
+  });
 });

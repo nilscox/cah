@@ -3,18 +3,12 @@ import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import { Meta } from '@storybook/react';
 
-import { createPlayer } from '../../../tests/factories';
-import Header from '../components/domain/Header';
 import { DragHandle, RenderItemFunction, SortableList } from '../components/elements/SortableList';
 import { FadeIn } from '../components/layout/FadeIn';
 
 export default {
   title: 'Layout',
 } as Meta;
-
-export const HeaderStory = () => <Header player={createPlayer()} />;
-
-HeaderStory.storyName = 'Header';
 
 const ItemContainer = styled.div<{ tall: boolean; isSelected: boolean }>`
   display: flex;

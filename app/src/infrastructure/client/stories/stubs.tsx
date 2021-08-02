@@ -11,10 +11,10 @@ import { PlayerGateway } from '../../../domain/gateways/PlayerGateway';
 import { RouterGateway } from '../../../domain/gateways/RouterGateway';
 import { RTCGateway, RTCListener } from '../../../domain/gateways/RTCGateway';
 import { ServerGateway } from '../../../domain/gateways/ServerGateway';
-import { TimerGateway } from '../../../domain/gateways/TimerGateway';
 import { ServerStatus } from '../../../store/reducers/appStateReducer';
 import { createFullPlayer, createGame } from '../../../tests/factories';
 import { ReactRouterGateway } from '../../gateways/ReactRouterGateway';
+import { RealTimerGateway } from '../../gateways/RealTimerGateway';
 import { gameRouterHistory } from '../views/GameView/GameView';
 
 const log = true;
@@ -133,16 +133,6 @@ export class StubRouterGateway extends ActionLogger implements RouterGateway {
   }
 }
 
-export class StubTimerGateway implements TimerGateway {
-  setInterval(_callback: () => void, _ms: number): NodeJS.Timer {
-    throw new Error('Method not implemented.');
-  }
-
-  clearInterval(_interval: NodeJS.Timer): void {
-    throw new Error('Method not implemented.');
-  }
-}
-
 export class StubServerGateway implements ServerGateway {
   healthcheck(): Promise<ServerStatus> {
     throw new Error('Method not implemented.');
@@ -158,6 +148,6 @@ export const stubDependencies = () => ({
   rtcGateway: new StubRTCGateway(),
   routerGateway: new ReactRouterGateway(storiesRouterHistory),
   gameRouterGateway: new ReactRouterGateway(gameRouterHistory),
-  timerGateway: new StubTimerGateway(),
+  timerGateway: new RealTimerGateway(),
   serverGateway: new StubServerGateway(),
 });

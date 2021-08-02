@@ -6,7 +6,7 @@ import { createBrowserHistory } from 'history';
 import { Provider as ReduxProvider } from 'react-redux';
 import { Router } from 'react-router-dom';
 
-import { handleServerDown } from '../../domain/usecases/server/handleServerDown/handleServerDown';
+import { handleServerDown } from '../../domain/usecases/app/handleServerDown/handleServerDown';
 import { configureStore } from '../../store/configureStore';
 import { Dependencies } from '../../store/types';
 import { HTTPAdapter } from '../gateways/HTTPAdapter';
