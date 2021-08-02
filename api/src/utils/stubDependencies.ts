@@ -1,5 +1,6 @@
 import { DtoMapperService } from '../application/services/DtoMapperService';
 import { GameService } from '../application/services/GameService';
+import { InMemoryCache } from '../infrastructure/database/InMemoryCache';
 import { InMemoryGameRepository } from '../infrastructure/database/repositories/game/InMemoryGameRepository';
 import { InMemoryPlayerRepository } from '../infrastructure/database/repositories/player/InMemoryPlayerRepository';
 import { Dependencies } from '../infrastructure/Dependencies';
@@ -43,8 +44,9 @@ export const instanciateStubDependencies = (): StubDependencies => {
   const publisher = new StubEventPublisher();
   const notifier = new StubNotifier();
 
-  const playerRepository = new InMemoryPlayerRepository();
-  const gameRepository = new InMemoryGameRepository();
+  const cache = new InMemoryCache();
+  const playerRepository = new InMemoryPlayerRepository(cache);
+  const gameRepository = new InMemoryGameRepository(cache);
 
   const gameService = new GameService(playerRepository, gameRepository, publisher);
 

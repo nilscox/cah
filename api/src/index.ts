@@ -2,7 +2,12 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-import { createKnexConnection, createKnexSessionStore, instanciateDependencies } from './infrastructure';
+import {
+  createKnexConnection,
+  createKnexSessionStore,
+  createTypeormConnection,
+  instanciateDependencies,
+} from './infrastructure';
 import { bootstrapServer } from './infrastructure/web';
 import { WebsocketServer } from './infrastructure/web/websocket';
 
@@ -10,7 +15,7 @@ const main = async () => {
   const wss = new WebsocketServer();
   const sessionStore = await createKnexSessionStore(createKnexConnection());
 
-  const deps = await instanciateDependencies({ wss });
+  const deps = await instanciateDependencies({ connection: await createTypeormConnection(), wss });
 
   const server = await bootstrapServer(deps, wss, sessionStore);
   const logger = deps.logger();

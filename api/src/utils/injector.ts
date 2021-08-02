@@ -17,10 +17,7 @@ import { EventHandler } from '../ddd/EventHandler';
 import { QueryHandler } from '../ddd/QueryHandler';
 import { Dependencies } from '../infrastructure/Dependencies';
 
-type ClassType<T> = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  new (...args: any[]): T;
-};
+import { ClassType } from './types';
 
 type Handler = CommandHandler<unknown, unknown> | QueryHandler<unknown, unknown> | EventHandler<unknown>;
 

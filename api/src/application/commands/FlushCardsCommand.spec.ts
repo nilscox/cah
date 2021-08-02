@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 
-import { InMemoryGameRepository } from '../../infrastructure/database/repositories/game/InMemoryGameRepository';
+import { Player } from '../../domain/models/Player';
 import { InMemoryPlayerRepository } from '../../infrastructure/database/repositories/player/InMemoryPlayerRepository';
 import { StubEventPublisher } from '../../infrastructure/stubs/StubEventPublisher';
 import { GameBuilder } from '../../utils/GameBuilder';
@@ -9,8 +9,7 @@ import { instanciateStubDependencies } from '../../utils/stubDependencies';
 
 import { FlushCardsHandler } from './FlushCardsCommand';
 
-describe.skip('FlushCards', () => {
-  let gameRepository: InMemoryGameRepository;
+describe('FlushCards', () => {
   let playerRepository: InMemoryPlayerRepository;
   let publisher: StubEventPublisher;
   let builder: GameBuilder;
@@ -19,38 +18,35 @@ describe.skip('FlushCards', () => {
 
   beforeEach(() => {
     const deps = instanciateStubDependencies();
-    ({ gameRepository, publisher, builder } = deps);
+    ({ playerRepository, publisher, builder } = deps);
 
     flushCards = instanciateHandler(FlushCardsHandler, deps);
   });
+
+  const execute = async (player: Player) => {
+    await flushCards.execute({}, { player });
+
+    playerRepository.reload(player);
+  };
 
   it("flushes the player's cards", async () => {
     const game = await builder.addPlayers().start().get();
 
     const player = game.players[0];
     const oldCards = player.cards.slice();
-    const session = { player };
 
-    await flushCards.execute({}, session);
-
-    gameRepository.reload(game);
-    playerRepository.reload(player);
+    await execute(player);
 
     expect(player.cards).to.have.length(11);
-
-    for (const card of player.cards) {
-      expect(oldCards.map(({ id }) => id)).not.to.include(card.id);
-    }
+    expect(player.cards).not.to.contain.oneOf(oldCards);
   });
 
   it('notifies the player that he received the new cards', async () => {
     const game = await builder.addPlayers().start().get();
-
     const player = game.players[0];
-    const session = { player };
 
-    await flushCards.execute({}, session);
+    await execute(player);
 
-    expect(publisher.lastEvent).to.shallowDeepEqual({ type: 'CardsDealt', player, cards: player.cards });
+    expect(publisher.lastEvent).to.eql({ type: 'CardsDealt', player, cards: player.cards });
   });
 });

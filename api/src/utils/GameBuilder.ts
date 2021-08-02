@@ -103,6 +103,7 @@ export class GameBuilder<G extends Game = Game> {
     }
 
     await this.gameRepository.save(this.game);
+    await this.playerRepository.save(this.game.players);
 
     this.game.dropEvents();
     this.game.players.forEach((player) => player.dropEvents());

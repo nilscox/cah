@@ -13,6 +13,7 @@ import { RandomService } from '../application/services/RandomService';
 
 import { ConsoleLoggerService } from './ConsoleLoggerService';
 import { entities } from './database/entities';
+import { InMemoryCache } from './database/InMemoryCache';
 import { InMemoryGameRepository } from './database/repositories/game/InMemoryGameRepository';
 import { SQLGameRepository } from './database/repositories/game/SQLGameRepository';
 import { InMemoryPlayerRepository } from './database/repositories/player/InMemoryPlayerRepository';
@@ -62,18 +63,15 @@ type Config = Partial<{
 }>;
 
 export const instanciateDependencies = async (config: Config = {}): Promise<Dependencies> => {
-  const {
-    connection = await createTypeormConnection(),
-    wss = new WebsocketServer(),
-    configService = new EnvConfigService(),
-  } = config;
+  const { connection, wss = new WebsocketServer(), configService = new EnvConfigService() } = config;
 
   const dataDir = configService.get('DATA_DIR');
 
   const logger = () => new ConsoleLoggerService(configService);
 
-  const playerRepository = connection ? new SQLPlayerRepository(connection) : new InMemoryPlayerRepository();
-  const gameRepository = connection ? new SQLGameRepository(connection) : new InMemoryGameRepository();
+  const cache = new InMemoryCache();
+  const playerRepository = connection ? new SQLPlayerRepository(connection) : new InMemoryPlayerRepository(cache);
+  const gameRepository = connection ? new SQLGameRepository(connection) : new InMemoryGameRepository(cache);
 
   const publisher = new PubSub(logger());
   const gameService = new GameService(playerRepository, gameRepository, publisher);

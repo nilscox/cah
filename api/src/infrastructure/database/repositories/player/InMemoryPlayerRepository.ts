@@ -2,13 +2,29 @@ import _ from 'lodash';
 
 import { PlayerRepository } from '../../../../application/interfaces/PlayerRepository';
 import { Player } from '../../../../domain/models/Player';
+import { InMemoryCache } from '../../InMemoryCache';
 
 export class InMemoryPlayerRepository implements PlayerRepository {
-  private players: Player[] = [];
+  get players() {
+    return this.cache.all(Player);
+  }
 
-  reload(player?: Player) {
-    if (player) {
-      Object.assign(player, this.findPlayerById(player.id));
+  private find<Key extends keyof Player>(key: Key, value: Player[Key]) {
+    return this.players.find((player) => player[key] === value);
+  }
+
+  constructor(private readonly cache: InMemoryCache) {}
+
+  async save(players: Player | Player[]): Promise<void> {
+    if (!Array.isArray(players)) {
+      players = [players];
+    }
+
+    for (const player of players) {
+      const clone = _.cloneDeep(player);
+
+      clone.dropEvents();
+      this.cache.save(Player, clone);
     }
   }
 
@@ -17,29 +33,16 @@ export class InMemoryPlayerRepository implements PlayerRepository {
   }
 
   async findPlayerById(id: string): Promise<Player | undefined> {
-    return this.players.find((player) => player.id === id);
+    return this.find('id', id);
   }
 
   async findPlayerByNick(nick: string): Promise<Player | undefined> {
-    return this.players.find((player) => player.nick === nick);
+    return this.find('nick', nick);
   }
 
-  async save(players: Player | Player[]): Promise<void> {
-    if (!Array.isArray(players)) {
-      players = [players];
-    }
-
-    for (const player of players) {
-      const idx = this.players.findIndex(({ id }) => id === player.id);
-      const clone = _.cloneDeep(player);
-
-      clone.dropEvents();
-
-      if (idx < 0) {
-        this.players.push(clone);
-      } else {
-        this.players[idx] = clone;
-      }
+  reload(player?: Player) {
+    if (player) {
+      Object.assign(player, this.find('id', player.id));
     }
   }
 }

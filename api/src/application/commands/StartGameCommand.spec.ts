@@ -94,8 +94,8 @@ describe('StartGameCommand', () => {
     });
 
     it('notifies that the game has started', () => {
-      expect(publisher.events).to.deep.include({ type: 'GameStarted', game });
-      expect(publisher.events).to.deep.include({ type: 'TurnStarted', game });
+      expect(publisher.findEvent('GameStarted')).to.shallowDeepEqual({ game: { id: game.id } });
+      expect(publisher.findEvent('TurnStarted')).to.shallowDeepEqual({ game: { id: game.id } });
     });
   });
 

@@ -4,6 +4,7 @@ import { Question } from '../../domain/models/Question';
 import { Turn } from '../../domain/models/Turn';
 
 export interface GameRepository {
+  save(game: Game): Promise<void>;
   findAll(): Promise<Game[]>;
   findGameById(id: string): Promise<Game | undefined>;
   findGameByCode(code: string): Promise<Game | undefined>;
@@ -15,5 +16,4 @@ export interface GameRepository {
   markChoicesUnavailable(choiceIds: string[]): Promise<void>;
   addTurn(gameId: string, turn: Turn): Promise<void>;
   findTurns(gameId: string): Promise<Turn[]>;
-  save(game: Game): Promise<void>;
 }

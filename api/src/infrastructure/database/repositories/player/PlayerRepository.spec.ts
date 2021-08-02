@@ -8,6 +8,7 @@ import { Player } from '../../../../domain/models/Player';
 import { entities } from '../../entities';
 import { ChoiceEntity } from '../../entities/ChoiceEntity';
 import { GameEntity } from '../../entities/GameEntity';
+import { InMemoryCache } from '../../InMemoryCache';
 
 import { InMemoryPlayerRepository } from './InMemoryPlayerRepository';
 import { SQLPlayerRepository } from './SQLPlayerRepository';
@@ -87,7 +88,7 @@ const specs = (
 };
 
 describe('InMemoryPlayerRepository', () => {
-  specs(() => new InMemoryPlayerRepository());
+  specs(() => new InMemoryPlayerRepository(new InMemoryCache()));
 });
 
 describe('SQLPlayerRepository', () => {

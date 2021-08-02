@@ -29,9 +29,7 @@ describe('SelectWinnerCommand', () => {
   });
 
   const execute = (player: Player, answer: Answer) => {
-    const command = new SelectWinnerCommand(answer.id);
-
-    return handler.execute(command, { player });
+    return handler.execute(new SelectWinnerCommand(answer.id), { player });
   };
 
   it('selects the winning answer', async () => {
@@ -44,9 +42,9 @@ describe('SelectWinnerCommand', () => {
     gameRepository.reload(game);
 
     expect(game.playState).to.eql(PlayState.endOfTurn);
-    expect(game.winner).to.eql(winner);
+    expect(game.winner).to.have.property('id', winner.id);
 
-    expect(publisher.events).to.deep.include({ type: 'WinnerSelected', game });
+    expect(publisher.lastEvent).to.eql({ type: 'WinnerSelected', game });
   });
 
   it('does not select a winner when the answerId is not valid', async () => {

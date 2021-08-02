@@ -47,6 +47,7 @@ describe('CreateAnswerCommand', () => {
     await handler.execute(command, { player });
 
     gameRepository.reload(game);
+    playerRepository.reload(player);
   };
 
   it('creates an answer for the current turn', async () => {
@@ -61,9 +62,13 @@ describe('CreateAnswerCommand', () => {
     expect(game.answers[0]).to.have.property('choices').that.have.length(1);
     expect(game.answers[0]).to.have.nested.property('question.id', game.question.id);
 
-    expect(player.getCards()).to.have.length(10);
+    expect(player.cards).to.have.length(10);
 
-    expect(publisher.lastEvent).to.shallowDeepEqual({ type: 'PlayerAnswered', game, player });
+    expect(publisher.lastEvent).to.shallowDeepEqual({
+      type: 'PlayerAnswered',
+      game: { id: game.id },
+      player,
+    });
   });
 
   it('creates an answer with multiple choices', async () => {
@@ -79,7 +84,7 @@ describe('CreateAnswerCommand', () => {
     expect(game.answers).to.have.length(1);
     expect(game.answers[0]).to.have.property('choices').that.have.length(2);
 
-    expect(player.getCards()).to.have.length(9);
+    expect(player.cards).to.have.length(9);
   });
 
   it('enters in question master selection play state when the last player answers', async () => {
@@ -91,7 +96,10 @@ describe('CreateAnswerCommand', () => {
 
     expect(game.playState).to.eql(PlayState.questionMasterSelection);
 
-    expect(publisher.events).to.deep.include({ type: 'AllPlayersAnswered', game });
+    expect(publisher.lastEvent).to.shallowDeepEqual({
+      type: 'AllPlayersAnswered',
+      game: { id: game.id },
+    });
   });
 
   it('randomizes the answers when the last player answers', async () => {

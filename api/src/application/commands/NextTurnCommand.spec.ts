@@ -5,6 +5,7 @@ import { InvalidPlayStateError } from '../../domain/errors/InvalidPlayStateError
 import { Game } from '../../domain/models/Game';
 import { Player } from '../../domain/models/Player';
 import { InMemoryGameRepository } from '../../infrastructure/database/repositories/game/InMemoryGameRepository';
+import { InMemoryPlayerRepository } from '../../infrastructure/database/repositories/player/InMemoryPlayerRepository';
 import { StubEventPublisher } from '../../infrastructure/stubs/StubEventPublisher';
 import { GameBuilder } from '../../utils/GameBuilder';
 import { instanciateHandler } from '../../utils/injector';
@@ -14,6 +15,7 @@ import { NextTurnHandler } from './NextTurnCommand';
 
 describe('NextTurnCommand', () => {
   let gameRepository: InMemoryGameRepository;
+  let playerRepository: InMemoryPlayerRepository;
   let publisher: StubEventPublisher;
   let builder: GameBuilder;
 
@@ -21,7 +23,7 @@ describe('NextTurnCommand', () => {
 
   beforeEach(() => {
     const deps = instanciateStubDependencies();
-    ({ gameRepository, publisher, builder } = deps);
+    ({ gameRepository, playerRepository, publisher, builder } = deps);
 
     handler = instanciateHandler(NextTurnHandler, deps);
   });
@@ -55,23 +57,24 @@ describe('NextTurnCommand', () => {
     expect(turns[0]).to.have.property('answers').that.have.length(game.playersExcludingQM.length);
     expect(turns[0]).to.have.nested.property('winner.id', lastWinner.id);
 
-    expect(publisher.events).to.deep.include({ type: 'TurnFinished', game });
-    expect(publisher.events).to.deep.include({ type: 'TurnStarted', game });
+    expect(publisher.findEvent('TurnFinished')).to.eql({ type: 'TurnFinished', game });
+    expect(publisher.findEvent('TurnStarted')).to.eql({ type: 'TurnStarted', game });
   });
 
-  it.skip('deals new cards to the players', async () => {
+  it('deals new cards to the players', async () => {
     const game = await builder.addPlayers().start(2).play(PlayState.endOfTurn).get();
+    const questionMaster = game.questionMaster;
     const players = game.playersExcludingQM;
 
-    await execute(game, game.questionMaster);
+    await execute(game, questionMaster);
 
-    expect(game.questionMaster.getCards()).to.have.length(11);
+    expect(questionMaster.cards).to.have.length(11);
 
     for (const player of players) {
-      const cards = player.getCards();
+      playerRepository.reload(player);
 
-      expect(cards).to.have.length(11);
-      expect(publisher.events).to.deep.include({ type: 'CardsDealt', player, cards: cards.slice(-1) });
+      expect(player.cards).to.have.length(11);
+      expect(publisher.events).to.deep.include({ type: 'CardsDealt', player, cards: player.cards.slice(-1) });
     }
   });
 
@@ -89,11 +92,11 @@ describe('NextTurnCommand', () => {
 
     expect(gameRepository.getTurns(game.id)).to.have.length(1);
 
-    expect(publisher.events).to.deep.include({ type: 'TurnFinished', game });
-    expect(publisher.events).to.deep.include({ type: 'GameFinished', game });
+    expect(publisher.findEvent('TurnFinished')).to.eql({ type: 'TurnFinished', game });
+    expect(publisher.findEvent('GameFinished')).to.eql({ type: 'GameFinished', game });
 
     for (const player of game.players) {
-      expect(player.getCards()).to.have.length(0);
+      expect(player.cards).to.have.length(0);
     }
   });
 

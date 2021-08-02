@@ -4,6 +4,7 @@ import { PlayerIsAlreadyInGameError } from '../../domain/errors/PlayerIsAlreadyI
 import { Game } from '../../domain/models/Game';
 import { Player } from '../../domain/models/Player';
 import { InMemoryGameRepository } from '../../infrastructure/database/repositories/game/InMemoryGameRepository';
+import { InMemoryPlayerRepository } from '../../infrastructure/database/repositories/player/InMemoryPlayerRepository';
 import { StubEventPublisher } from '../../infrastructure/stubs/StubEventPublisher';
 import { StubRTCManager } from '../../infrastructure/stubs/StubRTCManager';
 import { StubSessionStore } from '../../infrastructure/stubs/StubSessionStore';
@@ -14,6 +15,7 @@ import { JoinGameHandler } from './JoinGameCommand';
 
 describe('JoinGameCommand', () => {
   let gameRepository: InMemoryGameRepository;
+  let playerRepository: InMemoryPlayerRepository;
   let publisher: StubEventPublisher;
   let rtcManager: StubRTCManager;
 
@@ -26,7 +28,7 @@ describe('JoinGameCommand', () => {
 
   beforeEach(async () => {
     const deps = instanciateStubDependencies();
-    ({ gameRepository, publisher, rtcManager } = deps);
+    ({ gameRepository, playerRepository, publisher, rtcManager } = deps);
 
     handler = instanciateHandler(JoinGameHandler, deps);
 
@@ -34,32 +36,30 @@ describe('JoinGameCommand', () => {
     await gameRepository.save(game);
 
     player = session.player = new Player('player');
+    await playerRepository.save(player);
   });
 
-  const execute = () => {
-    return handler.execute({ gameCode: game.code }, session);
+  const execute = async () => {
+    const result = await handler.execute({ gameCode: game.code }, session);
+
+    gameRepository.reload(game);
+
+    return result;
   };
 
   it('joins a game', async () => {
     const { id: gameId } = await execute();
 
-    expect(gameId).to.be.a('string');
-
-    gameRepository.reload(game);
+    expect(gameId).to.eql(game.id);
 
     expect(game.players).to.have.length(1);
-    expect(publisher.events).deep.include({ type: 'GameJoined', game, player });
-  });
-
-  it('adds the player to the joind game', async () => {
-    await execute();
-
-    const game = await gameRepository.findGameForPlayer(player.id);
+    expect(game.players[0]).to.eql(player);
 
     expect(rtcManager.has(game!, player)).to.be.true;
+    expect(publisher.lastEvent).to.eql({ type: 'GameJoined', game, player });
   });
 
-  it('disallow a player to join a game when he is already in a game', async () => {
+  it('prevents a player to join a game when he is already in a game', async () => {
     const otherGame = new Game();
 
     otherGame.addPlayer(player);

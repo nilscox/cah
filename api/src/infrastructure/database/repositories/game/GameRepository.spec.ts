@@ -1,5 +1,4 @@
 import { expect } from 'chai';
-import _ from 'lodash';
 import { Connection, createConnection } from 'typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
@@ -8,10 +7,12 @@ import { GameRepository } from '../../../../application/interfaces/GameRepositor
 import { PlayerRepository } from '../../../../application/interfaces/PlayerRepository';
 import { createChoice } from '../../../../domain/models/Choice';
 import { Game } from '../../../../domain/models/Game';
+import { Player } from '../../../../domain/models/Player';
 import { createQuestion, createQuestions } from '../../../../domain/models/Question';
 import { GameBuilder } from '../../../../utils/GameBuilder';
 import { StubExternalData } from '../../../stubs/StubExternalData';
 import { entities } from '../../entities';
+import { InMemoryCache } from '../../InMemoryCache';
 import { InMemoryPlayerRepository } from '../player/InMemoryPlayerRepository';
 import { SQLPlayerRepository } from '../player/SQLPlayerRepository';
 
@@ -22,18 +23,17 @@ const debug = false;
 const keepDatabase = debug;
 const logging = debug;
 
-const specs = (getRepository: () => GameRepository, getPlayerRepository: () => PlayerRepository) => {
+const specs = (getRepositories: () => { gameRepository: GameRepository; playerRepository: PlayerRepository }) => {
   let repository: GameRepository;
   let playerRepository: PlayerRepository;
-  let externalData: StubExternalData;
 
+  let externalData: StubExternalData;
   let builder: GameBuilder;
 
   beforeEach(() => {
-    repository = getRepository();
-    playerRepository = getPlayerRepository();
-    externalData = new StubExternalData();
+    ({ gameRepository: repository, playerRepository } = getRepositories());
 
+    externalData = new StubExternalData();
     builder = new GameBuilder(repository, playerRepository, externalData);
   });
 
@@ -57,6 +57,23 @@ const specs = (getRepository: () => GameRepository, getPlayerRepository: () => P
     expect(savedGame).to.have.property('id', game.id);
     expect(savedGame).to.have.property('code', game.code);
     expect(savedGame).to.have.property('state', GameState.idle);
+  });
+
+  it('finds a game containing a player which was updated', async () => {
+    const player = new Player('Enialoiv');
+    const game = new Game();
+
+    game.players = [player];
+
+    await playerRepository.save(player);
+    await repository.save(game);
+
+    player.nick = 'Slin';
+    await playerRepository.save(player);
+
+    const savedGame = await repository.findGameById(game.id);
+
+    expect(savedGame!.players[0]).to.have.property('nick', 'Slin');
   });
 
   it('finds a started game from its id', async () => {
@@ -202,14 +219,18 @@ const specs = (getRepository: () => GameRepository, getPlayerRepository: () => P
 };
 
 describe('InMemoryGameRepository', () => {
-  specs(
-    () => new InMemoryGameRepository(),
-    () => new InMemoryPlayerRepository(),
-  );
+  specs(() => {
+    const cache = new InMemoryCache();
+
+    return {
+      playerRepository: new InMemoryPlayerRepository(cache),
+      gameRepository: new InMemoryGameRepository(cache),
+    };
+  });
 
   it('reloads a game', async () => {
+    const repo = new InMemoryGameRepository(new InMemoryCache());
     const game = new Game();
-    const repo = new InMemoryGameRepository();
 
     await repo.save(game);
 
@@ -218,7 +239,7 @@ describe('InMemoryGameRepository', () => {
     game.state = GameState.finished;
     await repo.save(game);
 
-    repo.reload(other);
+    await repo.reload(other);
 
     expect(other!.state).to.eql(GameState.finished);
   });
@@ -248,8 +269,8 @@ describe('SQLGameRepository', () => {
     }
   });
 
-  specs(
-    () => new SQLGameRepository(connection),
-    () => new SQLPlayerRepository(connection),
-  );
+  specs(() => ({
+    gameRepository: new SQLGameRepository(connection),
+    playerRepository: new SQLPlayerRepository(connection),
+  }));
 });

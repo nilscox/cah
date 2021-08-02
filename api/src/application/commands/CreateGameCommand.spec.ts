@@ -4,6 +4,7 @@ import { PlayerIsAlreadyInGameError } from '../../domain/errors/PlayerIsAlreadyI
 import { Game } from '../../domain/models/Game';
 import { Player } from '../../domain/models/Player';
 import { InMemoryGameRepository } from '../../infrastructure/database/repositories/game/InMemoryGameRepository';
+import { InMemoryPlayerRepository } from '../../infrastructure/database/repositories/player/InMemoryPlayerRepository';
 import { StubConfigService } from '../../infrastructure/stubs/StubConfigService';
 import { StubEventPublisher } from '../../infrastructure/stubs/StubEventPublisher';
 import { StubRTCManager } from '../../infrastructure/stubs/StubRTCManager';
@@ -16,6 +17,7 @@ import { CreateGameHandler } from './CreateGameCommand';
 describe('CreateGameCommand', () => {
   let config: StubConfigService;
   let gameRepository: InMemoryGameRepository;
+  let playerRepository: InMemoryPlayerRepository;
   let publisher: StubEventPublisher;
   let rtcManager: StubRTCManager;
 
@@ -25,13 +27,14 @@ describe('CreateGameCommand', () => {
 
   const session = new StubSessionStore();
 
-  beforeEach(() => {
+  beforeEach(async () => {
     const deps = instanciateStubDependencies();
-    ({ configService: config, gameRepository, publisher, rtcManager } = deps);
+    ({ configService: config, gameRepository, playerRepository, publisher, rtcManager } = deps);
 
     handler = instanciateHandler(CreateGameHandler, deps);
 
     player = session.player = new Player('player');
+    await playerRepository.save(player);
   });
 
   const execute = () => {
@@ -59,11 +62,12 @@ describe('CreateGameCommand', () => {
 
     expect(game).not.to.be.undefined;
     expect(player.gameId).to.eql(game!.id);
-    expect(publisher.lastEvent).to.eql({ type: 'GameJoined', game, player });
+
     expect(rtcManager.has(game!, player)).to.be.true;
+    expect(publisher.lastEvent).to.eql({ type: 'GameJoined', game, player });
   });
 
-  it('disallow a player to create a game when he is already in a game', async () => {
+  it('disallows a player to create a game when he is already in a game', async () => {
     const otherGame = new Game();
 
     otherGame.addPlayer(player);

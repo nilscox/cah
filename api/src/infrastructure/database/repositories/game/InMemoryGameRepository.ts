@@ -3,23 +3,39 @@ import _ from 'lodash';
 import { GameRepository } from '../../../../application/interfaces/GameRepository';
 import { Choice } from '../../../../domain/models/Choice';
 import { Game } from '../../../../domain/models/Game';
+import { Player } from '../../../../domain/models/Player';
 import { Question } from '../../../../domain/models/Question';
 import { Turn } from '../../../../domain/models/Turn';
+import { InMemoryCache } from '../../InMemoryCache';
+
+const ids = (arr: { id: string }[]) => arr.map(({ id }) => id);
 
 export class InMemoryGameRepository implements GameRepository {
-  private games: Game[] = [];
   private questions = new Map<string, Question[]>();
   private choices = new Map<string, Choice[]>();
   private turns = new Map<string, Turn[]>();
+
+  private get games() {
+    const games = this.cache.all(Game);
+
+    for (const game of games) {
+      game.players = this.cache.allInIds(Player, ids(game.players));
+    }
+
+    return games;
+  }
 
   private find<Key extends keyof Game>(key: Key, value: Game[Key]) {
     return this.games.find((game) => game[key] === value);
   }
 
-  reload(game?: Game) {
-    if (game) {
-      Object.assign(game, this.find('id', game.id));
-    }
+  constructor(private readonly cache: InMemoryCache) {}
+
+  async save(game: Game): Promise<void> {
+    const clone = _.cloneDeep(game);
+
+    clone.dropEvents();
+    this.cache.save(Game, clone);
   }
 
   async findAll(): Promise<Game[]> {
@@ -35,7 +51,9 @@ export class InMemoryGameRepository implements GameRepository {
   }
 
   async findGameForPlayer(playerId: string): Promise<Game | undefined> {
-    return this.games.find((game) => game.players.some((player) => player.id === playerId));
+    const hasPlayer = (game: Game) => game.players.some((player) => player.id === playerId);
+
+    return this.games.find(hasPlayer);
   }
 
   async addQuestions(gameId: string, questions: Question[]): Promise<void> {
@@ -76,6 +94,16 @@ export class InMemoryGameRepository implements GameRepository {
     this.turns.set(gameId, [...this.getTurns(gameId), turn]);
   }
 
+  async findTurns(gameId: string): Promise<Turn[]> {
+    return this.getTurns(gameId);
+  }
+
+  reload(game?: Game) {
+    if (game) {
+      Object.assign(game, this.find('id', game.id));
+    }
+  }
+
   getQuestions(gameId: string): Question[] {
     return this.questions.get(gameId) ?? [];
   }
@@ -86,23 +114,5 @@ export class InMemoryGameRepository implements GameRepository {
 
   getTurns(gameId: string): Turn[] {
     return this.turns.get(gameId) ?? [];
-  }
-
-  async findTurns(gameId: string): Promise<Turn[]> {
-    return this.getTurns(gameId);
-  }
-
-  async save(game: Game): Promise<void> {
-    const idx = this.games.findIndex(({ id }) => id === game.id);
-    const clone = _.cloneDeep(game);
-
-    clone.dropEvents();
-    clone.players.forEach((player) => player.dropEvents());
-
-    if (idx < 0) {
-      this.games.push(clone);
-    } else {
-      this.games[idx] = clone;
-    }
   }
 }
