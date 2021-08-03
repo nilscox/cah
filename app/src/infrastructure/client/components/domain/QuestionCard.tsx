@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 
 import { Choice } from '../../../../domain/entities/Choice';
 import { Question } from '../../../../domain/entities/Question';
-import { color, fontWeight, spacing } from '../../styles/theme';
+import { color } from '../../styles/theme';
 
 const Blank = styled.span`
   width: 30px;
@@ -14,7 +14,6 @@ const Blank = styled.span`
 
 const ChoiceText = styled.span`
   color: white;
-  /* font-weight: ${fontWeight('bold')}; */
   text-decoration: underline;
   text-decoration-color: #999;
 `;
@@ -47,7 +46,6 @@ const getChunks = (question: Question, choices: (Choice | null)[]) => {
 };
 
 const StyledQuestionCard = styled.div`
-  padding: ${spacing(1, 2)};
   line-height: 1.4rem;
 `;
 

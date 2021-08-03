@@ -133,5 +133,6 @@ export const GameMenu = Template.bind({});
 GameMenu.args = {
   player,
   game: startedGame,
+  turns,
   action: openMenu,
 };

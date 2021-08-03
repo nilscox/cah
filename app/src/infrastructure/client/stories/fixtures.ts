@@ -36,6 +36,7 @@ export const questions = [
   createQuestion({ text: 'Eh, elle est ou la marchandise ?' }),
   createQuestion({ text: "J'ai envie de .", blanks: [14] }),
   createQuestion({ text: "T'es plutôt  ou  ?.", blanks: [12, 16] }),
+  createQuestion({ text: "Il y a des fois, j'me dit : , et je pense toute de suite à toi...", blanks: [28] }),
 ];
 
 export const answers = createAnswers(players.length, {
@@ -59,3 +60,10 @@ export const turns = [
   ...createTurns(5, { winner: players[3] }),
   ...createTurns(4, { winner: players[2] }),
 ];
+
+for (let i = 0; i < turns.length; ++i) {
+  turns[i].number = i + 1;
+  turns[i].winner = players[i % players.length];
+  turns[i].question = questions[i % questions.length];
+  turns[i].answers = answers;
+}
