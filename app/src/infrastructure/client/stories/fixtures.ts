@@ -1,6 +1,6 @@
 import { PlayState } from '../../../domain/entities/Game';
 import {
-  createAnswer,
+  createAnswers,
   createChoice,
   createFullPlayer,
   createPlayers,
@@ -9,8 +9,6 @@ import {
   createTurns,
 } from '../../../tests/factories';
 
-export const mano = createFullPlayer({ nick: 'mano' });
-
 const nicks = ['nilsou', 'tominou', 'jeanette', ' Grââlandin', 'Croûtard', 'Fanny'];
 export const players = createPlayers(nicks.length, {
   nick: nicks,
@@ -18,17 +16,17 @@ export const players = createPlayers(nicks.length, {
 });
 
 export const choices = [
-  createChoice({ text: 'Bravo' }),
-  createChoice({ text: 'Charlie' }),
+  createChoice({ text: 'Avoir de la merde dans les yeux' }),
+  createChoice({ text: 'Toi' }),
+  createChoice({ text: 'Péter et rôter en même temps' }),
   createChoice({ text: "S'étouffer avec une carrote cuite" }),
   createChoice({ text: "Un coussin d'air" }),
   createChoice({ text: 'Ta soeur' }),
   createChoice({ text: 'Conduire une grue sous acide' }),
-  createChoice({ text: 'Gros con' }),
   createChoice({ text: "Les chaussettes de l'archiduchesse" }),
   createChoice({ text: 'Aller au cinémas' }),
   createChoice({ text: 'Nicolas Sarkozy' }),
-  createChoice({ text: 'La chasse aux sorcières' }),
+  createChoice({ text: 'Dans ton cul' }),
 ];
 
 export const player = createFullPlayer({ ...players[0], cards: choices });
@@ -40,11 +38,10 @@ export const questions = [
   createQuestion({ text: "T'es plutôt  ou  ?.", blanks: [12, 16] }),
 ];
 
-export const answers = [
-  createAnswer({ choices: [createChoice({ text: 'avoir de la merde dans les yeux' })], player: players[1] }),
-  createAnswer({ choices: [createChoice({ text: 'toi' })], player: players[2] }),
-  createAnswer({ choices: [createChoice({ text: 'péter et rôter en même temps' })], player: players[3] }),
-];
+export const answers = createAnswers(players.length, {
+  player: players,
+  choices: [[choices[1]], [choices[2]], [choices[10]], [choices[7]], [choices[6]], [choices[9]]],
+});
 
 export const startedGame = createStartedGame({
   playState: PlayState.playersAnswer,

@@ -18,13 +18,11 @@ const Container = styled.div`
   align-content: flex-start;
 `;
 
-const validateContainerSize = 14;
-
 const ValidateContainer = styled.div<{ open: boolean }>`
   display: flex;
   justify-content: center;
   align-items: center;
-  height: ${({ open }) => spacing(open ? validateContainerSize : 0)};
+  height: ${({ open }) => spacing(open ? 14 : 0)};
   overflow: hidden;
   transition: ${transition('height')};
 `;

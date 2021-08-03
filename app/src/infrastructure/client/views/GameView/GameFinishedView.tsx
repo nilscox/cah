@@ -65,7 +65,7 @@ export const GameFinishedView: React.FC = () => {
         </FadeIn>
       </Flex>
       <FadeIn delay={20}>
-        <Center minHeight={24}>
+        <Center minHeight={12}>
           <Button onClick={() => dispatch(leaveGame())}>Quitter la partie</Button>
         </Center>
       </FadeIn>

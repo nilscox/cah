@@ -15,7 +15,7 @@ import { createGame } from '../../../tests/factories';
 import CAHApp from '../App';
 import { gameRouterHistory } from '../views/GameView/GameView';
 
-import { answers, mano, player, players, questions, startedGame, turns } from './fixtures';
+import { answers, player, players, questions, startedGame, turns } from './fixtures';
 import { storiesRouterHistory, stubDependencies } from './stubs';
 
 const questionOptions = ['no blanks', 'one blank', 'multiple blanks'] as const;
@@ -49,7 +49,9 @@ const Template: Story<TemplateProps> = ({ player, game, question, turns, action 
   }
 
   if (game && isStarted(game)) {
-    game.question = questions[['no blanks', 'one blank', 'multiple blanks'].indexOf(question)];
+    const questionIndex = ['no blanks', 'one blank', 'multiple blanks'].indexOf(question);
+
+    game.question = questions[questionIndex];
   }
 
   deps.playerGateway.player = player;
@@ -58,8 +60,7 @@ const Template: Story<TemplateProps> = ({ player, game, question, turns, action 
 
   // @ts-expect-error the reference gets lost somehow
   deps.routerGateway.history = storiesRouterHistory;
-
-  // @ts-expect-error the reference gets lost somehow
+  // @ts-expect-error same here, obviously
   deps.gameRouterGateway.history = gameRouterHistory;
 
   return (
@@ -76,7 +77,7 @@ Login.args = {};
 
 export const Lobby = Template.bind({});
 Lobby.args = {
-  player: mano,
+  player,
 };
 
 export const GameIdle = Template.bind({});

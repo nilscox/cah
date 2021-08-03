@@ -13,6 +13,7 @@ import { AppState } from '../../../../store/types';
 import { QuestionCard } from '../../components/domain/QuestionCard';
 import Button from '../../components/elements/Button';
 import { Center } from '../../components/layout/Center';
+import { FadeIn } from '../../components/layout/Fade';
 import { useAction } from '../../hooks/useAction';
 import { useGame } from '../../hooks/useGame';
 import { fontSize, spacing } from '../../styles/theme';
@@ -25,7 +26,7 @@ const Answer = styled.div`
   cursor: ${({ onClick }) => (onClick ? 'pointer' : undefined)};
 `;
 
-const PlayerNick = styled.div`
+const PlayerNick = styled(FadeIn)`
   font-size: ${fontSize('small')};
 `;
 
@@ -66,7 +67,7 @@ export const AnswersList: React.FC = () => {
           </Answer>
         ))}
       </Center>
-      <Center minHeight={24}>
+      <Center minHeight={12}>
         <Route path="/game/:code/started/end-of-turn">
           {handleNextTurn && <Button onClick={handleNextTurn}>Prochaine question</Button>}
         </Route>

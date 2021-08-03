@@ -37,7 +37,7 @@ const canValidateSelectionSelector = (state: AppState) => {
   return !player.selectionValidated;
 };
 
-export const PlayersAnswer: React.FC = () => {
+export const AnswerQuestion: React.FC = () => {
   const game = useGame();
   const player = usePlayer();
   const selection = useSelector(selectChoicesSelection);

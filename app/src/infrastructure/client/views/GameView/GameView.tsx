@@ -17,11 +17,11 @@ import Back from '../../icons/back.svg';
 import Menu from '../../icons/menu.svg';
 import { View } from '../View';
 
+import { AnswerQuestion } from './AnswerQuestion';
 import { AnswersList } from './AnswersList';
 import { GameFinishedView } from './GameFinishedView';
 import { GameIdleView } from './GameIdleView';
 import GameMenu from './GameMenu';
-import { PlayersAnswer } from './PlayersAnswer';
 
 const memoryRouter = true;
 export const gameRouterHistory = memoryRouter ? createMemoryHistory() : createBrowserHistory();
@@ -55,7 +55,7 @@ const GameRouter: React.FC = () => {
       <Switch>
         <Route path={`${routePrefix}/idle`} component={GameIdleView} />
         <Route path={`${routePrefix}/finished`} component={GameFinishedView} />
-        <Route path={`${routePrefix}/started/players-answer`} component={PlayersAnswer} />
+        <Route path={`${routePrefix}/started/players-answer`} component={AnswerQuestion} />
         <Route path={`${routePrefix}/started/question-master-selection`} component={AnswersList} />
         <Route path={`${routePrefix}/started/end-of-turn`} component={AnswersList} />
         <Route path={`${routePrefix}/menu`} component={GameMenu} />
