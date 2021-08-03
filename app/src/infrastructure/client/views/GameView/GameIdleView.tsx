@@ -1,11 +1,14 @@
 import React from 'react';
 
 import styled from '@emotion/styled';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { startGame } from '../../../../domain/usecases/game/startGame/startGame';
+import { selectGame } from '../../../../store/selectors/gameSelectors';
+import { AppState } from '../../../../store/types';
 import Button from '../../components/elements/Button';
 import { Center } from '../../components/layout/Center';
+import { Fade } from '../../components/layout/Fade';
 import { Flex } from '../../components/layout/Flex';
 import { useGame } from '../../hooks/useGame';
 import { usePlayer } from '../../hooks/usePlayer';
@@ -22,8 +25,15 @@ const PlayerItem = styled.li<{ connected: boolean }>`
   opacity: ${({ connected }) => (connected ? 1 : 0.7)};
 `;
 
+const selectCanStartGame = (state: AppState) => {
+  const game = selectGame(state);
+
+  return game.players.length >= 3;
+};
+
 export const GameIdleView: React.FC = () => {
   const dispatch = useDispatch();
+  const canStart = useSelector(selectCanStartGame);
 
   const game = useGame();
   const player = usePlayer();
@@ -42,7 +52,9 @@ export const GameIdleView: React.FC = () => {
         </PlayersList>
       </Flex>
       <Center minHeight={24}>
-        <Button onClick={() => dispatch(startGame(player, 10))}>Démarrer</Button>
+        <Fade appear show={canStart}>
+          <Button onClick={() => dispatch(startGame(player, 10))}>Démarrer</Button>
+        </Fade>
       </Center>
     </>
   );
