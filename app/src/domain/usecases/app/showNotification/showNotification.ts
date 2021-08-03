@@ -6,5 +6,5 @@ export const showNotification = createThunk(({ dispatch, timerGateway }, text: s
 
   timerGateway.setTimeout(() => {
     dispatch(clearNotification());
-  }, 7000);
+  }, 3400);
 });

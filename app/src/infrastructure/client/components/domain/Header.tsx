@@ -1,13 +1,17 @@
 import React, { ReactElement } from 'react';
 
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Box } from 'reflexbox';
 
 import { Player } from '../../../../domain/entities/Player';
+import { useDebounce } from '../../hooks/useDebounce';
 import { fontSize, fontWeight, spacing } from '../../styles/theme';
+import { Box } from '../layout/Box';
+import { Fade } from '../layout/Fade';
 import { Flex } from '../layout/Flex';
 
 import { Notification } from './Notification';
+import { Switch } from './Switch';
 
 const Title = styled.h1`
   margin: 0;
@@ -30,24 +34,35 @@ export type HeaderProps = {
   notification?: string;
 };
 
-const Header: React.FC<HeaderProps> = ({ icon, title, player, notification }) => (
-  <Flex flexDirection="row" alignItems="center" padding={2}>
-    <Box flex={notification ? undefined : 1} paddingRight={2}>
-      {icon}
-    </Box>
+const Header: React.FC<HeaderProps> = ({ icon, title, player, notification }) => {
+  const theme = useTheme();
+  const notificationVisible = useDebounce(!!notification, theme.durations.default);
 
-    {notification ? (
-      <Box flex={1}>
-        <Notification text={notification} />
+  const content = {
+    notif: (
+      <Flex flex={1}>
+        <Notification text={notification ?? ''} />
+      </Flex>
+    ),
+    title: (
+      <Fade appear show={!notification}>
+        <Title>{title}</Title>
+      </Fade>
+    ),
+  };
+
+  return (
+    <Flex flexDirection="row" alignItems="center" padding={2}>
+      <Box flex={notificationVisible ? undefined : 1} paddingRight={2}>
+        {icon}
       </Box>
-    ) : (
-      <Title>{title}</Title>
-    )}
 
-    <Box flex={notification ? undefined : 1} textAlign="right">
-      <PlayerNick>{player.nick}</PlayerNick>
-    </Box>
-  </Flex>
-);
+      <Switch value={notificationVisible ? 'notif' : 'title'} options={content} />
 
+      <Box flex={notificationVisible ? undefined : 1} textAlign="right">
+        <PlayerNick>{player.nick}</PlayerNick>
+      </Box>
+    </Flex>
+  );
+};
 export default Header;

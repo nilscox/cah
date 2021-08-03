@@ -164,5 +164,5 @@ export const [createAnswer, createAnswers] = factory<Answer>(() => ({
 export const [createState] = factory<AppState>(() => ({
   game: null,
   player: null,
-  app: { ready: true, server: ServerStatus.up },
+  app: { ready: true, menuOpen: false, server: ServerStatus.up },
 }));

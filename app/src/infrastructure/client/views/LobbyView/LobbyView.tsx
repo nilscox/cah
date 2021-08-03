@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 
 import styled from '@emotion/styled';
 import { useDispatch } from 'react-redux';
-import { Box } from 'reflexbox';
 
 import { createGame } from '../../../../domain/usecases/game/createGame/createGame';
 import { joinGame } from '../../../../domain/usecases/game/joinGame/joinGame';
@@ -61,27 +60,29 @@ const Separator = styled.hr<{ show: boolean }>`
   margin: ${spacing(0, 4)};
 `;
 
+const nullOrValue = <T extends unknown>(maybeNull: unknown, value: T): T | null => {
+  return maybeNull === null ? null : value;
+};
+
 const LobbyView: React.FC = () => {
   const [open, setOpen] = useState<'join' | 'create' | null>(null);
 
-  const joinOpen = open === null ? null : open === 'join';
-  const createOpen = open === null ? null : open === 'create';
+  const joinOpen = nullOrValue(open, open === 'join');
+  const createOpen = nullOrValue(open, open === 'create');
 
   return (
-    <View header={<ViewHeader open={open} unsetOpen={() => setOpen(null)} />}>
-      <Box flex={1} padding={2}>
-        <Part open={joinOpen} onOpen={() => setOpen('join')} label="Rejoindre une partie">
-          <JoinGame />
-        </Part>
+    <View flex={1} padding={2} header={<ViewHeader open={open} unsetOpen={() => setOpen(null)} />}>
+      <Part open={joinOpen} onOpen={() => setOpen('join')} label="Rejoindre une partie">
+        <JoinGame />
+      </Part>
 
-        <Fade show={open === null}>
-          <Separator show={open === null} />
-        </Fade>
+      <Fade show={open === null}>
+        <Separator show={open === null} />
+      </Fade>
 
-        <Part open={createOpen} onOpen={() => setOpen('create')} label="Créer une partie">
-          <CreateGame />
-        </Part>
-      </Box>
+      <Part open={createOpen} onOpen={() => setOpen('create')} label="Créer une partie">
+        <CreateGame />
+      </Part>
     </View>
   );
 };

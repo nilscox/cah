@@ -22,12 +22,10 @@ declare module '@emotion/react' {
       normal: string;
       bold: string;
     };
-    animations: {
-      durations: {
-        default: number;
-        slow: number;
-      };
-      function: string;
+    durations: {
+      default: number;
+      slow: number;
     };
+    animationFunction: string;
   }
 }

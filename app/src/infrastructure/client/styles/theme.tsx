@@ -37,18 +37,16 @@ export const theme: Theme = {
     normal: 'normal',
     bold: 'bold',
   },
-  animations: {
-    durations: {
-      default: 400,
-      slow: 1000,
-    },
-    function: 'ease',
+  durations: {
+    default: 400,
+    slow: 1000,
   },
+  animationFunction: 'ease',
 };
 
 if (fast) {
-  theme.animations.durations.default /= 4;
-  theme.animations.durations.slow /= 4;
+  theme.durations.default /= 4;
+  theme.durations.slow /= 4;
 }
 
 type Props = { theme: Theme };
@@ -75,26 +73,13 @@ export const spacing = (...args: Parameters<Theme['spacing']>) => (props: Props)
 };
 
 type TransitionOptions = Partial<{
-  duration: keyof Theme['animations']['durations'] | number;
+  duration: keyof Theme['durations'];
   delay: number;
 }>;
 
-const defaultTransitionOptions: TransitionOptions = {
-  duration: 'default',
-  delay: 0,
-};
-
 export const transition = (property: string, options?: TransitionOptions) => (props: Props) => {
-  const { duration, delay } = { ...defaultTransitionOptions, ...options };
-  const { animations } = props.theme;
+  const { duration = 'default', delay = 0 } = options ?? {};
+  const { durations, animationFunction } = props.theme;
 
-  const getDuration = () => {
-    if (typeof duration === 'string') {
-      return animations.durations[duration];
-    }
-
-    return duration;
-  };
-
-  return `${property} ${getDuration()}ms ${animations.function} ${delay}ms`;
+  return `${property} ${durations[duration]}ms ${animationFunction} ${delay}ms`;
 };

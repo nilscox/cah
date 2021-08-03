@@ -1,9 +1,9 @@
 import React from 'react';
 
 import styled from '@emotion/styled';
-import { Flex } from 'reflexbox';
 
 import Button from '../../components/elements/Button';
+import { Flex } from '../../components/layout/Flex';
 import { transition } from '../../styles/theme';
 
 const ifOpen = <T extends unknown>(yes: T, no: T) => {
@@ -24,10 +24,8 @@ const height = (open: boolean | null) => {
   return '50%';
 };
 
-const PartContainer = styled.div<{ open: boolean | null }>`
+const PartContainer = styled(Flex)<{ open: boolean | null }>`
   flex-grow: ${ifOpen(0, 1)};
-  display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
   overflow: hidden;

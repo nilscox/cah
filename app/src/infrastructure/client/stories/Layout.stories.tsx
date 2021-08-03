@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 
 import styled from '@emotion/styled';
-import { Meta } from '@storybook/react';
+import { Meta, Story } from '@storybook/react';
 
 import { DragHandle, RenderItemFunction, SortableList } from '../components/elements/SortableList';
-import { FadeIn } from '../components/layout/FadeIn';
+import { Center } from '../components/layout/Center';
+import { Fade, FadeIn, FadeProps } from '../components/layout/Fade';
 
 export default {
   title: 'Layout',
@@ -59,8 +60,34 @@ export const sortableList = () => {
   );
 };
 
-export const fadeIn = () => (
-  <FadeIn speed="slow" delay={1}>
-    Hello !
-  </FadeIn>
-);
+export const fade: Story<FadeProps> = ({ show: _, ...props }) => {
+  const [show, setShow] = useState(true);
+
+  return (
+    <>
+      <button onClick={() => setShow(!show)}>{show ? 'hide' : 'show'}</button>
+      <Center>
+        <Fade show={show} {...props}>
+          Hello !
+        </Fade>
+      </Center>
+    </>
+  );
+};
+
+fade.args = {
+  appear: true,
+  delay: 0,
+};
+
+fade.argTypes = {
+  duration: {
+    options: ['default', 'slow'],
+    type: 'select',
+    defaultValue: 'default',
+  },
+};
+
+export const fadeIn = () => <FadeIn duration="slow">Hello !</FadeIn>;
+fadeIn.args = fade.args;
+fadeIn.argTypes = fade.argTypes;
