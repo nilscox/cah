@@ -102,8 +102,8 @@ export class GameEventsHandler implements EventHandler<GameEvent> {
   }
 
   private notify(game: Game, event: EventDto) {
-    this.logger.info('notify', game.code, event.type);
-    this.logger.verbose('notify', event);
+    this.logger.info('notify', game.code, { type: event.type });
+    this.logger.debug('notify', event);
 
     this.notifier.notifyGamePlayers(game, event);
   }

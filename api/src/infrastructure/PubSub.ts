@@ -15,7 +15,7 @@ export class PubSub implements EventPublisher<DomainEvent> {
   }
 
   publish(event: DomainEvent) {
-    this.logger.verbose('publish event ' + event.type);
+    this.logger.debug(`publish to ${this.handlers.length} handlers`, { type: event.type });
 
     for (const handler of this.handlers) {
       handler.execute(event);

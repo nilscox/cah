@@ -20,8 +20,8 @@ export class PlayerEventsHandler implements EventHandler<PlayerEvent> {
   }
 
   notify(player: Player, event: EventDto) {
-    this.logger.info('notify', player.nick, event.type);
-    this.logger.verbose('notify', event);
+    this.logger.info('notify', player.nick, { type: event.type });
+    this.logger.debug('notify', event);
 
     this.notifier.notifyPlayer(player, event);
   }
