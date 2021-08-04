@@ -16,7 +16,7 @@ export class GetPlayerHandler implements QueryHandler<GetPlayerQuery, PlayerDto 
     const player = await this.playerRepository.findPlayerById(playerId);
 
     if (!player) {
-      throw new PlayerNotFoundError();
+      throw new PlayerNotFoundError({ id: playerId });
     }
 
     if (!session.player?.equals(player)) {

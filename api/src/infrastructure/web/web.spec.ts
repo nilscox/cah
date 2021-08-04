@@ -5,7 +5,7 @@ import request from 'supertest';
 
 import { StubEventPublisher } from '../stubs/StubEventPublisher';
 
-import { HttpUnauthorizedError } from './errors';
+import { HttpBadRequestError, HttpUnauthorizedError } from './errors';
 import { context, dto, errorHandler, guard, handler, middleware, status } from './middlewaresCreators';
 import { FallbackRoute, Route } from './Route';
 import { createServer, Route as RouteInterface } from './web';
@@ -143,5 +143,24 @@ describe('web', () => {
     const agent = createAgent(routes);
 
     await agent.get('/fail').expect(200).expect({ message: 'catch me' });
+  });
+
+  it('registers an error handler as an mapper to transform errors', async () => {
+    const handler = errorHandler({
+      execute: (error: Error) => {
+        throw new HttpBadRequestError('nope: ' + error.message);
+      },
+    });
+
+    const routes = [
+      new Route('get', '/fail').use(() => {
+        throw new Error('catch me');
+      }),
+      new FallbackRoute().use(handler).use(errorHandler({ execute: (error: Error) => ({ message: error.message }) })),
+    ];
+
+    const agent = createAgent(routes);
+
+    await agent.get('/fail').expect(200).expect({ message: 'nope: catch me' });
   });
 });

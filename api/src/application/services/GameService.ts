@@ -18,7 +18,7 @@ export class GameService {
     const player = await this.playerRepository.findPlayerById(playerId);
 
     if (!player) {
-      throw new PlayerNotFoundError();
+      throw new PlayerNotFoundError({ id: playerId });
     }
 
     return player;
@@ -28,7 +28,7 @@ export class GameService {
     const game = await this.gameRepository.findGameById(gameId);
 
     if (!game) {
-      throw new GameNotFoundError();
+      throw new GameNotFoundError({ id: gameId });
     }
 
     return game;
@@ -38,7 +38,7 @@ export class GameService {
     const game = await this.gameRepository.findGameForPlayer(playerId);
 
     if (!game) {
-      throw new GameNotFoundError();
+      throw new GameNotFoundError({ playerId });
     }
 
     return game;

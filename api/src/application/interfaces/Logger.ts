@@ -23,5 +23,5 @@ export interface Logger {
   verbose(message: string, ...args: LogArgs): void;
   info(message: string, ...args: LogArgs): void;
   warn(message: string, ...args: LogArgs): void;
-  error(error: Error, ...args: LogArgs): void;
+  error(error: Error): void;
 }

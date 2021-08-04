@@ -1,3 +1,7 @@
-import { DomainError } from './DomainError';
+import { EntityNotFoundError } from './EntityNotFoundError';
 
-export class AnswerNotFoundError extends DomainError {}
+export class AnswerNotFoundError extends EntityNotFoundError {
+  constructor(query: Record<string, string>) {
+    super('Answer', query);
+  }
+}

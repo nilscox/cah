@@ -1,4 +1,4 @@
-import { ErrorRequestHandler, Request } from 'express';
+import { Request } from 'express';
 import { Store as SessionStoreBackend } from 'express-session';
 
 import {
@@ -15,17 +15,16 @@ import {
   SelectWinnerHandler,
 } from '../../application/commands/SelectWinnerCommand/SelectWinnerCommand';
 import { StartGameCommand, StartGameHandler } from '../../application/commands/StartGameCommand/StartGameCommand';
-import { Logger } from '../../application/interfaces/Logger';
 import { PlayerRepository } from '../../application/interfaces/PlayerRepository';
 import { SessionStore } from '../../application/interfaces/SessionStore';
 import { GetGameHandler, GetGameQuery } from '../../application/queries/GetGameQuery/GetGameQuery';
 import { GetPlayerHandler } from '../../application/queries/GetPlayerQuery/GetPlayerQuery';
 import { GetTurnsHandler, GetTurnsQuery } from '../../application/queries/GetTurnsQuery/GetTurnsQuery';
-import { DomainError } from '../../domain/errors/DomainError';
 import { Player } from '../../domain/models/Player';
 import { instanciateHandlers } from '../../utils/dependencyInjection';
 import { Dependencies } from '../Dependencies';
 
+import { DomainErrorMapper, ErrorHandler } from './ErrorHandler';
 import { context, dto, errorHandler, guard, handler, middleware, status } from './middlewaresCreators';
 import { FallbackRoute, InputDto, Route } from './Route';
 import { createServer } from './web';
@@ -68,31 +67,6 @@ class ExpressSessionStore implements SessionStore {
   }
 }
 
-class ErrorHandler {
-  constructor(private readonly logger: Logger) {
-    logger.setContext('ErrorHandler');
-  }
-
-  execute: ErrorRequestHandler = (error, req, res) => {
-    const { status, message, ...err } = error;
-
-    this.logger.verbose(error.message, error.meta);
-
-    if (error instanceof DomainError) {
-      this.logger.debug('', error);
-    } else {
-      this.logger.error(error);
-    }
-
-    res.status(status ?? 500);
-
-    return {
-      message,
-      ...err,
-    };
-  };
-}
-
 const isAuthenticated = (req: Request) => {
   if (req.session.playerId === undefined) {
     return 'you must be authenticated';
@@ -117,6 +91,10 @@ export const bootstrapServer = (deps: Dependencies, wss: WebsocketServer, sessio
 
   // prettier-ignore
   const routes = [
+    new Route('get', '/healthcheck')
+      .use(status(204))
+      .use((_req, res) => res.end()),
+
     new Route('get', '/player/me')
       .use(...authPlayerContext)
       .use(dto((req) => ({ playerId: req.session.playerId })))
@@ -179,10 +157,8 @@ export const bootstrapServer = (deps: Dependencies, wss: WebsocketServer, sessio
       .use(status(204))
       .use(handler(handlers.get(FlushCardsHandler))),
 
-    new Route('get', '/healthcheck')
-      .use((_req, res) => res.end()),
-
     new FallbackRoute()
+      .use(errorHandler(new DomainErrorMapper()))
       .use(errorHandler(new ErrorHandler(deps.logger())))
       .use((_req, res) => res.status(404).end()),
   ];

@@ -179,7 +179,7 @@ export class Game extends AggregateRoot<GameEvent> {
     const answer = answers.find((answer) => answer.id === answerId);
 
     if (!answer) {
-      throw new AnswerNotFoundError();
+      throw new AnswerNotFoundError({ id: answerId });
     }
 
     this.playState = PlayState.endOfTurn;

@@ -35,8 +35,7 @@ export class ConsoleLoggerService implements Logger {
     this.log('warn', message, ...args);
   }
 
-  error(error: Error, ...args: LogArgs) {
-    this.log('error', error.message, ...args);
+  error(error: Error) {
     this.log('error', error.stack ?? '<no stacktrace availabe>');
   }
 
@@ -58,7 +57,7 @@ export class ConsoleLoggerService implements Logger {
 
     const formatArgument = (arg: LogArgs[number]) => {
       if (typeof arg === 'object') {
-        return util.inspect(arg, true, undefined, true);
+        return util.inspect(arg, true, null, true);
       }
 
       return arg;
