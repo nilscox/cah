@@ -4,6 +4,7 @@ const path = require('path');
 const { DefinePlugin, EnvironmentPlugin, HotModuleReplacementPlugin } = require('webpack');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 const { NODE_ENV = 'development', HOST = '0.0.0.0', PORT = '8000' } = process.env;
 const dev = NODE_ENV === 'development';
@@ -47,10 +48,7 @@ module.exports = {
 
       {
         test: /\.(woff|woff2|eot|ttf|otf)$/,
-        loader: 'file-loader',
-        options: {
-          name: '[name].[contenthash].[ext]',
-        },
+        type: 'asset/resource',
       },
     ],
   },
@@ -58,6 +56,7 @@ module.exports = {
   plugins: [
     dev && new HotModuleReplacementPlugin(),
     dev && new ReactRefreshWebpackPlugin(),
+    new CleanWebpackPlugin(),
     new HtmlWebpackPlugin(),
     new DefinePlugin({ process: { env: {} } }),
     new EnvironmentPlugin({
