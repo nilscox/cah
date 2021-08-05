@@ -6,7 +6,7 @@ export class WSRTCGateway implements RTCGateway {
   constructor(private readonly ws: WSAdapter) {}
 
   async connect(): Promise<void> {
-    await this.ws.connect('http://localhost:4242');
+    await this.ws.connect(process.env.WS_URL!);
   }
 
   onMessage(listener: RTCListener): void {

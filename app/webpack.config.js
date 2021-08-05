@@ -61,6 +61,7 @@ module.exports = {
     new DefinePlugin({ process: { env: {} } }),
     new EnvironmentPlugin({
       API_URL: 'http://localhost:4242',
+      WS_URL: 'ws://localhost:4242',
     }),
   ].filter(Boolean),
 

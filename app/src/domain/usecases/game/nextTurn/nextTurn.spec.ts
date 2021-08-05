@@ -3,7 +3,7 @@ import expect from 'expect';
 import { GameState } from '../../../../../../shared/enums';
 import { createFullPlayer, createPlayer, createQuestion, createStartedGame } from '../../../../tests/factories';
 import { InMemoryStore } from '../../../../tests/InMemoryStore';
-import { setGame, setPlayer } from '../../../actions';
+import { selectionValidated, setGame, setPlayer } from '../../../actions';
 import { PlayState } from '../../../entities/Game';
 
 import { nextTurn } from './nextTurn';
@@ -24,6 +24,7 @@ describe('nextTurn', () => {
 
     store.setup(({ dispatch, listenRTCMessages }) => {
       dispatch(setPlayer(createFullPlayer()));
+      dispatch(selectionValidated());
       dispatch(setGame(createStartedGame({ playState: PlayState.endOfTurn, players: [nextQuestionMaster] })));
 
       listenRTCMessages();
@@ -39,6 +40,10 @@ describe('nextTurn', () => {
       question: nextQuestion,
       answers: [],
       winner: undefined,
+    });
+
+    store.expectPartialState('player', {
+      selectionValidated: false,
     });
   });
 

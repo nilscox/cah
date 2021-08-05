@@ -96,5 +96,12 @@ export const playerReducer = (state: PlayerState = null, action: AppAction): Pla
     };
   }
 
+  if (action.type === 'rtc/message' && action.payload.type === 'TurnFinished') {
+    return {
+      ...state,
+      selectionValidated: false,
+    };
+  }
+
   return state;
 };

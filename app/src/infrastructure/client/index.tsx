@@ -8,7 +8,7 @@ import { Router } from 'react-router-dom';
 
 import { handleServerDown } from '../../domain/usecases/app/handleServerDown/handleServerDown';
 import { configureStore } from '../../store/configureStore';
-import { Dependencies } from '../../store/types';
+import { AppStore, Dependencies } from '../../store/types';
 import { DeviceNetworkGateway } from '../gateways/DeviceNetworkGateway';
 import { HTTPAdapter } from '../gateways/HTTPAdapter';
 import { HTTPGameGateway } from '../gateways/HTTPGameGateway';
@@ -27,6 +27,12 @@ import { gameRouterHistory } from './views/GameView/GameView';
 
 import 'jetbrains-mono';
 import 'normalize.css';
+
+declare global {
+  interface Window {
+    store?: AppStore;
+  }
+}
 
 const axiosInstance = axios.create({
   baseURL: process.env.API_URL,
@@ -54,6 +60,7 @@ const dependencies: Dependencies = {
 const store = configureStore(dependencies);
 
 httpAdapter.onServerDown = () => store.dispatch(handleServerDown());
+window.store = store;
 
 ReactDOM.render(
   <ThemeProvider>

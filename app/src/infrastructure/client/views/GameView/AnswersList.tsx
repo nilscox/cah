@@ -12,6 +12,7 @@ import { selectIsQuestionMaster } from '../../../../store/selectors/playerSelect
 import { AppState } from '../../../../store/types';
 import { QuestionCard } from '../../components/domain/QuestionCard';
 import Button from '../../components/elements/Button';
+import { Box } from '../../components/layout/Box';
 import { Center } from '../../components/layout/Center';
 import { FadeIn } from '../../components/layout/Fade';
 import { useAction } from '../../hooks/useAction';
@@ -63,7 +64,9 @@ export const AnswersList: React.FC = () => {
               <Route path="/game/:code/started/end-of-turn">{isAnswer(answer) && answer.player.nick}</Route>
               <>&nbsp;</>
             </PlayerNick>
-            <QuestionCard question={game.question} choices={answer.choices} />
+            <Box marginLeft={2}>
+              <QuestionCard question={game.question} choices={answer.choices} />
+            </Box>
           </Answer>
         ))}
       </Center>
