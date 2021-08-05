@@ -13,7 +13,6 @@ import { RouterGateway } from '../../../domain/gateways/RouterGateway';
 import { RTCGateway, RTCListener } from '../../../domain/gateways/RTCGateway';
 import { ServerGateway } from '../../../domain/gateways/ServerGateway';
 import { NetworkStatus } from '../../../store/reducers/appStateReducer';
-import { Dependencies } from '../../../store/types';
 import { createFullPlayer, createGame } from '../../../tests/factories';
 import { ReactRouterGateway } from '../../gateways/ReactRouterGateway';
 import { RealTimerGateway } from '../../gateways/RealTimerGateway';

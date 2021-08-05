@@ -7,6 +7,7 @@ import { InvalidPlayStateError } from '../errors/InvalidPlayStateError';
 import { NoMoreChoiceError } from '../errors/NoMoreChoiceError';
 import { NotEnoughPlayersError } from '../errors/NotEnoughPlayersError';
 import { PlayerAlreadyAnsweredError } from '../errors/PlayerAlreadyAnsweredError';
+import { PlayerIsNotInTheGameError } from '../errors/PlayerIsNotInTheGame';
 import { PlayerIsNotQuestionMasterError } from '../errors/PlayerIsNotQuestionMasterError';
 import { PlayerIsQuestionMasterError } from '../errors/PlayerIsQuestionMasterError';
 import { GameEvent } from '../events';
@@ -67,6 +68,10 @@ export class Game extends AggregateRoot<GameEvent> {
     this.addEvent(new GameJoinedEvent(this, player));
   }
 
+  hasPlayer(player: Player) {
+    return Boolean(this.players.find((p) => p.equals(player)));
+  }
+
   computeNeededChoicesCount(questions: Question[]) {
     const sum = (a: number, b: number) => a + b;
     const totalNeededChoices = questions.map(({ numberOfBlanks }) => numberOfBlanks).reduce(sum, 0);
@@ -115,6 +120,10 @@ export class Game extends AggregateRoot<GameEvent> {
 
   start(questionMaster: Player, firstQuestion: Question) {
     this.ensureGameState(GameState.idle);
+
+    if (!this.hasPlayer(questionMaster)) {
+      throw new PlayerIsNotInTheGameError(this, questionMaster);
+    }
 
     if (this.players.length < this.minimumPlayersToStart) {
       throw new NotEnoughPlayersError(this.minimumPlayersToStart, this.players.length);

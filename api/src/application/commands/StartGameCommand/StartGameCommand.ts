@@ -32,7 +32,6 @@ export class StartGameHandler implements CommandHandler<StartGameCommand, void, 
     const player = session.player!;
 
     const game = await this.gameService.getGameForPlayer(player.id);
-    // todo: check that the question master is in the game
     const questionMaster = await this.gameService.getPlayer(questionMasterId);
 
     const [questions] = await this.getCards(game, turns);

@@ -29,8 +29,8 @@ describe('PlayerEventsHandler', () => {
 
     handler.execute(new CardsDealtEvent(player, cards));
 
-    expect(logger.last('info')).to.eql(['notify', player.nick, 'CardsDealt']);
-    expect(logger.last('verbose')).to.eql(['notify', { type: 'CardsDealt', cards: [cards[0].toJSON()] }]);
+    expect(logger.last('info')).to.eql(['notify', player.nick, { type: 'CardsDealt' }]);
+    expect(logger.last('debug')).to.eql(['notify', { type: 'CardsDealt', cards: [cards[0].toJSON()] }]);
   });
 
   it('CardsDealt event', () => {

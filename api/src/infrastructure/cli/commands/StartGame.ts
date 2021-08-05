@@ -11,7 +11,7 @@ export class StartGame extends Command {
     const questionMaster = await this.deps.playerRepository.findPlayerByNick(args.questionMaster);
 
     if (!questionMaster) {
-      throw new PlayerNotFoundError();
+      throw new PlayerNotFoundError({ nick: args.questionMaster });
     }
 
     await this.handler.execute({ questionMasterId: questionMaster.id, turns: Number(args.turns) }, this);

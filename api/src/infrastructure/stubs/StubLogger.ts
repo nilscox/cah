@@ -11,7 +11,7 @@ export class StubLogger implements Logger {
 
   last(level: LogLevel) {
     const logs = this.logs.filter((log) => log[0] === level);
-    const [, ...log] = logs[logs.length - 1];
+    const [, ...log] = logs.length > 0 ? logs[logs.length - 1] : [];
 
     return log;
   }

@@ -48,10 +48,12 @@ export class InMemoryCache {
     this.map.get(type)?.delete(id);
   }
 
+  // most beautiful function <3
   toJSON() {
     return Array.from(this.map.entries()).reduce(
       (obj, [type, map]) => ({
         ...obj,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         [(type as any).name]: Array.from(map.entries()).reduce(
           (obj, [id, value]) => ({
             ...obj,

@@ -44,8 +44,8 @@ describe('GameEventsHandler', () => {
 
     handler.execute(new GameJoinedEvent(game, player));
 
-    expect(logger.last('info')).to.eql(['notify', game.code, 'GameJoined']);
-    expect(logger.last('verbose')).to.eql([
+    expect(logger.last('info')).to.eql(['notify', game.code, { type: 'GameJoined' }]);
+    expect(logger.last('debug')).to.eql([
       'notify',
       { type: 'GameJoined', player: { id: player.id, nick: 'player', isConnected: false } },
     ]);

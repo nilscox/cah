@@ -30,7 +30,7 @@ export class JoinGameHandler implements CommandHandler<JoinGameCommand, GameDto,
     const game = await this.gameRepository.findGameByCode(gameCode);
 
     if (!game) {
-      throw new GameNotFoundError();
+      throw new GameNotFoundError({ code: gameCode });
     }
 
     game.addPlayer(player);

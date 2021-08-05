@@ -1,5 +1,6 @@
 import { expect } from 'chai';
 
+import { GameNotFoundError } from '../../../domain/errors/GameNotFoundError';
 import { PlayerIsAlreadyInGameError } from '../../../domain/errors/PlayerIsAlreadyInGameError';
 import { Game } from '../../../domain/models/Game';
 import { Player } from '../../../domain/models/Player';
@@ -39,8 +40,8 @@ describe('JoinGameCommand', () => {
     await playerRepository.save(player);
   });
 
-  const execute = async () => {
-    const result = await handler.execute({ gameCode: game.code }, session);
+  const execute = async (gameCode = game.code) => {
+    const result = await handler.execute({ gameCode }, session);
 
     gameRepository.reload(game);
 
@@ -57,6 +58,11 @@ describe('JoinGameCommand', () => {
 
     expect(rtcManager.has(game!, player)).to.be.true;
     expect(publisher.lastEvent).to.eql({ type: 'GameJoined', game, player });
+  });
+
+  it('fails when the game is not found', async () => {
+    const error = await expect(execute('blah')).to.be.rejectedWith(GameNotFoundError);
+    expect(error).to.shallowDeepEqual({ meta: { query: { code: 'blah' } } });
   });
 
   it('prevents a player to join a game when he is already in a game', async () => {

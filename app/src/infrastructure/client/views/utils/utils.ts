@@ -1,4 +1,4 @@
-export const conditionalCallback = <Args extends any[]>(cb?: (...args: Args) => void, ...args: Args) => {
+export const conditionalCallback = <Args extends unknown[]>(cb?: (...args: Args) => void, ...args: Args) => {
   if (!cb) {
     return;
   }

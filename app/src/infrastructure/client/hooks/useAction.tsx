@@ -2,7 +2,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Action } from 'redux';
 
 import { ThunkResult } from '../../../store/createAction';
-import { GuardSelector } from '../views/GameView/GameStartedView/PlayersAnswer';
+import { AppState } from '../../../store/types';
+
+type GuardSelector = (state: AppState) => boolean;
 
 export const useAction = <Args extends unknown[]>(
   guardSelector: GuardSelector,
