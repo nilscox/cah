@@ -4,6 +4,7 @@ import { rtcMessage } from '../domain/actions';
 import { configureStore } from '../store/configureStore';
 import { AppState, AppStore, Dependencies } from '../store/types';
 
+import { FakeNetworkGateway } from './gateways/FakeNetworkGateway';
 import { FakeServerGateway } from './gateways/FakeServerGateway';
 import { FakeTimerGateway } from './gateways/FakeTimerGateway';
 import { InMemoryGameGateway } from './gateways/InMemoryGameGateway';
@@ -29,6 +30,7 @@ export class InMemoryStore {
   routerGateway = new InMemoryRouterGateway();
   gameRouterGateway = new InMemoryRouterGateway();
   timerGateway = new FakeTimerGateway();
+  networkGateway = new FakeNetworkGateway();
   serverGateway = new FakeServerGateway();
 
   constructor(overrides: Partial<Dependencies> = {}) {

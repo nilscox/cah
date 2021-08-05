@@ -1,7 +1,16 @@
 import { createThunk } from '../../../../store/createThunk';
-import { setAppReady, setGame, setPlayer, setTurns } from '../../../actions';
+import { NetworkStatus } from '../../../../store/reducers/appStateReducer';
+import { networkStatusChanged, setAppReady, setGame, setPlayer, setTurns } from '../../../actions';
 import { redirect } from '../../game/redirect/redirect';
 import { connect } from '../connect/connect';
+
+const registerNetworkStatusListener = createThunk(({ dispatch, networkGateway }) => {
+  if (networkGateway.networkStatus === NetworkStatus.down) {
+    dispatch(networkStatusChanged(NetworkStatus.down));
+  }
+
+  networkGateway.onNetworkStatusChange((status) => dispatch(networkStatusChanged(status)));
+});
 
 const fetchPlayer = createThunk(async ({ dispatch, playerGateway }) => {
   const player = await playerGateway.fetchMe();
@@ -31,5 +40,6 @@ export const initialize = createThunk(async ({ dispatch }) => {
   }
 
   dispatch(redirect());
+  dispatch(registerNetworkStatusListener());
   dispatch(setAppReady());
 });

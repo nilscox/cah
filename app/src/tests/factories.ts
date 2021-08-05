@@ -4,7 +4,7 @@ import { Game, GameState, PlayState, StartedGame } from '../domain/entities/Game
 import { FullPlayer, Player } from '../domain/entities/Player';
 import { Question } from '../domain/entities/Question';
 import { Turn } from '../domain/entities/Turn';
-import { ServerStatus } from '../store/reducers/appStateReducer';
+import { NetworkStatus } from '../store/reducers/appStateReducer';
 import { AppState } from '../store/types';
 
 type FieldFactory<T, K extends keyof T> = T[K] | Array<T[K]> | ((index: number) => T[K]);
@@ -164,5 +164,5 @@ export const [createAnswer, createAnswers] = factory<Answer>(() => ({
 export const [createState] = factory<AppState>(() => ({
   game: null,
   player: null,
-  app: { ready: true, menuOpen: false, server: ServerStatus.up },
+  app: { ready: true, menuOpen: false, server: NetworkStatus.up },
 }));

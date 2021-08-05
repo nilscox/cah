@@ -1,6 +1,6 @@
 import expect from 'expect';
 
-import { ServerStatus } from '../../../../store/reducers/appStateReducer';
+import { NetworkStatus } from '../../../../store/reducers/appStateReducer';
 import { createFullPlayer, createGame, createTurns } from '../../../../tests/factories';
 import { InMemoryStore } from '../../../../tests/InMemoryStore';
 
@@ -17,7 +17,13 @@ describe('initialize', () => {
     await store.dispatch(initialize());
 
     store.expectState('player', null);
-    store.expectState('app', { server: ServerStatus.up, ready: true, menuOpen: false });
+
+    store.expectState('app', {
+      network: NetworkStatus.up,
+      server: NetworkStatus.up,
+      ready: true,
+      menuOpen: false,
+    });
   });
 
   it('initializes with a player who is not in game', async () => {
@@ -43,5 +49,30 @@ describe('initialize', () => {
 
     expect(store.getState().game).toHaveProperty('id', game.id);
     expect(store.getState().game).toHaveProperty('turns', turns);
+  });
+
+  it('reacts to network status update events', async () => {
+    const { networkGateway } = store;
+
+    networkGateway.networkStatus = NetworkStatus.down;
+
+    await store.dispatch(initialize());
+    store.snapshot();
+
+    store.expectPartialState('app', {
+      network: NetworkStatus.down,
+    });
+
+    networkGateway.triggerNetworkStatusChange(NetworkStatus.up);
+
+    store.expectPartialState('app', {
+      network: NetworkStatus.up,
+    });
+
+    networkGateway.triggerNetworkStatusChange(NetworkStatus.down);
+
+    store.expectPartialState('app', {
+      network: NetworkStatus.down,
+    });
   });
 });

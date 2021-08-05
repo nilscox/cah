@@ -1,5 +1,5 @@
 import { createThunk } from '../../../../store/createThunk';
-import { ServerStatus } from '../../../../store/reducers/appStateReducer';
+import { NetworkStatus } from '../../../../store/reducers/appStateReducer';
 import { serverStatusChanged } from '../../../actions';
 import { initialize } from '../../player/initialize/initialize';
 
@@ -18,14 +18,14 @@ const healthcheck = createThunk(async ({ getState, dispatch, serverGateway }) =>
 const checkServerStatus = createThunk(async ({ dispatch, timerGateway }) => {
   const status = await dispatch(healthcheck());
 
-  if (status === ServerStatus.up) {
+  if (status === NetworkStatus.up) {
     return;
   }
 
   const interval = timerGateway.setInterval(async () => {
     const status = await dispatch(healthcheck());
 
-    if (status === ServerStatus.up) {
+    if (status === NetworkStatus.up) {
       timerGateway.clearInterval(interval);
       await dispatch(initialize());
     }
@@ -33,8 +33,8 @@ const checkServerStatus = createThunk(async ({ dispatch, timerGateway }) => {
 });
 
 export const handleServerDown = createThunk(({ dispatch, getState }) => {
-  if (getState().app.server !== ServerStatus.down) {
-    dispatch(serverStatusChanged(ServerStatus.down));
+  if (getState().app.server !== NetworkStatus.down) {
+    dispatch(serverStatusChanged(NetworkStatus.down));
     dispatch(checkServerStatus());
   }
 });

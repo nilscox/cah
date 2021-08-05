@@ -1,24 +1,30 @@
 import { AppAction } from '../types';
 
-export enum ServerStatus {
+export enum NetworkStatus {
   up = 'up',
   down = 'down',
 }
 
 export type AppState = {
-  server: ServerStatus;
+  network: NetworkStatus;
+  server: NetworkStatus;
   ready: boolean;
   menuOpen: boolean;
   notification?: string;
 };
 
 const defaultAppState: AppState = {
-  server: ServerStatus.up,
+  network: NetworkStatus.up,
+  server: NetworkStatus.up,
   ready: false,
   menuOpen: false,
 };
 
 export const appStateReducer = (state = defaultAppState, action: AppAction): AppState => {
+  if (action.type === 'network/status') {
+    return { ...state, network: action.payload };
+  }
+
   if (action.type === 'server/status') {
     return { ...state, server: action.payload };
   }

@@ -3,7 +3,7 @@ import { InMemoryStore } from '../../../../tests/InMemoryStore';
 
 import { showNotification } from './showNotification';
 
-describe.only('showNotification', () => {
+describe('showNotification', () => {
   it('shows a notification', () => {
     const store = new InMemoryStore();
 

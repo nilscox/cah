@@ -54,7 +54,7 @@ export const AnswerQuestion: React.FC = () => {
 
   return (
     <>
-      <Center minHeight={24}>
+      <Center minHeight={24} padding={4}>
         <QuestionCard question={game.question} choices={selection} />
       </Center>
       <ChoicesList

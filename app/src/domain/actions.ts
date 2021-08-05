@@ -1,5 +1,5 @@
 import { createAction } from '../store/createAction';
-import { ServerStatus } from '../store/reducers/appStateReducer';
+import { NetworkStatus } from '../store/reducers/appStateReducer';
 
 import { Choice } from './entities/Choice';
 import { Game } from './entities/Game';
@@ -18,7 +18,8 @@ export const setTurns = createAction<Turn[], 'game/set-turns'>('game/set-turns')
 export const gameStarted = createAction('game/started');
 
 export const setAppReady = createAction('app/ready');
-export const serverStatusChanged = createAction<ServerStatus, 'server/status'>('server/status');
+export const networkStatusChanged = createAction<NetworkStatus, 'network/status'>('network/status');
+export const serverStatusChanged = createAction<NetworkStatus, 'server/status'>('server/status');
 export const openMenu = createAction('app/open-menu');
 export const closeMenu = createAction('app/close-menu');
 export const setNotification = createAction<string, 'app/set-notification'>('app/set-notification');
@@ -39,6 +40,7 @@ export type Actions = ReturnType<
   | typeof setGame
   | typeof setTurns
   | typeof setAppReady
+  | typeof networkStatusChanged
   | typeof serverStatusChanged
   | typeof openMenu
   | typeof closeMenu

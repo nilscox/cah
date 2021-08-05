@@ -1,6 +1,6 @@
 import expect from 'expect';
 
-import { ServerStatus } from '../../../../store/reducers/appStateReducer';
+import { NetworkStatus } from '../../../../store/reducers/appStateReducer';
 import { FakeServerGateway } from '../../../../tests/gateways/FakeServerGateway';
 import { FakeTimerGateway } from '../../../../tests/gateways/FakeTimerGateway';
 import { InMemoryStore } from '../../../../tests/InMemoryStore';
@@ -19,44 +19,44 @@ describe('handleServerDown', () => {
     ({ timerGateway, serverGateway } = store);
   });
 
-  const expectServerStatus = (status: ServerStatus) => {
+  const expectServerStatus = (status: NetworkStatus) => {
     expect(store.getState().app.server).toEqual(status);
   };
 
   it('does not do anything when the server is already down', async () => {
-    serverGateway.serverStatus = ServerStatus.up;
+    serverGateway.serverStatus = NetworkStatus.up;
 
-    store.dispatch(serverStatusChanged(ServerStatus.down));
+    store.dispatch(serverStatusChanged(NetworkStatus.down));
     store.snapshot();
 
     await store.dispatch(handleServerDown());
 
     await timerGateway.invokeInterval();
 
-    expectServerStatus(ServerStatus.down);
+    expectServerStatus(NetworkStatus.down);
   });
 
   it('periodically checks if the server is up', async () => {
-    serverGateway.serverStatus = ServerStatus.down;
+    serverGateway.serverStatus = NetworkStatus.down;
 
     await store.dispatch(handleServerDown());
 
-    expectServerStatus(ServerStatus.down);
+    expectServerStatus(NetworkStatus.down);
 
     await timerGateway.invokeInterval();
 
-    expectServerStatus(ServerStatus.down);
+    expectServerStatus(NetworkStatus.down);
 
-    serverGateway.serverStatus = ServerStatus.up;
+    serverGateway.serverStatus = NetworkStatus.up;
     await timerGateway.invokeInterval();
 
-    expectServerStatus(ServerStatus.up);
+    expectServerStatus(NetworkStatus.up);
     store.expectPartialState('app', { ready: true });
 
-    serverGateway.serverStatus = ServerStatus.down;
+    serverGateway.serverStatus = NetworkStatus.down;
     await timerGateway.invokeInterval();
 
     // interval was cleared
-    expectServerStatus(ServerStatus.up);
+    expectServerStatus(NetworkStatus.up);
   });
 });

@@ -9,6 +9,7 @@ import { Router } from 'react-router-dom';
 import { handleServerDown } from '../../domain/usecases/app/handleServerDown/handleServerDown';
 import { configureStore } from '../../store/configureStore';
 import { Dependencies } from '../../store/types';
+import { DeviceNetworkGateway } from '../gateways/DeviceNetworkGateway';
 import { HTTPAdapter } from '../gateways/HTTPAdapter';
 import { HTTPGameGateway } from '../gateways/HTTPGameGateway';
 import { HTTPPlayerGateway } from '../gateways/HTTPPlayerGateway';
@@ -45,8 +46,9 @@ const dependencies: Dependencies = {
   rtcGateway: new WSRTCGateway(wsAdapter),
   routerGateway: new ReactRouterGateway(history),
   gameRouterGateway: new ReactRouterGateway(gameRouterHistory),
-  serverGateway: new HTTPServerGateway(httpAdapter),
   timerGateway: new RealTimerGateway(),
+  networkGateway: new DeviceNetworkGateway(),
+  serverGateway: new HTTPServerGateway(httpAdapter),
 };
 
 const store = configureStore(dependencies);

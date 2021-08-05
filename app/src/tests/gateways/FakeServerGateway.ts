@@ -1,10 +1,10 @@
 import { ServerGateway } from '../../domain/gateways/ServerGateway';
-import { ServerStatus } from '../../store/reducers/appStateReducer';
+import { NetworkStatus } from '../../store/reducers/appStateReducer';
 
 export class FakeServerGateway implements ServerGateway {
-  serverStatus = ServerStatus.up;
+  serverStatus = NetworkStatus.up;
 
-  async healthcheck(): Promise<ServerStatus> {
+  async healthcheck(): Promise<NetworkStatus> {
     return this.serverStatus;
   }
 }
