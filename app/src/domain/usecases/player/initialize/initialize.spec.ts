@@ -1,8 +1,7 @@
-import expect from 'expect';
-
 import { NetworkStatus } from '../../../../store/reducers/appStateReducer';
 import { createFullPlayer, createGame, createTurns } from '../../../../tests/factories';
 import { InMemoryStore } from '../../../../tests/InMemoryStore';
+import { GameState } from '../../../entities/Game';
 
 import { initialize } from './initialize';
 
@@ -27,13 +26,20 @@ describe('initialize', () => {
   });
 
   it('initializes with a player who is not in game', async () => {
-    const player = createFullPlayer();
+    const player = createFullPlayer({ nick: 'poooooopopopopo' });
 
     store.playerGateway.player = player;
 
     await store.dispatch(initialize());
 
-    expect(store.getState().player).toHaveProperty('id', player.id);
+    store.expectState('player', {
+      id: player.id,
+      nick: 'poooooopopopopo',
+      isConnected: true,
+      cards: [],
+      selection: [],
+      selectionValidated: false,
+    });
   });
 
   it('initializes with a player who is in game', async () => {
@@ -47,8 +53,13 @@ describe('initialize', () => {
 
     await store.dispatch(initialize());
 
-    expect(store.getState().game).toHaveProperty('id', game.id);
-    expect(store.getState().game).toHaveProperty('turns', turns);
+    store.expectState('game', {
+      id: game.id,
+      code: 'code',
+      players: [],
+      state: GameState.idle,
+      turns,
+    });
   });
 
   it('reacts to network status update events', async () => {

@@ -151,7 +151,7 @@ export class StubServerGateway implements ServerGateway {
 // export const storiesRouterHistory = createStubHistory();
 export const storiesRouterHistory = createMemoryHistory();
 
-export const stubDependencies: () => Dependencies = () => ({
+export const stubDependencies = () => ({
   gameGateway: new StubGameGateway(),
   playerGateway: new StubPlayerGateway(),
   rtcGateway: new StubRTCGateway(),
