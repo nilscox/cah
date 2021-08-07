@@ -62,10 +62,7 @@ describe('GetGameQuery', () => {
   });
 
   it('queries a finished game', async () => {
-    const game = await builder.addPlayers().start().play(PlayState.endOfTurn).get();
-
-    game.finish();
-    await gameRepository.save(game);
+    const game = await builder.addPlayers().start().finish().get();
 
     const result = await handler.execute({ gameId: game.id });
 

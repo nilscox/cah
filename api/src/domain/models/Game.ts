@@ -15,6 +15,7 @@ import { AllPlayersAnsweredEvent } from '../events/AllPlayersAnsweredEvent';
 import { GameCreatedEvent } from '../events/GameCreatedEvent';
 import { GameFinishedEvent } from '../events/GameFinishedEvent';
 import { GameJoinedEvent } from '../events/GameJoinedEvent';
+import { GameLeftEvent } from '../events/GameLeftEvent';
 import { GameStartedEvent } from '../events/GameStartedEvent';
 import { PlayerAnsweredEvent } from '../events/PlayerAnsweredEvent';
 import { TurnFinishedEvent } from '../events/TurnFinishedEvent';
@@ -66,6 +67,23 @@ export class Game extends AggregateRoot<GameEvent> {
     player.gameId = this.id;
 
     this.addEvent(new GameJoinedEvent(this, player));
+  }
+
+  removePlayer(player: Player) {
+    if (this.state !== GameState.finished) {
+      throw new InvalidGameStateError(GameState.finished, this.state);
+    }
+
+    const idx = this.players.findIndex((p) => p.equals(player));
+
+    if (idx < 0) {
+      return;
+    }
+
+    this.players.splice(idx, 1);
+    player.gameId = undefined;
+
+    this.addEvent(new GameLeftEvent(this, player));
   }
 
   hasPlayer(player: Player) {

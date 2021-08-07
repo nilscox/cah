@@ -3,6 +3,7 @@ import { CardsDealtEvent } from './CardsDealtEvent';
 import { GameCreatedEvent } from './GameCreatedEvent';
 import { GameFinishedEvent } from './GameFinishedEvent';
 import { GameJoinedEvent } from './GameJoinedEvent';
+import { GameLeftEvent } from './GameLeftEvent';
 import { GameStartedEvent } from './GameStartedEvent';
 import { PlayerAnsweredEvent } from './PlayerAnsweredEvent';
 import { PlayerConnectedEvent } from './PlayerConnectedEvent';
@@ -16,6 +17,7 @@ export type GameEvent =
   | PlayerDisconnectedEvent
   | GameCreatedEvent
   | GameJoinedEvent
+  | GameLeftEvent
   | GameStartedEvent
   | GameFinishedEvent
   | TurnStartedEvent

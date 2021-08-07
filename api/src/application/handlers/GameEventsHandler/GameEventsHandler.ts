@@ -39,6 +39,13 @@ export class GameEventsHandler implements EventHandler<GameEvent> {
         });
         break;
 
+      case 'GameLeft':
+        this.notify(event.game, {
+          type: event.type,
+          player: event.player.nick,
+        });
+        break;
+
       case 'GameStarted':
         this.notify(event.game, {
           type: event.type,

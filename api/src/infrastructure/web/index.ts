@@ -8,6 +8,7 @@ import {
 import { CreateGameCommand, CreateGameHandler } from '../../application/commands/CreateGameCommand/CreateGameCommand';
 import { FlushCardsHandler } from '../../application/commands/FlushCardsCommand/FlushCardsCommand';
 import { JoinGameCommand, JoinGameHandler } from '../../application/commands/JoinGameCommand/JoinGameCommand';
+import { LeaveGameHandler } from '../../application/commands/LeaveGameCommand/LeaveGameCommand';
 import { LoginCommand, LoginHandler } from '../../application/commands/LoginCommand/LoginCommand';
 import { NextTurnHandler } from '../../application/commands/NextTurnCommand/NextTurnCommand';
 import {
@@ -132,6 +133,11 @@ export const bootstrapServer = (deps: Dependencies, wss: WebsocketServer, sessio
       .use(...authPlayerContext)
       .use(dto((req) => new JoinGameCommand(req.params.gameCode)))
       .use(handler(handlers.get(JoinGameHandler))),
+
+    new Route('post', '/game/leave')
+      .use(...authPlayerContext)
+      .use(status(204))
+      .use(handler(handlers.get(LeaveGameHandler))),
 
     new Route('post', '/start')
       .use(...authPlayerContext)

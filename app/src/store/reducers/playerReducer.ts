@@ -45,7 +45,7 @@ export const playerReducer = (state: PlayerState = null, action: AppAction): Pla
     const game = action.payload;
 
     if (game === null) {
-      return null;
+      return state;
     }
 
     if (!isStarted(game)) {

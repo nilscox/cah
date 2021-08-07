@@ -20,6 +20,11 @@ export interface GameJoinedEvent {
   };
 }
 
+export interface GameLeftEvent {
+  type: "GameLeft";
+  player: string;
+}
+
 export interface GameStartedEvent {
   type: "GameStarted";
 }
@@ -64,6 +69,7 @@ export type GameEventDto =
   | PlayerConnectedEvent
   | PlayerDisconnectedEvent
   | GameJoinedEvent
+  | GameLeftEvent
   | GameStartedEvent
   | TurnStartedEvent
   | PlayerAnsweredEvent

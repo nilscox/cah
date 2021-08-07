@@ -77,7 +77,7 @@ export class HTTPGameGateway implements GameGateway {
   }
 
   async leaveGame(): Promise<void> {
-    // todo
+    await this.http.post('/game/leave');
   }
 
   async startGame(questionMaster: Player, turns: number): Promise<void> {

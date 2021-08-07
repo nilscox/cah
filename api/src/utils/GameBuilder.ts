@@ -1,4 +1,4 @@
-import { PlayState } from '../../../shared/enums';
+import { GameState, PlayState } from '../../../shared/enums';
 import { GameRepository } from '../application/interfaces/GameRepository';
 import { PlayerRepository } from '../application/interfaces/PlayerRepository';
 import { Game, StartedGame } from '../domain/models/Game';
@@ -58,35 +58,49 @@ export class GameBuilder<G extends Game = Game> {
     return this as GameBuilder<StartedGame>;
   }
 
-  play(to: PlayState): GameBuilder<G> {
+  private async playTurn(to?: PlayState) {
+    const game = this.game as StartedGame;
+
+    if (to === PlayState.playersAnswer) {
+      return;
+    }
+
+    for (const player of this.game.playersExcludingQM) {
+      this.game.addAnswer(player, player.getFirstCards(game.question.numberOfBlanks), (arr) => arr);
+    }
+
+    if (to === PlayState.questionMasterSelection) {
+      return;
+    }
+
+    game.setWinningAnswer(game.questionMaster, game.answers[0].id);
+
+    if (to === PlayState.endOfTurn) {
+      return;
+    }
+
+    await this.gameRepository.addTurn(game.id, game.currentTurn);
+
+    const nextQuestion = await this.gameRepository.findNextAvailableQuestion(game.id);
+
+    if (nextQuestion) {
+      game.nextTurn(nextQuestion);
+      game.dealCards(await this.gameRepository.findAvailableChoices(game.id));
+    } else {
+      game.finish();
+    }
+  }
+
+  play(to?: PlayState): GameBuilder<G> {
+    this.register(() => this.playTurn(to));
+
+    return this;
+  }
+
+  finish(): GameBuilder<G> {
     this.register(async () => {
-      const game = this.game as StartedGame;
-
-      if (to === PlayState.playersAnswer) {
-        return;
-      }
-
-      for (const player of this.game.playersExcludingQM) {
-        this.game.addAnswer(player, player.getFirstCards(game.question.numberOfBlanks), (arr) => arr);
-      }
-
-      if (to === PlayState.questionMasterSelection) {
-        return;
-      }
-
-      game.setWinningAnswer(game.questionMaster, game.answers[0].id);
-
-      if (to === PlayState.endOfTurn) {
-        return;
-      }
-
-      const nextQuestion = await this.gameRepository.findNextAvailableQuestion(game.id);
-
-      if (nextQuestion) {
-        game.nextTurn(nextQuestion);
-        game.dealCards(await this.gameRepository.findAvailableChoices(game.id));
-      } else {
-        game.finish();
+      while (this.game.state !== GameState.finished) {
+        await this.playTurn();
       }
     });
 

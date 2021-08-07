@@ -82,6 +82,7 @@ class StubPlayer {
 
     switch (event.type) {
       case 'GameJoined':
+      case 'GameLeft':
       case 'PlayerAnswered':
         break;
 
@@ -165,6 +166,12 @@ class StubPlayer {
 
     await this.agent.post(`/game/${gameId}/join`).expect(200);
     this.gameId = gameId;
+  }
+
+  async leaveGame() {
+    this.log('leaves the game');
+
+    await this.agent.post(`/game/leave`).expect(204);
   }
 
   async startGame(questionMaster: StubPlayer, turns: number) {
@@ -358,5 +365,9 @@ describe('e2e', () => {
 
     // console.log({ nils, tom, jeanne });
     // console.log((await nils.agent.get('/game/' + nils.gameId + '/turns').expect(200)).body);
+
+    for (const player of players) {
+      await player.leaveGame();
+    }
   });
 });

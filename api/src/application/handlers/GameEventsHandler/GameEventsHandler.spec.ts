@@ -4,6 +4,7 @@ import { PlayState } from '../../../../../shared/enums';
 import { AllPlayersAnsweredEvent } from '../../../domain/events/AllPlayersAnsweredEvent';
 import { GameFinishedEvent } from '../../../domain/events/GameFinishedEvent';
 import { GameJoinedEvent } from '../../../domain/events/GameJoinedEvent';
+import { GameLeftEvent } from '../../../domain/events/GameLeftEvent';
 import { GameStartedEvent } from '../../../domain/events/GameStartedEvent';
 import { PlayerAnsweredEvent } from '../../../domain/events/PlayerAnsweredEvent';
 import { TurnFinishedEvent } from '../../../domain/events/TurnFinishedEvent';
@@ -66,6 +67,18 @@ describe('GameEventsHandler', () => {
         nick: player.nick,
         isConnected: true,
       },
+    });
+  });
+
+  it('GameLeft event', () => {
+    const game = new Game();
+    const player = new Player('player');
+
+    handler.execute(new GameLeftEvent(game, player));
+
+    expect(notifier.lastGameMessage(game)).to.eql({
+      type: 'GameLeft',
+      player: player.nick,
     });
   });
 
