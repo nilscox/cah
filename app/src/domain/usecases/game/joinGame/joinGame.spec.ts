@@ -41,11 +41,13 @@ describe('joinGame', () => {
     store.expectPartialState('game', {
       players: [player],
     });
+
+    store.expectPartialState('app', { notification: 'mario a rejoint la partie' });
   });
 
   it('redirects to the game view', async () => {
     await store.dispatch(joinGame('OK42'));
 
-    expect(store.routerGateway.pathname).toEqual('/game/OK42');
+    expect(store.routerGateway.gamePathname).toEqual('/game/OK42/idle');
   });
 });

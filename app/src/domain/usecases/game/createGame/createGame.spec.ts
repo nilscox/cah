@@ -30,6 +30,6 @@ describe('createGame', () => {
   it('redirects to the game view', async () => {
     await store.dispatch(createGame());
 
-    expect(store.routerGateway.pathname).toEqual('/game/OK42');
+    expect(store.routerGateway.pathname).toEqual('/game/OK42/idle');
   });
 });

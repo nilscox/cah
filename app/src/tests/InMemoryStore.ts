@@ -1,6 +1,6 @@
 import expect from 'expect';
 
-import { rtcMessage } from '../domain/actions';
+import { handleRTCMessage } from '../domain/usecases/game/handleRTCMessage/handleRTCMessage';
 import { configureStore } from '../store/configureStore';
 import { AppState, AppStore, Dependencies } from '../store/types';
 
@@ -38,7 +38,7 @@ export class InMemoryStore {
   }
 
   listenRTCMessages = (rtcGateway = this.rtcGateway) => {
-    rtcGateway.onMessage((message) => this.store.dispatch(rtcMessage(message)));
+    rtcGateway.onMessage((message) => this.store.dispatch(handleRTCMessage(message)));
   };
 
   snapshot = () => {

@@ -6,5 +6,5 @@ export const createGame = createThunk(async ({ dispatch, gameGateway, routerGate
 
   dispatch(setGame(game));
 
-  routerGateway.push(`/game/${game.code}`);
+  routerGateway.push(`/game/${game.code}/idle`);
 });

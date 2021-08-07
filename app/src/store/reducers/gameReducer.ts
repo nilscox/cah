@@ -3,7 +3,7 @@ import { Game, GameState as GS, PlayState, StartedGame } from '../../domain/enti
 import { RTCMessage } from '../../domain/gateways/RTCGateway';
 import { AppAction, NotNull, Nullable } from '../types';
 
-import { append, upsert } from './helpers';
+import { append, remove, upsert } from './helpers';
 
 export type GameState = Nullable<Game | StartedGame>;
 
@@ -31,6 +31,13 @@ const rtcMessageReducer = (state: NotNull<GameState>, message: RTCMessage): Game
     return {
       ...state,
       players: append(state.players, message.player),
+    };
+  }
+
+  if (message.type === 'GameLeft') {
+    return {
+      ...state,
+      players: remove(state.players, (player) => player.nick === message.player),
     };
   }
 

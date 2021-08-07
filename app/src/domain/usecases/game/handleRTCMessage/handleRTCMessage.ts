@@ -2,8 +2,17 @@ import { createThunk } from '../../../../store/createThunk';
 import { rtcMessage } from '../../../actions';
 import { RTCMessage } from '../../../gateways/RTCGateway';
 import { navigateToGameRoute } from '../../app/navigate/navigate';
+import { showNotification } from '../../app/showNotification/showNotification';
 
 export const handleRTCMessage = createThunk(({ dispatch }, message: RTCMessage) => {
+  if (message.type === 'GameJoined') {
+    dispatch(showNotification(message.player.nick + ' a rejoint la partie'));
+  }
+
+  if (message.type === 'GameLeft') {
+    dispatch(showNotification(message.player + ' a quitté la partie'));
+  }
+
   if (message.type === 'TurnStarted') {
     dispatch(navigateToGameRoute('/started/answer-question'));
   }
