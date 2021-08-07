@@ -7,6 +7,7 @@ import { Choice } from '../../../domain/entities/Choice';
 import { createPlayer, createQuestion } from '../../../tests/factories';
 import { ChoiceCard, ChoiceCardProps } from '../components/domain/ChoiceCard';
 import { ChoiceCardsListProps, ChoicesList } from '../components/domain/ChoicesList';
+import { Fallback } from '../components/domain/ErrorBoundary';
 import Header, { HeaderProps } from '../components/domain/Header';
 import { Notification } from '../components/domain/Notification';
 import { QuestionCard, QuestionCardProps } from '../components/domain/QuestionCard';
@@ -127,3 +128,5 @@ header.args = {
 };
 
 export const fireworks = () => <Fireworks />;
+
+export const errorBoundary = () => <Fallback />;

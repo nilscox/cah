@@ -4,18 +4,20 @@ import styled from '@emotion/styled';
 
 import { Choice } from '../../../../domain/entities/Choice';
 import Sort from '../../icons/sort-handle.svg';
-import { fontWeight, spacing, transition } from '../../styles/theme';
+import { color, fontWeight, spacing, transition } from '../../styles/theme';
 import Button from '../elements/Button';
 import { Icon } from '../elements/Icon';
 import { IconButton } from '../elements/IconButton';
 import { DragHandle } from '../elements/SortableList';
 
-const Container = styled.div<{ isSorting: boolean }>`
+const Container = styled.div<{ isSorting: boolean; isBeingSorted: boolean }>`
   display: flex;
   flex-direction: row;
   align-items: center;
-  background: white;
-  visibility: ${({ isSorting }) => (isSorting ? 'hidden' : undefined)};
+  visibility: ${({ isBeingSorted }) => (isBeingSorted ? 'hidden' : undefined)};
+  border-bottom: 1px solid ${color('border')};
+  border-top: ${({ isSorting, theme: { colors } }) => isSorting && `1px solid ${colors.border}`};
+  background: ${({ isSorting }) => isSorting && 'white'};
 `;
 
 const Text = styled(Button)<{ selected?: boolean }>`
@@ -34,6 +36,9 @@ const Text = styled(Button)<{ selected?: boolean }>`
 const SortHandle = styled(IconButton)`
   color: #ccc;
   padding: ${spacing(1)};
+
+  /* https://docs.dndkit.com/api-documentation/sensors/touch#touch-action */
+  touch-action: none;
 `;
 
 export type ChoiceCardProps = {
@@ -41,11 +46,19 @@ export type ChoiceCardProps = {
   selected: boolean;
   onClick?: () => void;
   isSorting: boolean;
+  isBeingSorted: boolean;
   dragHandle: DragHandle;
 };
 
-export const ChoiceCard: React.FC<ChoiceCardProps> = ({ choice, selected, onClick, isSorting, dragHandle }) => (
-  <Container isSorting={isSorting}>
+export const ChoiceCard: React.FC<ChoiceCardProps> = ({
+  choice,
+  selected,
+  onClick,
+  isSorting,
+  isBeingSorted,
+  dragHandle,
+}) => (
+  <Container isSorting={isSorting} isBeingSorted={isBeingSorted}>
     <Text selected={selected} disabled={!onClick} onClick={onClick}>
       {choice.text}
     </Text>

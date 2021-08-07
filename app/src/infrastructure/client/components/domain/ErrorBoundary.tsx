@@ -3,6 +3,12 @@ import React, { ErrorInfo } from 'react';
 import { Center } from '../layout/Center';
 import { FullScreen } from '../layout/FullScreen';
 
+export const Fallback: React.FC = () => (
+  <FullScreen>
+    <Center flex={1}>Y'a eu une erreur.</Center>
+  </FullScreen>
+);
+
 export class ErrorBoundary extends React.PureComponent<unknown, { hasError: boolean }> {
   state = { hasError: false };
 
@@ -16,11 +22,7 @@ export class ErrorBoundary extends React.PureComponent<unknown, { hasError: bool
 
   render() {
     if (this.state.hasError) {
-      return (
-        <FullScreen>
-          <Center>Ya eu une erreur.</Center>
-        </FullScreen>
-      );
+      return <Fallback />;
     }
 
     return this.props.children;

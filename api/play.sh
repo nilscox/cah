@@ -4,19 +4,28 @@ function cah() {
   http --session "/tmp/httpie-cah-$1.json" "$2" "http://localhost:4242$3" "${@:4}"
 }
 
-reset() {
-  yarn cah reset
-
+auth() {
   cah nils POST /login nick=nils
   cah tom POST /login nick=tom
-  jeanneId=$(cah jeanne POST /login nick=jeanne -b | jq -r .id)
+  cah jeanne POST /login nick=jeanne
+}
 
+join() {
   cah nils POST /game
-
   cah tom POST /game/6666/join
   cah jeanne POST /game/6666/join
+}
 
-  cah tom POST /start questionMasterId="$jeanneId" turns:=20
+start() {
+  jeanneId=$(cah jeanne GET /player/me -b | jq -r .id)
+  cah tom POST /start questionMasterId="$jeanneId" turns:="${1:-20}"
+}
+
+reset() {
+  yarn cah reset
+  auth
+  join
+  start "$1"
 }
 
 answer() {

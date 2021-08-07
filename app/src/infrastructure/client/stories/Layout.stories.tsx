@@ -49,7 +49,7 @@ export const sortableList = () => {
       .map((_, n) => ({ id: String(n), text: `item ${n}` })),
   );
 
-  const renderItem: RenderItemFunction<ItemType> = (item, isSelected, dragHandle) => (
+  const renderItem: RenderItemFunction<ItemType> = (item, isSelected, _isBeingSorted, dragHandle) => (
     <Item item={item} isSelected={isSelected} dragHandle={dragHandle} />
   );
 

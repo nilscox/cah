@@ -1,18 +1,21 @@
 import { Theme } from '@emotion/react';
 
 const fast = false;
+const compact = false;
 
-const themeSpacing = (...spacings: Array<number | string>) => {
-  return spacings
-    .map((value) => {
-      if (typeof value === 'string') {
-        return value;
-      }
+const makeSpacing =
+  (unit: number) =>
+  (...spacings: Array<number | string>) => {
+    return spacings
+      .map((value) => {
+        if (typeof value === 'string') {
+          return value;
+        }
 
-      return 6 * value + 'px';
-    })
-    .join(' ');
-};
+        return unit * value + 'px';
+      })
+      .join(' ');
+  };
 
 export const theme: Theme = {
   colors: {
@@ -28,17 +31,17 @@ export const theme: Theme = {
     big: '1.4rem',
     title: '2rem',
   },
-  spacing: themeSpacing,
+  spacing: makeSpacing(8),
   space: Array(8)
     .fill(0)
-    .map((_, n) => themeSpacing(n)),
+    .map((_, n) => makeSpacing(8)(n)),
   fontWeights: {
     thin: 200,
     normal: 'normal',
     bold: 'bold',
   },
   durations: {
-    default: 400,
+    default: 300,
     slow: 1000,
   },
   animationFunction: 'ease',
@@ -47,6 +50,19 @@ export const theme: Theme = {
 if (fast) {
   theme.durations.default /= 4;
   theme.durations.slow /= 4;
+}
+
+if (compact) {
+  theme.fontSizes = {
+    ...theme.fontSizes,
+    small: '10px',
+    default: '14px',
+  };
+
+  theme.spacing = makeSpacing(5);
+  theme.space = Array(8)
+    .fill(0)
+    .map((_, n) => makeSpacing(5)(n));
 }
 
 type Props = { theme: Theme };

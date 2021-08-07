@@ -13,9 +13,8 @@ import { ChoiceCard } from './ChoiceCard';
 const Container = styled.div`
   flex: 1;
   overflow-y: auto;
-  display: grid;
-  row-gap: 1px;
   align-content: flex-start;
+  background: white;
 `;
 
 const ValidateContainer = styled.div<{ open: boolean }>`
@@ -44,12 +43,13 @@ export const ChoicesList: React.FC<ChoiceCardsListProps> = ({
   validateButtonVisible,
   onValidateSelection,
 }) => {
-  const renderChoice: RenderItemFunction<Choice> = (choice, isSorting, dragHandle) => (
+  const renderChoice: RenderItemFunction<Choice> = (choice, isSorting, isBeingSorted, dragHandle) => (
     <ChoiceCard
       choice={choice}
       selected={selection.includes(choice)}
       onClick={conditionalCallback(onSelectChoice, choice)}
       isSorting={isSorting}
+      isBeingSorted={isBeingSorted}
       dragHandle={dragHandle}
     />
   );

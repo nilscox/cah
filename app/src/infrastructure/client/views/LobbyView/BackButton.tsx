@@ -12,7 +12,7 @@ type BackButtonProps = {
 
 export const BackButton: React.FC<BackButtonProps> = ({ show, onBack }) => (
   <Fade show={show}>
-    <IconButton onClick={onBack}>
+    <IconButton disabled={!show} onClick={onBack}>
       <Icon as={Back} />
     </IconButton>
   </Fade>

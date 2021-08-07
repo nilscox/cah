@@ -12,7 +12,7 @@ import { openMenu } from '../../../domain/usecases/app/navigate/navigate';
 import { configureStore } from '../../../store/configureStore';
 import { AppActionOrThunk } from '../../../store/types';
 import { createGame } from '../../../tests/factories';
-import CAHApp from '../App';
+import App from '../App';
 import { gameHistory } from '../views/GameView/GameView';
 
 import { answers, player, players, questions, startedGame, turns } from './fixtures';
@@ -22,7 +22,7 @@ const questionOptions = ['no blanks', 'one blank', 'multiple blanks'] as const;
 
 export default {
   title: 'Views',
-  component: CAHApp,
+  component: App,
   argTypes: {
     question: {
       options: questionOptions,
@@ -44,10 +44,6 @@ const Template: Story<TemplateProps> = ({ player, game, question, turns, action 
   const deps = stubDependencies();
   const store = configureStore(deps);
 
-  if (action) {
-    store.dispatch(action());
-  }
-
   if (game && isStarted(game)) {
     const questionIndex = ['no blanks', 'one blank', 'multiple blanks'].indexOf(question);
 
@@ -63,10 +59,16 @@ const Template: Story<TemplateProps> = ({ player, game, question, turns, action 
   // @ts-expect-error same here, obviously
   deps.routerGateway.gameHistory = gameHistory;
 
+  store.subscribe(() => {
+    if (action && store.getState().app.ready) {
+      store.dispatch(action());
+    }
+  });
+
   return (
     <Router history={storiesHistory}>
       <ReduxProvider store={store}>
-        <CAHApp />
+        <App />
       </ReduxProvider>
     </Router>
   );
@@ -116,6 +118,7 @@ EndOfTurn.args = {
     questionMaster: player,
     playState: PlayState.endOfTurn,
     answers,
+    winner: players[1],
   },
 };
 

@@ -1,4 +1,5 @@
 import { GameState as GameStateEnum } from '../../../../shared/enums';
+import { Answer } from '../../domain/entities/Answer';
 import { Game, GameState as GS, PlayState, StartedGame } from '../../domain/entities/Game';
 import { RTCMessage } from '../../domain/gateways/RTCGateway';
 import { AppAction, NotNull, Nullable } from '../types';
@@ -78,10 +79,18 @@ const rtcMessageReducer = (state: NotNull<GameState>, message: RTCMessage): Game
   }
 
   if (message.type === 'TurnFinished') {
+    const game = state as StartedGame;
+
     return {
       ...state,
       answers: [],
       winner: undefined,
+      turns: append(game.turns, {
+        number: game.turns.length + 1,
+        question: game.question,
+        answers: game.answers as Answer[],
+        winner: game.winner!,
+      }),
     };
   }
 

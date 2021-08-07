@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from 'react';
+import React, { CSSProperties, ReactElement, useState } from 'react';
 
 import {
   closestCenter,
@@ -26,27 +26,27 @@ export type SortableItem = {
 export type RenderItemFunction<T extends SortableItem> = (
   item: T,
   isSorting: boolean,
+  isBeingSorted: boolean,
   dragHandle: DragHandle,
 ) => ReactElement;
 
 type SortableItemProps<T extends SortableItem> = {
   item: T;
-  isSorting: boolean;
+  isBeingSorted: boolean;
   renderItem: RenderItemFunction<T>;
 };
 
-const SortableItem = <T extends SortableItem>({ item, isSorting, renderItem }: SortableItemProps<T>) => {
+const SortableItem = <T extends SortableItem>({ item, isBeingSorted, renderItem }: SortableItemProps<T>) => {
   const { listeners, setNodeRef, transform, transition } = useSortable({ id: item.id });
 
   const style: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
     transition: transition as React.CSSProperties['transition'],
-    touchAction: 'none',
   };
 
   return (
     <div ref={setNodeRef} style={{ ...style, outline: 'none' }}>
-      {renderItem(item, isSorting, listeners)}
+      {renderItem(item, false, isBeingSorted, { ...listeners })}
     </div>
   );
 };
@@ -92,10 +92,10 @@ export const SortableList = <T extends SortableItem>({ items, renderItem, onOrde
     >
       <SortableContext items={items} strategy={verticalListSortingStrategy}>
         {items.map((item) => (
-          <SortableItem key={item.id} isSorting={item.id === activeId} item={item} renderItem={renderItem} />
+          <SortableItem key={item.id} isBeingSorted={item.id === activeId} item={item} renderItem={renderItem} />
         ))}
       </SortableContext>
-      <DragOverlay>{active && renderItem(active, false, {})}</DragOverlay>
+      <DragOverlay>{active && renderItem(active, true, false, {})}</DragOverlay>
     </DndContext>
   );
 };

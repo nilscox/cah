@@ -8,7 +8,7 @@ import {
 import { CreateGameCommand, CreateGameHandler } from '../../application/commands/CreateGameCommand/CreateGameCommand';
 import { FlushCardsHandler } from '../../application/commands/FlushCardsCommand/FlushCardsCommand';
 import { JoinGameCommand, JoinGameHandler } from '../../application/commands/JoinGameCommand/JoinGameCommand';
-import { LeaveGameHandler } from '../../application/commands/LeaveGameCommand/LeaveGameCommand';
+import { LeaveGameHandler } from '../../application/commands/LeaveCommand/LeaveGameCommand';
 import { LoginCommand, LoginHandler } from '../../application/commands/LoginCommand/LoginCommand';
 import { NextTurnHandler } from '../../application/commands/NextTurnCommand/NextTurnCommand';
 import {

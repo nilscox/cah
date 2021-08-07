@@ -34,7 +34,7 @@ const appReadySelector = (state: AppState) => state.app.ready;
 const networkStatusSelector = (state: AppState) => state.app.network;
 const serverStatusSelector = (state: AppState) => state.app.server;
 
-const CAHApp: React.FC = () => {
+const App: React.FC = () => {
   const dispatch = useDispatch();
 
   const network = useSelector(networkStatusSelector);
@@ -65,4 +65,4 @@ const CAHApp: React.FC = () => {
   );
 };
 
-export default CAHApp;
+export default App;

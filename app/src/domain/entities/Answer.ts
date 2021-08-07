@@ -5,6 +5,7 @@ export interface AnonymousAnswer {
   id: string;
   choices: Choice[];
   formatted: string;
+  player?: Player;
 }
 
 export interface Answer extends AnonymousAnswer {

@@ -1,5 +1,5 @@
 import { AnonymousAnswerDto, AnswerDto, GameDto, TurnDto } from '../../../../shared/dtos';
-import { AnonymousAnswer, Answer } from '../../domain/entities/Answer';
+import { Answer } from '../../domain/entities/Answer';
 import { Choice } from '../../domain/entities/Choice';
 import { Game, isStarted, StartedGame } from '../../domain/entities/Game';
 import { Player } from '../../domain/entities/Player';
@@ -9,10 +9,7 @@ import { GameGateway } from '../../domain/gateways/GameGateway';
 import { HTTPAdapter } from './HTTPAdapter';
 
 class DtoMapper {
-  private static toAnswer(
-    dto: AnonymousAnswerDto | AnswerDto,
-    findPlayer: (nick: string) => Player,
-  ): AnonymousAnswer | Answer {
+  private static toAnswer(dto: AnonymousAnswerDto | AnswerDto, findPlayer: (nick: string) => Player): Answer {
     const answer: Answer = { ...dto } as Answer;
 
     if ('player' in dto) {
@@ -34,6 +31,10 @@ class DtoMapper {
     if (isStarted(game)) {
       game.questionMaster = findPlayer(dto.questionMaster!);
       game.answers = dto.answers?.map((answer) => DtoMapper.toAnswer(answer, findPlayer)) ?? [];
+
+      if (dto.winner) {
+        game.winner = findPlayer(dto.winner);
+      }
     }
 
     return game;
