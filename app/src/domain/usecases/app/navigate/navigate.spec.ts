@@ -28,6 +28,11 @@ describe('navigate', () => {
 
     expect(store.routerGateway.pathname).toEqual('/game/cafe');
     expect(store.routerGateway.gamePathname).toEqual('/game/cafe/moustache');
+    expect(store.routerGateway.gameLocationState).toBeUndefined();
+
+    store.dispatch(navigateToGameRoute('/', { answer: 42 }));
+
+    expect(store.routerGateway.gameLocationState).toEqual({ answer: 42 });
   });
 
   it('toggles the game menu', () => {

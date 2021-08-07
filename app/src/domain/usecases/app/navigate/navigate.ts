@@ -6,11 +6,13 @@ export const navigate = createThunk(({ routerGateway }, to: string) => {
   routerGateway.push(to);
 });
 
-export const navigateToGameRoute = createThunk(({ getState, routerGateway }, to: string) => {
-  const game = selectGame(getState());
+export const navigateToGameRoute = createThunk(
+  ({ getState, routerGateway }, to: string, state?: Record<string, unknown>) => {
+    const game = selectGame(getState());
 
-  routerGateway.pushGame(game, to);
-});
+    routerGateway.pushGame(game, to, state);
+  },
+);
 
 export const openMenu = createThunk(({ getState, routerGateway }) => {
   const game = selectGame(getState());

@@ -39,6 +39,8 @@ export const Fade: React.FC<FadeProps> = ({ show, appear, duration: dur = 'defau
   return <animated.div style={props}>{children}</animated.div>;
 };
 
-export const FadeIn: React.FC<Omit<FadeProps, 'show'>> = ({ ...props }) => {
+export type FadeInProps = Omit<FadeProps, 'show'>;
+
+export const FadeIn: React.FC<FadeInProps> = ({ ...props }) => {
   return <Fade show appear {...props} />;
 };

@@ -12,7 +12,7 @@ export const selectIsQuestionMaster = (state: AppState) => {
   const game = selectGame(state);
   const player = selectPlayer(state);
 
-  return game.questionMaster.nick === player.nick;
+  return game.questionMaster?.nick === player.nick;
 };
 
 export const selectChoicesSelection = (state: AppState) => {

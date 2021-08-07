@@ -19,8 +19,9 @@ describe('handleRTCMessage', () => {
     store.dispatch(handleRTCMessage(message));
   };
 
-  const expectGameRoute = (route: string) => {
+  const expectGameRoute = (route: string, state?: Record<string, unknown>) => {
     expect(store.routerGateway.gamePathname).toEqual(`/game/code${route}`);
+    expect(store.routerGateway.gameLocationState).toEqual(state);
   };
 
   it('navigates to the answer question view when the turn starts', () => {
@@ -50,5 +51,13 @@ describe('handleRTCMessage', () => {
     triggerRTCMessage({ type: 'WinnerSelected', answers: [], winner: '' });
 
     expectGameRoute('/started/end-of-turn');
+  });
+
+  it('navigates to the game finished view when game... finishes', () => {
+    store.dispatch(setGame(createGame()));
+
+    triggerRTCMessage({ type: 'GameFinished' });
+
+    expectGameRoute('/finished', { animations: true });
   });
 });
