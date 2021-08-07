@@ -5,18 +5,18 @@ import { Meta, Story } from '@storybook/react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { Router } from 'react-router-dom';
 
-import { openMenu } from '../../../domain/actions';
 import { Game, GameState, isStarted, PlayState, StartedGame } from '../../../domain/entities/Game';
 import { FullPlayer } from '../../../domain/entities/Player';
 import { Turn } from '../../../domain/entities/Turn';
+import { openMenu } from '../../../domain/usecases/app/navigate/navigate';
 import { configureStore } from '../../../store/configureStore';
-import { AppAction } from '../../../store/types';
+import { AppActionOrThunk } from '../../../store/types';
 import { createGame } from '../../../tests/factories';
 import CAHApp from '../App';
-import { gameRouterHistory } from '../views/GameView/GameView';
+import { gameHistory } from '../views/GameView/GameView';
 
 import { answers, player, players, questions, startedGame, turns } from './fixtures';
-import { storiesRouterHistory, stubDependencies } from './stubs';
+import { storiesHistory, stubDependencies } from './stubs';
 
 const questionOptions = ['no blanks', 'one blank', 'multiple blanks'] as const;
 
@@ -37,7 +37,7 @@ type TemplateProps = {
   game?: Game | StartedGame;
   question: typeof questionOptions[number];
   turns?: Turn[];
-  action?: () => AppAction;
+  action?: AppActionOrThunk;
 };
 
 const Template: Story<TemplateProps> = ({ player, game, question, turns, action }) => {
@@ -59,12 +59,12 @@ const Template: Story<TemplateProps> = ({ player, game, question, turns, action 
   deps.gameGateway.turns = turns;
 
   // @ts-expect-error the reference gets lost somehow
-  deps.routerGateway.history = storiesRouterHistory;
+  deps.routerGateway.history = storiesHistory;
   // @ts-expect-error same here, obviously
-  deps.gameRouterGateway.history = gameRouterHistory;
+  deps.routerGateway.gameHistory = gameHistory;
 
   return (
-    <Router history={storiesRouterHistory}>
+    <Router history={storiesHistory}>
       <ReduxProvider store={store}>
         <CAHApp />
       </ReduxProvider>

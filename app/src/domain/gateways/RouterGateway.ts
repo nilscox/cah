@@ -1,4 +1,6 @@
+import { Game } from '../entities/Game';
+
 export interface RouterGateway {
-  pathname: string;
   push(to: string): void;
+  pushGame(game: Game, to: string): void;
 }

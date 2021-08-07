@@ -39,6 +39,6 @@ describe('startGame', () => {
 
     await store.dispatch(startGame(player, 3));
 
-    expect(store.gameRouterGateway.pathname).toEqual('/game/1234/started');
+    expect(store.routerGateway.gamePathname).toEqual('/game/1234/started');
   });
 });

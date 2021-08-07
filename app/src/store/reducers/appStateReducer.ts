@@ -9,7 +9,6 @@ export type AppState = {
   network: NetworkStatus;
   server: NetworkStatus;
   ready: boolean;
-  menuOpen: boolean;
   notification?: string;
 };
 
@@ -17,7 +16,6 @@ const defaultAppState: AppState = {
   network: NetworkStatus.up,
   server: NetworkStatus.up,
   ready: false,
-  menuOpen: false,
 };
 
 export const appStateReducer = (state = defaultAppState, action: AppAction): AppState => {
@@ -31,14 +29,6 @@ export const appStateReducer = (state = defaultAppState, action: AppAction): App
 
   if (action.type === 'app/ready') {
     return { ...state, ready: true };
-  }
-
-  if (action.type === 'app/open-menu') {
-    return { ...state, menuOpen: true };
-  }
-
-  if (action.type === 'app/close-menu') {
-    return { ...state, menuOpen: false };
   }
 
   if (action.type === 'app/set-notification') {

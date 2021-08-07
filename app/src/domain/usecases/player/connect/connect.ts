@@ -1,10 +1,11 @@
 import { createThunk } from '../../../../store/createThunk';
-import { rtcMessage, setConnected } from '../../../actions';
+import { setConnected } from '../../../actions';
+import { handleRTCMessage } from '../../game/handleRTCMessage/handleRTCMessage';
 
 export const connect = createThunk(async ({ dispatch, rtcGateway }) => {
   await rtcGateway.connect();
 
-  rtcGateway.onMessage((message) => dispatch(rtcMessage(message)));
+  rtcGateway.onMessage((message) => dispatch(handleRTCMessage(message)));
 
   dispatch(setConnected());
 });

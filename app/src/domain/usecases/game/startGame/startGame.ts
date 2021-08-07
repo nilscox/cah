@@ -1,12 +1,9 @@
 import { createThunk } from '../../../../store/createThunk';
 import { Player } from '../../../entities/Player';
+import { navigateToGameRoute } from '../../app/navigate/navigate';
 
-export const startGame = createThunk(
-  async ({ getState, gameGateway, gameRouterGateway }, questionMaster: Player, turns: number) => {
-    const { game } = getState();
+export const startGame = createThunk(async ({ dispatch, gameGateway }, questionMaster: Player, turns: number) => {
+  await gameGateway.startGame(questionMaster, turns);
 
-    await gameGateway.startGame(questionMaster, turns);
-
-    gameRouterGateway.push(`/game/${game?.code}/started`);
-  },
-);
+  dispatch(navigateToGameRoute('/started'));
+});

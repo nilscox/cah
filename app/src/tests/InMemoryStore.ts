@@ -28,7 +28,6 @@ export class InMemoryStore {
   playerGateway = new InMemoryPlayerGateway();
   gameGateway = new InMemoryGameGateway(this.rtcGateway);
   routerGateway = new InMemoryRouterGateway();
-  gameRouterGateway = new InMemoryRouterGateway();
   timerGateway = new FakeTimerGateway();
   networkGateway = new FakeNetworkGateway();
   serverGateway = new FakeServerGateway();

@@ -3,7 +3,9 @@ import expect from 'expect';
 import { createAnonymousAnswer, createFullPlayer, createPlayer, createStartedGame } from '../../../../tests/factories';
 import { InMemoryStore } from '../../../../tests/InMemoryStore';
 import { setGame, setPlayer } from '../../../actions';
+import { AnonymousAnswer } from '../../../entities/Answer';
 import { PlayState } from '../../../entities/Game';
+import { Player } from '../../../entities/Player';
 
 import { selectWinner } from './selectWinner';
 
@@ -14,19 +16,23 @@ describe('selectWinner', () => {
     store = new InMemoryStore();
   });
 
-  it('selects the winning answer', async () => {
-    const answer = createAnonymousAnswer();
-    const winner = createPlayer({ nick: 'winnie' });
-
-    store.gameGateway.winner = winner;
-
-    store.setup(({ dispatch, listenRTCMessages, rtcGateway }) => {
+  const setup = (answer: AnonymousAnswer, winner: Player) => {
+    store.setup(({ dispatch, listenRTCMessages, gameGateway, rtcGateway }) => {
       dispatch(setPlayer(createFullPlayer()));
       dispatch(setGame(createStartedGame({ playState: PlayState.questionMasterSelection, players: [winner] })));
+
+      gameGateway.winner = winner;
 
       listenRTCMessages();
       rtcGateway.triggerMessage({ type: 'AllPlayersAnswered', answers: [answer] });
     });
+  };
+
+  it('selects the winning answer', async () => {
+    const answer = createAnonymousAnswer();
+    const winner = createPlayer({ nick: 'winnie' });
+
+    setup(answer, winner);
 
     await store.dispatch(selectWinner(answer));
 

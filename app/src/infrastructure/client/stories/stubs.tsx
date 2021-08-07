@@ -1,5 +1,5 @@
 import { action } from '@storybook/addon-actions';
-import { createMemoryHistory, History } from 'history';
+import { createMemoryHistory } from 'history';
 
 import { Answer } from '../../../domain/entities/Answer';
 import { Choice } from '../../../domain/entities/Choice';
@@ -9,14 +9,13 @@ import { Turn } from '../../../domain/entities/Turn';
 import { GameGateway } from '../../../domain/gateways/GameGateway';
 import { NetworkGateway } from '../../../domain/gateways/NetworkGateway';
 import { PlayerGateway } from '../../../domain/gateways/PlayerGateway';
-import { RouterGateway } from '../../../domain/gateways/RouterGateway';
 import { RTCGateway, RTCListener } from '../../../domain/gateways/RTCGateway';
 import { ServerGateway } from '../../../domain/gateways/ServerGateway';
 import { NetworkStatus } from '../../../store/reducers/appStateReducer';
 import { createFullPlayer, createGame } from '../../../tests/factories';
 import { ReactRouterGateway } from '../../gateways/ReactRouterGateway';
 import { RealTimerGateway } from '../../gateways/RealTimerGateway';
-import { gameRouterHistory } from '../views/GameView/GameView';
+import { gameHistory } from '../views/GameView/GameView';
 
 const log = true;
 
@@ -100,40 +99,6 @@ export class StubRTCGateway extends ActionLogger implements RTCGateway {
   onMessage(_listener: RTCListener): void {}
 }
 
-export interface StubHistory extends History {
-  goto(pathname: string): void;
-}
-
-export function createStubHistory(): StubHistory {
-  const memoryHistory = createMemoryHistory();
-
-  const onEvent =
-    (event: string) =>
-    (...args: unknown[]) => {
-      log && action(event)(args);
-    };
-
-  const { replace, ...rest } = memoryHistory;
-
-  return {
-    ...rest,
-    goto: replace.bind(memoryHistory),
-    push: onEvent('push'),
-    replace: onEvent('replace'),
-    go: onEvent('go'),
-    goBack: onEvent('goBack'),
-    goForward: onEvent('goForward'),
-  };
-}
-
-export class StubRouterGateway extends ActionLogger implements RouterGateway {
-  pathname = '/';
-
-  push(to: string): void {
-    this.log('history.push', { to });
-  }
-}
-
 export class StubNetworkGateway implements NetworkGateway {
   networkStatus = NetworkStatus.up;
 
@@ -147,15 +112,13 @@ export class StubServerGateway implements ServerGateway {
   }
 }
 
-// export const storiesRouterHistory = createStubHistory();
-export const storiesRouterHistory = createMemoryHistory();
+export const storiesHistory = createMemoryHistory();
 
 export const stubDependencies = () => ({
   gameGateway: new StubGameGateway(),
   playerGateway: new StubPlayerGateway(),
   rtcGateway: new StubRTCGateway(),
-  routerGateway: new ReactRouterGateway(storiesRouterHistory),
-  gameRouterGateway: new ReactRouterGateway(gameRouterHistory),
+  routerGateway: new ReactRouterGateway(storiesHistory, gameHistory),
   timerGateway: new RealTimerGateway(),
   networkGateway: new StubNetworkGateway(),
   serverGateway: new StubServerGateway(),

@@ -23,7 +23,7 @@ import CAHApp from './App';
 import { ErrorBoundary } from './components/domain/ErrorBoundary';
 import { GlobalStyles } from './styles/GlobalStyles';
 import ThemeProvider from './styles/ThemeProvider';
-import { gameRouterHistory } from './views/GameView/GameView';
+import { gameHistory } from './views/GameView/GameView';
 
 import 'jetbrains-mono';
 import 'normalize.css';
@@ -31,6 +31,7 @@ import 'normalize.css';
 declare global {
   interface Window {
     store?: AppStore;
+    dependencies?: Dependencies;
   }
 }
 
@@ -44,14 +45,13 @@ const wsAdapter = new WSAdapter();
 
 export type AxiosInstance = typeof axiosInstance;
 
-const history = createBrowserHistory();
+export const history = createBrowserHistory();
 
 const dependencies: Dependencies = {
   gameGateway: new HTTPGameGateway(httpAdapter),
   playerGateway: new HTTPPlayerGateway(httpAdapter),
   rtcGateway: new WSRTCGateway(wsAdapter),
-  routerGateway: new ReactRouterGateway(history),
-  gameRouterGateway: new ReactRouterGateway(gameRouterHistory),
+  routerGateway: new ReactRouterGateway(history, gameHistory),
   timerGateway: new RealTimerGateway(),
   networkGateway: new DeviceNetworkGateway(),
   serverGateway: new HTTPServerGateway(httpAdapter),
@@ -60,7 +60,9 @@ const dependencies: Dependencies = {
 const store = configureStore(dependencies);
 
 httpAdapter.onServerDown = () => store.dispatch(handleServerDown());
+
 window.store = store;
+window.dependencies = dependencies;
 
 ReactDOM.render(
   <ThemeProvider>

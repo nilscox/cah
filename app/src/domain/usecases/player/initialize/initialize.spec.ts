@@ -21,7 +21,6 @@ describe('initialize', () => {
       network: NetworkStatus.up,
       server: NetworkStatus.up,
       ready: true,
-      menuOpen: false,
     });
   });
 

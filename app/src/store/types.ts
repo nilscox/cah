@@ -30,7 +30,6 @@ export type Dependencies = {
   gameGateway: GameGateway;
   rtcGateway: RTCGateway;
   routerGateway: RouterGateway;
-  gameRouterGateway: RouterGateway;
   timerGateway: TimerGateway;
   networkGateway: NetworkGateway;
   serverGateway: ServerGateway;
@@ -40,3 +39,5 @@ export type AppStore = ReturnType<typeof configureStore>;
 export type AppDispatch = AppStore['dispatch'];
 
 export type AppThunkMiddleware = ThunkMiddleware<AppState, AppAction, Dependencies>;
+
+export type AppActionOrThunk = () => Parameters<AppDispatch>[0];

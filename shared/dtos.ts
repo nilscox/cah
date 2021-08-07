@@ -47,6 +47,7 @@ export interface GameDto {
 
 export interface TurnDto {
   number: number;
+  questionMaster: string;
   question: QuestionDto;
   winner: string;
   answers: AnswerDto[];

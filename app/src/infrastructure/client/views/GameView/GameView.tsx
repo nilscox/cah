@@ -1,17 +1,14 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
-import { createBrowserHistory, createMemoryHistory } from 'history';
+import { createMemoryHistory } from 'history';
 import { useDispatch, useSelector } from 'react-redux';
-import { Redirect, Route, Router, Switch } from 'react-router-dom';
+import { Route, Router, Switch, useRouteMatch } from 'react-router-dom';
 
-import { closeMenu, openMenu } from '../../../../domain/actions';
-import { redirect } from '../../../../domain/usecases/game/redirect/redirect';
-import { selectMenuOpen, selectNotification } from '../../../../store/selectors/appStateSelectors';
-import { selectGame } from '../../../../store/selectors/gameSelectors';
+import { closeMenu, openMenu } from '../../../../domain/usecases/app/navigate/navigate';
+import { selectNotification } from '../../../../store/selectors/appStateSelectors';
 import Header from '../../components/domain/Header';
 import { Icon } from '../../components/elements/Icon';
 import { IconButton } from '../../components/elements/IconButton';
-import { useGame } from '../../hooks/useGame';
 import { usePlayer } from '../../hooks/usePlayer';
 import Back from '../../icons/back.svg';
 import Menu from '../../icons/menu.svg';
@@ -23,21 +20,27 @@ import { GameFinishedView } from './GameFinishedView';
 import { GameIdleView } from './GameIdleView';
 import GameMenu from './GameMenu';
 
-const memoryRouter = true;
-export const gameRouterHistory = memoryRouter ? createMemoryHistory() : createBrowserHistory();
+export const gameHistory = createMemoryHistory();
 
 const routePrefix = '/game/:code';
 
+const gameRoutes = {
+  idle: `${routePrefix}/idle`,
+  finished: `${routePrefix}/finished`,
+  menu: `${routePrefix}/menu`,
+  started: {
+    answerQuestion: `${routePrefix}/started/answer-question`,
+    winnerSelection: `${routePrefix}/started/winner-selection`,
+    endOfTurn: `${routePrefix}/started/end-of-turn`,
+  },
+};
+
 const MenuIcon = () => {
-  const menuOpen = useSelector(selectMenuOpen);
+  const menuOpen = useRouteMatch(gameRoutes.menu);
   const dispatch = useDispatch();
 
   const handleToggleMenu = () => {
-    if (menuOpen) {
-      return dispatch(closeMenu());
-    }
-
-    dispatch(openMenu());
+    dispatch(menuOpen ? closeMenu() : openMenu());
   };
 
   return (
@@ -47,39 +50,28 @@ const MenuIcon = () => {
   );
 };
 
-const GameRouter: React.FC = () => {
-  const game = useSelector(selectGame);
-
-  return (
-    <Router history={gameRouterHistory}>
-      <Switch>
-        <Route path={`${routePrefix}/idle`} component={GameIdleView} />
-        <Route path={`${routePrefix}/finished`} component={GameFinishedView} />
-        <Route path={`${routePrefix}/started/players-answer`} component={AnswerQuestion} />
-        <Route path={`${routePrefix}/started/question-master-selection`} component={AnswersList} />
-        <Route path={`${routePrefix}/started/end-of-turn`} component={AnswersList} />
-        <Route path={`${routePrefix}/menu`} component={GameMenu} />
-        <Route>
-          <Redirect to={`/game/${game.code}/idle`} />
-        </Route>
-      </Switch>
-    </Router>
-  );
-};
+const GameRouter: React.FC = () => (
+  <Router history={gameHistory}>
+    <Switch>
+      <Route path={gameRoutes.idle} component={GameIdleView} />
+      <Route path={gameRoutes.finished} component={GameFinishedView} />
+      <Route path={gameRoutes.menu} component={GameMenu} />
+      <Route path={gameRoutes.started.answerQuestion} component={AnswerQuestion} />
+      <Route path={gameRoutes.started.winnerSelection} component={AnswersList} />
+      <Route path={gameRoutes.started.endOfTurn} component={AnswersList} />
+      <Route>Not found.</Route>
+    </Switch>
+  </Router>
+);
 
 const GameView: React.FC = () => {
-  const dispatch = useDispatch();
-
   const player = usePlayer();
-  const game = useGame();
-
-  const menuOpen = useSelector(selectMenuOpen);
   const notification = useSelector(selectNotification);
 
-  useEffect(() => void dispatch(redirect()), [dispatch, game.state, game.playState, menuOpen]);
+  const header = <Header notification={notification} icon={<MenuIcon />} title="CAH" player={player} />;
 
   return (
-    <View header={<Header notification={notification} icon={<MenuIcon />} title="CAH" player={player} />}>
+    <View header={header}>
       <GameRouter />
     </View>
   );
