@@ -1,8 +1,14 @@
 import { expect } from 'chai';
 
 import { PlayState } from '../../../../../shared/enums';
+import { Answer } from '../../../domain/models/Answer';
+import { createChoice } from '../../../domain/models/Choice';
+import { Player } from '../../../domain/models/Player';
+import { createQuestion } from '../../../domain/models/Question';
+import { Turn } from '../../../domain/models/Turn';
 import { InMemoryGameRepository } from '../../../infrastructure/database/repositories/game/InMemoryGameRepository';
 import { StubSessionStore } from '../../../infrastructure/stubs/StubSessionStore';
+import { array } from '../../../utils/array';
 import { instanciateHandler } from '../../../utils/dependencyInjection';
 import { GameBuilder } from '../../../utils/GameBuilder';
 import { instanciateStubDependencies } from '../../../utils/stubDependencies';
@@ -26,19 +32,31 @@ describe('GetTurnsQuery', () => {
 
   it("fetches a game's turns", async () => {
     const game = await builder.addPlayers().start().play(PlayState.endOfTurn).get();
-    const turn = game.currentTurn;
 
-    await gameRepository.addTurn(game.id, turn);
+    const question = createQuestion();
+    const questionMaster = new Player('question master');
+    const winner = new Player('winner');
+    const answers = [new Answer(winner, question, [createChoice()])];
+
+    const gameTurns = array(2, () => new Turn(questionMaster, question, answers, winner));
+
+    await gameRepository.addTurn(game.id, gameTurns[0]);
+    await gameRepository.addTurn(game.id, gameTurns[1]);
 
     const turns = await handler.execute({ gameId: game.id }, session);
 
-    expect(turns).to.eql([
-      {
-        number: 0,
-        question: turn.question.toJSON(),
-        answers: [turn.answers[0].toJSON(), turn.answers[1].toJSON()],
-        winner: turn.winner.nick,
-      },
-    ]);
+    expect(turns).to.have.length(2);
+
+    expect(turns[0]).to.eql({
+      number: 1,
+      questionMaster: questionMaster.nick,
+      question: question.toJSON(),
+      answers: [answers[0].toJSON()],
+      winner: winner.nick,
+    });
+
+    expect(turns[1]).to.shallowDeepEqual({
+      number: 2,
+    });
   });
 });

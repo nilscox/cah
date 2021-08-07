@@ -1,4 +1,5 @@
 import { Entity } from '../../ddd/Entity';
+import { InvalidNumberOfChoicesError } from '../errors/InvalidNumberOfChoicesError';
 
 import { Blank } from './Blank';
 import { Choice } from './Choice';
@@ -32,7 +33,7 @@ export class Question extends Entity {
     const { blanks, numberOfBlanks } = this;
 
     if (choices && choices.length !== numberOfBlanks) {
-      throw new Error(`Invalid number of choices, expected ${numberOfBlanks}, got ${choices.length}`);
+      throw new InvalidNumberOfChoicesError(numberOfBlanks, choices.length);
     }
 
     const getChoice = (index: number) => {

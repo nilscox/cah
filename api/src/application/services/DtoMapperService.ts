@@ -67,9 +67,10 @@ export class DtoMapperService {
     };
   }
 
-  turnToDto(turn: Turn): TurnDto {
+  turnToDto(turn: Turn, index: number): TurnDto {
     return {
-      number: 0,
+      number: index + 1,
+      questionMaster: turn.questionMaster.nick,
       question: turn.question.toJSON(),
       answers: turn.answers.map((answer) => answer.toJSON() as AnswerDto),
       winner: turn.winner.nick,
