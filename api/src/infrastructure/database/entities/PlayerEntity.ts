@@ -13,6 +13,9 @@ export class PlayerEntity {
   @Column()
   nick!: string;
 
+  @Column()
+  hasFlushed!: boolean;
+
   @ManyToOne(() => GameEntity, (game) => game.players)
   game?: GameEntity;
 
@@ -28,6 +31,7 @@ export class PlayerEntity {
 
     entity.id = player.id;
     entity.nick = player.nick;
+    entity.hasFlushed = player.hasFlushed;
     entity.gameId = gameId;
 
     if (gameId && player.cards) {
@@ -45,8 +49,9 @@ export class PlayerEntity {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     player.id = entity.id;
-    player.gameId = entity.gameId;
+    player.hasFlushed = entity.hasFlushed;
     player.cards = entity.cards?.map(ChoiceEntity.toDomain);
+    player.gameId = entity.gameId;
 
     return player;
   }

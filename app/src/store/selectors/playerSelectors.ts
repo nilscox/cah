@@ -18,3 +18,7 @@ export const selectIsQuestionMaster = (state: AppState) => {
 export const selectChoicesSelection = (state: AppState) => {
   return selectPlayer(state).selection.filter((choice): choice is Choice => choice !== null);
 };
+
+export const selectCanFlushCards = (state: AppState) => {
+  return !selectPlayer(state).hasFlushed;
+};

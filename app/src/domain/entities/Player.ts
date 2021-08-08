@@ -9,4 +9,5 @@ export interface Player {
 export interface FullPlayer extends Player {
   gameId?: string;
   cards: Choice[];
+  hasFlushed: boolean;
 }

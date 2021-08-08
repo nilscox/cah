@@ -14,6 +14,7 @@ export const createPlayerEntity = async () => {
 
   player.id = uuid();
   player.nick = 'nick';
+  player.hasFlushed = false;
 
   await getRepository(PlayerEntity).save(player);
 

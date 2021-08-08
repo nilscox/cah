@@ -1,5 +1,5 @@
 import { createThunk } from '../../../../store/createThunk';
-import { setPlayerCards } from '../../../actions';
+import { cardsFlushed, setPlayerCards } from '../../../actions';
 import { showNotification } from '../../app/showNotification/showNotification';
 
 export const flushCards = createThunk(async ({ dispatch, gameGateway }) => {
@@ -7,5 +7,6 @@ export const flushCards = createThunk(async ({ dispatch, gameGateway }) => {
 
   await gameGateway.flushCards();
 
+  dispatch(cardsFlushed());
   dispatch(showNotification('Nouvelles cartes reçues !'));
 });

@@ -77,6 +77,7 @@ const specs = (
 
     savedPlayer.nick = 'nick';
     savedPlayer.cards[0].available = false;
+    savedPlayer.hasFlushed = true;
 
     await repository.save(savedPlayer);
 
@@ -84,6 +85,7 @@ const specs = (
 
     expect(resavedPlayer?.nick).to.equal('nick');
     expect(resavedPlayer?.cards[0].available).to.be.false;
+    expect(resavedPlayer?.hasFlushed).to.be.true;
   });
 };
 

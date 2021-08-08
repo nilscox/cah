@@ -1,4 +1,5 @@
 import { AggregateRoot } from '../../ddd/AggregateRoot';
+import { AlreadyFlushedCardsError } from '../errors/AlreadyFlushedCardsError';
 import { InvalidChoicesSelectionError } from '../errors/InvalidChoicesSelectionError';
 import { PlayerEvent } from '../events';
 import { CardsDealtEvent } from '../events/CardsDealtEvent';
@@ -11,6 +12,8 @@ export class Player extends AggregateRoot<PlayerEvent> {
   // todo: optional?
   public cards: Choice[] = [];
 
+  public hasFlushed = false;
+
   constructor(public nick: string) {
     super();
   }
@@ -22,6 +25,15 @@ export class Player extends AggregateRoot<PlayerEvent> {
 
   removeCards(cards: Choice[]) {
     this.cards = this.cards.filter((card) => !cards.some((c) => c.equals(card)));
+  }
+
+  flushCards() {
+    if (this.hasFlushed) {
+      throw new AlreadyFlushedCardsError(this);
+    }
+
+    this.removeCards(this.cards);
+    this.hasFlushed = true;
   }
 
   getFirstCards(count: number) {

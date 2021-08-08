@@ -36,6 +36,7 @@ export class DtoMapperService {
       nick: data.nick,
       isConnected: this.rtcManager.isConnected(player),
       cards: player.cards.map((choice) => this.toChoiceDto(choice)),
+      hasFlushed: player.hasFlushed,
     };
   }
 

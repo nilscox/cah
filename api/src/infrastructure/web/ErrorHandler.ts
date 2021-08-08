@@ -2,6 +2,7 @@ import { ErrorRequestHandler } from 'express';
 import _ from 'lodash';
 
 import { Logger } from '../../application/interfaces/Logger';
+import { AlreadyFlushedCardsError } from '../../domain/errors/AlreadyFlushedCardsError';
 import { DomainError } from '../../domain/errors/DomainError';
 import { EntityNotFoundError } from '../../domain/errors/EntityNotFoundError';
 import { InvalidChoicesSelectionError } from '../../domain/errors/InvalidChoicesSelectionError';
@@ -15,7 +16,7 @@ export class DomainErrorMapper {
       throw new HttpNotFoundError(error.message, { domainError: error, ...error.meta });
     }
 
-    const badRequestErrors = [InvalidChoicesSelectionError, InvalidNumberOfChoicesError];
+    const badRequestErrors = [InvalidChoicesSelectionError, InvalidNumberOfChoicesError, AlreadyFlushedCardsError];
 
     for (const BadRequestError of badRequestErrors) {
       if (error instanceof BadRequestError) {

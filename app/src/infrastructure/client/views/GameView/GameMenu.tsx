@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Turn } from '../../../../domain/entities/Turn';
 import { flushCards } from '../../../../domain/usecases/game/flushCards/flushCards';
 import { selectGame, selectScores, selectTurns } from '../../../../store/selectors/gameSelectors';
+import { selectCanFlushCards } from '../../../../store/selectors/playerSelectors';
 import { QuestionCard } from '../../components/domain/QuestionCard';
 import Button from '../../components/elements/Button';
 import { Box } from '../../components/layout/Box';
@@ -84,6 +85,7 @@ const PlayerScore = styled.span`
 
 const GameMenu: React.FC = () => {
   const game = useSelector(selectGame);
+  const canFlushCards = useSelector(selectCanFlushCards);
   const dispatch = useDispatch();
 
   const scores = useSelector(selectScores);
@@ -93,7 +95,9 @@ const GameMenu: React.FC = () => {
       <Box paddingY={2}>Code de la partie : {game.code}</Box>
       <Box paddingY={2}>Question Master : {game.questionMaster.nick}</Box>
       <Box paddingY={2}>
-        <Button onClick={() => dispatch(flushCards())}>Changer toutes ses cartes</Button>
+        <Button disabled={!canFlushCards} onClick={() => dispatch(flushCards())}>
+          Changer toutes ses cartes
+        </Button>
       </Box>
       <Box paddingY={2}>
         <div>Scores :</div>

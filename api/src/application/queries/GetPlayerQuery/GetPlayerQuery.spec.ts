@@ -55,6 +55,7 @@ describe('GetPlayerQuery', () => {
       nick: player.nick,
       isConnected: false,
       cards: [{ id: player.cards[0].id, text: 'text' }],
+      hasFlushed: false,
     });
   });
 });

@@ -1,9 +1,11 @@
-import { expect } from 'chai';
+import { expect } from 'earljs';
 
+import { AlreadyFlushedCardsError } from '../../../domain/errors/AlreadyFlushedCardsError';
 import { Player } from '../../../domain/models/Player';
 import { InMemoryPlayerRepository } from '../../../infrastructure/database/repositories/player/InMemoryPlayerRepository';
 import { StubEventPublisher } from '../../../infrastructure/stubs/StubEventPublisher';
 import { instanciateHandler } from '../../../utils/dependencyInjection';
+import { expectError } from '../../../utils/expectError';
 import { GameBuilder } from '../../../utils/GameBuilder';
 import { instanciateStubDependencies } from '../../../utils/stubDependencies';
 
@@ -37,8 +39,8 @@ describe('FlushCards', () => {
 
     await execute(player);
 
-    expect(player.cards).to.have.length(11);
-    expect(player.cards).not.to.contain.oneOf(oldCards);
+    expect(player.cards).toBeAnArrayOfLength(11);
+    expect(player.cards).not.toBeAnArrayWith(oldCards);
   });
 
   it('notifies the player that he received the new cards', async () => {
@@ -47,6 +49,20 @@ describe('FlushCards', () => {
 
     await execute(player);
 
-    expect(publisher.lastEvent).to.eql({ type: 'CardsDealt', player, cards: player.cards });
+    expect(publisher.lastEvent).toBeAnObjectWith({ type: 'CardsDealt', player, cards: player.cards });
+  });
+
+  it('prevents the player to flush his cards twice', async () => {
+    const game = await builder.addPlayers().start().get();
+
+    const player = game.players[0];
+    player.cards.slice();
+
+    await expect(execute(player)).not.toBeRejected();
+
+    const error = await expectError(execute(player), AlreadyFlushedCardsError);
+    expect(error).toBeAnObjectWith({ player });
+  });
+    expect(error).toBeAnObjectWith({ player });
   });
 });

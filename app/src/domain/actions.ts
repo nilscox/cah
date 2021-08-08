@@ -11,6 +11,7 @@ export const setPlayer = createAction<FullPlayer, 'player/set'>('player/set');
 export const setConnected = createAction('player/set-connected');
 export const setPlayerCards = createAction<Choice[], 'player/set-cards'>('player/set-cards');
 export const selectionValidated = createAction('player/selection-validated');
+export const cardsFlushed = createAction('player/cards-flushed');
 
 export const setGame = createAction<Game | null, 'game/set'>('game/set');
 export const setTurns = createAction<Turn[], 'game/set-turns'>('game/set-turns');
@@ -35,6 +36,7 @@ export type Actions = ReturnType<
   | typeof setConnected
   | typeof setPlayerCards
   | typeof selectionValidated
+  | typeof cardsFlushed
   | typeof setGame
   | typeof setTurns
   | typeof setAppReady

@@ -11,7 +11,7 @@ export class FlushCardsHandler implements CommandHandler<FlushCardsCommand, void
   async execute(_: FlushCardsCommand, context: SessionStore): Promise<void> {
     const player = await this.gameService.getPlayer(context.player!.id);
 
-    player.removeCards(player.cards);
+    player.flushCards();
 
     await this.playerRepository.save(player);
 

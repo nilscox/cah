@@ -1,4 +1,4 @@
-import { GameState, PlayState } from "./enums";
+import { GameState, PlayState } from './enums';
 
 export interface ChoiceDto {
   id: string;
@@ -14,6 +14,7 @@ export interface PlayerDto {
 export interface FullPlayerDto extends PlayerDto {
   gameId?: string;
   cards: ChoiceDto[];
+  hasFlushed: boolean;
 }
 
 export interface QuestionDto {

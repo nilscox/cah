@@ -12,6 +12,7 @@ export type PlayerState = Nullable<{
   cards: Choice[];
   selection: Array<Choice | null>;
   selectionValidated: boolean;
+  hasFlushed: boolean;
 }>;
 
 export const playerReducer = (state: PlayerState = null, action: AppAction): PlayerState => {
@@ -93,6 +94,13 @@ export const playerReducer = (state: PlayerState = null, action: AppAction): Pla
       ...state,
       selectionValidated: true,
       cards: filter(state.cards, ({ id }) => !selectionIds.includes(id)),
+    };
+  }
+
+  if (action.type === 'player/cards-flushed') {
+    return {
+      ...state,
+      hasFlushed: true,
     };
   }
 
