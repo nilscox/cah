@@ -85,14 +85,14 @@ describe('StartGameCommand', () => {
 
     it('deals the cards to all players', () => {
       for (const player of game.players) {
-        const cards = player.getCards();
+        const cards = player.cards;
 
         for (const card of cards) {
           expect(card.available).to.be.false;
         }
 
         expect(cards).to.have.length(11);
-        expect(publisher.events).to.deep.include({ type: 'CardsDealt', player, cards: player.getCards() });
+        expect(publisher.events).to.deep.include({ type: 'CardsDealt', player, cards });
       }
     });
 

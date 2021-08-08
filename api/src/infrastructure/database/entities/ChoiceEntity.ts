@@ -14,6 +14,9 @@ export class ChoiceEntity {
   @Column()
   text!: string;
 
+  @Column({ nullable: true })
+  position!: number;
+
   @Column({ default: true })
   available!: boolean;
 
@@ -29,13 +32,17 @@ export class ChoiceEntity {
   @ManyToOne(() => PlayerEntity, (player) => player.cards)
   player!: PlayerEntity;
 
-  static toPersistence(choice: Choice, gameId: string): ChoiceEntity {
+  static toPersistence(choice: Choice, gameId: string, position?: number): ChoiceEntity {
     const entity = new ChoiceEntity();
 
     entity.id = choice.id;
     entity.text = choice.text;
     entity.available = choice.available;
     entity.gameId = gameId;
+
+    if (position) {
+      entity.position = position;
+    }
 
     return entity;
   }

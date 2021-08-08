@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { Entity, ManyToOne, OneToMany, PrimaryColumn } from 'typeorm';
 
 import { Answer } from '../../../domain/models/Answer';
@@ -34,7 +35,7 @@ export class AnswerEntity {
     entity.id = answer.id;
     entity.player = PlayerEntity.toPersistence(answer.player);
     entity.question = QuestionEntity.toPersistence(answer.question, gameId);
-    entity.choices = answer.choices.map((choice) => ChoiceEntity.toPersistence(choice, gameId));
+    entity.choices = answer.choices.map((choice, index) => ChoiceEntity.toPersistence(choice, gameId, index + 1));
 
     return entity;
   }
@@ -43,7 +44,7 @@ export class AnswerEntity {
     const answer = new Answer(
       PlayerEntity.toDomain(entity.player),
       QuestionEntity.toDomain(entity.question),
-      entity.choices.map(ChoiceEntity.toDomain),
+      _.orderBy(entity.choices, 'position').map(ChoiceEntity.toDomain),
     );
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment

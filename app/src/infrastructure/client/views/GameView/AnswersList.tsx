@@ -15,7 +15,7 @@ import Button from '../../components/elements/Button';
 import { Icon } from '../../components/elements/Icon';
 import { Box } from '../../components/layout/Box';
 import { Center } from '../../components/layout/Center';
-import { FadeIn } from '../../components/layout/Fade';
+import { Fade } from '../../components/layout/Fade';
 import { useAction } from '../../hooks/useAction';
 import { useGame } from '../../hooks/useGame';
 import Trophy from '../../icons/trophy.svg';
@@ -29,7 +29,7 @@ const Answer = styled.div`
   cursor: ${({ onClick }) => (onClick ? 'pointer' : undefined)};
 `;
 
-const PlayerNick = styled(FadeIn)`
+const PlayerNick = styled(Fade)`
   font-size: ${fontSize('small')};
 `;
 
@@ -58,15 +58,15 @@ export const AnswersList: React.FC = () => {
   const handleAnswerClick = useAction(canSelectAnswerSelector, selectWinner);
   const handleNextTurn = useAction(canEndTurnSelector, nextTurn);
 
-  const isWinner = (answer: AnonymousAnswer) => game.winner?.nick === answer?.player?.nick;
+  const isWinner = (answer: AnonymousAnswer | Answer) => game.winner && game.winner.nick === answer?.player?.nick;
 
   return (
     <>
       <Center flex={1} padding={2} horizontal={false}>
         {game.answers.map((answer) => (
           <Answer key={answer.id} role="button" onClick={conditionalCallback(handleAnswerClick, answer)}>
-            <PlayerNick>
-              {answer.player?.nick ?? '&nbsp;'}
+            <PlayerNick appear show={Boolean(answer.player)}>
+              {answer.player?.nick ?? <>&nbsp;</>}
               {isWinner(answer) && <WinnerIcon as={Trophy} size={2} />}
             </PlayerNick>
             <Box marginLeft={2}>

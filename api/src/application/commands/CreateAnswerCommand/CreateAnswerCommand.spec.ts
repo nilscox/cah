@@ -1,4 +1,4 @@
-import { expect } from 'chai';
+import { expect } from 'earljs';
 import _ from 'lodash';
 
 import { GameState, PlayState } from '../../../../../shared/enums';
@@ -19,6 +19,7 @@ import { InMemoryPlayerRepository } from '../../../infrastructure/database/repos
 import { StubEventPublisher } from '../../../infrastructure/stubs/StubEventPublisher';
 import { StubRandomService } from '../../../infrastructure/stubs/StubRandomService';
 import { instanciateHandler } from '../../../utils/dependencyInjection';
+import { expectError } from '../../../utils/expectError';
 import { GameBuilder } from '../../../utils/GameBuilder';
 import { instanciateStubDependencies } from '../../../utils/stubDependencies';
 
@@ -57,16 +58,18 @@ describe('CreateAnswerCommand', () => {
 
     await execute(game, player, choices);
 
-    expect(game.answers).to.have.length(1);
-    expect(game.answers[0]).to.have.nested.property('player.id', player.id);
-    expect(game.answers[0]).to.have.property('choices').that.have.length(1);
-    expect(game.answers[0]).to.have.nested.property('question.id', game.question.id);
+    expect(game.answers).toBeAnArrayOfLength(1);
+    expect(game.answers[0]).toBeAnObjectWith({
+      player,
+      choices,
+      question: game.question,
+    });
 
-    expect(player.cards).to.have.length(10);
+    expect(player.cards).toBeAnArrayOfLength(10);
 
-    expect(publisher.lastEvent).to.shallowDeepEqual({
+    expect(publisher.lastEvent).toBeAnObjectWith({
       type: 'PlayerAnswered',
-      game: { id: game.id },
+      game: expect.objectWith({ id: game.id }),
       player,
     });
   });
@@ -74,17 +77,22 @@ describe('CreateAnswerCommand', () => {
   it('creates an answer with multiple choices', async () => {
     const game = await builder.addPlayers().start().get();
     const player = game.playersExcludingQM[0];
-    const choices = player.getFirstCards(2);
+    const choices = player.getFirstCards(2).reverse();
+    const question = new Question('question', [new Blank(1), new Blank(2)]);
 
-    game.question = new Question('question', [new Blank(1), new Blank(2)]);
+    game.question = question;
     await gameRepository.save(game);
 
     await execute(game, player, choices);
 
-    expect(game.answers).to.have.length(1);
-    expect(game.answers[0]).to.have.property('choices').that.have.length(2);
+    expect(game.answers).toBeAnArrayOfLength(1);
+    expect(game.answers[0]).toBeAnObjectWith({
+      player,
+      choices,
+      question,
+    });
 
-    expect(player.cards).to.have.length(9);
+    expect(player.cards).toBeAnArrayOfLength(9);
   });
 
   it('enters in question master selection play state when the last player answers', async () => {
@@ -94,11 +102,11 @@ describe('CreateAnswerCommand', () => {
       await execute(game, player, player.getFirstCards(1));
     }
 
-    expect(game.playState).to.eql(PlayState.questionMasterSelection);
+    expect(game.playState).toEqual(PlayState.questionMasterSelection);
 
-    expect(publisher.lastEvent).to.shallowDeepEqual({
+    expect(publisher.lastEvent).toBeAnObjectWith({
       type: 'AllPlayersAnswered',
-      game: { id: game.id },
+      game: expect.objectWith({ id: game.id }),
     });
   });
 
@@ -112,7 +120,7 @@ describe('CreateAnswerCommand', () => {
       await execute(game, player, player.getFirstCards(1));
     }
 
-    expect(game.answers.map((answer) => answer.player.id)).to.eql(players.reverse().map((player) => player.id));
+    expect(game.answers.map((answer) => answer.player.id)).toEqual(players.reverse().map((player) => player.id));
   });
 
   it('does not create an answer when the player is not in a game', async () => {
@@ -122,7 +130,8 @@ describe('CreateAnswerCommand', () => {
     player.addCards(choices);
     await playerRepository.save(player);
 
-    await expect(execute(undefined, player, choices)).to.be.rejectedWith(GameNotFoundError);
+    const error = await expectError(execute(undefined, player, choices), GameNotFoundError);
+    expect(error).toBeAnObjectWith({ meta: { query: { playerId: player.id } } });
   });
 
   it('does not create an answer when the game is not started', async () => {
@@ -133,8 +142,8 @@ describe('CreateAnswerCommand', () => {
     player.addCards(choices);
     await playerRepository.save(player);
 
-    const error = await expect(execute(game, player, choices)).to.be.rejectedWith(InvalidGameStateError);
-    expect(error).to.shallowDeepEqual({ expected: GameState.started, actual: GameState.idle });
+    const error = await expectError(execute(game, player, choices), InvalidGameStateError);
+    expect(error).toBeAnObjectWith({ expected: GameState.started, actual: GameState.idle });
   });
 
   it('does not create an answer when the game is not in play state players answer', async () => {
@@ -143,8 +152,8 @@ describe('CreateAnswerCommand', () => {
       const player = game.playersExcludingQM[0];
       const choices = player.getFirstCards(1);
 
-      const error = await expect(execute(game, player, choices)).to.be.rejectedWith(InvalidPlayStateError);
-      expect(error).to.shallowDeepEqual({ expected: PlayState.playersAnswer, actual: playState });
+      const error = await expectError(execute(game, player, choices), InvalidPlayStateError);
+      expect(error).toBeAnObjectWith({ expected: PlayState.playersAnswer, actual: playState });
     }
   });
 
@@ -153,29 +162,35 @@ describe('CreateAnswerCommand', () => {
     const player = game.questionMaster;
     const choices = player.getFirstCards(1);
 
-    const error = await expect(execute(game, player, choices)).to.be.rejectedWith(PlayerIsQuestionMasterError);
-    expect(error).to.have.nested.property('player.id', player.id);
+    const error = await expectError(execute(game, player, choices), PlayerIsQuestionMasterError);
+    expect(error).toBeAnObjectWith({ player });
   });
 
   it('does not create an answer when the player has already answered', async () => {
     const game = await builder.addPlayers().start().get();
     const player = game.playersExcludingQM[0];
 
-    await expect(execute(game, player, player.getFirstCards(1))).to.be.fulfilled;
+    await expect(execute(game, player, player.getFirstCards(1))).not.toBeRejected();
+    await playerRepository.reload(player);
 
-    const error = await expect(execute(game, player, player.getFirstCards(1))).to.be.rejectedWith(
-      PlayerAlreadyAnsweredError,
-    );
-    expect(error).to.have.nested.property('player.id', player.id);
+    const error = await expectError(execute(game, player, player.getFirstCards(1)), PlayerAlreadyAnsweredError);
+    expect(error).toBeAnObjectWith({ player });
   });
 
   it('does not create an answer with choices that the player does not own', async () => {
     const game = await builder.addPlayers().start().get();
+    const question = new Question('question', [new Blank(4), new Blank(8)]);
     const player = game.playersExcludingQM[0];
-    const choices = game.playersExcludingQM[1].getFirstCards(1);
 
-    const error = await expect(execute(game, player, choices)).to.be.rejectedWith(InvalidChoicesSelectionError);
-    expect(error).to.shallowDeepEqual({ player: { id: player.id }, choicesIds: _.map(choices, 'id') });
+    const [playerChoice] = player.getFirstCards(1);
+    const [otherPlayerChoice] = game.playersExcludingQM[1].getFirstCards(1);
+    const choices = [playerChoice, otherPlayerChoice];
+
+    game.question = question;
+    await gameRepository.save(game);
+
+    const error = await expectError(execute(game, player, choices), InvalidChoicesSelectionError);
+    expect(error).toBeAnObjectWith({ player, choicesIds: [otherPlayerChoice.id] });
   });
 
   it('does not create an answer with an invalid number of choices', async () => {
@@ -183,10 +198,10 @@ describe('CreateAnswerCommand', () => {
     const player = game.playersExcludingQM[0];
     const choices = player.getFirstCards(2);
 
-    let error = await expect(execute(game, player, [])).to.be.rejectedWith(InvalidNumberOfChoicesError);
-    expect(error).to.shallowDeepEqual({ expected: 1, actual: 0 });
+    let error = await expectError(execute(game, player, []), InvalidNumberOfChoicesError);
+    expect(error).toBeAnObjectWith({ expected: 1, actual: 0 });
 
-    error = await expect(execute(game, player, choices)).to.be.rejectedWith(InvalidNumberOfChoicesError);
-    expect(error).to.shallowDeepEqual({ expected: 1, actual: 2 });
+    error = await expectError(execute(game, player, choices), InvalidNumberOfChoicesError);
+    expect(error).toBeAnObjectWith({ expected: 1, actual: 2 });
   });
 });

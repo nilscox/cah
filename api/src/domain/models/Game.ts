@@ -239,7 +239,7 @@ export class Game extends AggregateRoot<GameEvent> {
     this.winner = undefined;
 
     for (const player of this.players) {
-      player.removeCards(player.getCards());
+      player.removeCards(player.cards);
     }
 
     this.addEvent(new TurnFinishedEvent(this));

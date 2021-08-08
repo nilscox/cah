@@ -12,7 +12,10 @@
   <body>
     <div id="app"></div>
     <script>
-      document.getElementById('app').style.height = window.innerHeight + 'px';
+      const setViewHeight = () => (document.getElementById('app').style.height = window.innerHeight + 'px');
+
+      setViewHeight();
+      window.addEventListener('resize', setViewHeight);
     </script>
   </body>
 </html>

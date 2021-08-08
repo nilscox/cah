@@ -28,18 +28,25 @@ export class Player extends AggregateRoot<PlayerEvent> {
     return this.cards.slice(0, count);
   }
 
-  getCards(choicesIds?: string[]) {
-    if (!choicesIds) {
-      return this.cards;
+  getCards(choicesIds: string[]) {
+    const selection = [];
+    const unknownIds = [];
+
+    for (const id of choicesIds) {
+      const card = this.cards.find((card) => card.id === id);
+
+      if (card) {
+        selection.push(card);
+      } else {
+        unknownIds.push(id);
+      }
     }
 
-    const cards = this.cards.filter((choice) => choicesIds.includes(choice.id));
-
-    if (cards.length !== choicesIds.length) {
-      throw new InvalidChoicesSelectionError(this, choicesIds);
+    if (unknownIds.length > 0) {
+      throw new InvalidChoicesSelectionError(this, unknownIds);
     }
 
-    return cards;
+    return selection;
   }
 
   toJSON() {
