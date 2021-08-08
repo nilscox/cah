@@ -1,10 +1,12 @@
 import expect from 'expect';
 
 import { GameState } from '../../../../../../shared/enums';
+import { selectGame } from '../../../../store/selectors/gameSelectors';
 import { createFullPlayer, createPlayer, createQuestion, createStartedGame } from '../../../../tests/factories';
 import { InMemoryStore } from '../../../../tests/InMemoryStore';
 import { selectionValidated, setGame, setPlayer } from '../../../actions';
 import { PlayState } from '../../../entities/Game';
+import { Player } from '../../../entities/Player';
 
 import { nextTurn } from './nextTurn';
 
@@ -30,6 +32,10 @@ describe('nextTurn', () => {
       listenRTCMessages();
     });
 
+    const game = selectGame(store.getState());
+    const winner = game.winner as Player;
+    const question = game.question;
+
     await store.dispatch(nextTurn());
 
     expect(store.gameGateway.turnEnded).toBe(true);
@@ -40,6 +46,14 @@ describe('nextTurn', () => {
       question: nextQuestion,
       answers: [],
       winner: undefined,
+      turns: [
+        {
+          number: 1,
+          answers: [],
+          question,
+          winner,
+        },
+      ],
     });
 
     store.expectPartialState('player', {
@@ -55,6 +69,10 @@ describe('nextTurn', () => {
       listenRTCMessages();
     });
 
+    const game = selectGame(store.getState());
+    const winner = game.winner as Player;
+    const question = game.question;
+
     await store.dispatch(nextTurn());
 
     store.expectPartialState('game', {
@@ -63,6 +81,14 @@ describe('nextTurn', () => {
       questionMaster: undefined,
       question: undefined,
       answers: undefined,
+      turns: [
+        {
+          number: 1,
+          answers: [],
+          question,
+          winner,
+        },
+      ],
     });
   });
 });
