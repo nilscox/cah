@@ -101,6 +101,7 @@ export const playerReducer = (state: PlayerState = null, action: AppAction): Pla
     return {
       ...state,
       hasFlushed: true,
+      selection: replace(state.selection, () => true, null),
     };
   }
 

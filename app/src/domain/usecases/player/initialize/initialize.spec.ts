@@ -38,6 +38,7 @@ describe('initialize', () => {
       cards: [],
       selection: [],
       selectionValidated: false,
+      hasFlushed: false,
     });
   });
 

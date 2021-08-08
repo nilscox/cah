@@ -10,6 +10,10 @@ export const selectTurns = (state: AppState) => {
   return selectGame(state).turns;
 };
 
+export const selectPlayState = (state: AppState) => {
+  return selectGame(state).playState;
+};
+
 export const selectPlayers = (state: AppState) => {
   return selectGame(state).players;
 };

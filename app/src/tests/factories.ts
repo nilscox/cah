@@ -113,6 +113,7 @@ export const [createPlayer, createPlayers] = factory<Player>(() => ({
 export const [createFullPlayer] = factory<FullPlayer>(() => ({
   ...createPlayer(),
   cards: [],
+  hasFlushed: false,
 }));
 
 export const [createGame, createGames] = factory<Game>(() => ({

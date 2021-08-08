@@ -1,6 +1,6 @@
 import { createChoices, createFullPlayer, createStartedGame } from '../../../../tests/factories';
 import { InMemoryStore } from '../../../../tests/InMemoryStore';
-import { setGame, setPlayer } from '../../../actions';
+import { choiceSelected, setGame, setPlayer } from '../../../actions';
 import { Choice } from '../../../entities/Choice';
 
 import { flushCards } from './flushCards';
@@ -26,6 +26,7 @@ describe('flushCards', () => {
     const newCards = createChoices(1);
 
     setup(oldCards);
+    await store.dispatch(choiceSelected(oldCards[0]));
 
     store.gameGateway.flushCards = async () => {
       store.rtcGateway.triggerMessage({
@@ -39,6 +40,7 @@ describe('flushCards', () => {
     store.expectPartialState('player', {
       cards: newCards,
       hasFlushed: true,
+      selection: [null],
     });
   });
 

@@ -1,8 +1,9 @@
 import { Choice } from '../../domain/entities/Choice';
+import { PlayState } from '../../domain/entities/Game';
 import { PlayerState } from '../reducers/playerReducer';
 import { AppState, NotNull } from '../types';
 
-import { selectGame } from './gameSelectors';
+import { selectGame, selectPlayState } from './gameSelectors';
 
 export const selectPlayer = (state: AppState) => state.player as NotNull<PlayerState>;
 
@@ -20,5 +21,15 @@ export const selectChoicesSelection = (state: AppState) => {
 };
 
 export const selectCanFlushCards = (state: AppState) => {
-  return !selectPlayer(state).hasFlushed;
+  const player = selectPlayer(state);
+
+  if (selectPlayState(state) !== PlayState.playersAnswer) {
+    return false;
+  }
+
+  if (player.selectionValidated) {
+    return false;
+  }
+
+  return !player.hasFlushed;
 };

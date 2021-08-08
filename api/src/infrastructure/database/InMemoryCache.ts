@@ -23,7 +23,7 @@ export class InMemoryCache {
   }
 
   all<T extends InMemoryEntity>(type: ClassType<T>): T[] {
-    return Array.from<T>(this.map.get(type)?.values() ?? []);
+    return Array.from<T>(this.map.get(type)?.values() ?? []).map(_.cloneDeep);
   }
 
   allInIds<T extends InMemoryEntity>(type: ClassType<T>, ids: string[]): T[] {
@@ -31,7 +31,7 @@ export class InMemoryCache {
   }
 
   get<T extends InMemoryEntity>(type: ClassType<T>, id: string): T | undefined {
-    return this.map.get(type)?.get(id);
+    return _.cloneDeep(this.map.get(type)?.get(id));
   }
 
   getExisting<T extends InMemoryEntity>(type: ClassType<T>, id: string): T {
