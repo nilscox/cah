@@ -1,11 +1,11 @@
 import { expect } from 'chai';
-import { Connection, createConnection } from 'typeorm';
+import { Connection, createConnection, Repository } from 'typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
-import { v4 as uuid } from 'uuid';
 
 import { GameState, PlayState } from '../../../../../../shared/enums';
 import { GameRepository } from '../../../../application/interfaces/GameRepository';
 import { PlayerRepository } from '../../../../application/interfaces/PlayerRepository';
+import { Answer } from '../../../../domain/models/Answer';
 import { Blank } from '../../../../domain/models/Blank';
 import { createChoice } from '../../../../domain/models/Choice';
 import { Game } from '../../../../domain/models/Game';
@@ -19,16 +19,27 @@ import { ChoiceEntity } from '../../entities/ChoiceEntity';
 import { GameEntity } from '../../entities/GameEntity';
 import { PlayerEntity } from '../../entities/PlayerEntity';
 import { QuestionEntity } from '../../entities/QuestionEntity';
+import { TurnEntity } from '../../entities/TurnEntity';
 import { InMemoryCache } from '../../InMemoryCache';
 import { InMemoryPlayerRepository } from '../player/InMemoryPlayerRepository';
 import { SQLPlayerRepository } from '../player/SQLPlayerRepository';
 
+import * as createEntities from './createEntities';
 import { InMemoryGameRepository } from './InMemoryGameRepository';
 import { SQLGameRepository } from './SQLGameRepository';
 
 const debug = false;
 const keepDatabase = debug;
 const logging = debug;
+
+const {
+  createAnswerEntity,
+  createChoiceEntity,
+  createGameEntity,
+  createPlayerEntity,
+  createQuestionEntity,
+  createTurnEntity,
+} = createEntities;
 
 const specs = (getRepositories: () => { gameRepository: GameRepository; playerRepository: PlayerRepository }) => {
   let repository: GameRepository;
@@ -257,6 +268,9 @@ describe('SQLGameRepository', () => {
   let gameRepository: SQLGameRepository;
   let playerRepository: SQLPlayerRepository;
 
+  let choiceRepository: Repository<ChoiceEntity>;
+  let answerRepository: Repository<AnswerEntity>;
+
   before(async () => {
     connection = await createConnection({
       type: 'sqlite',
@@ -269,6 +283,9 @@ describe('SQLGameRepository', () => {
 
     gameRepository = new SQLGameRepository(connection);
     playerRepository = new SQLPlayerRepository(connection);
+
+    choiceRepository = connection.getRepository(ChoiceEntity);
+    answerRepository = connection.getRepository(AnswerEntity);
   });
 
   after(async () => {
@@ -283,30 +300,6 @@ describe('SQLGameRepository', () => {
 
   specs(() => ({ gameRepository, playerRepository }));
 
-  const createPlayer = async () => {
-    const player = new PlayerEntity();
-
-    player.id = uuid();
-    player.nick = 'nick';
-
-    await connection.getRepository(PlayerEntity).save(player);
-
-    return player;
-  };
-
-  const createGame = async (players: PlayerEntity[]) => {
-    const game = new GameEntity();
-
-    game.id = uuid();
-    game.code = 'code';
-    game.state = GameState.idle;
-    game.players = players;
-
-    await connection.getRepository(GameEntity).save(game);
-
-    return game;
-  };
-
   const startGame = async (game: GameEntity, questionMaster: PlayerEntity, question: QuestionEntity) => {
     game.state = GameState.started;
     game.questionMaster = questionMaster;
@@ -315,79 +308,103 @@ describe('SQLGameRepository', () => {
     await connection.getRepository(GameEntity).save(game);
   };
 
-  const createChoice = async (game: GameEntity, position: number) => {
-    const choice = new ChoiceEntity();
+  describe('choices order in answer', () => {
+    it("finds a game with the answer's choices in correct order", async () => {
+      const player = await createPlayerEntity();
+      const game = await createGameEntity([player]);
+      const question = await createQuestionEntity(game);
 
-    choice.id = uuid();
-    choice.text = 'choice at ' + position;
-    choice.position = position;
-    choice.game = game;
+      await startGame(game, player, question);
 
-    await connection.getRepository(ChoiceEntity).save(choice);
+      const choice1 = await createChoiceEntity(game, 2);
+      const choice2 = await createChoiceEntity(game, 1);
 
-    return choice;
-  };
+      await createAnswerEntity(game, player, question, [choice1, choice2]);
 
-  const createQuestion = async (game: GameEntity) => {
-    const question = new QuestionEntity();
+      const savedGame = await gameRepository.findGameById(game.id);
 
-    question.id = uuid();
-    question.text = 'question';
-    question.game = game;
-    question.blanks = [];
+      expect(savedGame?.answers?.[0].choices.map(({ id }) => id)).to.eql([choice2.id, choice1.id]);
+    });
 
-    await connection.getRepository(QuestionEntity).save(question);
+    it("saves a game with the answer's choices in correct order", async () => {
+      const externalData = new StubExternalData();
+      const builder = new GameBuilder(gameRepository, playerRepository, externalData);
 
-    return question;
-  };
+      const question = new Question('', [new Blank(1), new Blank(2)]);
+      externalData.setRandomQuestions([question]);
 
-  const createAnswer = async (
-    game: GameEntity,
-    player: PlayerEntity,
-    question: QuestionEntity,
-    choices: ChoiceEntity[],
-  ) => {
-    const answer = new AnswerEntity();
+      const game = await builder.addPlayers().start().get();
+      const player = game.playersExcludingQM[0];
+      const choices = player.getFirstCards(2);
 
-    answer.id = uuid();
-    answer.choices = choices;
-    answer.player = player;
-    answer.question = question;
-    answer.current_of_game = game;
+      game.addAnswer(player, choices, (arr) => arr);
+      await gameRepository.save(game);
 
-    await connection.getRepository(AnswerEntity).save(answer);
+      const answer = game.answers[0];
+      const savedChoices = await choiceRepository.findByIds(answer.choices.map(({ id }) => id));
 
-    return answer;
-  };
+      for (const [index, choice] of Object.entries(choices)) {
+        const savedChoice = savedChoices.find(({ id }) => id === choice.id);
+        const expectedPosition = Number(index) + 1;
 
-  it("finds a game with the answer's choices in correct order", async () => {
-    const player = await createPlayer();
-    const game = await createGame([player]);
-    const question = await createQuestion(game);
-
-    await startGame(game, player, question);
-
-    const choice1 = await createChoice(game, 2);
-    const choice2 = await createChoice(game, 1);
-
-    await createAnswer(game, player, question, [choice1, choice2]);
-
-    const savedGame = await new SQLGameRepository(connection).findGameById(game.id);
-
-    expect(savedGame?.answers?.[0].choices.map(({ id }) => id)).to.eql([choice2.id, choice1.id]);
+        expect(savedChoice).to.have.property('position', expectedPosition);
+      }
+    });
   });
 
-  it("saves a game with the answer's choices in correct order", async () => {
-    const externalData = new StubExternalData();
-    const builder = new GameBuilder(gameRepository, playerRepository, externalData);
+  describe('answers order in game', () => {
+    it('finds a game with the answers in correct order', async () => {
+      const player = await createPlayerEntity();
+      const game = await createGameEntity([player]);
+      const question = await createQuestionEntity(game);
 
-    const question = new Question('', [new Blank(1), new Blank(2)]);
-    externalData.setRandomQuestions([question]);
+      await startGame(game, player, question);
 
-    const game = await builder.addPlayers().start().play(PlayState.questionMasterSelection).get();
+      const answer1 = await createAnswerEntity(game, player, question, [], 2);
+      const answer2 = await createAnswerEntity(game, player, question, [], 1);
 
-    const entity = GameEntity.toPersistence(game);
+      const savedGame = await gameRepository.findGameById(game.id);
 
-    expect(entity.currentAnswers[0].choices.map(({ position }) => position)).to.eql([1, 2]);
+      expect(savedGame?.answers?.map(({ id }) => id)).to.eql([answer2.id, answer1.id]);
+    });
+
+    it("saves a game with the answer's choices in correct order", async () => {
+      const externalData = new StubExternalData();
+      const builder = new GameBuilder(gameRepository, playerRepository, externalData);
+
+      builder.randomize = (array) => array.reverse();
+
+      const game = await builder.addPlayers().start().play(PlayState.questionMasterSelection).get();
+
+      const answers = await answerRepository.findByIds(game.answers.map(({ id }) => id));
+
+      for (const [index, answer] of Object.entries(game.answers)) {
+        const savedAnswer = answers.find(({ id }) => id === answer.id);
+        const expectedPosition = Number(index) + 1;
+
+        expect(savedAnswer).to.have.property('position', expectedPosition);
+      }
+    });
+  });
+
+  describe('answers order in turn', () => {
+    it('finds a turn with the answers in correct order', async () => {
+      const player = await createPlayerEntity();
+      const game = await createGameEntity([player]);
+      const question = await createQuestionEntity(game);
+
+      await startGame(game, player, question);
+
+      const answer1 = await createAnswerEntity(game, player, question, [], 2);
+      const answer2 = await createAnswerEntity(game, player, question, [], 1);
+
+      await createTurnEntity(game, player, player, question, [answer1, answer2]);
+
+      const savedTurn = await gameRepository.findTurns(game.id);
+
+      expect(savedTurn[0].answers.map(({ id }) => id)).to.eql([answer2.id, answer1.id]);
+    });
+
+    // save is already tested with the game entity
   });
 });

@@ -189,6 +189,7 @@ export class SQLGameRepository implements GameRepository {
     }
 
     if (entity.currentAnswers) {
+      await this.choiceRepository.save(entity.currentAnswers.map((answer) => answer.choices).flat());
       await this.answerRepository.save(entity.currentAnswers);
     }
 

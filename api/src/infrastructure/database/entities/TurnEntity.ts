@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryColumn } from 'typeorm';
 
 import { Turn } from '../../../domain/models/Turn';
@@ -48,7 +49,7 @@ export class TurnEntity {
     return new Turn(
       PlayerEntity.toDomain(entity.questionMaster),
       QuestionEntity.toDomain(entity.question),
-      entity.answers.map((answer) => AnswerEntity.toDomain(answer)),
+      _.orderBy(entity.answers, 'position').map((answer) => AnswerEntity.toDomain(answer)),
       PlayerEntity.toDomain(entity.winner),
     );
   }

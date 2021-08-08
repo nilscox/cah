@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryColumn } from 'typeorm';
 
 import { GameState, PlayState } from '../../../../../shared/enums';
@@ -55,7 +56,10 @@ export class GameEntity {
     if (game.isStarted()) {
       entity.questionMaster = PlayerEntity.toPersistence(game.questionMaster);
       entity.question = QuestionEntity.toPersistence(game.question, game.id);
-      entity.currentAnswers = game.answers.map((answer) => AnswerEntity.toPersistence(answer, game.id));
+
+      entity.currentAnswers = game.answers.map((answer, index) =>
+        AnswerEntity.toPersistence(answer, game.id, index + 1),
+      );
 
       if (game.winner) {
         entity.winner = PlayerEntity.toPersistence(game.winner);
@@ -75,7 +79,7 @@ export class GameEntity {
     if (game.isStarted()) {
       game.questionMaster = PlayerEntity.toDomain(entity.questionMaster!);
       game.question = QuestionEntity.toDomain(entity.question!);
-      game.answers = entity.currentAnswers.map(AnswerEntity.toDomain);
+      game.answers = _.orderBy(entity.currentAnswers, 'position').map(AnswerEntity.toDomain);
 
       if (entity.winner) {
         game.winner = PlayerEntity.toDomain(entity.winner);

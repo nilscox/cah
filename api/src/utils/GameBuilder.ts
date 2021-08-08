@@ -12,6 +12,8 @@ export class GameBuilder<G extends Game = Game> {
     private readonly externalData: ExternalData,
   ) {}
 
+  public randomize = <T>(array: T[]): T[] => array;
+
   private game: Game = new Game();
   private functions: Array<() => Promise<void>> = [];
 
@@ -66,7 +68,7 @@ export class GameBuilder<G extends Game = Game> {
     }
 
     for (const player of this.game.playersExcludingQM) {
-      this.game.addAnswer(player, player.getFirstCards(game.question.numberOfBlanks), (arr) => arr);
+      this.game.addAnswer(player, player.getFirstCards(game.question.numberOfBlanks), this.randomize);
     }
 
     if (to === PlayState.questionMasterSelection) {
