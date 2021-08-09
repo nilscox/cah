@@ -115,4 +115,8 @@ export class InMemoryGameRepository implements GameRepository {
   getTurns(gameId: string): Turn[] {
     return this.turns.get(gameId) ?? [];
   }
+
+  async getQuestionsCount(gameId: string): Promise<number> {
+    return this.questions.get(gameId)?.length ?? 0;
+  }
 }

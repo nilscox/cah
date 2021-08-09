@@ -77,7 +77,8 @@ describe('GetGameQuery', () => {
     const player = new Player('prof');
     const choices = [new Choice('yeah'), new Choice('!')];
     const question = createQuestion({ text: 'hell  low ?', blanks: [new Blank(5), new Blank(10)] });
-    const game = await builder.addPlayers().start().get();
+
+    const game = await builder.addPlayers().start(6).get();
 
     game.question = question;
     game.answers = [new Answer(player, question, choices)];
@@ -88,6 +89,7 @@ describe('GetGameQuery', () => {
     expect(_.omit(result, 'players')).to.eql({
       id: game.id,
       code: game.code,
+      totalQuestions: 6,
       gameState: GameState.started,
       playState: PlayState.playersAnswer,
       questionMaster: game.questionMaster.nick,
@@ -106,7 +108,7 @@ describe('GetGameQuery', () => {
     const player = new Player('dormeur');
     const choices = [new Choice('Who who')];
     const question = createQuestion({ text: 'Who are you?' });
-    const game = await builder.addPlayers().start().play(PlayState.questionMasterSelection).get();
+    const game = await builder.addPlayers().start(1).play(PlayState.questionMasterSelection).get();
 
     game.question = question;
     game.answers = [new Answer(player, question, choices)];
@@ -117,6 +119,7 @@ describe('GetGameQuery', () => {
     expect(_.omit(result, 'id', 'code', 'questionMaster', 'players')).to.eql({
       gameState: GameState.started,
       playState: PlayState.questionMasterSelection,
+      totalQuestions: 1,
       question: {
         text: 'Who are you?',
         formatted: 'Who are you? __',
@@ -143,7 +146,7 @@ describe('GetGameQuery', () => {
     const player = new Player('joyeux');
     const choices = [new Choice('yeah'), new Choice('!')];
     const question = createQuestion({ text: 'hell  low ?', blanks: [new Blank(5), new Blank(10)] });
-    const game = await builder.addPlayers().start().play(PlayState.endOfTurn).get();
+    const game = await builder.addPlayers().start(1).play(PlayState.endOfTurn).get();
 
     game.question = question;
     game.answers = [new Answer(player, question, choices)];
@@ -155,6 +158,7 @@ describe('GetGameQuery', () => {
     expect(_.omit(result, 'id', 'code', 'questionMaster', 'question', 'players')).to.eql({
       gameState: GameState.started,
       playState: PlayState.endOfTurn,
+      totalQuestions: 1,
       answers: [
         {
           id: game.answers[0].id,

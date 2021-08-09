@@ -21,6 +21,10 @@ const JoinGame: React.FC = () => {
   const dispatch = useDispatch();
   const [code, setCode] = useState('');
 
+  const handleCodeChange = (code: string) => {
+    setCode(code.toUpperCase());
+  };
+
   return (
     <>
       <p>Entrez le code de la partie à rejoindre.</p>
@@ -29,7 +33,7 @@ const JoinGame: React.FC = () => {
         <SubmittableInput
           placeholder="Code de partie"
           value={code}
-          onTextChange={setCode}
+          onTextChange={handleCodeChange}
           onSubmit={() => dispatch(joinGame(code))}
         />
       </Center>

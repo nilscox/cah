@@ -25,6 +25,7 @@ export interface Game {
 
 export interface StartedGame extends Game {
   playState: PlayState;
+  totalQuestions: number;
   questionMaster: Player;
   question: Question;
   answers: AnonymousAnswer[] | Answer[];

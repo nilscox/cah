@@ -68,7 +68,7 @@ export class CahCli {
 
     const rtcManager = new StubRTCManager();
 
-    const mapper = new DtoMapperService(rtcManager);
+    const mapper = new DtoMapperService(gameRepository, rtcManager);
 
     this.deps = {
       logger,

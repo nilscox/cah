@@ -128,6 +128,7 @@ export const [createStartedGame, createStartedGames] = factory<StartedGame>(() =
   ...createGame(),
   state: GameState.started,
   playState: PlayState.playersAnswer,
+  totalQuestions: 1,
   questionMaster: createPlayer(),
   question: createQuestion(),
   answers: [],

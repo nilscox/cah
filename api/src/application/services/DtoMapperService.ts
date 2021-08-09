@@ -5,10 +5,11 @@ import { Choice } from '../../domain/models/Choice';
 import { Game } from '../../domain/models/Game';
 import { Player } from '../../domain/models/Player';
 import { Turn } from '../../domain/models/Turn';
+import { GameRepository } from '../interfaces/GameRepository';
 import { RTCManager } from '../interfaces/RTCManager';
 
 export class DtoMapperService {
-  constructor(private readonly rtcManager: RTCManager) {}
+  constructor(private readonly gameRepository: GameRepository, private readonly rtcManager: RTCManager) {}
 
   toChoiceDto(choice: Choice): ChoiceDto {
     return {
@@ -40,7 +41,7 @@ export class DtoMapperService {
     };
   }
 
-  gameToDto(game: Game): GameDto {
+  async gameToDto(game: Game): Promise<GameDto> {
     const result = {
       id: game.id,
       code: game.code,
@@ -61,6 +62,7 @@ export class DtoMapperService {
     return {
       ...result,
       playState: game.playState,
+      totalQuestions: await this.gameRepository.getQuestionsCount(game.id),
       questionMaster: game.questionMaster.nick,
       question: game.question.toJSON(),
       answers: answers.map((answer) => answer.toJSON(game.playState !== PlayState.endOfTurn)),

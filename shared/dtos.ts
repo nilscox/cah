@@ -40,6 +40,7 @@ export interface GameDto {
   players: PlayerDto[];
   gameState: GameState;
   playState?: PlayState;
+  totalQuestions?: number;
   questionMaster?: string;
   question?: QuestionDto;
   answers?: Array<AnonymousAnswerDto | AnswerDto>;

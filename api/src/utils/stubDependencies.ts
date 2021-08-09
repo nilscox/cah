@@ -39,8 +39,6 @@ export const instanciateStubDependencies = (): StubDependencies => {
 
   const rtcManager = new StubRTCManager();
 
-  const mapper = new DtoMapperService(rtcManager);
-
   const publisher = new StubEventPublisher();
   const notifier = new StubNotifier();
 
@@ -49,6 +47,8 @@ export const instanciateStubDependencies = (): StubDependencies => {
   const gameRepository = new InMemoryGameRepository(cache);
 
   const gameService = new GameService(playerRepository, gameRepository, publisher);
+
+  const mapper = new DtoMapperService(gameRepository, rtcManager);
 
   const builder = new GameBuilder(gameRepository, playerRepository, externalData);
 

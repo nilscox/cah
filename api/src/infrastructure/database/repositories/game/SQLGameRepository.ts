@@ -195,4 +195,8 @@ export class SQLGameRepository implements GameRepository {
 
     await this.repository.save(entity);
   }
+
+  async getQuestionsCount(gameId: string): Promise<number> {
+    return this.questionRepository.count({ gameId });
+  }
 }

@@ -16,4 +16,5 @@ export interface GameRepository {
   markChoicesUnavailable(choiceIds: string[]): Promise<void>;
   addTurn(gameId: string, turn: Turn): Promise<void>;
   findTurns(gameId: string): Promise<Turn[]>;
+  getQuestionsCount(gameId: string): Promise<number>;
 }
