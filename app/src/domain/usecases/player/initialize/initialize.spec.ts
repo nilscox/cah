@@ -1,5 +1,5 @@
 import { NetworkStatus } from '../../../../store/reducers/appStateReducer';
-import { createFullPlayer, createGame, createTurns } from '../../../../tests/factories';
+import { createFullPlayer, createGame, createPlayer, createTurns } from '../../../../tests/factories';
 import { InMemoryStore } from '../../../../tests/InMemoryStore';
 import { GameState } from '../../../entities/Game';
 
@@ -43,7 +43,8 @@ describe('initialize', () => {
   });
 
   it('initializes with a player who is in game', async () => {
-    const game = createGame();
+    const creator = createPlayer();
+    const game = createGame({ creator });
     const turns = createTurns(2);
     const player = createFullPlayer({ gameId: game.id });
 
@@ -55,6 +56,7 @@ describe('initialize', () => {
 
     store.expectState('game', {
       id: game.id,
+      creator,
       code: 'code',
       players: [],
       state: GameState.idle,

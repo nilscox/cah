@@ -13,7 +13,7 @@ import { WinnerSelectedEvent } from '../../../domain/events/WinnerSelectedEvent'
 import { Answer } from '../../../domain/models/Answer';
 import { Blank } from '../../../domain/models/Blank';
 import { Choice } from '../../../domain/models/Choice';
-import { Game } from '../../../domain/models/Game';
+import { createGame } from '../../../domain/models/Game';
 import { Player } from '../../../domain/models/Player';
 import { createQuestion } from '../../../domain/models/Question';
 import { StubLogger } from '../../../infrastructure/stubs/StubLogger';
@@ -40,7 +40,7 @@ describe('GameEventsHandler', () => {
   });
 
   it('logs the events', () => {
-    const game = new Game();
+    const game = createGame();
     const player = new Player('player');
 
     handler.execute(new GameJoinedEvent(game, player));
@@ -53,7 +53,7 @@ describe('GameEventsHandler', () => {
   });
 
   it('GameJoined event', () => {
-    const game = new Game();
+    const game = createGame();
     const player = new Player('player');
 
     rtcManager.setConnected(player);
@@ -71,7 +71,7 @@ describe('GameEventsHandler', () => {
   });
 
   it('GameLeft event', () => {
-    const game = new Game();
+    const game = createGame();
     const player = new Player('player');
 
     handler.execute(new GameLeftEvent(game, player));
@@ -83,7 +83,7 @@ describe('GameEventsHandler', () => {
   });
 
   it('GameStarted event', () => {
-    const game = new Game();
+    const game = createGame();
 
     handler.execute(new GameStartedEvent(game));
 
@@ -93,7 +93,7 @@ describe('GameEventsHandler', () => {
   });
 
   it('TurnStarted event', () => {
-    const game = new Game();
+    const game = createGame();
 
     game.question = createQuestion({ text: 'question  ?', blanks: [new Blank(9)] });
     game.questionMaster = new Player('question master');
@@ -114,7 +114,7 @@ describe('GameEventsHandler', () => {
   });
 
   it('PlayerAnswered event', () => {
-    const game = new Game();
+    const game = createGame();
     const player = new Player('player');
 
     handler.execute(new PlayerAnsweredEvent(game, player));
@@ -126,7 +126,7 @@ describe('GameEventsHandler', () => {
   });
 
   it('AllPlayersAnswered event', () => {
-    const game = new Game();
+    const game = createGame();
     const player = new Player('player');
     const answer = new Answer(player, createQuestion({ text: 'Hello !', blanks: [new Blank(6)] }), [new Choice('you')]);
 
@@ -147,7 +147,7 @@ describe('GameEventsHandler', () => {
   });
 
   it('WinnerSelectedAnswered event', () => {
-    const game = new Game();
+    const game = createGame();
     const player = new Player('player');
     const winner = new Player('winner');
     const answer = new Answer(player, createQuestion({ text: 'Who are you?' }), [new Choice('who who')]);
@@ -172,7 +172,7 @@ describe('GameEventsHandler', () => {
   });
 
   it('TurnFinished event', () => {
-    const game = new Game();
+    const game = createGame();
 
     handler.execute(new TurnFinishedEvent(game));
 
@@ -182,7 +182,7 @@ describe('GameEventsHandler', () => {
   });
 
   it('GameFinished event', () => {
-    const game = new Game();
+    const game = createGame();
 
     handler.execute(new GameFinishedEvent(game));
 

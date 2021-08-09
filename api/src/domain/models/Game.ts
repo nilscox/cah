@@ -28,7 +28,19 @@ import { Player } from './Player';
 import { Question } from './Question';
 import { Turn } from './Turn';
 
+type GameAttributes = {
+  creator: Player;
+  code?: string;
+  cardsPerPlayer?: number;
+  minimumPlayersToStart?: number;
+};
+
 export class Game extends AggregateRoot<GameEvent> {
+  public readonly creator: Player;
+  public readonly code: string;
+  public readonly cardsPerPlayer: number;
+  public readonly minimumPlayersToStart: number;
+
   public state = GameState.idle;
   public players: Player[] = [];
 
@@ -38,8 +50,13 @@ export class Game extends AggregateRoot<GameEvent> {
   public answers?: Answer[];
   public winner?: Player;
 
-  constructor(id?: string, readonly code = '0000', readonly cardsPerPlayer = 11, readonly minimumPlayersToStart = 3) {
+  constructor(attributes: GameAttributes, id?: string) {
     super(id);
+
+    this.creator = attributes.creator;
+    this.code = attributes.code ?? Game.generateCode();
+    this.cardsPerPlayer = attributes.cardsPerPlayer ?? 11;
+    this.minimumPlayersToStart = attributes.minimumPlayersToStart ?? 3;
 
     this.addEvent(new GameCreatedEvent(this));
   }
@@ -56,6 +73,10 @@ export class Game extends AggregateRoot<GameEvent> {
 
   get roomId() {
     return `game-${this.id}`;
+  }
+
+  private static generateCode() {
+    return Math.random().toString(36).slice(-4).toUpperCase();
   }
 
   isStarted(): this is StartedGame {
@@ -253,3 +274,7 @@ export class StartedGame extends Game {
   override question!: Question;
   override answers!: Answer[];
 }
+
+export const createGame = (attributes: Partial<GameAttributes> = {}) => {
+  return new Game({ creator: new Player('creator'), ...attributes });
+};

@@ -1,4 +1,4 @@
-import { GameState, PlayState } from '../../../shared/enums';
+import { PlayState } from '../../../shared/enums';
 import { GameRepository } from '../application/interfaces/GameRepository';
 import { PlayerRepository } from '../application/interfaces/PlayerRepository';
 import { Game, StartedGame } from '../domain/models/Game';
@@ -14,29 +14,36 @@ export class GameBuilder<G extends Game = Game> {
 
   public randomize = <T>(array: T[]): T[] => array;
 
-  private game: Game = new Game();
-  private functions: Array<() => Promise<void>> = [];
+  private game = new Game({ creator: new Player('creator') });
 
-  private register(func: () => Promise<void>) {
+  private functions: Array<(game: Game) => Promise<void>> = [];
+
+  private register(func: (game: Game) => Promise<void>) {
     this.functions.push(func);
   }
 
+  from(game: Game) {
+    this.game = game;
+
+    return this;
+  }
+
   addPlayer(player = new Player('player')): GameBuilder<G> {
-    this.register(async () => {
+    this.register(async (game: Game) => {
       await this.playerRepository.save(player);
-      this.game.addPlayer(player);
+      game.addPlayer(player);
     });
 
     return this;
   }
 
   addPlayers(count = 3): GameBuilder<G> {
-    this.register(async () => {
+    this.register(async (game: Game) => {
       for (let i = 0; i < count; ++i) {
         const player = new Player(`player ${i + 1}`);
 
         await this.playerRepository.save(player);
-        this.game.addPlayer(player);
+        game.addPlayer(player);
       }
     });
 
@@ -44,31 +51,27 @@ export class GameBuilder<G extends Game = Game> {
   }
 
   start(turns = 1): GameBuilder<StartedGame> {
-    this.register(async () => {
-      const game = this.game;
-
+    this.register(async (game: Game) => {
       const questions = await this.externalData.pickRandomQuestions(turns);
       const choices = await this.externalData.pickRandomChoices(game.computeNeededChoicesCount(questions));
 
       await this.gameRepository.addQuestions(game.id, questions);
       await this.gameRepository.addChoices(game.id, choices);
 
-      this.game.start(this.game.players[0], questions[0]);
-      this.game.dealCards(choices);
+      game.start(game.players[0], questions[0]);
+      game.dealCards(choices);
     });
 
     return this as GameBuilder<StartedGame>;
   }
 
-  private async playTurn(to?: PlayState) {
-    const game = this.game as StartedGame;
-
+  private async playTurn(game: StartedGame, to?: PlayState) {
     if (to === PlayState.playersAnswer) {
       return;
     }
 
-    for (const player of this.game.playersExcludingQM) {
-      this.game.addAnswer(player, player.getFirstCards(game.question.numberOfBlanks), this.randomize);
+    for (const player of game.playersExcludingQM) {
+      game.addAnswer(player, player.getFirstCards(game.question.numberOfBlanks), this.randomize);
     }
 
     if (to === PlayState.questionMasterSelection) {
@@ -94,15 +97,15 @@ export class GameBuilder<G extends Game = Game> {
   }
 
   play(to?: PlayState): GameBuilder<G> {
-    this.register(() => this.playTurn(to));
+    this.register((game: Game) => this.playTurn(game as StartedGame, to));
 
     return this;
   }
 
   finish(): GameBuilder<G> {
-    this.register(async () => {
-      while (this.game.state !== GameState.finished) {
-        await this.playTurn();
+    this.register(async (game: Game) => {
+      while (game.isStarted()) {
+        await this.playTurn(game);
       }
     });
 
@@ -112,19 +115,20 @@ export class GameBuilder<G extends Game = Game> {
   async get(): Promise<G> {
     const game = this.game;
 
-    await this.gameRepository.save(this.game);
+    await this.playerRepository.save(game.creator);
+    await this.gameRepository.save(game);
 
     for (const func of this.functions) {
-      await func();
+      await func(game);
     }
 
-    await this.gameRepository.save(this.game);
-    await this.playerRepository.save(this.game.players);
+    await this.playerRepository.save(game.players);
+    await this.gameRepository.save(game);
 
-    this.game.dropEvents();
-    this.game.players.forEach((player) => player.dropEvents());
+    game.dropEvents();
+    game.players.forEach((player) => player.dropEvents());
 
-    this.game = new Game();
+    this.game = new Game({ creator: new Player('creator') });
     this.functions = [];
 
     return game as G;

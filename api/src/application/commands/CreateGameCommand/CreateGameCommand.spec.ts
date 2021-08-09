@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 
 import { PlayerIsAlreadyInGameError } from '../../../domain/errors/PlayerIsAlreadyInGameError';
-import { Game } from '../../../domain/models/Game';
+import { createGame } from '../../../domain/models/Game';
 import { Player } from '../../../domain/models/Player';
 import { InMemoryGameRepository } from '../../../infrastructure/database/repositories/game/InMemoryGameRepository';
 import { InMemoryPlayerRepository } from '../../../infrastructure/database/repositories/player/InMemoryPlayerRepository';
@@ -68,7 +68,7 @@ describe('CreateGameCommand', () => {
   });
 
   it('disallows a player to create a game when he is already in a game', async () => {
-    const otherGame = new Game();
+    const otherGame = createGame();
 
     otherGame.addPlayer(player);
 

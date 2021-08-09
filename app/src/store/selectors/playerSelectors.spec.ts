@@ -2,12 +2,29 @@ import expect from 'expect';
 
 import { selectionValidated, setGame, setPlayer } from '../../domain/actions';
 import { PlayState } from '../../domain/entities/Game';
-import { createFullPlayer, createStartedGame } from '../../tests/factories';
+import { createFullPlayer, createGame, createPlayer, createStartedGame } from '../../tests/factories';
 import { InMemoryStore } from '../../tests/InMemoryStore';
 
-import { selectCanFlushCards } from './playerSelectors';
+import { selectCanFlushCards, selectIsGameCreator } from './playerSelectors';
 
 describe('playerSelectors', () => {
+  describe('selectIsGameCreator', () => {
+    it('retruns true when the player is the creator of the game', () => {
+      const store = new InMemoryStore();
+
+      const creator = createFullPlayer({ nick: 'creator' });
+
+      store.dispatch(setPlayer(creator));
+      store.dispatch(setGame(createGame({ creator })));
+
+      expect(selectIsGameCreator(store.getState())).toBe(true);
+
+      store.dispatch(setGame(createGame({ creator: createPlayer() })));
+
+      expect(selectIsGameCreator(store.getState())).toBe(false);
+    });
+  });
+
   describe('selectCanFlushCards', () => {
     it('allows the player to flush his cards', () => {
       const store = new InMemoryStore();

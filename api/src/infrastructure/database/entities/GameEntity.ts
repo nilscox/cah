@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryColumn } from 'typeorm';
 
 import { GameState, PlayState } from '../../../../../shared/enums';
 import { Game } from '../../../domain/models/Game';
@@ -26,6 +26,9 @@ export class GameEntity {
   @OneToMany(() => PlayerEntity, (player) => player.game)
   players!: PlayerEntity[];
 
+  @ManyToOne(() => PlayerEntity, { nullable: false })
+  createdBy!: PlayerEntity;
+
   @OneToOne(() => PlayerEntity)
   @JoinColumn()
   questionMaster?: PlayerEntity;
@@ -48,6 +51,7 @@ export class GameEntity {
     const entity = new GameEntity();
 
     entity.id = game.id;
+    entity.createdBy = PlayerEntity.toPersistence(game.creator);
     entity.code = game.code;
     entity.players = game.players.map(PlayerEntity.toPersistence);
     entity.state = game.state;
@@ -70,7 +74,7 @@ export class GameEntity {
   }
 
   static toDomain(entity: GameEntity): Game {
-    const game = new Game(entity.id, entity.code);
+    const game = new Game({ creator: PlayerEntity.toDomain(entity.createdBy), code: entity.code }, entity.id);
 
     game.players = entity.players.map(PlayerEntity.toDomain);
     game.state = entity.state;

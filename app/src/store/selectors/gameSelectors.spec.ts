@@ -1,6 +1,9 @@
 import expect from 'expect';
 
+import { setGame, setPlayer } from '../../domain/actions';
+import { Game } from '../../domain/entities/Game';
 import {
+  createFullPlayer,
   createGame,
   createPlayer,
   createPlayers,
@@ -10,8 +13,10 @@ import {
   createTurn,
   createTurns,
 } from '../../tests/factories';
+import { InMemoryStore } from '../../tests/InMemoryStore';
 
 import {
+  selectCanStartGame,
   selectCurrentQuestion,
   selectGameWinners,
   selectPlayers,
@@ -22,6 +27,31 @@ import {
 
 describe('gameSelectors', () => {
   const nicks = ['player1', 'player2', 'player3'];
+
+  describe('selectCanStartGame', () => {
+    const state = (overrides: Partial<Game> = {}) => {
+      const { dispatch, getState } = new InMemoryStore();
+
+      const player = createFullPlayer({ nick: 'wazabi' });
+
+      dispatch(setPlayer(player));
+      dispatch(setGame(createGame({ creator: player, players: createPlayers(3), ...overrides })));
+
+      return getState();
+    };
+
+    it('allows to start a game', () => {
+      expect(selectCanStartGame(state())).toEqual(true);
+    });
+
+    it('does not allow to start a game when the player is not the game creator', () => {
+      expect(selectCanStartGame(state({ creator: createPlayer() }))).toEqual(false);
+    });
+
+    it('does not allow to start a game containing less than 3 players', () => {
+      expect(selectCanStartGame(state({ players: createPlayers(2) }))).toEqual(false);
+    });
+  });
 
   describe('selectTurns', () => {
     it("selects the game's turns", () => {

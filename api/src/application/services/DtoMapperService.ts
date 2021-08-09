@@ -44,6 +44,7 @@ export class DtoMapperService {
   async gameToDto(game: Game): Promise<GameDto> {
     const result = {
       id: game.id,
+      creator: game.creator.nick,
       code: game.code,
       players: game.players.map((player) => this.toPlayerDto(player)),
       gameState: game.state,

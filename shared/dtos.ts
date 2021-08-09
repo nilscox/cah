@@ -1,4 +1,4 @@
-import { GameState, PlayState } from './enums';
+import { GameState, PlayState } from "./enums";
 
 export interface ChoiceDto {
   id: string;
@@ -36,6 +36,7 @@ export interface AnswerDto extends AnonymousAnswerDto {
 
 export interface GameDto {
   id: string;
+  creator: string;
   code: string;
   players: PlayerDto[];
   gameState: GameState;

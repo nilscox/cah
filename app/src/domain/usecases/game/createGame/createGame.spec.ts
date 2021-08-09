@@ -20,6 +20,7 @@ describe('createGame', () => {
 
     store.expectState('game', {
       id: game.id,
+      creator: game.creator,
       code: 'OK42',
       state: GameState.idle,
       players: [],

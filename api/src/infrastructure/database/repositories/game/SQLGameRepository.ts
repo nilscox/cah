@@ -26,38 +26,27 @@ export class SQLGameRepository implements GameRepository {
     this.turnRepository = connection.getRepository(TurnEntity);
   }
 
+  private static relations = [
+    'createdBy',
+    'players',
+    'players.cards',
+    'questionMaster',
+    'question',
+    'currentAnswers',
+    'currentAnswers.player',
+    'currentAnswers.question',
+    'currentAnswers.choices',
+    'winner',
+  ];
+
   async findAll(): Promise<Game[]> {
-    const entities = await this.repository.find({
-      relations: [
-        'players',
-        'players.cards',
-        'questionMaster',
-        'question',
-        'currentAnswers',
-        'currentAnswers.player',
-        'currentAnswers.question',
-        'currentAnswers.choices',
-        'winner',
-      ],
-    });
+    const entities = await this.repository.find({ relations: SQLGameRepository.relations });
 
     return entities.map(GameEntity.toDomain);
   }
 
   async findGameById(id: string): Promise<Game | undefined> {
-    const entity = await this.repository.findOne(id, {
-      relations: [
-        'players',
-        'players.cards',
-        'questionMaster',
-        'question',
-        'currentAnswers',
-        'currentAnswers.player',
-        'currentAnswers.question',
-        'currentAnswers.choices',
-        'winner',
-      ],
-    });
+    const entity = await this.repository.findOne(id, { relations: SQLGameRepository.relations });
 
     if (entity) {
       return GameEntity.toDomain(entity);
@@ -65,24 +54,7 @@ export class SQLGameRepository implements GameRepository {
   }
 
   async findGameByCode(code: string): Promise<Game | undefined> {
-    const entity = await this.repository.findOne(
-      {
-        code,
-      },
-      {
-        relations: [
-          'players',
-          'players.cards',
-          'questionMaster',
-          'question',
-          'currentAnswers',
-          'currentAnswers.player',
-          'currentAnswers.question',
-          'currentAnswers.choices',
-          'winner',
-        ],
-      },
-    );
+    const entity = await this.repository.findOne({ code }, { relations: SQLGameRepository.relations });
 
     if (entity) {
       return GameEntity.toDomain(entity);
@@ -106,15 +78,6 @@ export class SQLGameRepository implements GameRepository {
   }
 
   async findNextAvailableQuestion(gameId: string): Promise<Question | undefined> {
-    // const entity = await this.questionRepository
-    //   .createQueryBuilder('question')
-    //   .leftJoin('question.game', 'game')
-    //   .leftJoin('game.turns', 'turns')
-    //   .where('game.id = :gameId', { gameId })
-    //   .andWhere('game.question_id IS NOT question.id')
-    //   .andWhere('turns.question_id IS NOT question.id')
-    //   .getOne();
-
     const game = await this.repository.findOneOrFail(gameId, { relations: ['question'] });
     const qb = this.questionRepository.createQueryBuilder('question').where('question.gameId = :id', { id: gameId });
 

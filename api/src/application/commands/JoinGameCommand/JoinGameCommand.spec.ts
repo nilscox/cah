@@ -2,7 +2,7 @@ import { expect } from 'chai';
 
 import { GameNotFoundError } from '../../../domain/errors/GameNotFoundError';
 import { PlayerIsAlreadyInGameError } from '../../../domain/errors/PlayerIsAlreadyInGameError';
-import { Game } from '../../../domain/models/Game';
+import { createGame, Game } from '../../../domain/models/Game';
 import { Player } from '../../../domain/models/Player';
 import { InMemoryGameRepository } from '../../../infrastructure/database/repositories/game/InMemoryGameRepository';
 import { InMemoryPlayerRepository } from '../../../infrastructure/database/repositories/player/InMemoryPlayerRepository';
@@ -33,7 +33,7 @@ describe('JoinGameCommand', () => {
 
     handler = instanciateHandler(JoinGameHandler, deps);
 
-    game = new Game();
+    game = createGame();
     await gameRepository.save(game);
 
     player = session.player = new Player('player');
@@ -66,7 +66,7 @@ describe('JoinGameCommand', () => {
   });
 
   it('prevents a player to join a game when he is already in a game', async () => {
-    const otherGame = new Game();
+    const otherGame = createGame();
 
     otherGame.addPlayer(player);
     await gameRepository.save(otherGame);

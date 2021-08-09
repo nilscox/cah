@@ -118,6 +118,7 @@ export const [createFullPlayer] = factory<FullPlayer>(() => ({
 
 export const [createGame, createGames] = factory<Game>(() => ({
   id: createId(),
+  creator: createPlayer({ nick: 'creator' }),
   code: 'code',
   state: GameState.idle,
   players: [],

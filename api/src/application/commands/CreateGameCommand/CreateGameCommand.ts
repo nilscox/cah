@@ -31,7 +31,7 @@ export class CreateGameHandler implements CommandHandler<CreateGameCommand, Crea
     }
 
     const code = this.configService.get('GAME_CODE');
-    const game = new Game(undefined, code);
+    const game = new Game({ creator: player, code });
 
     game.addPlayer(player);
     this.rtcManager.join(game, player);

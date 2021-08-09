@@ -4,8 +4,7 @@ import styled from '@emotion/styled';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { startGame } from '../../../../domain/usecases/game/startGame/startGame';
-import { selectGame } from '../../../../store/selectors/gameSelectors';
-import { AppState } from '../../../../store/types';
+import { selectCanStartGame } from '../../../../store/selectors/gameSelectors';
 import Button from '../../components/elements/Button';
 import { Center } from '../../components/layout/Center';
 import { Fade } from '../../components/layout/Fade';
@@ -24,12 +23,6 @@ const PlayerItem = styled.li<{ connected: boolean }>`
   color: ${({ connected }) => (connected ? undefined : 'red')};
   opacity: ${({ connected }) => (connected ? 1 : 0.7)};
 `;
-
-const selectCanStartGame = (state: AppState) => {
-  const game = selectGame(state);
-
-  return game.players.length >= 3;
-};
 
 export const GameIdleView: React.FC = () => {
   const dispatch = useDispatch();
@@ -52,7 +45,7 @@ export const GameIdleView: React.FC = () => {
         </PlayersList>
       </Flex>
       <Center minHeight={24}>
-        <Fade appear show={canStart}>
+        <Fade appear={canStart} show={canStart}>
           <Button onClick={() => dispatch(startGame(player, 10))}>Démarrer</Button>
         </Fade>
       </Center>

@@ -9,6 +9,13 @@ export const selectPlayer = (state: AppState) => state.player as NotNull<PlayerS
 
 export const selectPlayerCards = (state: AppState) => selectPlayer(state).cards;
 
+export const selectIsGameCreator = (state: AppState) => {
+  const game = selectGame(state);
+  const player = selectPlayer(state);
+
+  return game.creator?.nick === player.nick;
+};
+
 export const selectIsQuestionMaster = (state: AppState) => {
   const game = selectGame(state);
   const player = selectPlayer(state);

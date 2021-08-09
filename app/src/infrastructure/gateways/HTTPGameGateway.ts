@@ -24,6 +24,7 @@ class DtoMapper {
 
     const game: Game = {
       ...dto,
+      creator: findPlayer(dto.creator),
       state: dto.gameState,
       turns: [],
     };

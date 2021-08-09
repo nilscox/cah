@@ -6,6 +6,7 @@ import { GameNotFoundError } from '../../../domain/errors/GameNotFoundError';
 import { Answer } from '../../../domain/models/Answer';
 import { Blank } from '../../../domain/models/Blank';
 import { Choice } from '../../../domain/models/Choice';
+import { createGame } from '../../../domain/models/Game';
 import { Player } from '../../../domain/models/Player';
 import { createQuestion } from '../../../domain/models/Question';
 import { InMemoryGameRepository } from '../../../infrastructure/database/repositories/game/InMemoryGameRepository';
@@ -43,13 +44,17 @@ describe('GetGameQuery', () => {
 
   it('queries an idle game', async () => {
     const player = new Player('graincheux');
-    const game = await builder.addPlayer(player).get();
+    const game = await builder
+      .from(createGame({ creator: player }))
+      .addPlayer(player)
+      .get();
 
     const result = await handler.execute({ gameId: game.id });
 
     expect(result).to.eql({
       id: game.id,
       code: game.code,
+      creator: 'graincheux',
       players: [
         {
           id: player.id,
@@ -66,7 +71,7 @@ describe('GetGameQuery', () => {
 
     const result = await handler.execute({ gameId: game.id });
 
-    expect(_.omit(result, 'players')).to.eql({
+    expect(_.omit(result, 'creator', 'players')).to.eql({
       id: game.id,
       code: game.code,
       gameState: GameState.finished,
@@ -86,7 +91,7 @@ describe('GetGameQuery', () => {
 
     const result = await handler.execute({ gameId: game.id });
 
-    expect(_.omit(result, 'players')).to.eql({
+    expect(_.omit(result, 'creator', 'players')).to.eql({
       id: game.id,
       code: game.code,
       totalQuestions: 6,
@@ -116,7 +121,7 @@ describe('GetGameQuery', () => {
 
     const result = await handler.execute({ gameId: game.id });
 
-    expect(_.omit(result, 'id', 'code', 'questionMaster', 'players')).to.eql({
+    expect(_.omit(result, 'id', 'creator', 'code', 'questionMaster', 'players')).to.eql({
       gameState: GameState.started,
       playState: PlayState.questionMasterSelection,
       totalQuestions: 1,
@@ -155,7 +160,7 @@ describe('GetGameQuery', () => {
 
     const result = await handler.execute({ gameId: game.id });
 
-    expect(_.omit(result, 'id', 'code', 'questionMaster', 'question', 'players')).to.eql({
+    expect(_.omit(result, 'id', 'creator', 'code', 'questionMaster', 'question', 'players')).to.eql({
       gameState: GameState.started,
       playState: PlayState.endOfTurn,
       totalQuestions: 1,

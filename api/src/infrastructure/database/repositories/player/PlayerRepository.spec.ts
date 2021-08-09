@@ -1,11 +1,11 @@
 import { expect } from 'chai';
-import { Connection, createConnection, getRepository as getTypeOrmRepository } from 'typeorm';
+import { Connection, getRepository as getTypeOrmRepository } from 'typeorm';
 
 import { PlayerRepository } from '../../../../application/interfaces/PlayerRepository';
 import { Choice } from '../../../../domain/models/Choice';
-import { Game } from '../../../../domain/models/Game';
+import { createGame, Game } from '../../../../domain/models/Game';
 import { Player } from '../../../../domain/models/Player';
-import { entities } from '../../entities';
+import { createTestDatabaseConnection } from '../../../../utils/createTestDatabaseConnection';
 import { ChoiceEntity } from '../../entities/ChoiceEntity';
 import { GameEntity } from '../../entities/GameEntity';
 import { InMemoryCache } from '../../InMemoryCache';
@@ -57,11 +57,13 @@ const specs = (
   });
 
   it('saves the player and his cards', async () => {
+    const game = createGame();
     const player = new Player('toto');
-    const game = new Game();
     const cards = [new Choice('choice')];
 
     player.gameId = game.id;
+
+    await repository.save?.(game.creator);
 
     await saveGame?.(game);
     await saveChoice?.(cards[0], game);
@@ -94,24 +96,11 @@ describe('InMemoryPlayerRepository', () => {
 });
 
 describe('SQLPlayerRepository', () => {
+  const getConnection = createTestDatabaseConnection();
   let connection: Connection;
 
   before(async () => {
-    connection = await createConnection({
-      type: 'sqlite',
-      database: ':memory:',
-      entities,
-      synchronize: true,
-    });
-  });
-
-  after(async () => {
-    await connection?.close();
-  });
-
-  afterEach(async () => {
-    await connection.query('delete from choice');
-    await connection.query('delete from player');
+    connection = getConnection();
   });
 
   const saveGame = async (game: Game) => {

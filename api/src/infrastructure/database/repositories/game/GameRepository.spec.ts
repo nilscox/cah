@@ -1,18 +1,17 @@
 import { expect } from 'chai';
-import { Connection, createConnection, Repository } from 'typeorm';
-import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
+import { Connection, Repository } from 'typeorm';
 
 import { GameState, PlayState } from '../../../../../../shared/enums';
 import { GameRepository } from '../../../../application/interfaces/GameRepository';
 import { PlayerRepository } from '../../../../application/interfaces/PlayerRepository';
 import { Blank } from '../../../../domain/models/Blank';
 import { createChoice } from '../../../../domain/models/Choice';
-import { Game } from '../../../../domain/models/Game';
+import { createGame } from '../../../../domain/models/Game';
 import { Player } from '../../../../domain/models/Player';
 import { createQuestion, createQuestions, Question } from '../../../../domain/models/Question';
+import { createTestDatabaseConnection } from '../../../../utils/createTestDatabaseConnection';
 import { GameBuilder } from '../../../../utils/GameBuilder';
 import { StubExternalData } from '../../../stubs/StubExternalData';
-import { entities } from '../../entities';
 import { AnswerEntity } from '../../entities/AnswerEntity';
 import { ChoiceEntity } from '../../entities/ChoiceEntity';
 import { GameEntity } from '../../entities/GameEntity';
@@ -25,10 +24,6 @@ import { SQLPlayerRepository } from '../player/SQLPlayerRepository';
 import * as createEntities from './createEntities';
 import { InMemoryGameRepository } from './InMemoryGameRepository';
 import { SQLGameRepository } from './SQLGameRepository';
-
-const debug = false;
-const keepDatabase = debug;
-const logging = debug;
 
 const {
   createAnswerEntity,
@@ -56,7 +51,9 @@ const specs = (getRepositories: () => { gameRepository: GameRepository; playerRe
   it('finds all games', async () => {
     expect(await repository.findAll()).to.eql([]);
 
-    const game = new Game();
+    const game = createGame();
+
+    await playerRepository.save(game.creator);
     await repository.save(game);
 
     expect(await repository.findAll()).to.shallowDeepEqual([{ id: game.id }]);
@@ -65,7 +62,9 @@ const specs = (getRepositories: () => { gameRepository: GameRepository; playerRe
   it('finds a game from its id', async () => {
     expect(await repository.findGameById('')).to.be.undefined;
 
-    const game = new Game();
+    const game = createGame();
+
+    await playerRepository.save(game.creator);
     await repository.save(game);
 
     const savedGame = await repository.findGameById(game.id);
@@ -77,7 +76,7 @@ const specs = (getRepositories: () => { gameRepository: GameRepository; playerRe
 
   it('finds a game containing a player which was updated', async () => {
     const player = new Player('Enialoiv');
-    const game = new Game();
+    const game = createGame({ creator: player });
 
     game.players = [player];
 
@@ -130,8 +129,9 @@ const specs = (getRepositories: () => { gameRepository: GameRepository; playerRe
       const question = await createQuestion();
       externalData.setRandomQuestions([question]);
 
-      const game = new Game();
+      const game = createGame();
 
+      await playerRepository.save(game.creator);
       await repository.save(game);
       await repository.addQuestions(game.id, [question]);
 
@@ -186,7 +186,9 @@ const specs = (getRepositories: () => { gameRepository: GameRepository; playerRe
 
   describe('choices availability', () => {
     it('finds all the choices', async () => {
-      const game = new Game();
+      const game = createGame();
+
+      await playerRepository.save(game.creator);
       await repository.save(game);
 
       const choice = createChoice();
@@ -199,7 +201,9 @@ const specs = (getRepositories: () => { gameRepository: GameRepository; playerRe
     });
 
     it('excludes unavailable choices', async () => {
-      const game = new Game();
+      const game = createGame();
+
+      await playerRepository.save(game.creator);
       await repository.save(game);
 
       const choice = createChoice({ available: false });
@@ -211,8 +215,9 @@ const specs = (getRepositories: () => { gameRepository: GameRepository; playerRe
     });
 
     it('resolves an empty array when there is no more choice', async () => {
-      const game = new Game();
+      const game = createGame();
 
+      await playerRepository.save(game.creator);
       await repository.save(game);
 
       const availableChoices = await repository.findAvailableChoices(game.id);
@@ -221,7 +226,9 @@ const specs = (getRepositories: () => { gameRepository: GameRepository; playerRe
     });
 
     it('marks choices as unavailable', async () => {
-      const game = new Game();
+      const game = createGame();
+
+      await playerRepository.save(game.creator);
       await repository.save(game);
 
       const choice = createChoice();
@@ -246,7 +253,7 @@ describe('InMemoryGameRepository', () => {
 
   it('reloads a game', async () => {
     const repo = new InMemoryGameRepository(new InMemoryCache());
-    const game = new Game();
+    const game = createGame();
 
     await repo.save(game);
 
@@ -262,38 +269,25 @@ describe('InMemoryGameRepository', () => {
 });
 
 describe('SQLGameRepository', () => {
+  const getConnection = createTestDatabaseConnection();
   let connection: Connection;
+
+  before(async () => {
+    connection = getConnection();
+  });
+
   let gameRepository: SQLGameRepository;
   let playerRepository: SQLPlayerRepository;
 
   let choiceRepository: Repository<ChoiceEntity>;
   let answerRepository: Repository<AnswerEntity>;
 
-  before(async () => {
-    connection = await createConnection({
-      type: 'sqlite',
-      database: keepDatabase ? './db.sqlite' : ':memory:',
-      entities,
-      synchronize: true,
-      logging,
-      namingStrategy: new SnakeNamingStrategy(),
-    });
-
+  before(() => {
     gameRepository = new SQLGameRepository(connection);
     playerRepository = new SQLPlayerRepository(connection);
 
     choiceRepository = connection.getRepository(ChoiceEntity);
     answerRepository = connection.getRepository(AnswerEntity);
-  });
-
-  after(async () => {
-    await connection?.close();
-  });
-
-  afterEach(async () => {
-    if (!keepDatabase) {
-      await connection.synchronize(true);
-    }
   });
 
   specs(() => ({ gameRepository, playerRepository }));

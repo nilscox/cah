@@ -25,6 +25,7 @@ export const createGameEntity = async (players: PlayerEntity[]) => {
   const game = new GameEntity();
 
   game.id = uuid();
+  game.createdBy = await createPlayerEntity();
   game.code = 'code';
   game.state = GameState.idle;
   game.players = players;

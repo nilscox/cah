@@ -17,6 +17,7 @@ export enum PlayState {
 
 export interface Game {
   id: string;
+  creator: Player;
   code: string;
   state: GameState;
   players: Player[];

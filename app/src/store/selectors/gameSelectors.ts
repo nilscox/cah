@@ -2,6 +2,8 @@ import { StartedGame } from '../../domain/entities/Game';
 import { Player } from '../../domain/entities/Player';
 import { AppState } from '../types';
 
+import { selectIsGameCreator } from './playerSelectors';
+
 export const selectGame = (state: AppState) => state.game as StartedGame;
 
 export const selectCurrentQuestion = (state: AppState) => selectGame(state).question;
@@ -16,6 +18,13 @@ export const selectPlayState = (state: AppState) => {
 
 export const selectPlayers = (state: AppState) => {
   return selectGame(state).players;
+};
+
+export const selectCanStartGame = (state: AppState) => {
+  const game = selectGame(state);
+  const isCreator = selectIsGameCreator(state);
+
+  return isCreator && game.players.length >= 3;
 };
 
 export const selectScores = (state: AppState): Array<[Player, number]> => {
