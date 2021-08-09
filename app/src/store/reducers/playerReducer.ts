@@ -2,7 +2,7 @@ import { Choice } from '../../domain/entities/Choice';
 import { isStarted } from '../../domain/entities/Game';
 import { AppAction, Nullable } from '../types';
 
-import { append, filter, findById, isNull, mapIds, replace } from './helpers';
+import { append, filter, findById, isNull, mapIds, replace, replaceAll } from './helpers';
 
 export type PlayerState = Nullable<{
   id: string;
@@ -101,7 +101,7 @@ export const playerReducer = (state: PlayerState = null, action: AppAction): Pla
     return {
       ...state,
       hasFlushed: true,
-      selection: replace(state.selection, () => true, null),
+      selection: replaceAll(state.selection, () => true, null),
     };
   }
 

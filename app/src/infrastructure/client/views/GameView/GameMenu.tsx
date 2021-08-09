@@ -103,9 +103,6 @@ const GameMenu: React.FC = () => {
         Question : {game.turns.length + 1} / {game.totalQuestions}
       </Box>
       <Box paddingY={2}>
-        <Button onClick={() => dispatch(flushCards())}>Changer toutes ses cartes</Button>
-      </Box>
-      <Box paddingY={2}>
         <div>Scores :</div>
         <ol>
           {scores.map(([player, score]) => (

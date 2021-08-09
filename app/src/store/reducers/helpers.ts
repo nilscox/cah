@@ -34,6 +34,24 @@ export const replace = <T>(array: T[], predicate: (element: T, index: number) =>
   ];
 };
 
+export const replaceAll = <T>(
+  array: T[],
+  predicate: (element: T, index: number) => boolean,
+  updater: Updater<T>,
+): T[] => {
+  const copy = array.slice();
+
+  for (const [idx, element] of Object.entries(array)) {
+    const i = Number(idx);
+
+    if (predicate(element, i)) {
+      copy[i] = update(updater, array[i]);
+    }
+  }
+
+  return copy;
+};
+
 export const upsert = <T>(
   array: T[],
   predicate: (element: T, index: number) => boolean,
