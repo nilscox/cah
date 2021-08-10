@@ -1,15 +1,12 @@
 import React from 'react';
 
 import { css, Global, ThemeProvider } from '@emotion/react';
-import { withThemes } from '@react-theming/storybook-addon';
 
 import { GlobalStyles } from '../src/infrastructure/client/styles/GlobalStyles';
 import { theme } from '../src/infrastructure/client/styles/theme';
 
 import 'jetbrains-mono';
 import 'normalize.css';
-
-const themingDecorator = withThemes(ThemeProvider, [theme]);
 
 export const StorybookGlobalStyles: React.FC = () => (
   <Global
@@ -20,6 +17,12 @@ export const StorybookGlobalStyles: React.FC = () => (
       }
     `}
   />
+);
+
+const themingDecorator = (Story) => (
+  <ThemeProvider theme={theme}>
+    <Story />
+  </ThemeProvider>
 );
 
 const globalStylesDecorator = (Story) => (
