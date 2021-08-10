@@ -1,6 +1,6 @@
-import { expect } from 'chai';
+import { expect } from 'earljs';
 
-import { Choice } from '../../../domain/models/Choice';
+import { createChoice } from '../../../domain/models/Choice';
 import { Player } from '../../../domain/models/Player';
 import { InMemoryPlayerRepository } from '../../../infrastructure/database/repositories/player/InMemoryPlayerRepository';
 import { StubSessionStore } from '../../../infrastructure/stubs/StubSessionStore';
@@ -32,7 +32,7 @@ describe('GetPlayerQuery', () => {
 
     const result = await handler.execute({ playerId: player.id }, session);
 
-    expect(result).to.eql({
+    expect(result).toEqual({
       id: player.id,
       nick: 'tok',
       isConnected: false,
@@ -43,18 +43,23 @@ describe('GetPlayerQuery', () => {
     const game = await builder.addPlayers().start().get();
     const player = game.players[0];
 
-    player.cards = [new Choice('text')];
     session.player = player;
+
+    player.cards = [createChoice('bonjour', { caseSensitive: false }), createChoice('Mano', { caseSensitive: true })];
+
     await playerRepository.save(player);
 
     const result = await handler.execute({ playerId: player.id }, session);
 
-    expect(result).to.eql({
+    expect(result).toEqual({
       id: player.id,
       gameId: game.id,
       nick: player.nick,
       isConnected: false,
-      cards: [{ id: player.cards[0].id, text: 'text' }],
+      cards: [
+        { id: player.cards[0].id, text: 'bonjour', caseSensitive: false },
+        { id: player.cards[1].id, text: 'Mano', caseSensitive: true },
+      ],
       hasFlushed: false,
     });
   });

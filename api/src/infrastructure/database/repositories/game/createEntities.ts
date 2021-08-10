@@ -40,6 +40,7 @@ export const createChoiceEntity = async (game: GameEntity, position: number) => 
 
   choice.id = uuid();
   choice.text = 'choice at ' + position;
+  choice.caseSensitive = false;
   choice.position = position;
   choice.game = game;
 

@@ -21,6 +21,7 @@ describe('login', () => {
       cards: [],
       selection: [],
       selectionValidated: false,
+      hasFlushed: false,
     });
   });
 

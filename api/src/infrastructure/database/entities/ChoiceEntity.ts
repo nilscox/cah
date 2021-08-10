@@ -14,6 +14,9 @@ export class ChoiceEntity {
   @Column()
   text!: string;
 
+  @Column()
+  caseSensitive!: boolean;
+
   @Column({ nullable: true })
   position!: number;
 
@@ -37,6 +40,7 @@ export class ChoiceEntity {
 
     entity.id = choice.id;
     entity.text = choice.text;
+    entity.caseSensitive = choice.caseSensitive;
     entity.available = choice.available;
     entity.gameId = gameId;
 
@@ -48,8 +52,9 @@ export class ChoiceEntity {
   }
 
   static toDomain(entity: ChoiceEntity): Choice {
-    const choice = new Choice(entity.text);
+    const choice = new Choice(entity.text, entity.caseSensitive);
 
+    // todo
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     choice.id = entity.id;

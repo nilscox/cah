@@ -10,7 +10,7 @@ import { InvalidPlayStateError } from '../../../domain/errors/InvalidPlayStateEr
 import { PlayerAlreadyAnsweredError } from '../../../domain/errors/PlayerAlreadyAnsweredError';
 import { PlayerIsQuestionMasterError } from '../../../domain/errors/PlayerIsQuestionMasterError';
 import { Blank } from '../../../domain/models/Blank';
-import { Choice } from '../../../domain/models/Choice';
+import { Choice, createChoice } from '../../../domain/models/Choice';
 import { Game } from '../../../domain/models/Game';
 import { Player } from '../../../domain/models/Player';
 import { Question } from '../../../domain/models/Question';
@@ -125,7 +125,7 @@ describe('CreateAnswerCommand', () => {
 
   it('does not create an answer when the player is not in a game', async () => {
     const player = new Player('player');
-    const choices = [new Choice('choice 1')];
+    const choices = [createChoice('choice 1')];
 
     player.addCards(choices);
     await playerRepository.save(player);
@@ -137,7 +137,7 @@ describe('CreateAnswerCommand', () => {
   it('does not create an answer when the game is not started', async () => {
     const game = await builder.addPlayers().get();
     const player = game.playersExcludingQM[0];
-    const choices = [new Choice('choice 1')];
+    const choices = [createChoice('choice 1')];
 
     player.addCards(choices);
     await playerRepository.save(player);

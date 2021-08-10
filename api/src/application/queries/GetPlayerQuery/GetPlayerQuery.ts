@@ -12,7 +12,7 @@ export class GetPlayerQuery {
 export class GetPlayerHandler implements QueryHandler<GetPlayerQuery, PlayerDto | FullPlayerDto, SessionStore> {
   constructor(private readonly playerRepository: PlayerRepository, private readonly dtoMapper: DtoMapperService) {}
 
-  async execute({ playerId }: GetPlayerQuery, session: SessionStore) {
+  async execute({ playerId }: GetPlayerQuery, session: SessionStore): Promise<PlayerDto | FullPlayerDto> {
     const player = await this.playerRepository.findPlayerById(playerId);
 
     if (!player) {

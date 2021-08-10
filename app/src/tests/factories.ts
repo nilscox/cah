@@ -151,6 +151,7 @@ export const [createQuestion, createQuestions] = factory<Question>(() => ({
 export const [createChoice, createChoices] = factory<Choice>(() => ({
   id: createId(),
   text: 'choice',
+  caseSensitive: false,
 }));
 
 export const [createAnonymousAnswer, createAnonymousAnswers] = factory<AnonymousAnswer>(() => ({

@@ -1,11 +1,11 @@
-import { expect } from 'chai';
-import _ from 'lodash';
+import { expect } from 'earljs';
+import { invokeMap, omit } from 'lodash';
 
 import { GameState, PlayState } from '../../../../../shared/enums';
 import { GameNotFoundError } from '../../../domain/errors/GameNotFoundError';
 import { Answer } from '../../../domain/models/Answer';
 import { Blank } from '../../../domain/models/Blank';
-import { Choice } from '../../../domain/models/Choice';
+import { createChoice } from '../../../domain/models/Choice';
 import { createGame } from '../../../domain/models/Game';
 import { Player } from '../../../domain/models/Player';
 import { createQuestion } from '../../../domain/models/Question';
@@ -39,7 +39,7 @@ describe('GetGameQuery', () => {
   });
 
   it('throws when the game does not exist', async () => {
-    await expect(handler.execute({ gameId: 'nope' })).to.be.rejectedWith(GameNotFoundError);
+    await expect(handler.execute({ gameId: 'nope' })).toBeRejected(GameNotFoundError);
   });
 
   it('queries an idle game', async () => {
@@ -51,7 +51,7 @@ describe('GetGameQuery', () => {
 
     const result = await handler.execute({ gameId: game.id });
 
-    expect(result).to.eql({
+    expect(result).toEqual({
       id: game.id,
       code: game.code,
       creator: 'graincheux',
@@ -71,7 +71,7 @@ describe('GetGameQuery', () => {
 
     const result = await handler.execute({ gameId: game.id });
 
-    expect(_.omit(result, 'creator', 'players')).to.eql({
+    expect(omit(result, 'creator', 'players')).toEqual({
       id: game.id,
       code: game.code,
       gameState: GameState.finished,
@@ -80,7 +80,7 @@ describe('GetGameQuery', () => {
 
   it('queries a started game in playersAnswer play state', async () => {
     const player = new Player('prof');
-    const choices = [new Choice('yeah'), new Choice('!')];
+    const choices = [createChoice('yeah'), createChoice('!')];
     const question = createQuestion({ text: 'hell  low ?', blanks: [new Blank(5), new Blank(10)] });
 
     const game = await builder.addPlayers().start(6).get();
@@ -91,7 +91,7 @@ describe('GetGameQuery', () => {
 
     const result = await handler.execute({ gameId: game.id });
 
-    expect(_.omit(result, 'creator', 'players')).to.eql({
+    expect(omit(result, 'creator', 'players')).toEqual({
       id: game.id,
       code: game.code,
       totalQuestions: 6,
@@ -111,7 +111,7 @@ describe('GetGameQuery', () => {
 
   it('queries a started game in questionMasterSelection play state', async () => {
     const player = new Player('dormeur');
-    const choices = [new Choice('Who who')];
+    const choices = [createChoice('Who who')];
     const question = createQuestion({ text: 'Who are you?' });
     const game = await builder.addPlayers().start(1).play(PlayState.questionMasterSelection).get();
 
@@ -121,7 +121,7 @@ describe('GetGameQuery', () => {
 
     const result = await handler.execute({ gameId: game.id });
 
-    expect(_.omit(result, 'id', 'creator', 'code', 'questionMaster', 'players')).to.eql({
+    expect(omit(result, 'id', 'creator', 'code', 'questionMaster', 'players')).toEqual({
       gameState: GameState.started,
       playState: PlayState.questionMasterSelection,
       totalQuestions: 1,
@@ -137,6 +137,7 @@ describe('GetGameQuery', () => {
           choices: [
             {
               id: choices[0].id,
+              caseSensitive: false,
               text: 'Who who',
             },
           ],
@@ -149,25 +150,26 @@ describe('GetGameQuery', () => {
 
   it('queries a started game in endOfTurn play state', async () => {
     const player = new Player('joyeux');
-    const choices = [new Choice('yeah'), new Choice('!')];
+    const choices = [createChoice('yeah'), createChoice('!')];
     const question = createQuestion({ text: 'hell  low ?', blanks: [new Blank(5), new Blank(10)] });
     const game = await builder.addPlayers().start(1).play(PlayState.endOfTurn).get();
 
     game.question = question;
     game.answers = [new Answer(player, question, choices)];
     game.winner = player;
+
     await gameRepository.save(game);
 
     const result = await handler.execute({ gameId: game.id });
 
-    expect(_.omit(result, 'id', 'creator', 'code', 'questionMaster', 'question', 'players')).to.eql({
+    expect(omit(result, 'id', 'creator', 'code', 'questionMaster', 'question', 'players')).toEqual({
       gameState: GameState.started,
       playState: PlayState.endOfTurn,
       totalQuestions: 1,
       answers: [
         {
           id: game.answers[0].id,
-          choices: choices.map(({ id, text }) => ({ id, text })),
+          choices: invokeMap(choices, 'toJSON'),
           formatted: 'hell yeah low !?',
           player: 'joyeux',
         },

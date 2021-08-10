@@ -1,4 +1,5 @@
-import { expect } from 'chai';
+import { expect } from 'earljs';
+import { invokeMap } from 'lodash';
 
 import { PlayState } from '../../../../../shared/enums';
 import { AllPlayersAnsweredEvent } from '../../../domain/events/AllPlayersAnsweredEvent';
@@ -12,7 +13,7 @@ import { TurnStartedEvent } from '../../../domain/events/TurnStartedEvent';
 import { WinnerSelectedEvent } from '../../../domain/events/WinnerSelectedEvent';
 import { Answer } from '../../../domain/models/Answer';
 import { Blank } from '../../../domain/models/Blank';
-import { Choice } from '../../../domain/models/Choice';
+import { createChoice } from '../../../domain/models/Choice';
 import { createGame } from '../../../domain/models/Game';
 import { Player } from '../../../domain/models/Player';
 import { createQuestion } from '../../../domain/models/Question';
@@ -45,8 +46,8 @@ describe('GameEventsHandler', () => {
 
     handler.execute(new GameJoinedEvent(game, player));
 
-    expect(logger.last('info')).to.eql(['notify', game.code, { type: 'GameJoined' }]);
-    expect(logger.last('debug')).to.eql([
+    expect(logger.last('info')).toEqual(['notify', game.code, { type: 'GameJoined' }]);
+    expect(logger.last('debug')).toEqual([
       'notify',
       { type: 'GameJoined', player: { id: player.id, nick: 'player', isConnected: false } },
     ]);
@@ -60,7 +61,7 @@ describe('GameEventsHandler', () => {
 
     handler.execute(new GameJoinedEvent(game, player));
 
-    expect(notifier.lastGameMessage(game)).to.eql({
+    expect(notifier.lastGameMessage(game)).toEqual({
       type: 'GameJoined',
       player: {
         id: player.id,
@@ -76,7 +77,7 @@ describe('GameEventsHandler', () => {
 
     handler.execute(new GameLeftEvent(game, player));
 
-    expect(notifier.lastGameMessage(game)).to.eql({
+    expect(notifier.lastGameMessage(game)).toEqual({
       type: 'GameLeft',
       player: player.nick,
     });
@@ -87,7 +88,7 @@ describe('GameEventsHandler', () => {
 
     handler.execute(new GameStartedEvent(game));
 
-    expect(notifier.lastGameMessage(game)).to.eql({
+    expect(notifier.lastGameMessage(game)).toEqual({
       type: 'GameStarted',
     });
   });
@@ -100,7 +101,7 @@ describe('GameEventsHandler', () => {
 
     handler.execute(new TurnStartedEvent(game));
 
-    expect(notifier.lastGameMessage(game)).to.eql({
+    expect(notifier.lastGameMessage(game)).toEqual({
       type: 'TurnStarted',
       playState: PlayState.playersAnswer,
       questionMaster: 'question master',
@@ -119,7 +120,7 @@ describe('GameEventsHandler', () => {
 
     handler.execute(new PlayerAnsweredEvent(game, player));
 
-    expect(notifier.lastGameMessage(game)).to.eql({
+    expect(notifier.lastGameMessage(game)).toEqual({
       type: 'PlayerAnswered',
       player: player.nick,
     });
@@ -128,18 +129,20 @@ describe('GameEventsHandler', () => {
   it('AllPlayersAnswered event', () => {
     const game = createGame();
     const player = new Player('player');
-    const answer = new Answer(player, createQuestion({ text: 'Hello !', blanks: [new Blank(6)] }), [new Choice('you')]);
+    const answer = new Answer(player, createQuestion({ text: 'Hello !', blanks: [new Blank(6)] }), [
+      createChoice('you'),
+    ]);
 
     game.answers = [answer];
 
     handler.execute(new AllPlayersAnsweredEvent(game));
 
-    expect(notifier.lastGameMessage(game)).to.eql({
+    expect(notifier.lastGameMessage(game)).toEqual({
       type: 'AllPlayersAnswered',
       answers: [
         {
           id: answer.id,
-          choices: answer.choices.map(({ id, text }) => ({ id, text })),
+          choices: invokeMap(answer.choices, 'toJSON'),
           formatted: 'Hello you!',
         },
       ],
@@ -150,21 +153,21 @@ describe('GameEventsHandler', () => {
     const game = createGame();
     const player = new Player('player');
     const winner = new Player('winner');
-    const answer = new Answer(player, createQuestion({ text: 'Who are you?' }), [new Choice('who who')]);
+    const answer = new Answer(player, createQuestion({ text: 'Who are you?' }), [createChoice('who who')]);
 
     game.answers = [answer];
     game.winner = winner;
 
     handler.execute(new WinnerSelectedEvent(game));
 
-    expect(notifier.lastGameMessage(game)).to.eql({
+    expect(notifier.lastGameMessage(game)).toEqual({
       type: 'WinnerSelected',
       winner: 'winner',
       answers: [
         {
           id: answer.id,
           player: 'player',
-          choices: answer.choices.map(({ id, text }) => ({ id, text })),
+          choices: invokeMap(answer.choices, 'toJSON'),
           formatted: 'Who are you? who who',
         },
       ],
@@ -176,7 +179,7 @@ describe('GameEventsHandler', () => {
 
     handler.execute(new TurnFinishedEvent(game));
 
-    expect(notifier.lastGameMessage(game)).to.eql({
+    expect(notifier.lastGameMessage(game)).toEqual({
       type: 'TurnFinished',
     });
   });
@@ -186,7 +189,7 @@ describe('GameEventsHandler', () => {
 
     handler.execute(new GameFinishedEvent(game));
 
-    expect(notifier.lastGameMessage(game)).to.eql({
+    expect(notifier.lastGameMessage(game)).toEqual({
       type: 'GameFinished',
     });
   });

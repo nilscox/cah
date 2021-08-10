@@ -37,7 +37,17 @@ export class Question extends Entity {
     }
 
     const getChoice = (index: number) => {
-      return choices?.[index]?.text ?? '__';
+      const choice = choices?.[index];
+
+      if (!choice) {
+        return '__';
+      }
+
+      if (choice.caseSensitive || !this.blanks) {
+        return choice.text;
+      }
+
+      return choice.text.toLowerCase();
     };
 
     if (!blanks) {

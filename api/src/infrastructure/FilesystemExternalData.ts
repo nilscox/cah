@@ -9,8 +9,15 @@ import { Question } from '../domain/models/Question';
 
 import { ExternalData } from './ExternalData';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type Data = any;
+type QuestionData = {
+  text: string;
+  blanks?: number[];
+};
+
+type ChoiceData = {
+  text: string;
+  caseSensitive?: boolean;
+};
 
 export class FilesystemExternalData implements ExternalData {
   constructor(private readonly dataDir: string, private readonly randomService: RandomService) {}
@@ -18,7 +25,7 @@ export class FilesystemExternalData implements ExternalData {
   async pickRandomQuestions(count: number): Promise<Question[]> {
     const data = await this.loadJsonFile('fr', 'questions.json');
     const questions: Question[] = data.map(
-      (data: Data) =>
+      (data: QuestionData) =>
         new Question(
           data.text,
           data.blanks?.map((place: number) => new Blank(place)),
@@ -30,7 +37,9 @@ export class FilesystemExternalData implements ExternalData {
 
   async pickRandomChoices(count: number): Promise<Choice[]> {
     const data = await this.loadJsonFile('fr', 'choices.json');
-    const choices: Choice[] = data.map((data: Data) => new Choice(data.text));
+    const choices: Choice[] = data.map(
+      ({ text, caseSensitive = false }: ChoiceData) => new Choice(text, caseSensitive),
+    );
 
     return this.randomService.randomize(choices).slice(0, count);
   }

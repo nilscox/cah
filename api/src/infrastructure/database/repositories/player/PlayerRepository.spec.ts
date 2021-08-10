@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { Connection, getRepository as getTypeOrmRepository } from 'typeorm';
 
 import { PlayerRepository } from '../../../../application/interfaces/PlayerRepository';
-import { Choice } from '../../../../domain/models/Choice';
+import { Choice, createChoice } from '../../../../domain/models/Choice';
 import { createGame, Game } from '../../../../domain/models/Game';
 import { Player } from '../../../../domain/models/Player';
 import { createTestDatabaseConnection } from '../../../../utils/createTestDatabaseConnection';
@@ -59,7 +59,7 @@ const specs = (
   it('saves the player and his cards', async () => {
     const game = createGame();
     const player = new Player('toto');
-    const cards = [new Choice('choice')];
+    const cards = [createChoice('choice')];
 
     player.gameId = game.id;
 

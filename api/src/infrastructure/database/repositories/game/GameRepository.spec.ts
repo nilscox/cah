@@ -206,7 +206,7 @@ const specs = (getRepositories: () => { gameRepository: GameRepository; playerRe
       await playerRepository.save(game.creator);
       await repository.save(game);
 
-      const choice = createChoice({ available: false });
+      const choice = createChoice('choice', { available: false });
       await repository.addChoices(game.id, [choice]);
 
       const choices = await repository.findAvailableChoices(game.id);

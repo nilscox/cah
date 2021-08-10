@@ -12,10 +12,7 @@ export class DtoMapperService {
   constructor(private readonly gameRepository: GameRepository, private readonly rtcManager: RTCManager) {}
 
   toChoiceDto(choice: Choice): ChoiceDto {
-    return {
-      id: choice.id,
-      text: choice.text,
-    };
+    return choice.toJSON();
   }
 
   toPlayerDto(player: Player): PlayerDto {
@@ -32,10 +29,8 @@ export class DtoMapperService {
     const data = player.toJSON();
 
     return {
-      id: data.id,
+      ...this.toPlayerDto(player),
       gameId: data.gameId,
-      nick: data.nick,
-      isConnected: this.rtcManager.isConnected(player),
       cards: player.cards.map((choice) => this.toChoiceDto(choice)),
       hasFlushed: player.hasFlushed,
     };

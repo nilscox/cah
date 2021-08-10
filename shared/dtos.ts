@@ -3,6 +3,7 @@ import { GameState, PlayState } from "./enums";
 export interface ChoiceDto {
   id: string;
   text: string;
+  caseSensitive: boolean;
 }
 
 export interface PlayerDto {

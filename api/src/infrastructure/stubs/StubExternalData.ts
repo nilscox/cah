@@ -32,6 +32,6 @@ export class StubExternalData implements ExternalData {
 
     return Array(count ?? 0)
       .fill(null)
-      .map((_, n) => new Choice(`Choice ${n + 1}`));
+      .map((_, n) => new Choice(`Choice ${n + 1}`, false));
   }
 }

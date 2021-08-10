@@ -23,6 +23,7 @@ const createId = () => Math.random().toString(36).slice(-6);
 const createChoice = (overrides: Partial<Choice>): Choice => ({
   id: createId(),
   text: 'text',
+  caseSensitive: false,
   ...overrides,
 });
 

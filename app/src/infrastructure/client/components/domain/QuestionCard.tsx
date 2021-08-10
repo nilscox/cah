@@ -19,21 +19,29 @@ const ChoiceText = styled(TypedLabel)`
   text-decoration-color: #999;
 `;
 
-const getChoiceText = (choice: Choice | null, animate: boolean) => {
+const getChoiceText = (choice: Choice | null, animate: boolean, questionWithoutBlank = false) => {
   if (!choice) {
     return <Blank />;
   }
 
+  const getText = () => {
+    if (choice.caseSensitive || questionWithoutBlank) {
+      return choice.text;
+    }
+
+    return choice.text.toLowerCase();
+  };
+
   return (
     <ChoiceText key={choice.text} animate={animate}>
-      {choice.text.toLowerCase()}
+      {getText()}
     </ChoiceText>
   );
 };
 
 const getChunks = (question: Question, choices: (Choice | null)[], animate: boolean) => {
   if (!question.blanks) {
-    return [<>{question.text}</>, <> </>, getChoiceText(choices[0], animate)];
+    return [<>{question.text}</>, <> </>, getChoiceText(choices[0], animate, true)];
   }
 
   const chunks = [];

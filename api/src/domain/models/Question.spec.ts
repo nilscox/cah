@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 
 import { Blank } from './Blank';
-import { Choice } from './Choice';
+import { createChoice } from './Choice';
 import { Question } from './Question';
 
 describe('Question', () => {
@@ -16,10 +16,10 @@ describe('Question', () => {
   });
 
   it("prints a question's text without blanks with choices", () => {
-    const choice = new Choice('moi');
+    const choice = createChoice('Moi');
     const question = new Question('Qui es-tu ?');
 
-    expect(question.toString([choice])).to.eql('Qui es-tu ? moi');
+    expect(question.toString([choice])).to.eql('Qui es-tu ? Moi');
   });
 
   it("prints a question's text, replacing blanks with __", () => {
@@ -29,9 +29,16 @@ describe('Question', () => {
   });
 
   it("prints a question's text, replacing blanks with choices", () => {
-    const choices = [new Choice("l'infra"), new Choice('coder')];
+    const choices = [createChoice("L'infra"), createChoice('Coder')];
     const question = new Question("J'aime beaucoup , mais je préfère .", [new Blank(16), new Blank(34)]);
 
     expect(question.toString(choices)).to.eql("J'aime beaucoup l'infra, mais je préfère coder.");
+  });
+
+  it("correctly handles the choices' case sensitivity", () => {
+    const choices = [createChoice('Patrick Sébastien', { caseSensitive: true }), createChoice('Regarder netflix')];
+    const question = new Question("J'aime beaucoup , mais je préfère .", [new Blank(16), new Blank(34)]);
+
+    expect(question.toString(choices)).to.eql("J'aime beaucoup Patrick Sébastien, mais je préfère regarder netflix.");
   });
 });
