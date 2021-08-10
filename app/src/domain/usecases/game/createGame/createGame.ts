@@ -1,10 +1,10 @@
 import { createThunk } from '../../../../store/createThunk';
 import { setGame } from '../../../actions';
+import { navigateToGameRoute } from '../../app/navigate/navigate';
 
-export const createGame = createThunk(async ({ dispatch, gameGateway, routerGateway }) => {
+export const createGame = createThunk(async ({ dispatch, gameGateway }) => {
   const game = await gameGateway.createGame();
 
   dispatch(setGame(game));
-
-  routerGateway.push(`/game/${game.code}/idle`);
+  dispatch(navigateToGameRoute('/idle'));
 });
