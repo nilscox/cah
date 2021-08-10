@@ -54,7 +54,7 @@ export class Game extends AggregateRoot<GameEvent> {
     super(id);
 
     this.creator = attributes.creator;
-    this.code = attributes.code ?? Game.generateCode();
+    this.code = attributes.code || Game.generateCode();
     this.cardsPerPlayer = attributes.cardsPerPlayer ?? 11;
     this.minimumPlayersToStart = attributes.minimumPlayersToStart ?? 3;
 

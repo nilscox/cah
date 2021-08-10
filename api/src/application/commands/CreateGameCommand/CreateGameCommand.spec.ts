@@ -1,7 +1,7 @@
-import { expect } from 'chai';
+import { expect } from 'earljs';
 
 import { PlayerIsAlreadyInGameError } from '../../../domain/errors/PlayerIsAlreadyInGameError';
-import { createGame } from '../../../domain/models/Game';
+import { createGame, Game } from '../../../domain/models/Game';
 import { Player } from '../../../domain/models/Player';
 import { InMemoryGameRepository } from '../../../infrastructure/database/repositories/game/InMemoryGameRepository';
 import { InMemoryPlayerRepository } from '../../../infrastructure/database/repositories/player/InMemoryPlayerRepository';
@@ -10,6 +10,7 @@ import { StubEventPublisher } from '../../../infrastructure/stubs/StubEventPubli
 import { StubRTCManager } from '../../../infrastructure/stubs/StubRTCManager';
 import { StubSessionStore } from '../../../infrastructure/stubs/StubSessionStore';
 import { instanciateHandler } from '../../../utils/dependencyInjection';
+import { expectError } from '../../../utils/expectError';
 import { instanciateStubDependencies } from '../../../utils/stubDependencies';
 
 import { CreateGameHandler } from './CreateGameCommand';
@@ -46,25 +47,34 @@ describe('CreateGameCommand', () => {
 
     const game = await execute();
 
-    expect(game.id).to.be.a('string');
-    expect(game.code).to.eql('CAFE');
+    expect(game.id).toBeA(String);
+    expect(game.code).toEqual('CAFE');
 
     const games = await gameRepository.findAll();
 
-    expect(games).to.have.length(1);
-    expect(publisher.firstEvent).to.eql({ type: 'GameCreated', game: games[0] });
+    expect(games).toBeAnArrayOfLength(1);
+    expect(publisher.firstEvent).toBeAnObjectWith({ type: 'GameCreated', game: games[0] });
+  });
+
+  it('generates a 4 letters code', async () => {
+    config.set('GAME_CODE', '');
+
+    const game = await execute();
+
+    expect(game.code).toBeA(String);
+    expect(game.code).toEqual(expect.stringMatching(/[A-Z0-9]{4}/));
   });
 
   it('adds the player to the created game', async () => {
     await execute();
 
-    const game = await gameRepository.findGameForPlayer(player.id);
+    const game = (await gameRepository.findGameForPlayer(player.id)) as Game;
 
-    expect(game).not.to.be.undefined;
-    expect(player.gameId).to.eql(game!.id);
+    expect(game as unknown).not.toEqual(undefined);
+    expect(player.gameId).toEqual(game.id);
 
-    expect(rtcManager.has(game!, player)).to.be.true;
-    expect(publisher.lastEvent).to.eql({ type: 'GameJoined', game, player });
+    expect(rtcManager.has(game!, player)).toEqual(true);
+    expect(publisher.lastEvent).toBeAnObjectWith({ type: 'GameJoined', game, player });
   });
 
   it('disallows a player to create a game when he is already in a game', async () => {
@@ -74,7 +84,7 @@ describe('CreateGameCommand', () => {
 
     await gameRepository.save(otherGame);
 
-    const error = await expect(execute()).to.be.rejectedWith(PlayerIsAlreadyInGameError);
-    expect(error).to.shallowDeepEqual({ player });
+    const error = await expectError(execute(), PlayerIsAlreadyInGameError);
+    expect(error).toBeAnObjectWith({ player });
   });
 });
