@@ -1,12 +1,19 @@
 import { createThunk } from '../../../../store/createThunk';
+import { selectPlayer } from '../../../../store/selectors/playerSelectors';
 import { rtcMessage } from '../../../actions';
 import { RTCMessage } from '../../../gateways/RTCGateway';
 import { navigateToGameRoute } from '../../app/navigate/navigate';
 import { showNotification } from '../../app/showNotification/showNotification';
 
-export const handleRTCMessage = createThunk(({ dispatch }, message: RTCMessage) => {
+export const handleRTCMessage = createThunk(({ dispatch, getState }, message: RTCMessage) => {
+  const state = getState();
+
+  const player = selectPlayer(state);
+
   if (message.type === 'GameJoined') {
-    dispatch(showNotification(message.player.nick + ' a rejoint la partie'));
+    if (message.player.id !== player.id) {
+      dispatch(showNotification(message.player.nick + ' a rejoint la partie'));
+    }
   }
 
   if (message.type === 'GameLeft') {
