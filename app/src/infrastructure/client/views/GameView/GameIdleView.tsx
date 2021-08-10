@@ -6,8 +6,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { startGame } from '../../../../domain/usecases/game/startGame/startGame';
 import { selectCanStartGame } from '../../../../store/selectors/gameSelectors';
 import Button from '../../components/elements/Button';
+import { BottomAction } from '../../components/layout/BottomAction';
 import { Center } from '../../components/layout/Center';
-import { Fade } from '../../components/layout/Fade';
 import { Flex } from '../../components/layout/Flex';
 import { useGame } from '../../hooks/useGame';
 import { usePlayer } from '../../hooks/usePlayer';
@@ -44,11 +44,9 @@ export const GameIdleView: React.FC = () => {
           ))}
         </PlayersList>
       </Flex>
-      <Center minHeight={24}>
-        <Fade appear={canStart} show={canStart}>
-          <Button onClick={() => dispatch(startGame(player, 10))}>Démarrer</Button>
-        </Fade>
-      </Center>
+      <BottomAction visible={canStart}>
+        <Button onClick={() => dispatch(startGame(player, 10))}>Démarrer</Button>
+      </BottomAction>
     </>
   );
 };

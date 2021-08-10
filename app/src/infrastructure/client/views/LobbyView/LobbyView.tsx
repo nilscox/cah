@@ -8,6 +8,7 @@ import { joinGame } from '../../../../domain/usecases/game/joinGame/joinGame';
 import Button from '../../components/elements/Button';
 import { Icon } from '../../components/elements/Icon';
 import SubmittableInput from '../../components/elements/SubmittableInput';
+import { Box } from '../../components/layout/Box';
 import { Center } from '../../components/layout/Center';
 import { Fade } from '../../components/layout/Fade';
 import ChevronRight from '../../icons/chevron-right.svg';
@@ -29,14 +30,14 @@ const JoinGame: React.FC = () => {
     <>
       <p>Entrez le code de la partie à rejoindre.</p>
       <p>Si vous n'avez pas de code, l'un des joueur doit créer une partie.</p>
-      <Center flex={1}>
+      <Box padding={4}>
         <SubmittableInput
           placeholder="Code de partie"
           value={code}
           onTextChange={handleCodeChange}
           onSubmit={() => dispatch(joinGame(code))}
         />
-      </Center>
+      </Box>
     </>
   );
 };
@@ -48,7 +49,7 @@ const CreateGame: React.FC = () => {
     <>
       <p>En cliquant sur continuer, vous allez créer une partie de Cards Against Humanity.</p>
       <p>Un code sera généré pour que les autres joueurs puissent vous rejoindre.</p>
-      <Center flex={1}>
+      <Center vertical={false} paddingY={4}>
         <Button onClick={() => dispatch(createGame())}>
           Continuer <Icon as={ChevronRight} />
         </Button>

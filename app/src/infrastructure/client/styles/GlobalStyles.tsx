@@ -15,7 +15,7 @@ export const GlobalStyles: React.FC = () => {
 
         body {
           color: ${theme.colors.text};
-          font-family: ${theme.font};
+          font-family: ${theme.fonts.default};
         }
       `}
     />

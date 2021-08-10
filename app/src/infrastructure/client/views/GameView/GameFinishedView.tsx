@@ -8,6 +8,7 @@ import { leaveGame } from '../../../../domain/usecases/game/leaveGame/leaveGame'
 import { selectGameWinners, selectScoresExcludingWinners } from '../../../../store/selectors/gameSelectors';
 import { NotNull } from '../../../../store/types';
 import Button from '../../components/elements/Button';
+import { BottomAction } from '../../components/layout/BottomAction';
 import { Center } from '../../components/layout/Center';
 import { FadeIn, FadeInProps } from '../../components/layout/Fade';
 import { Flex } from '../../components/layout/Flex';
@@ -90,9 +91,9 @@ export const GameFinishedView: React.FC = () => {
         {players}
       </Flex>
       <MaybeFadeIn delay={20}>
-        <Center minHeight={12}>
+        <BottomAction visible>
           <Button onClick={() => dispatch(leaveGame())}>Quitter la partie</Button>
-        </Center>
+        </BottomAction>
       </MaybeFadeIn>
     </>
   );

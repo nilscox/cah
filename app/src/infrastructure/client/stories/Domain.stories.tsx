@@ -91,10 +91,8 @@ const ChoicesListTemplate: Story<ChoiceCardsListProps> = ({ choices }) => {
     <ChoicesList
       choices={choices}
       selection={selection}
-      validateButtonVisible={false}
-      onSelectChoice={handleChoiceClick}
+      onChoiceClick={handleChoiceClick}
       onOrderChange={action('order change')}
-      onValidateSelection={action('validate selection')}
     />
   );
 };

@@ -86,6 +86,7 @@ export const GameIdle = Template.bind({});
 GameIdle.args = {
   player,
   game: createGame({
+    creator: player,
     state: GameState.idle,
     players,
   }),

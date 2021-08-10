@@ -30,6 +30,14 @@ const ServerDownFallback: React.FC = () => (
   </FullScreen>
 );
 
+const NotFound: React.FC = () => (
+  <FullScreen>
+    <Center flex={1} padding={4}>
+      Not found.
+    </Center>
+  </FullScreen>
+);
+
 const appReadySelector = (state: AppState) => state.app.ready;
 const networkStatusSelector = (state: AppState) => state.app.network;
 const serverStatusSelector = (state: AppState) => state.app.server;
@@ -60,7 +68,7 @@ const App: React.FC = () => {
       <Route path="/login" component={LoginView} />
       <Route path="/" exact component={LobbyView} />
       <Route path="/game/:gameCode" component={GameView} />
-      <Route>Not found.</Route>
+      <Route component={NotFound} />
     </Switch>
   );
 };

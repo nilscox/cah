@@ -6,11 +6,12 @@ import { Meta } from '@storybook/react';
 import Button from '../components/elements/Button';
 import { Input } from '../components/elements/Input';
 import SubmittableInput from '../components/elements/SubmittableInput';
+import TypedLabel from '../components/elements/TypedLabel';
 import { Center } from '../components/layout/Center';
 import { FullScreen } from '../components/layout/FullScreen';
 
 export default {
-  title: 'Form',
+  title: 'Elements',
   decorators: [
     (Story) => (
       <FullScreen>
@@ -52,3 +53,5 @@ export const submittableInput = () => {
     />
   );
 };
+
+export const typedLabel = () => <TypedLabel>Allez salut les toons !</TypedLabel>;

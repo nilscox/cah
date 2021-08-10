@@ -16,7 +16,7 @@ const Container = styled.div`
 `;
 
 const StyledMainTitle = styled(MainTitle)`
-  margin: ${spacing(0, 0, 8)};
+  margin: ${spacing(0, 0, 6)};
 `;
 
 type NickInputProps = {

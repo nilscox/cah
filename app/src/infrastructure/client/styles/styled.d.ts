@@ -8,15 +8,16 @@ declare module '@emotion/react' {
       disabled: string;
       border: string;
     };
-    font: string;
+    fonts: {
+      default: string;
+    };
     fontSizes: {
       small: string;
       default: string;
       big: string;
       title: string;
     };
-    spacing: themeSpacing;
-    space: string[];
+    space: number[];
     fontWeights: {
       thin: number;
       normal: string;

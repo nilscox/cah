@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { Route } from 'react-router-dom';
 
 import { PlayState } from '../../../../../../shared/enums';
-import { AnonymousAnswer, Answer } from '../../../../domain/entities/Answer';
+import { AnonymousAnswer, Answer as AnswerType } from '../../../../domain/entities/Answer';
 import { nextTurn } from '../../../../domain/usecases/game/nextTurn/nextTurn';
 import { selectWinner } from '../../../../domain/usecases/game/selectWinner/selectWinner';
 import { selectGame } from '../../../../store/selectors/gameSelectors';
@@ -13,6 +13,7 @@ import { AppState } from '../../../../store/types';
 import { QuestionCard } from '../../components/domain/QuestionCard';
 import Button from '../../components/elements/Button';
 import { Icon } from '../../components/elements/Icon';
+import { BottomAction } from '../../components/layout/BottomAction';
 import { Box } from '../../components/layout/Box';
 import { Center } from '../../components/layout/Center';
 import { Fade } from '../../components/layout/Fade';
@@ -58,11 +59,11 @@ export const AnswersList: React.FC = () => {
   const handleAnswerClick = useAction(canSelectAnswerSelector, selectWinner);
   const handleNextTurn = useAction(canEndTurnSelector, nextTurn);
 
-  const isWinner = (answer: AnonymousAnswer | Answer) => game.winner && game.winner.nick === answer?.player?.nick;
+  const isWinner = (answer: AnonymousAnswer | AnswerType) => game.winner && game.winner.nick === answer?.player?.nick;
 
   return (
     <>
-      <Center flex={1} padding={2} horizontal={false}>
+      <Center flex={1} padding={2} horizontal={false} overflowY="auto">
         {game.answers.map((answer) => (
           <Answer key={answer.id} role="button" onClick={conditionalCallback(handleAnswerClick, answer)}>
             <PlayerNick appear show={Boolean(answer.player)}>
@@ -75,11 +76,11 @@ export const AnswersList: React.FC = () => {
           </Answer>
         ))}
       </Center>
-      <Center minHeight={12}>
+      <BottomAction visible={handleNextTurn !== undefined}>
         <Route path="/game/:code/started/end-of-turn">
-          {handleNextTurn && <Button onClick={handleNextTurn}>Prochaine question</Button>}
+          <Button onClick={handleNextTurn}>Prochaine question</Button>
         </Route>
-      </Center>
+      </BottomAction>
     </>
   );
 };

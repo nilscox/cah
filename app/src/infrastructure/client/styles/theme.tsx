@@ -3,19 +3,15 @@ import { Theme } from '@emotion/react';
 const fast = false;
 const compact = false;
 
-const makeSpacing =
-  (unit: number) =>
-  (...spacings: Array<number | string>) => {
-    return spacings
-      .map((value) => {
-        if (typeof value === 'string') {
-          return value;
-        }
+const makeSpace = (n: number): number[] => {
+  const a = [0, 1, 2, 2.5].map((m) => m * n);
 
-        return unit * value + 'px';
-      })
-      .join(' ');
-  };
+  for (let i = a.length; i < 12; ++i) {
+    a.push(a[i - 1] + a[i - 3]);
+  }
+
+  return a;
+};
 
 export const theme: Theme = {
   colors: {
@@ -24,17 +20,16 @@ export const theme: Theme = {
     disabled: '#999',
     border: '#CCC',
   },
-  font: "'JetBrains Mono', 'Courier New', Courier, monospace",
+  fonts: {
+    default: "'JetBrains Mono', 'Courier New', Courier, monospace",
+  },
   fontSizes: {
     small: '12px',
     default: '14px',
     big: '1.4rem',
     title: '2rem',
   },
-  spacing: makeSpacing(8),
-  space: Array(8)
-    .fill(0)
-    .map((_, n) => makeSpacing(8)(n)),
+  space: makeSpace(8),
   fontWeights: {
     thin: 200,
     normal: 'normal',
@@ -59,10 +54,7 @@ if (compact) {
     default: '14px',
   };
 
-  theme.spacing = makeSpacing(5);
-  theme.space = Array(8)
-    .fill(0)
-    .map((_, n) => makeSpacing(5)(n));
+  theme.space = makeSpace(6);
 }
 
 type Props = { theme: Theme };
@@ -72,7 +64,7 @@ export const color = (color: keyof Theme['colors']) => (props: Props) => {
 };
 
 export const font = () => (props: Props) => {
-  return props.theme.font;
+  return props.theme.fonts.default;
 };
 
 export const fontSize = (fontSize: keyof Theme['fontSizes']) => (props: Props) => {
@@ -84,8 +76,8 @@ export const fontWeight = (weight: keyof Theme['fontWeights']) => (props: Props)
 };
 
 // prettier-ignore
-export const spacing = (...args: Parameters<Theme['spacing']>) => (props: Props) => {
-  return props.theme.spacing(...args);
+export const spacing = (...args: number[]) => (props: Props) => {
+  return args.map(index => props.theme.space[index] + 'px').join(' ');
 };
 
 type TransitionOptions = Partial<{

@@ -10,8 +10,8 @@ import { fontSize, fontWeight, spacing } from '../../styles/theme';
 const StyledWord = styled(FadeIn)`
   font-size: ${fontSize('title')};
   font-weight: ${fontWeight('thin')};
-  line-height: 2.2rem;
-  letter-spacing: ${spacing(0.8)};
+  line-height: 3.5rem;
+  letter-spacing: ${spacing(1)};
 `;
 
 const WordFirstLetter = styled.span`
@@ -39,7 +39,7 @@ const MainTitle: React.FC<MainTitleProps> = ({ className, onRest }) => {
   const theme = useTheme();
   const duration = theme.durations.slow;
 
-  useTimeout(onRest, 3.5 * duration, []);
+  useTimeout(onRest, 3 * duration, []);
 
   return (
     <h1 className={className}>

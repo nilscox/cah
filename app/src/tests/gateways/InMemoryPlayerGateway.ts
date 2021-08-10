@@ -14,6 +14,7 @@ export class InMemoryPlayerGateway implements PlayerGateway {
       nick,
       cards: [],
       isConnected: false,
+      hasFlushed: false,
     };
   }
 }
