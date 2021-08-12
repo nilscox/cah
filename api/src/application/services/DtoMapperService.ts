@@ -1,10 +1,10 @@
-import { AnswerDto, ChoiceDto, FullPlayerDto, GameDto, PlayerDto, TurnDto } from '../../../../shared/dtos';
-import { PlayState } from '../../../../shared/enums';
 import { Answer } from '../../domain/models/Answer';
 import { Choice } from '../../domain/models/Choice';
 import { Game } from '../../domain/models/Game';
 import { Player } from '../../domain/models/Player';
 import { Turn } from '../../domain/models/Turn';
+import { AnswerDto, ChoiceDto, FullPlayerDto, GameDto, PlayerDto, TurnDto } from '../../shared/dtos';
+import { PlayState } from '../../shared/enums';
 import { GameRepository } from '../interfaces/GameRepository';
 import { RTCManager } from '../interfaces/RTCManager';
 

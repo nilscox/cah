@@ -1,4 +1,4 @@
-import { GameState } from '../../../../shared/enums';
+import { GameState } from '../../shared/enums';
 
 import { DomainError } from './DomainError';
 

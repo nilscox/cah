@@ -1,6 +1,5 @@
 import { expect } from 'chai';
 
-import { PlayState } from '../../../../../shared/enums';
 import { AnswerNotFoundError } from '../../../domain/errors/AnswerNotFoundError';
 import { InvalidPlayStateError } from '../../../domain/errors/InvalidPlayStateError';
 import { PlayerIsNotQuestionMasterError } from '../../../domain/errors/PlayerIsNotQuestionMasterError';
@@ -8,6 +7,7 @@ import { Answer } from '../../../domain/models/Answer';
 import { Player } from '../../../domain/models/Player';
 import { InMemoryGameRepository } from '../../../infrastructure/database/repositories/game/InMemoryGameRepository';
 import { StubEventPublisher } from '../../../infrastructure/stubs/StubEventPublisher';
+import { PlayState } from '../../../shared/enums';
 import { instanciateHandler } from '../../../utils/dependencyInjection';
 import { GameBuilder } from '../../../utils/GameBuilder';
 import { instanciateStubDependencies } from '../../../utils/stubDependencies';

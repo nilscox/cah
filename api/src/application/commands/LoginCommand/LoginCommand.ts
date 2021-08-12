@@ -1,8 +1,8 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 
-import { FullPlayerDto } from '../../../../../shared/dtos';
 import { CommandHandler } from '../../../ddd/CommandHandler';
 import { Player } from '../../../domain/models/Player';
+import { FullPlayerDto } from '../../../shared/dtos';
 import { PlayerRepository } from '../../interfaces/PlayerRepository';
 import { SessionStore } from '../../interfaces/SessionStore';
 import { DtoMapperService } from '../../services/DtoMapperService';

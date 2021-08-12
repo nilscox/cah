@@ -1,7 +1,7 @@
-import { PlayState } from '../../../../../shared/enums';
 import { CommandHandler } from '../../../ddd/CommandHandler';
 import { CannotFlushCardsError } from '../../../domain/errors/CannotFlushCardsError';
 import { InvalidPlayStateError } from '../../../domain/errors/InvalidPlayStateError';
+import { PlayState } from '../../../shared/enums';
 import { PlayerRepository } from '../../interfaces/PlayerRepository';
 import { SessionStore } from '../../interfaces/SessionStore';
 import { GameService } from '../../services/GameService';

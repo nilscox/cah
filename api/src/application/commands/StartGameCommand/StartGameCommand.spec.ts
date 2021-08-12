@@ -1,6 +1,5 @@
 import { expect } from 'chai';
 
-import { GameState, PlayState } from '../../../../../shared/enums';
 import { InvalidGameStateError } from '../../../domain/errors/InvalidGameStateError';
 import { NotEnoughPlayersError } from '../../../domain/errors/NotEnoughPlayersError';
 import { PlayerIsNotInTheGameError } from '../../../domain/errors/PlayerIsNotInTheGame';
@@ -12,6 +11,7 @@ import { InMemoryGameRepository } from '../../../infrastructure/database/reposit
 import { InMemoryPlayerRepository } from '../../../infrastructure/database/repositories/player/InMemoryPlayerRepository';
 import { StubEventPublisher } from '../../../infrastructure/stubs/StubEventPublisher';
 import { StubExternalData } from '../../../infrastructure/stubs/StubExternalData';
+import { GameState, PlayState } from '../../../shared/enums';
 import { instanciateHandler } from '../../../utils/dependencyInjection';
 import { GameBuilder } from '../../../utils/GameBuilder';
 import { instanciateStubDependencies } from '../../../utils/stubDependencies';

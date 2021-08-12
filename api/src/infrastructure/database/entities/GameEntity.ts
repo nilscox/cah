@@ -1,8 +1,8 @@
 import _ from 'lodash';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryColumn } from 'typeorm';
 
-import { GameState, PlayState } from '../../../../../shared/enums';
 import { Game } from '../../../domain/models/Game';
+import { GameState, PlayState } from '../../../shared/enums';
 
 import { AnswerEntity } from './AnswerEntity';
 import { PlayerEntity } from './PlayerEntity';

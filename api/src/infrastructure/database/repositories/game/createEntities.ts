@@ -1,7 +1,7 @@
 import { getRepository } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
-import { GameState } from '../../../../../../shared/enums';
+import { GameState } from '../../../../shared/enums';
 import { AnswerEntity } from '../../entities/AnswerEntity';
 import { ChoiceEntity } from '../../entities/ChoiceEntity';
 import { GameEntity } from '../../entities/GameEntity';

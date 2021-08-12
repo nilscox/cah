@@ -1,6 +1,6 @@
-import { FullPlayerDto, PlayerDto } from '../../../../../shared/dtos';
 import { QueryHandler } from '../../../ddd/QueryHandler';
 import { PlayerNotFoundError } from '../../../domain/errors/PlayerNotFoundError';
+import { FullPlayerDto, PlayerDto } from '../../../shared/dtos';
 import { PlayerRepository } from '../../interfaces/PlayerRepository';
 import { SessionStore } from '../../interfaces/SessionStore';
 import { DtoMapperService } from '../../services/DtoMapperService';

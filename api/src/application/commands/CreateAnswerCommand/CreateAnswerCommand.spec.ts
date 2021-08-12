@@ -1,7 +1,6 @@
 import { expect } from 'earljs';
 import _ from 'lodash';
 
-import { GameState, PlayState } from '../../../../../shared/enums';
 import { GameNotFoundError } from '../../../domain/errors/GameNotFoundError';
 import { InvalidChoicesSelectionError } from '../../../domain/errors/InvalidChoicesSelectionError';
 import { InvalidGameStateError } from '../../../domain/errors/InvalidGameStateError';
@@ -18,6 +17,7 @@ import { InMemoryGameRepository } from '../../../infrastructure/database/reposit
 import { InMemoryPlayerRepository } from '../../../infrastructure/database/repositories/player/InMemoryPlayerRepository';
 import { StubEventPublisher } from '../../../infrastructure/stubs/StubEventPublisher';
 import { StubRandomService } from '../../../infrastructure/stubs/StubRandomService';
+import { GameState, PlayState } from '../../../shared/enums';
 import { instanciateHandler } from '../../../utils/dependencyInjection';
 import { expectError } from '../../../utils/expectError';
 import { GameBuilder } from '../../../utils/GameBuilder';

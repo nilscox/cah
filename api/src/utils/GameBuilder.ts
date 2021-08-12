@@ -1,9 +1,9 @@
-import { PlayState } from '../../../shared/enums';
 import { GameRepository } from '../application/interfaces/GameRepository';
 import { PlayerRepository } from '../application/interfaces/PlayerRepository';
 import { Game, StartedGame } from '../domain/models/Game';
 import { Player } from '../domain/models/Player';
 import { ExternalData } from '../infrastructure/ExternalData';
+import { PlayState } from '../shared/enums';
 
 export class GameBuilder<G extends Game = Game> {
   constructor(

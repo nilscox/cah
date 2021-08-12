@@ -1,5 +1,5 @@
-import { GameDto } from '../../../../../shared/dtos';
 import { QueryHandler } from '../../../ddd/QueryHandler';
+import { GameDto } from '../../../shared/dtos';
 import { DtoMapperService } from '../../services/DtoMapperService';
 import { GameService } from '../../services/GameService';
 

@@ -1,7 +1,6 @@
 import { expect } from 'chai';
 import { Connection, Repository } from 'typeorm';
 
-import { GameState, PlayState } from '../../../../../../shared/enums';
 import { GameRepository } from '../../../../application/interfaces/GameRepository';
 import { PlayerRepository } from '../../../../application/interfaces/PlayerRepository';
 import { Blank } from '../../../../domain/models/Blank';
@@ -9,6 +8,7 @@ import { createChoice } from '../../../../domain/models/Choice';
 import { createGame } from '../../../../domain/models/Game';
 import { Player } from '../../../../domain/models/Player';
 import { createQuestion, createQuestions, Question } from '../../../../domain/models/Question';
+import { GameState, PlayState } from '../../../../shared/enums';
 import { createTestDatabaseConnection } from '../../../../utils/createTestDatabaseConnection';
 import { GameBuilder } from '../../../../utils/GameBuilder';
 import { StubExternalData } from '../../../stubs/StubExternalData';

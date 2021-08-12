@@ -1,12 +1,12 @@
 import { expect } from 'chai';
 
-import { GameState } from '../../../../../shared/enums';
 import { InvalidGameStateError } from '../../../domain/errors/InvalidGameStateError';
 import { Player } from '../../../domain/models/Player';
 import { InMemoryGameRepository } from '../../../infrastructure/database/repositories/game/InMemoryGameRepository';
 import { InMemoryPlayerRepository } from '../../../infrastructure/database/repositories/player/InMemoryPlayerRepository';
 import { StubEventPublisher } from '../../../infrastructure/stubs/StubEventPublisher';
 import { StubRTCManager } from '../../../infrastructure/stubs/StubRTCManager';
+import { GameState } from '../../../shared/enums';
 import { instanciateHandler } from '../../../utils/dependencyInjection';
 import { GameBuilder } from '../../../utils/GameBuilder';
 import { instanciateStubDependencies } from '../../../utils/stubDependencies';

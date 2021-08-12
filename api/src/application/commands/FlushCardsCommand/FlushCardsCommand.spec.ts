@@ -1,6 +1,5 @@
 import { expect } from 'earljs';
 
-import { PlayState } from '../../../../../shared/enums';
 import { AlreadyFlushedCardsError } from '../../../domain/errors/AlreadyFlushedCardsError';
 import { CannotFlushCardsError } from '../../../domain/errors/CannotFlushCardsError';
 import { InvalidPlayStateError } from '../../../domain/errors/InvalidPlayStateError';
@@ -8,6 +7,7 @@ import { Player } from '../../../domain/models/Player';
 import { InMemoryGameRepository } from '../../../infrastructure/database/repositories/game/InMemoryGameRepository';
 import { InMemoryPlayerRepository } from '../../../infrastructure/database/repositories/player/InMemoryPlayerRepository';
 import { StubEventPublisher } from '../../../infrastructure/stubs/StubEventPublisher';
+import { PlayState } from '../../../shared/enums';
 import { instanciateHandler } from '../../../utils/dependencyInjection';
 import { expectError } from '../../../utils/expectError';
 import { GameBuilder } from '../../../utils/GameBuilder';

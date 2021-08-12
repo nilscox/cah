@@ -1,11 +1,11 @@
 import _ from 'lodash';
 
-import { AnswerDto } from '../../../../../shared/dtos';
-import { PlayState } from '../../../../../shared/enums';
-import { EventDto } from '../../../../../shared/events';
 import { EventHandler } from '../../../ddd/EventHandler';
 import { GameEvent } from '../../../domain/events';
 import { Game, StartedGame } from '../../../domain/models/Game';
+import { AnswerDto } from '../../../shared/dtos';
+import { PlayState } from '../../../shared/enums';
+import { EventDto } from '../../../shared/events';
 import { Logger } from '../../interfaces/Logger';
 import { Notifier } from '../../interfaces/Notifier';
 import { RTCManager } from '../../interfaces/RTCManager';

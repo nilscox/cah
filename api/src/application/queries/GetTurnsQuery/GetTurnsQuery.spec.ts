@@ -1,6 +1,5 @@
 import { expect } from 'chai';
 
-import { PlayState } from '../../../../../shared/enums';
 import { Answer } from '../../../domain/models/Answer';
 import { createChoice } from '../../../domain/models/Choice';
 import { Player } from '../../../domain/models/Player';
@@ -8,6 +7,7 @@ import { createQuestion } from '../../../domain/models/Question';
 import { Turn } from '../../../domain/models/Turn';
 import { InMemoryGameRepository } from '../../../infrastructure/database/repositories/game/InMemoryGameRepository';
 import { StubSessionStore } from '../../../infrastructure/stubs/StubSessionStore';
+import { PlayState } from '../../../shared/enums';
 import { array } from '../../../utils/array';
 import { instanciateHandler } from '../../../utils/dependencyInjection';
 import { GameBuilder } from '../../../utils/GameBuilder';

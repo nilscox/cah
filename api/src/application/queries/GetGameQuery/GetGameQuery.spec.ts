@@ -1,7 +1,6 @@
 import { expect } from 'earljs';
 import { invokeMap, omit } from 'lodash';
 
-import { GameState, PlayState } from '../../../../../shared/enums';
 import { GameNotFoundError } from '../../../domain/errors/GameNotFoundError';
 import { Answer } from '../../../domain/models/Answer';
 import { Blank } from '../../../domain/models/Blank';
@@ -12,6 +11,7 @@ import { createQuestion } from '../../../domain/models/Question';
 import { InMemoryGameRepository } from '../../../infrastructure/database/repositories/game/InMemoryGameRepository';
 import { InMemoryPlayerRepository } from '../../../infrastructure/database/repositories/player/InMemoryPlayerRepository';
 import { StubExternalData } from '../../../infrastructure/stubs/StubExternalData';
+import { GameState, PlayState } from '../../../shared/enums';
 import { instanciateHandler } from '../../../utils/dependencyInjection';
 import { GameBuilder } from '../../../utils/GameBuilder';
 import { instanciateStubDependencies } from '../../../utils/stubDependencies';

@@ -1,5 +1,5 @@
-import { TurnDto } from '../../../../../shared/dtos';
 import { QueryHandler } from '../../../ddd/QueryHandler';
+import { TurnDto } from '../../../shared/dtos';
 import { GameRepository } from '../../interfaces/GameRepository';
 import { SessionStore } from '../../interfaces/SessionStore';
 import { DtoMapperService } from '../../services/DtoMapperService';

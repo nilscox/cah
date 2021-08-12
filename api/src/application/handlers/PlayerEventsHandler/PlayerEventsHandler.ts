@@ -1,7 +1,7 @@
-import { EventDto } from '../../../../../shared/events';
 import { EventHandler } from '../../../ddd/EventHandler';
 import { PlayerEvent } from '../../../domain/events';
 import { Player } from '../../../domain/models/Player';
+import { EventDto } from '../../../shared/events';
 import { Logger } from '../../interfaces/Logger';
 import { Notifier } from '../../interfaces/Notifier';
 
