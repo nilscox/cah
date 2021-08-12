@@ -4,14 +4,14 @@ import { handleRTCMessage } from '../domain/usecases/game/handleRTCMessage/handl
 import { configureStore } from '../store/configureStore';
 import { AppState, AppStore, Dependencies } from '../store/types';
 
+import { FakeGameGateway } from './gateways/FakeGameGateway';
 import { FakeNetworkGateway } from './gateways/FakeNetworkGateway';
+import { FakePlayerGateway } from './gateways/FakePlayerGateway';
+import { FakeRTCGateway } from './gateways/FakeRTCGateway';
 import { FakeServerGateway } from './gateways/FakeServerGateway';
 import { FakeTimerGateway } from './gateways/FakeTimerGateway';
-import { InMemoryGameGateway } from './gateways/InMemoryGameGateway';
 import { InMemoryPersistenceGateway } from './gateways/InMemoryPersistenceGateway';
-import { InMemoryPlayerGateway } from './gateways/InMemoryPlayerGateway';
 import { InMemoryRouterGateway } from './gateways/InMemoryRouterGateway';
-import { InMemoryRTCGateway } from './gateways/InMemoryRTCGateway';
 
 export class InMemoryStore {
   store: AppStore;
@@ -25,9 +25,9 @@ export class InMemoryStore {
     return this.store.getState;
   }
 
-  rtcGateway = new InMemoryRTCGateway();
-  playerGateway = new InMemoryPlayerGateway();
-  gameGateway = new InMemoryGameGateway(this.rtcGateway);
+  rtcGateway = new FakeRTCGateway();
+  playerGateway = new FakePlayerGateway();
+  gameGateway = new FakeGameGateway(this.rtcGateway);
   routerGateway = new InMemoryRouterGateway();
   timerGateway = new FakeTimerGateway();
   networkGateway = new FakeNetworkGateway();

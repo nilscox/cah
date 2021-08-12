@@ -1,6 +1,6 @@
 import { RTCGateway, RTCListener, RTCMessage } from '../../domain/gateways/RTCGateway';
 
-export class InMemoryRTCGateway implements RTCGateway {
+export class FakeRTCGateway implements RTCGateway {
   async connect(): Promise<void> {
     //
   }

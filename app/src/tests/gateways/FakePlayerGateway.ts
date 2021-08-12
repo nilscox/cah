@@ -1,7 +1,7 @@
 import { FullPlayer } from '../../domain/entities/Player';
 import { PlayerGateway } from '../../domain/gateways/PlayerGateway';
 
-export class InMemoryPlayerGateway implements PlayerGateway {
+export class FakePlayerGateway implements PlayerGateway {
   player?: FullPlayer;
 
   async fetchMe(): Promise<FullPlayer | undefined> {

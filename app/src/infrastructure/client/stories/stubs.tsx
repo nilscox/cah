@@ -7,12 +7,11 @@ import { Game, StartedGame } from '../../../domain/entities/Game';
 import { FullPlayer, Player } from '../../../domain/entities/Player';
 import { Turn } from '../../../domain/entities/Turn';
 import { GameGateway } from '../../../domain/gateways/GameGateway';
-import { NetworkGateway } from '../../../domain/gateways/NetworkGateway';
 import { PlayerGateway } from '../../../domain/gateways/PlayerGateway';
 import { RTCGateway, RTCListener } from '../../../domain/gateways/RTCGateway';
-import { ServerGateway } from '../../../domain/gateways/ServerGateway';
-import { NetworkStatus } from '../../../store/reducers/appStateReducer';
 import { createFullPlayer, createGame } from '../../../tests/factories';
+import { FakeNetworkGateway } from '../../../tests/gateways/FakeNetworkGateway';
+import { FakeServerGateway } from '../../../tests/gateways/FakeServerGateway';
 import { ReactRouterGateway } from '../../gateways/ReactRouterGateway';
 import { RealTimerGateway } from '../../gateways/RealTimerGateway';
 import { gameHistory } from '../views/GameView/GameView';
@@ -37,7 +36,7 @@ export class StubGameGateway extends ActionLogger implements GameGateway {
 
   turns?: Turn[];
 
-  async fetchTurns(_gameId: string): Promise<Turn[]> {
+  async fetchTurns(): Promise<Turn[]> {
     return this.turns ?? [];
   }
 
@@ -99,19 +98,6 @@ export class StubRTCGateway extends ActionLogger implements RTCGateway {
   onMessage(_listener: RTCListener): void {}
 }
 
-export class StubNetworkGateway implements NetworkGateway {
-  networkStatus = NetworkStatus.up;
-
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  onNetworkStatusChange(_cb: (status: NetworkStatus) => void): void {}
-}
-
-export class StubServerGateway implements ServerGateway {
-  healthcheck(): Promise<NetworkStatus> {
-    throw new Error('Method not implemented.');
-  }
-}
-
 export const storiesHistory = createMemoryHistory();
 
 export const stubDependencies = () => ({
@@ -120,6 +106,6 @@ export const stubDependencies = () => ({
   rtcGateway: new StubRTCGateway(),
   routerGateway: new ReactRouterGateway(storiesHistory, gameHistory),
   timerGateway: new RealTimerGateway(),
-  networkGateway: new StubNetworkGateway(),
-  serverGateway: new StubServerGateway(),
+  networkGateway: new FakeNetworkGateway(),
+  serverGateway: new FakeServerGateway(),
 });

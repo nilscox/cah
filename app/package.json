@@ -8,8 +8,8 @@
     "start": "webpack serve",
     "start:static": "yarn build && http-server dist --proxy http://cah?",
     "build": "webpack",
-    "test": "mocha --config mocha.unit.json",
-    "test:infra": "TS_NODE_PROJECT=./tsconfig.mocha.json mocha --config mocha.infra.json",
+    "test": "mocha --config ./tests/mocha.unit.json",
+    "test:infra": "TS_NODE_PROJECT=./tests/tsconfig.mocha.json mocha --config ./tests/mocha.infra.json",
     "storybook": "start-storybook -p 6006 --ci"
   },
   "devDependencies": {

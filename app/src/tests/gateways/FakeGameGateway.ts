@@ -7,13 +7,10 @@ import { Turn } from '../../domain/entities/Turn';
 import { GameGateway } from '../../domain/gateways/GameGateway';
 import { createGame, createQuestion } from '../factories';
 
-import { InMemoryRTCGateway } from './InMemoryRTCGateway';
+import { FakeRTCGateway } from './FakeRTCGateway';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-const noop = async () => {};
-
-export class InMemoryGameGateway implements GameGateway {
-  constructor(private readonly rtcGateway: InMemoryRTCGateway) {}
+export class FakeGameGateway implements GameGateway {
+  constructor(private readonly rtcGateway: FakeRTCGateway) {}
 
   game?: Game | StartedGame;
 
@@ -50,7 +47,9 @@ export class InMemoryGameGateway implements GameGateway {
     });
   }
 
-  flushCards = noop;
+  async flushCards(): Promise<void> {
+    //
+  }
 
   answers?: Answer[];
   answered?: Choice[];
