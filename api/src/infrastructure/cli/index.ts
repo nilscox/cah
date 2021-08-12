@@ -1,7 +1,6 @@
+import { createConnection } from 'typeorm';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-
-import { createTypeormConnection } from '../index';
 
 import { CahCli } from './CahCli';
 
@@ -23,7 +22,7 @@ const parser = yargs(hideBin(process.argv))
 
 const cli = async () => {
   const argv = await parser.argv;
-  const cli = new CahCli(await createTypeormConnection());
+  const cli = new CahCli(await createConnection());
   const command = String(argv._[0]);
 
   try {

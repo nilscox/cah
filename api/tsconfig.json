@@ -12,5 +12,5 @@
     "noImplicitAny": true,
     "noImplicitOverride": true
   },
-  "include": ["../shared", "src"]
+  "include": ["src"]
 }
