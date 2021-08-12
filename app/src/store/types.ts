@@ -3,6 +3,7 @@ import { ThunkMiddleware } from 'redux-thunk';
 import { Actions } from '../domain/actions';
 import { GameGateway } from '../domain/gateways/GameGateway';
 import { NetworkGateway } from '../domain/gateways/NetworkGateway';
+import { PersistenceGateway } from '../domain/gateways/PersistenceGateway';
 import { PlayerGateway } from '../domain/gateways/PlayerGateway';
 import { RouterGateway } from '../domain/gateways/RouterGateway';
 import { RTCGateway } from '../domain/gateways/RTCGateway';
@@ -33,6 +34,7 @@ export type Dependencies = {
   timerGateway: TimerGateway;
   networkGateway: NetworkGateway;
   serverGateway: ServerGateway;
+  persistenceGateway: PersistenceGateway;
 };
 
 export type AppStore = ReturnType<typeof configureStore>;

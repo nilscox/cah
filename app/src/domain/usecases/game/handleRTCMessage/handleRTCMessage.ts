@@ -1,14 +1,21 @@
 import { createThunk } from '../../../../store/createThunk';
-import { selectPlayer } from '../../../../store/selectors/playerSelectors';
+import { selectPlayer, selectPlayerCards } from '../../../../store/selectors/playerSelectors';
 import { rtcMessage } from '../../../actions';
 import { RTCMessage } from '../../../gateways/RTCGateway';
 import { navigateToGameRoute } from '../../app/navigate/navigate';
 import { showNotification } from '../../app/showNotification/showNotification';
+import { setCards } from '../../player/setCards/setCards';
 
 export const handleRTCMessage = createThunk(({ dispatch, getState }, message: RTCMessage) => {
   const state = getState();
 
   const player = selectPlayer(state);
+
+  if (message.type === 'CardsDealt') {
+    const cards = selectPlayerCards(state);
+
+    dispatch(setCards([...cards, ...message.cards]));
+  }
 
   if (message.type === 'GameJoined') {
     if (message.player.id !== player.id) {

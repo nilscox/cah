@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 
 import { useSelector } from 'react-redux';
 
-import { setPlayerCards } from '../../../../domain/actions';
+import { Choice } from '../../../../domain/entities/Choice';
 import { GameState } from '../../../../domain/entities/Game';
 import { validateChoicesSelection } from '../../../../domain/usecases/game/validateChoicesSelection/validateChoicesSelection';
+import { setCards } from '../../../../domain/usecases/player/setCards/setCards';
 import { toggleChoice } from '../../../../domain/usecases/player/toggleChoice/toggleChoice';
 import { selectGame } from '../../../../store/selectors/gameSelectors';
 import { selectChoicesSelection, selectPlayer } from '../../../../store/selectors/playerSelectors';
@@ -17,6 +18,10 @@ import { Center } from '../../components/layout/Center';
 import { useAction } from '../../hooks/useAction';
 import { useGame } from '../../hooks/useGame';
 import { usePlayer } from '../../hooks/usePlayer';
+
+const canAlwaysDo = () => true;
+
+const setCardsOrder = (cards: Choice[]) => setCards(cards, false);
 
 const validateButtonVisibleSelector = (state: AppState) => {
   const game = selectGame(state);
@@ -54,7 +59,7 @@ export const AnswerQuestion: React.FC = () => {
 
   const validateButtonVisible = useSelector(validateButtonVisibleSelector);
 
-  const handleCardsOrderChange = useAction(() => true, setPlayerCards);
+  const handleCardsOrderChange = useAction(canAlwaysDo, setCardsOrder);
   const handleSelectChoices = useAction(canSelectChoicesSelector, toggleChoice);
   const handleValidateSelection = useAction(canValidateSelectionSelector, validateChoicesSelection);
 

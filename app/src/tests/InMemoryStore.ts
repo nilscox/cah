@@ -1,4 +1,4 @@
-import expect from 'expect';
+import { expect } from 'earljs';
 
 import { handleRTCMessage } from '../domain/usecases/game/handleRTCMessage/handleRTCMessage';
 import { configureStore } from '../store/configureStore';
@@ -8,6 +8,7 @@ import { FakeNetworkGateway } from './gateways/FakeNetworkGateway';
 import { FakeServerGateway } from './gateways/FakeServerGateway';
 import { FakeTimerGateway } from './gateways/FakeTimerGateway';
 import { InMemoryGameGateway } from './gateways/InMemoryGameGateway';
+import { InMemoryPersistenceGateway } from './gateways/InMemoryPersistenceGateway';
 import { InMemoryPlayerGateway } from './gateways/InMemoryPlayerGateway';
 import { InMemoryRouterGateway } from './gateways/InMemoryRouterGateway';
 import { InMemoryRTCGateway } from './gateways/InMemoryRTCGateway';
@@ -31,6 +32,7 @@ export class InMemoryStore {
   timerGateway = new FakeTimerGateway();
   networkGateway = new FakeNetworkGateway();
   serverGateway = new FakeServerGateway();
+  persistenceGateway = new InMemoryPersistenceGateway();
 
   constructor(overrides: Partial<Dependencies> = {}) {
     this.store = configureStore({ ...this, ...overrides });
@@ -41,13 +43,8 @@ export class InMemoryStore {
     rtcGateway.onMessage((message) => this.store.dispatch(handleRTCMessage(message)));
   };
 
-  snapshot = () => {
-    this.state = this.store.getState();
-  };
-
   setup(cb: (store: InMemoryStore) => void) {
     cb(this);
-    this.snapshot();
   }
 
   expectState<S extends keyof AppState>(state: S, expected: AppState[S]) {
@@ -55,8 +52,6 @@ export class InMemoryStore {
   }
 
   expectPartialState<S extends keyof AppState>(state: S, expected: Partial<AppState[S]>) {
-    // console.log(this.store.getState()[state]);
-    // console.log({ ...this.state[state], ...expected });
-    expect(this.store.getState()[state]).toEqual({ ...this.state[state], ...expected });
+    expect(this.store.getState()[state] as unknown).toBeAnObjectWith(expected);
   }
 }

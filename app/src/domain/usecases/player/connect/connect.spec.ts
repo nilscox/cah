@@ -15,7 +15,6 @@ describe('connect', () => {
 
   beforeEach(() => {
     store.dispatch(setPlayer(createFullPlayer()));
-    store.snapshot();
   });
 
   it('connects to the server', async () => {

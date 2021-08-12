@@ -16,6 +16,7 @@ import { HTTPPlayerGateway } from '../gateways/HTTPPlayerGateway';
 import { HTTPServerGateway } from '../gateways/HTTPServerGateway';
 import { ReactRouterGateway } from '../gateways/ReactRouterGateway';
 import { RealTimerGateway } from '../gateways/RealTimerGateway';
+import { StoragePersistenceGateway } from '../gateways/StoragePersistenceGateway';
 import { WSAdapter } from '../gateways/WSAdapter';
 import { WSRTCGateway } from '../gateways/WSRTCGateway';
 
@@ -55,6 +56,7 @@ const dependencies: Dependencies = {
   timerGateway: new RealTimerGateway(),
   networkGateway: new DeviceNetworkGateway(),
   serverGateway: new HTTPServerGateway(httpAdapter),
+  persistenceGateway: new StoragePersistenceGateway(localStorage),
 };
 
 const store = configureStore(dependencies);

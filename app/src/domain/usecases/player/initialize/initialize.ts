@@ -5,6 +5,7 @@ import { networkStatusChanged, setAppReady, setGame, setPlayer, setTurns } from 
 import { FullPlayer } from '../../../entities/Player';
 import { redirect } from '../../game/redirect/redirect';
 import { connect } from '../connect/connect';
+import { setCards } from '../setCards/setCards';
 
 const registerNetworkStatusListener = createThunk(({ dispatch, networkGateway }) => {
   if (networkGateway.networkStatus === NetworkStatus.down) {
@@ -19,6 +20,7 @@ const fetchPlayer = createThunk(async ({ dispatch, playerGateway }) => {
 
   if (player) {
     dispatch(setPlayer(player));
+    dispatch(setCards(player.cards));
   }
 
   return player;

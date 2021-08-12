@@ -27,7 +27,6 @@ describe('handleServerDown', () => {
     serverGateway.serverStatus = NetworkStatus.up;
 
     store.dispatch(serverStatusChanged(NetworkStatus.down));
-    store.snapshot();
 
     await store.dispatch(handleServerDown());
 

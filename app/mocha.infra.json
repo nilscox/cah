@@ -1,5 +1,5 @@
 {
   "extension": ["ts", "tsx"],
   "spec": ["src/setup.spec.ts", "src/infrastructure/**/*.spec.{ts,tsx}"],
-  "require": ["ts-node/register/transpile-only", "jsdom-global/register"]
+  "require": ["ts-node/register/transpile-only", "./jsdom-global"]
 }

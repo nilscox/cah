@@ -1,5 +1,7 @@
+import { expect } from 'earljs';
+
 import { NetworkStatus } from '../../../../store/reducers/appStateReducer';
-import { createFullPlayer, createGame, createPlayer, createTurns } from '../../../../tests/factories';
+import { createChoices, createFullPlayer, createGame, createPlayer, createTurns } from '../../../../tests/factories';
 import { InMemoryStore } from '../../../../tests/InMemoryStore';
 import { GameState } from '../../../entities/Game';
 
@@ -64,13 +66,23 @@ describe('initialize', () => {
     });
   });
 
+  it("persists the player's cards", async () => {
+    const store = new InMemoryStore();
+    const cards = createChoices(2);
+
+    store.playerGateway.player = createFullPlayer({ cards });
+
+    await store.dispatch(initialize());
+
+    expect(store.persistenceGateway.getItem('cards')).toEqual(cards.map(({ id }) => id));
+  });
+
   it('reacts to network status update events', async () => {
     const { networkGateway } = store;
 
     networkGateway.networkStatus = NetworkStatus.down;
 
     await store.dispatch(initialize());
-    store.snapshot();
 
     store.expectPartialState('app', {
       network: NetworkStatus.down,

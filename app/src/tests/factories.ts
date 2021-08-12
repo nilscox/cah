@@ -142,21 +142,21 @@ export const [createTurn, createTurns] = factory<Turn>((index) => ({
   answers: [],
 }));
 
-export const [createQuestion, createQuestions] = factory<Question>(() => ({
-  text: 'question',
-  formatted: 'question',
+export const [createQuestion, createQuestions] = factory<Question>((index) => ({
+  text: `question ${index}`,
+  formatted: `question ${index}`,
   numberOfBlanks: 1,
 }));
 
-export const [createChoice, createChoices] = factory<Choice>(() => ({
-  id: createId(),
-  text: 'choice',
+export const [createChoice, createChoices] = factory<Choice>((index) => ({
+  id: `c${index}`,
+  text: `choice ${index}`,
   caseSensitive: false,
 }));
 
-export const [createAnonymousAnswer, createAnonymousAnswers] = factory<AnonymousAnswer>(() => ({
-  id: createId(),
-  formatted: 'answer',
+export const [createAnonymousAnswer, createAnonymousAnswers] = factory<AnonymousAnswer>((index) => ({
+  id: `a ${index}`,
+  formatted: `answer ${index}`,
   choices: [],
 }));
 

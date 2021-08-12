@@ -1,6 +1,7 @@
 import { PlayState } from '../../../../../../shared/enums';
 import {
   createChoice,
+  createChoices,
   createFullPlayer,
   createGame,
   createQuestion,
@@ -10,6 +11,7 @@ import { InMemoryStore } from '../../../../tests/InMemoryStore';
 import { setGame, setPlayer } from '../../../actions';
 import { Choice } from '../../../entities/Choice';
 import { Question } from '../../../entities/Question';
+import { setCards } from '../setCards/setCards';
 
 import { toggleChoice } from './toggleChoice';
 
@@ -19,35 +21,24 @@ describe('toggleChoice', () => {
   beforeEach(() => {
     store = new InMemoryStore();
 
-    store.setup(({ dispatch, listenRTCMessages }) => {
+    store.setup(({ dispatch }) => {
       dispatch(setPlayer(createFullPlayer()));
       dispatch(setGame(createGame()));
-      listenRTCMessages();
     });
   });
 
   const dealCards = (cards: Choice[]) => {
-    store.rtcGateway.triggerMessage({ type: 'CardsDealt', cards: cards });
-    store.snapshot();
+    store.dispatch(setCards(cards));
   };
 
   const setQuestion = (question: Question) => {
     store.dispatch(setGame(createStartedGame({ question })));
-    store.snapshot();
   };
-
-  it('recieves some choices', () => {
-    const choice = createChoice({ text: 'youpi' });
-
-    store.rtcGateway.triggerMessage({ type: 'CardsDealt', cards: [choice] });
-
-    store.expectPartialState('player', {
-      cards: [choice],
-    });
-  });
 
   it('resets the selection when a turn starts', () => {
     const question = createQuestion({ numberOfBlanks: 2 });
+
+    store.listenRTCMessages();
 
     store.rtcGateway.triggerMessage({
       type: 'TurnStarted',
@@ -85,8 +76,7 @@ describe('toggleChoice', () => {
   });
 
   it('replaces the selected choice with another', async () => {
-    const choice1 = createChoice({ text: 'choice 1' });
-    const choice2 = createChoice({ text: 'choice 2' });
+    const [choice1, choice2] = createChoices(2);
 
     dealCards([choice1, choice2]);
     setQuestion(createQuestion({ numberOfBlanks: 1 }));
@@ -101,9 +91,7 @@ describe('toggleChoice', () => {
   });
 
   it('replaces the last selected choice with another', async () => {
-    const choice1 = createChoice({ text: 'choice 1' });
-    const choice2 = createChoice({ text: 'choice 2' });
-    const choice3 = createChoice({ text: 'choice 3' });
+    const [choice1, choice2, choice3] = createChoices(3);
 
     dealCards([choice1, choice2, choice3]);
     setQuestion(createQuestion({ numberOfBlanks: 2 }));
@@ -118,9 +106,7 @@ describe('toggleChoice', () => {
   });
 
   it('replaces the first selected choice with another', async () => {
-    const choice1 = createChoice({ text: 'choice 1' });
-    const choice2 = createChoice({ text: 'choice 2' });
-    const choice3 = createChoice({ text: 'choice 3' });
+    const [choice1, choice2, choice3] = createChoices(3);
 
     dealCards([choice1, choice2, choice3]);
     setQuestion(createQuestion({ numberOfBlanks: 2 }));

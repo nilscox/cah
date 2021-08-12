@@ -1,9 +1,9 @@
 import expect from 'expect';
 
 import { PlayState } from '../../../../../../shared/enums';
-import { createGame, createQuestion } from '../../../../tests/factories';
+import { createChoices, createFullPlayer, createGame, createQuestion } from '../../../../tests/factories';
 import { InMemoryStore } from '../../../../tests/InMemoryStore';
-import { setGame } from '../../../actions';
+import { setGame, setPlayer } from '../../../actions';
 import { RTCMessage } from '../../../gateways/RTCGateway';
 
 import { handleRTCMessage } from './handleRTCMessage';
@@ -23,6 +23,24 @@ describe('handleRTCMessage', () => {
     expect(store.routerGateway.gamePathname).toEqual(`/game/code${route}`);
     expect(store.routerGateway.gameLocationState).toEqual(state);
   };
+
+  it('gives some new cards to the player', () => {
+    const [existingCard, ...newCards] = createChoices(3);
+
+    store.setup(({ dispatch }) => {
+      dispatch(setPlayer(createFullPlayer({ cards: [existingCard] })));
+      dispatch(setGame(createGame()));
+    });
+
+    triggerRTCMessage({
+      type: 'CardsDealt',
+      cards: newCards,
+    });
+
+    store.expectPartialState('player', {
+      cards: [existingCard, ...newCards],
+    });
+  });
 
   it('navigates to the answer question view when the turn starts', () => {
     store.dispatch(setGame(createGame()));

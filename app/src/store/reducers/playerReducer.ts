@@ -2,7 +2,7 @@ import { Choice } from '../../domain/entities/Choice';
 import { isStarted } from '../../domain/entities/Game';
 import { AppAction, Nullable } from '../types';
 
-import { append, filter, findById, isNull, mapIds, replace, replaceAll } from './helpers';
+import { findById, isNull, replace, replaceAll } from './helpers';
 
 export type PlayerState = Nullable<{
   id: string;
@@ -28,17 +28,17 @@ export const playerReducer = (state: PlayerState = null, action: AppAction): Pla
     return state;
   }
 
+  if (action.type === 'player/set-cards') {
+    return {
+      ...state,
+      cards: action.payload,
+    };
+  }
+
   if (action.type === 'player/set-connected') {
     return {
       ...state,
       isConnected: true,
-    };
-  }
-
-  if (action.type === 'rtc/message' && action.payload.type === 'CardsDealt') {
-    return {
-      ...state,
-      cards: append(state.cards, ...action.payload.cards),
     };
   }
 
@@ -66,13 +66,6 @@ export const playerReducer = (state: PlayerState = null, action: AppAction): Pla
     };
   }
 
-  if (action.type === 'player/set-cards') {
-    return {
-      ...state,
-      cards: action.payload,
-    };
-  }
-
   if (action.type === 'choice/selected') {
     return {
       ...state,
@@ -88,12 +81,9 @@ export const playerReducer = (state: PlayerState = null, action: AppAction): Pla
   }
 
   if (action.type === 'player/selection-validated') {
-    const selectionIds = mapIds(state.selection.filter(Boolean) as Choice[]);
-
     return {
       ...state,
       selectionValidated: true,
-      cards: filter(state.cards, ({ id }) => !selectionIds.includes(id)),
     };
   }
 

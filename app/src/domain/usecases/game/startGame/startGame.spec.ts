@@ -20,7 +20,6 @@ describe('startGame', () => {
     store.dispatch(setGame(createGame({ players: [player] })));
 
     store.listenRTCMessages();
-    store.snapshot();
 
     await store.dispatch(startGame(player, 3));
 
