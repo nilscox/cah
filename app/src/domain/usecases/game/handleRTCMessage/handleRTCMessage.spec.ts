@@ -1,7 +1,6 @@
 import expect from 'expect';
 
-import { PlayState } from '../../../../../../shared/enums';
-import { createChoices, createFullPlayer, createGame, createQuestion } from '../../../../tests/factories';
+import { createChoices, createFullPlayer, createGame } from '../../../../tests/factories';
 import { InMemoryStore } from '../../../../tests/InMemoryStore';
 import { setGame, setPlayer } from '../../../actions';
 import { RTCMessage } from '../../../gateways/RTCGateway';
@@ -40,19 +39,6 @@ describe('handleRTCMessage', () => {
     store.expectPartialState('player', {
       cards: [existingCard, ...newCards],
     });
-  });
-
-  it('navigates to the answer question view when the turn starts', () => {
-    store.dispatch(setGame(createGame()));
-
-    triggerRTCMessage({
-      type: 'TurnStarted',
-      playState: PlayState.playersAnswer,
-      question: createQuestion(),
-      questionMaster: '',
-    });
-
-    expectGameRoute('/started/answer-question');
   });
 
   it('navigates to the winner selection view when all players answered', () => {

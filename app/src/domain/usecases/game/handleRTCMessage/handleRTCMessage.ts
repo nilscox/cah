@@ -11,6 +11,8 @@ export const handleRTCMessage = createThunk(({ dispatch, getState }, message: RT
 
   const player = selectPlayer(state);
 
+  dispatch(rtcMessage(message));
+
   if (message.type === 'CardsDealt') {
     const cards = selectPlayerCards(state);
 
@@ -42,6 +44,4 @@ export const handleRTCMessage = createThunk(({ dispatch, getState }, message: RT
   if (message.type === 'GameFinished') {
     dispatch(navigateToGameRoute('/finished', { animations: true }));
   }
-
-  dispatch(rtcMessage(message));
 });

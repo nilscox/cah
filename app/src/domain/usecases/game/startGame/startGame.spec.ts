@@ -35,9 +35,10 @@ describe('startGame', () => {
     const player = createPlayer({ nick: 'wat' });
 
     store.dispatch(setGame(createGame({ code: '1234' })));
+    store.listenRTCMessages();
 
     await store.dispatch(startGame(player, 3));
 
-    expect(store.routerGateway.gamePathname).toEqual('/game/1234/started');
+    expect(store.routerGateway.gamePathname).toEqual('/game/1234/started/answer-question');
   });
 });
