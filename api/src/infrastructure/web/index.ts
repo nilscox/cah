@@ -1,5 +1,4 @@
 import { Request } from 'express';
-import { Store as SessionStoreBackend } from 'express-session';
 
 import {
   CreateAnswerCommand,
@@ -29,7 +28,6 @@ import { DomainErrorMapper, ErrorHandler } from './ErrorHandler';
 import { context, dto, errorHandler, guard, handler, middleware, status } from './middlewaresCreators';
 import { FallbackRoute, InputDto, Route } from './Route';
 import { createServer } from './web';
-import { WebsocketServer } from './websocket';
 
 declare module 'express-session' {
   export interface SessionData {
@@ -80,7 +78,7 @@ const isNotAuthenticated = (req: Request) => {
   }
 };
 
-export const bootstrapServer = (deps: Dependencies, wss: WebsocketServer, sessionStore?: SessionStoreBackend) => {
+export const bootstrapServer = (deps: Dependencies) => {
   const handlers = instanciateHandlers(deps);
 
   const playerContext = [
@@ -169,5 +167,5 @@ export const bootstrapServer = (deps: Dependencies, wss: WebsocketServer, sessio
       .use((_req, res) => res.status(404).end()),
   ];
 
-  return createServer(routes, wss, sessionStore);
+  return createServer(routes, deps);
 };

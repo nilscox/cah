@@ -1,12 +1,37 @@
 import * as http from 'http';
 
+import connectSessionKnex from 'connect-session-knex';
 import cors from 'cors';
 import express, { ErrorRequestHandler, Express } from 'express';
-import expressSession, { Store as SessionStore } from 'express-session';
+import expressSession from 'express-session';
+import knexFactory, { Knex } from 'knex';
+
+import { ConfigService } from '../../application/interfaces/ConfigService';
+import { Dependencies } from '../Dependencies';
 
 import { errorHandler } from './middlewaresCreators';
 import { FallbackRoute } from './Route';
-import { WebsocketServer } from './websocket';
+
+export const createKnexConnection = (config: ConfigService) => {
+  return knexFactory({
+    useNullAsDefault: true,
+    client: 'sqlite3',
+    connection: {
+      filename: config.get('DB_FILE') ?? ':memory:',
+    },
+  });
+};
+
+export const createKnexSessionStore = (knex: Knex) => {
+  const KnexSessionStore = connectSessionKnex(expressSession);
+
+  return new KnexSessionStore({
+    tablename: 'sessions',
+    createtable: true,
+    // @ts-expect-error knex version issue
+    knex,
+  });
+};
 
 export interface Route {
   register: (app: Express) => void;
@@ -20,10 +45,10 @@ class FallbackErrorHandler {
 
 const fallbackErrorHandler = new FallbackRoute().use(errorHandler(new FallbackErrorHandler()));
 
-export const createServer = (routes: Route[], wss: WebsocketServer, sessionStore?: SessionStore) => {
+export const createServer = (routes: Route[], { configService, websocketServer }: Dependencies) => {
   const session = expressSession({
-    store: sessionStore,
-    secret: 'secret',
+    store: createKnexSessionStore(createKnexConnection(configService)),
+    secret: configService.get('SESSION_SECRET') ?? 'si crête',
     resave: false,
     saveUninitialized: true,
   });
@@ -31,7 +56,7 @@ export const createServer = (routes: Route[], wss: WebsocketServer, sessionStore
   const app = express();
   const server = http.createServer(app);
 
-  wss.connect(server, session);
+  websocketServer.connect(server, session);
 
   app.use(cors({ origin: true, credentials: true }));
   app.use(session);

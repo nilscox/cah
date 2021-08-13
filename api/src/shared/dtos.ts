@@ -1,4 +1,4 @@
-import { GameState, PlayState } from "./enums";
+import { GameState, PlayState } from './enums';
 
 export interface ChoiceDto {
   id: string;

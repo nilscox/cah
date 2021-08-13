@@ -9,9 +9,11 @@ import { Turn } from '../../../domain/entities/Turn';
 import { GameGateway } from '../../../domain/gateways/GameGateway';
 import { PlayerGateway } from '../../../domain/gateways/PlayerGateway';
 import { RTCGateway, RTCListener } from '../../../domain/gateways/RTCGateway';
+import { Dependencies } from '../../../store/types';
 import { createFullPlayer, createGame } from '../../../tests/factories';
 import { FakeNetworkGateway } from '../../../tests/gateways/FakeNetworkGateway';
 import { FakeServerGateway } from '../../../tests/gateways/FakeServerGateway';
+import { InMemoryPersistenceGateway } from '../../../tests/gateways/InMemoryPersistenceGateway';
 import { ReactRouterGateway } from '../../gateways/ReactRouterGateway';
 import { RealTimerGateway } from '../../gateways/RealTimerGateway';
 import { gameHistory } from '../views/GameView/GameView';
@@ -100,7 +102,18 @@ export class StubRTCGateway extends ActionLogger implements RTCGateway {
 
 export const storiesHistory = createMemoryHistory();
 
-export const stubDependencies = () => ({
+interface StubDependencies extends Dependencies {
+  gameGateway: StubGameGateway;
+  playerGateway: StubPlayerGateway;
+  rtcGateway: StubRTCGateway;
+  routerGateway: ReactRouterGateway;
+  timerGateway: RealTimerGateway;
+  networkGateway: FakeNetworkGateway;
+  serverGateway: FakeServerGateway;
+  persistenceGateway: InMemoryPersistenceGateway;
+}
+
+export const stubDependencies = (): StubDependencies => ({
   gameGateway: new StubGameGateway(),
   playerGateway: new StubPlayerGateway(),
   rtcGateway: new StubRTCGateway(),
@@ -108,4 +121,5 @@ export const stubDependencies = () => ({
   timerGateway: new RealTimerGateway(),
   networkGateway: new FakeNetworkGateway(),
   serverGateway: new FakeServerGateway(),
+  persistenceGateway: new InMemoryPersistenceGateway(),
 });

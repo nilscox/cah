@@ -5,34 +5,21 @@ import { expect } from 'chai';
 import { Knex } from 'knex';
 import { io, Socket } from 'socket.io-client';
 import request from 'supertest';
-import { Connection, createConnection } from 'typeorm';
-import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
+import { Connection } from 'typeorm';
 
-import { ConfigService, ConfigurationVariable } from './application/interfaces/ConfigService';
-import { Choice } from './domain/models/Choice';
-import { createKnexConnection, createKnexSessionStore, instanciateDependencies } from './infrastructure';
-import { AnswerEntity } from './infrastructure/database/entities/AnswerEntity';
-import { ChoiceEntity } from './infrastructure/database/entities/ChoiceEntity';
-import { GameEntity } from './infrastructure/database/entities/GameEntity';
-import { PlayerEntity } from './infrastructure/database/entities/PlayerEntity';
-import { QuestionEntity } from './infrastructure/database/entities/QuestionEntity';
-import { TurnEntity } from './infrastructure/database/entities/TurnEntity';
+import { ConfigurationVariable } from './application/interfaces/ConfigService';
+import { instanciateDependencies } from './infrastructure';
 import { bootstrapServer } from './infrastructure/web';
-import { WebsocketServer } from './infrastructure/web/websocket';
+import { AnonymousAnswerDto, AnswerDto, ChoiceDto, QuestionDto } from './shared/dtos';
+import { EventDto } from './shared/events';
 
 const port = 1222;
 const log = false;
-
-const debug = false;
-const keepDatabase = debug;
-const logging = debug;
-
 const inMemory = false;
+const dbFile = ':memory:';
+const dbLogs = false;
 
 const randInt = (min: number, max: number) => ~~(Math.random() * (max - min + 1)) + min;
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type WSEvent = Record<string, any>;
 
 class StubPlayer {
   public agent: request.SuperAgentTest;
@@ -44,14 +31,14 @@ class StubPlayer {
   public gameState: 'idle' | 'started' | 'finished' = 'idle';
   public playState?: 'playersAnswer' | 'questionMasterSelection' | 'endOfTurn';
 
-  public cards: Choice[] = [];
+  public cards: ChoiceDto[] = [];
   public questionMaster?: string;
-  public question?: { text: string; numberOfBlanks: number; formatted: string };
+  public question?: QuestionDto;
 
-  public answers: { id: number; choices: { text: string }[]; formatted: string; player?: string }[] = [];
+  public answers: Array<AnonymousAnswerDto | AnswerDto> = [];
   public winner?: string;
 
-  public events: WSEvent[] = [];
+  public events: EventDto[] = [];
 
   get isQuestionMaster() {
     return this.questionMaster === this.nick;
@@ -77,7 +64,7 @@ class StubPlayer {
     }
   }
 
-  private handleEvent(event: WSEvent) {
+  private handleEvent(event: EventDto) {
     this.logEvent(event.type);
 
     switch (event.type) {
@@ -231,23 +218,16 @@ class StubPlayer {
   }
 }
 
-class E2eConfigService implements ConfigService {
-  values: Record<ConfigurationVariable, string> = {
-    LISTEN_HOST: 'localhost',
-    LISTEN_PORT: '',
-    LOG_LEVEL: log ? 'info' : 'error',
-    REFLECT_ORIGIN: '',
-    DB_FILE: '',
-    DB_LOGS: '',
-    SESSION_SECRET: '',
-    DATA_DIR: path.resolve(__dirname, '..', 'data'),
-    GAME_CODE: '0000',
-  };
+const config = new Map<ConfigurationVariable, string>();
 
-  get(key: ConfigurationVariable): string | undefined {
-    return this.values[key];
-  }
-}
+config.set('LOG_LEVEL', log ? 'info' : 'error');
+
+config.set('DB_FILE', inMemory ? '' : dbFile);
+config.set('DB_LOGS', String(dbLogs));
+
+config.set('SESSION_SECRET', 'yolo');
+
+config.set('DATA_DIR', path.resolve(__dirname, '..', 'data'));
 
 describe('e2e', () => {
   let connection: Connection;
@@ -259,31 +239,15 @@ describe('e2e', () => {
   let [nils, tom, jeanne]: StubPlayer[] = [];
 
   before(async () => {
-    connection = await createConnection({
-      type: 'sqlite',
-      database: keepDatabase ? './db.sqlite' : ':memory:',
-      entities: [PlayerEntity, GameEntity, QuestionEntity, ChoiceEntity, AnswerEntity, TurnEntity],
-      synchronize: true,
-      dropSchema: true,
-      logging,
-      namingStrategy: new SnakeNamingStrategy(),
-    });
-
-    knex = createKnexConnection();
-  });
-
-  before(async () => {
-    const wss = new WebsocketServer();
-
     const deps = await instanciateDependencies({
-      connection: inMemory ? undefined : connection,
-      configService: new E2eConfigService(),
-      wss,
+      configService: config,
+      connectionOptions: {
+        synchronize: true,
+        dropSchema: true,
+      },
     });
 
-    const sessionStore = await createKnexSessionStore(knex);
-
-    server = bootstrapServer(deps, wss, sessionStore);
+    server = bootstrapServer(deps);
 
     // required for websockets
     await new Promise<void>((resolve) => server.listen(port, resolve));
@@ -308,7 +272,7 @@ describe('e2e', () => {
   });
 
   after(async () => {
-    await knex.destroy();
+    await knex?.destroy();
     await connection?.close();
   });
 

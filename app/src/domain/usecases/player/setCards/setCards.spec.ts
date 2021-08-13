@@ -1,5 +1,5 @@
 import { expect } from 'earljs';
-import { reverse, slice } from 'lodash';
+import { map, reverse, slice } from 'lodash';
 
 import { createChoices, createFullPlayer } from '../../../../tests/factories';
 import { InMemoryStore } from '../../../../tests/InMemoryStore';
@@ -20,14 +20,11 @@ describe('setCards', () => {
   });
 
   const persistCards = (cards: Choice[]) => {
-    store.persistenceGateway.setItem(
-      'cards',
-      cards.map(({ id }) => id),
-    );
+    store.persistenceGateway.setItem('cards', map(cards, 'id'));
   };
 
   const expectPersistedCards = (cards: Choice[]) => {
-    expect(store.persistenceGateway.getItem('cards')).toEqual(cards.map(({ id }) => id));
+    expect(store.persistenceGateway.getItem('cards')).toEqual(map(cards, 'id'));
   };
 
   it("sets the player's cards", () => {

@@ -1,7 +1,9 @@
 #!/usr/bin/env sh
 
 function cah() {
-  http --session "/tmp/httpie-cah-$1.json" "$2" "http://localhost:4242$3" "${@:4}"
+  url="${API_URL:-http://localhost:4242}$3"
+
+  http --session "/tmp/httpie-cah-$1.json" "$2" "$url" "${@:4}"
 }
 
 auth() {
@@ -12,8 +14,8 @@ auth() {
 
 join() {
   cah nils POST /game
-  cah tom POST /game/6666/join
-  cah jeanne POST /game/6666/join
+  cah tom POST "/game/$1/join"
+  cah jeanne POST "/game/$1/join"
 }
 
 start() {
@@ -24,7 +26,7 @@ start() {
 reset() {
   yarn cah reset
   auth
-  join
+  join "6666"
   start "$1"
 }
 

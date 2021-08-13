@@ -1,7 +1,6 @@
-import connectSessionKnex from 'connect-session-knex';
-import expressSession from 'express-session';
-import knexFactory, { Knex } from 'knex';
-import { Connection } from 'typeorm';
+import { createConnection, LoggerOptions } from 'typeorm';
+import { SqliteConnectionOptions } from 'typeorm/driver/sqlite/SqliteConnectionOptions';
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 import { GameEventsHandler } from '../application/handlers/GameEventsHandler/GameEventsHandler';
 import { PlayerEventsHandler } from '../application/handlers/PlayerEventsHandler/PlayerEventsHandler';
@@ -11,6 +10,7 @@ import { GameService } from '../application/services/GameService';
 import { RandomService } from '../application/services/RandomService';
 
 import { ConsoleLoggerService } from './ConsoleLoggerService';
+import { entities } from './database/entities';
 import { InMemoryCache } from './database/InMemoryCache';
 import { InMemoryGameRepository } from './database/repositories/game/InMemoryGameRepository';
 import { SQLGameRepository } from './database/repositories/game/SQLGameRepository';
@@ -23,50 +23,53 @@ import { PubSub } from './PubSub';
 import { StubExternalData } from './stubs/StubExternalData';
 import { WebsocketRTCManager, WebsocketServer } from './web/websocket';
 
-export const createKnexConnection = () => {
-  return knexFactory({
-    useNullAsDefault: true,
-    client: 'sqlite3',
-    connection: {
-      filename: process.env.DB_FILE ?? ':memory:',
-    },
-  });
-};
+const createTypeormConnection = (
+  file?: string,
+  logging?: LoggerOptions,
+  overrides?: Partial<SqliteConnectionOptions>,
+) => {
+  if (!file) {
+    return;
+  }
 
-export const createKnexSessionStore = (knex: Knex) => {
-  const KnexSessionStore = connectSessionKnex(expressSession);
-
-  return new KnexSessionStore({
-    tablename: 'sessions',
-    createtable: true,
-    // @ts-expect-error knex version issue
-    knex,
+  return createConnection({
+    type: 'sqlite',
+    database: file,
+    entities,
+    logging,
+    namingStrategy: new SnakeNamingStrategy(),
+    ...overrides,
   });
 };
 
 type Config = Partial<{
-  connection: Connection;
-  wss: WebsocketServer;
   configService: ConfigService;
+  connectionOptions: Partial<SqliteConnectionOptions>;
 }>;
 
 export const instanciateDependencies = async (config: Config = {}): Promise<Dependencies> => {
-  const { connection, wss = new WebsocketServer(), configService = new EnvConfigService() } = config;
+  const { configService = new EnvConfigService() } = config;
 
   const dataDir = configService.get('DATA_DIR');
+  const dbFile = configService.get('DB_FILE');
+  const dbLogs = configService.get('DB_LOGS');
 
   const logger = () => new ConsoleLoggerService(configService);
 
-  const cache = new InMemoryCache();
-  const playerRepository = connection ? new SQLPlayerRepository(connection) : new InMemoryPlayerRepository(cache);
-  const gameRepository = connection ? new SQLGameRepository(connection) : new InMemoryGameRepository(cache);
-
   const publisher = new PubSub(logger());
-  const gameService = new GameService(playerRepository, gameRepository, publisher);
   const randomService = new RandomService();
   const externalData = dataDir ? new FilesystemExternalData(dataDir, randomService) : new StubExternalData();
 
-  const rtcManager = new WebsocketRTCManager(playerRepository, gameRepository, wss, publisher);
+  const cache = new InMemoryCache();
+  const connection = await createTypeormConnection(dbFile, dbLogs === 'true', config.connectionOptions);
+
+  const playerRepository = connection ? new SQLPlayerRepository(connection) : new InMemoryPlayerRepository(cache);
+  const gameRepository = connection ? new SQLGameRepository(connection) : new InMemoryGameRepository(cache);
+
+  const gameService = new GameService(playerRepository, gameRepository, publisher);
+
+  const websocketServer = new WebsocketServer();
+  const rtcManager = new WebsocketRTCManager(playerRepository, gameRepository, websocketServer, publisher);
 
   const gameEventsHandler = new GameEventsHandler(logger(), rtcManager, rtcManager);
   const playerEventsHandler = new PlayerEventsHandler(logger(), rtcManager);
@@ -80,6 +83,7 @@ export const instanciateDependencies = async (config: Config = {}): Promise<Depe
     logger,
     configService,
     notifier: rtcManager,
+    websocketServer,
     playerRepository,
     gameRepository,
     gameService,

@@ -1,18 +1,18 @@
-import { QuestionDto, AnonymousAnswerDto, AnswerDto, ChoiceDto } from "./dtos";
-import { PlayState } from "./enums";
+import { AnonymousAnswerDto, AnswerDto, ChoiceDto, QuestionDto } from './dtos';
+import { PlayState } from './enums';
 
 export interface PlayerConnectedEvent {
-  type: "PlayerConnected";
+  type: 'PlayerConnected';
   player: string;
 }
 
 export interface PlayerDisconnectedEvent {
-  type: "PlayerDisconnected";
+  type: 'PlayerDisconnected';
   player: string;
 }
 
 export interface GameJoinedEvent {
-  type: "GameJoined";
+  type: 'GameJoined';
   player: {
     id: string;
     nick: string;
@@ -21,47 +21,47 @@ export interface GameJoinedEvent {
 }
 
 export interface GameLeftEvent {
-  type: "GameLeft";
+  type: 'GameLeft';
   player: string;
 }
 
 export interface GameStartedEvent {
-  type: "GameStarted";
+  type: 'GameStarted';
 }
 
 export interface TurnStartedEvent {
-  type: "TurnStarted";
+  type: 'TurnStarted';
   playState: PlayState.playersAnswer;
   question: QuestionDto;
   questionMaster: string;
 }
 
 export interface PlayerAnsweredEvent {
-  type: "PlayerAnswered";
+  type: 'PlayerAnswered';
   player: string;
 }
 
 export interface AllPlayersAnsweredEvent {
-  type: "AllPlayersAnswered";
+  type: 'AllPlayersAnswered';
   answers: AnonymousAnswerDto[];
 }
 
 export interface WinnerSelectedEvent {
-  type: "WinnerSelected";
+  type: 'WinnerSelected';
   winner: string;
   answers: AnswerDto[];
 }
 
 export interface TurnFinishedEvent {
-  type: "TurnFinished";
+  type: 'TurnFinished';
 }
 
 export interface GameFinishedEvent {
-  type: "GameFinished";
+  type: 'GameFinished';
 }
 
 export interface CardsDealtEvent {
-  type: "CardsDealt";
+  type: 'CardsDealt';
   cards: ChoiceDto[];
 }
 

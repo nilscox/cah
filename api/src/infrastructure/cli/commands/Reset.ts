@@ -1,4 +1,4 @@
-import { createKnexConnection, createKnexSessionStore } from '../../index';
+import { createKnexConnection, createKnexSessionStore } from '../../web/web';
 import { Command } from '../Command';
 
 export class Reset extends Command {
@@ -7,7 +7,7 @@ export class Reset extends Command {
   }
 
   private async dropSessions() {
-    const knex = await createKnexConnection();
+    const knex = await createKnexConnection(this.deps.configService);
 
     await new Promise<void>((r) => createKnexSessionStore(knex).clear?.(r) ?? r());
     await knex.destroy();

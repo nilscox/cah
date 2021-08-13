@@ -1,14 +1,12 @@
 import dotenv from 'dotenv';
-import { createConnection } from 'typeorm';
 
 import { Blank } from './domain/models/Blank';
 import { createChoice } from './domain/models/Choice';
 import { createQuestion } from './domain/models/Question';
-import { createKnexConnection, createKnexSessionStore, instanciateDependencies } from './infrastructure';
+import { instanciateDependencies } from './infrastructure';
 import { Dependencies } from './infrastructure/Dependencies';
 import { StubExternalData } from './infrastructure/stubs/StubExternalData';
 import { bootstrapServer } from './infrastructure/web';
-import { WebsocketServer } from './infrastructure/web/websocket';
 import { array } from './utils/array';
 
 dotenv.config();
@@ -25,16 +23,13 @@ const overrideDependencies = (): Partial<Dependencies> => {
 };
 
 const main = async () => {
-  const wss = new WebsocketServer();
-  const sessionStore = await createKnexSessionStore(createKnexConnection());
-
-  const deps = await instanciateDependencies({ connection: await createConnection(), wss });
+  const deps = await instanciateDependencies();
 
   if (process.env.NODE_ENV === 'development') {
     Object.assign(deps, overrideDependencies());
   }
 
-  const server = await bootstrapServer(deps, wss, sessionStore);
+  const server = await bootstrapServer(deps);
   const logger = deps.logger();
 
   const port = Number(deps.configService.get('LISTEN_PORT') ?? '4242');
