@@ -226,6 +226,7 @@ config.set('LOG_LEVEL', log ? 'info' : 'error');
 config.set('DB_FILE', inMemory ? '' : dbFile);
 config.set('DB_LOGS', String(dbLogs));
 
+config.set('SESSION_STORE_DB', 'true');
 config.set('SESSION_SECRET', 'yolo');
 
 config.set('DATA_DIR', path.resolve(__dirname, '..', 'data'));

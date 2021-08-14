@@ -4,7 +4,7 @@ import connectSessionKnex from 'connect-session-knex';
 import cors from 'cors';
 import express, { ErrorRequestHandler, Express, RequestHandler } from 'express';
 import expressSession from 'express-session';
-import knexFactory, { Knex } from 'knex';
+import Knex from 'knex';
 
 import { ConfigService } from '../../application/interfaces/ConfigService';
 import { Logger } from '../../application/interfaces/Logger';
@@ -14,7 +14,7 @@ import { FallbackRoute } from './Route';
 import { WebsocketServer } from './websocket';
 
 export const createKnexConnection = (config: ConfigService) => {
-  return knexFactory({
+  return Knex({
     useNullAsDefault: true,
     client: 'sqlite3',
     connection: {
@@ -29,7 +29,6 @@ export const createKnexSessionStore = (knex: Knex) => {
   return new KnexSessionStore({
     tablename: 'sessions',
     createtable: true,
-    // @ts-expect-error knex version issue
     knex,
   });
 };
@@ -50,15 +49,21 @@ export class WebServer {
   app = express();
   httpServer = http.createServer(this.app);
   websocketServer = new WebsocketServer();
-  knex?: Knex;
 
+  knex?: Knex;
+  sessionStore?: expressSession.Store;
   session?: RequestHandler;
 
   init(config: ConfigService) {
-    this.knex = createKnexConnection(config);
+    const storeSessions = config.get('SESSION_STORE_DB') === 'true';
+
+    if (storeSessions) {
+      this.knex = createKnexConnection(config);
+      this.sessionStore = createKnexSessionStore(this.knex);
+    }
 
     this.session = expressSession({
-      store: createKnexSessionStore(this.knex),
+      store: this.sessionStore,
       secret: config.get('SESSION_SECRET') ?? 'si crête',
       resave: false,
       saveUninitialized: true,
@@ -102,7 +107,7 @@ export class WebServer {
     }
 
     if (this.knex) {
-      this.knex.destroy();
+      await this.knex.destroy();
     }
   }
 }

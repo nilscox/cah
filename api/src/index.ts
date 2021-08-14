@@ -31,6 +31,7 @@ const main = async () => {
     Object.assign(deps, overrideDependencies());
   }
 
+  server.init(deps.configService);
   server.register(createRoutes(deps));
 
   await server.listen(deps.configService, deps.logger());

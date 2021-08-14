@@ -14,6 +14,7 @@ const configurationVariables = [
 
   // Session
 
+  'SESSION_STORE_DB',
   'SESSION_SECRET',
 
   // Game
