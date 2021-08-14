@@ -64,7 +64,7 @@ export const AnswersList: React.FC = () => {
   return (
     <>
       <Center flex={1} padding={2} horizontal={false} overflowY="auto">
-        {game.answers.map((answer) => (
+        {game.answers?.map((answer) => (
           <Answer key={answer.id} role="button" onClick={conditionalCallback(handleAnswerClick, answer)}>
             <PlayerNick appear show={Boolean(answer.player)}>
               {answer.player?.nick ?? <>&nbsp;</>}

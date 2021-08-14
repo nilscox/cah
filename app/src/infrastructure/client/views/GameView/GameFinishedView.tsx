@@ -8,6 +8,7 @@ import { leaveGame } from '../../../../domain/usecases/game/leaveGame/leaveGame'
 import { selectGameWinners, selectScoresExcludingWinners } from '../../../../store/selectors/gameSelectors';
 import { NotNull } from '../../../../store/types';
 import Button from '../../components/elements/Button';
+import { Fireworks } from '../../components/elements/Fireworks';
 import { BottomAction } from '../../components/layout/BottomAction';
 import { Center } from '../../components/layout/Center';
 import { FadeIn, FadeInProps } from '../../components/layout/Fade';
@@ -86,6 +87,9 @@ export const GameFinishedView: React.FC = () => {
 
   return (
     <>
+      <FadeIn delay={8}>
+        <Fireworks />
+      </FadeIn>
       <Flex flex={1} padding={2}>
         {winner}
         {players}

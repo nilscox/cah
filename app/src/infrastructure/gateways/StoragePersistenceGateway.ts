@@ -1,7 +1,11 @@
 import { PersistenceGateway } from '../../domain/gateways/PersistenceGateway';
 
 export class StoragePersistenceGateway implements PersistenceGateway {
-  constructor(private readonly storage: Storage) {}
+  private storage: Storage;
+
+  constructor(storage: Storage) {
+    this.storage = storage;
+  }
 
   getItem<T>(key: string): T {
     return JSON.parse(this.storage.getItem(key) ?? 'null');
