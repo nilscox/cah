@@ -113,6 +113,21 @@ describe('gameSelectors', () => {
         [notWinner, 0],
       ]);
     });
+
+    it("selects the game's scores with players who have left the game", () => {
+      const [playerWhoLeft, winner] = createPlayers(2, { nick: nicks });
+
+      const turns = [createTurn({ winner: playerWhoLeft }), createTurn({ winner })];
+
+      const state = createState({
+        game: createGame({ players: [winner], turns }),
+      });
+
+      expect(selectScores(state)).toEqual([
+        [winner, 1],
+        [playerWhoLeft, 1],
+      ]);
+    });
   });
 
   describe('selectGameWinners', () => {

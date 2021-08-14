@@ -29,11 +29,17 @@ export const selectCanStartGame = (state: AppState) => {
 
 export const selectScores = (state: AppState): Array<[Player, number]> => {
   const turns = selectTurns(state);
-  const players = selectPlayers(state);
+  const players = selectPlayers(state).slice();
   const scores = players.reduce((obj, player) => ({ ...obj, [player.nick]: 0 }), {} as Record<string, number>);
 
-  for (const turn of turns) {
-    scores[turn.winner.nick]++;
+  for (const { winner } of turns) {
+    // the player have left
+    if (scores[winner.nick] === undefined) {
+      scores[winner.nick] = 0;
+      players.push(winner);
+    }
+
+    scores[winner.nick]++;
   }
 
   const findPlayer = (nick: string) => players.find((player) => player.nick === nick)!;
