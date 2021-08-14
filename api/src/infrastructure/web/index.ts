@@ -28,6 +28,7 @@ import { DomainErrorMapper, ErrorHandler } from './ErrorHandler';
 import { context, dto, errorHandler, guard, handler, middleware, status } from './middlewaresCreators';
 import { FallbackRoute, InputDto, Route } from './Route';
 import { createServer } from './web';
+import { WebsocketServer } from './websocket';
 
 declare module 'express-session' {
   export interface SessionData {
@@ -78,7 +79,7 @@ const isNotAuthenticated = (req: Request) => {
   }
 };
 
-export const bootstrapServer = (deps: Dependencies) => {
+export const bootstrapServer = (deps: Dependencies, websocketServer: WebsocketServer) => {
   const handlers = instanciateHandlers(deps);
 
   const playerContext = [
@@ -167,5 +168,5 @@ export const bootstrapServer = (deps: Dependencies) => {
       .use((_req, res) => res.status(404).end()),
   ];
 
-  return createServer(routes, deps);
+  return createServer(routes, deps.configService, websocketServer);
 };

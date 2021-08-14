@@ -7,10 +7,10 @@ import expressSession from 'express-session';
 import knexFactory, { Knex } from 'knex';
 
 import { ConfigService } from '../../application/interfaces/ConfigService';
-import { Dependencies } from '../Dependencies';
 
 import { errorHandler } from './middlewaresCreators';
 import { FallbackRoute } from './Route';
+import { WebsocketServer } from './websocket';
 
 export const createKnexConnection = (config: ConfigService) => {
   return knexFactory({
@@ -45,10 +45,10 @@ class FallbackErrorHandler {
 
 const fallbackErrorHandler = new FallbackRoute().use(errorHandler(new FallbackErrorHandler()));
 
-export const createServer = (routes: Route[], { configService, websocketServer }: Dependencies) => {
+export const createServer = (routes: Route[], config: ConfigService, websocketServer: WebsocketServer) => {
   const session = expressSession({
-    store: createKnexSessionStore(createKnexConnection(configService)),
-    secret: configService.get('SESSION_SECRET') ?? 'si crête',
+    store: createKnexSessionStore(createKnexConnection(config)),
+    secret: config.get('SESSION_SECRET') ?? 'si crête',
     resave: false,
     saveUninitialized: true,
   });

@@ -3,6 +3,7 @@ import { IsInt } from 'class-validator';
 import { Request } from 'express';
 import request from 'supertest';
 
+import { ConfigurationVariable } from '../../application/interfaces/ConfigService';
 import { StubEventPublisher } from '../stubs/StubEventPublisher';
 
 import { HttpBadRequestError, HttpUnauthorizedError } from './errors';
@@ -15,7 +16,10 @@ describe('web', () => {
   const defaultHandler = handler({ execute: () => {} });
 
   const createAgent = (routes: RouteInterface[]) => {
-    return request.agent(createServer(routes, new WebsocketServer()));
+    const websocketServer = new WebsocketServer();
+    const config = new Map<ConfigurationVariable, string>();
+
+    return request.agent(createServer(routes, config, websocketServer));
   };
 
   it('registers a route doing nothing', async () => {

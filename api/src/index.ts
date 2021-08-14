@@ -7,6 +7,7 @@ import { instanciateDependencies } from './infrastructure';
 import { Dependencies } from './infrastructure/Dependencies';
 import { StubExternalData } from './infrastructure/stubs/StubExternalData';
 import { bootstrapServer } from './infrastructure/web';
+import { WebsocketServer } from './infrastructure/web/websocket';
 import { array } from './utils/array';
 
 dotenv.config();
@@ -23,13 +24,14 @@ const overrideDependencies = (): Partial<Dependencies> => {
 };
 
 const main = async () => {
-  const deps = await instanciateDependencies();
+  const websocketServer = new WebsocketServer();
+  const deps = await instanciateDependencies({ websocketServer });
 
   if (process.env.NODE_ENV === 'development') {
     Object.assign(deps, overrideDependencies());
   }
 
-  const server = await bootstrapServer(deps);
+  const server = await bootstrapServer(deps, websocketServer);
   const logger = deps.logger();
 
   const port = Number(deps.configService.get('LISTEN_PORT') ?? '4242');

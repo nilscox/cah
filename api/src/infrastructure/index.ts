@@ -1,4 +1,4 @@
-import { createConnection, LoggerOptions } from 'typeorm';
+import { Connection, createConnection } from 'typeorm';
 import { SqliteConnectionOptions } from 'typeorm/driver/sqlite/SqliteConnectionOptions';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
@@ -23,11 +23,10 @@ import { PubSub } from './PubSub';
 import { StubExternalData } from './stubs/StubExternalData';
 import { WebsocketRTCManager, WebsocketServer } from './web/websocket';
 
-const createTypeormConnection = (
-  file?: string,
-  logging?: LoggerOptions,
-  overrides?: Partial<SqliteConnectionOptions>,
-) => {
+export const createTypeormConnection = (config: ConfigService, overrides?: Partial<SqliteConnectionOptions>) => {
+  const file = config.get('DB_FILE');
+  const logging = config.get('DB_LOGS') === 'true';
+
   if (!file) {
     return;
   }
@@ -44,31 +43,29 @@ const createTypeormConnection = (
 
 type Config = Partial<{
   configService: ConfigService;
-  connectionOptions: Partial<SqliteConnectionOptions>;
+  websocketServer: WebsocketServer;
+  connection: Connection;
 }>;
 
 export const instanciateDependencies = async (config: Config = {}): Promise<Dependencies> => {
-  const { configService = new EnvConfigService() } = config;
-
-  const dataDir = configService.get('DATA_DIR');
-  const dbFile = configService.get('DB_FILE');
-  const dbLogs = configService.get('DB_LOGS');
+  const { configService = new EnvConfigService(), websocketServer = new WebsocketServer() } = config;
+  const { connection = await createTypeormConnection(configService) } = config;
 
   const logger = () => new ConsoleLoggerService(configService);
 
   const publisher = new PubSub(logger());
   const randomService = new RandomService();
+
+  const dataDir = configService.get('DATA_DIR');
   const externalData = dataDir ? new FilesystemExternalData(dataDir, randomService) : new StubExternalData();
 
   const cache = new InMemoryCache();
-  const connection = await createTypeormConnection(dbFile, dbLogs === 'true', config.connectionOptions);
 
   const playerRepository = connection ? new SQLPlayerRepository(connection) : new InMemoryPlayerRepository(cache);
   const gameRepository = connection ? new SQLGameRepository(connection) : new InMemoryGameRepository(cache);
 
   const gameService = new GameService(playerRepository, gameRepository, publisher);
 
-  const websocketServer = new WebsocketServer();
   const rtcManager = new WebsocketRTCManager(playerRepository, gameRepository, websocketServer, publisher);
 
   const gameEventsHandler = new GameEventsHandler(logger(), rtcManager, rtcManager);
@@ -83,7 +80,6 @@ export const instanciateDependencies = async (config: Config = {}): Promise<Depe
     logger,
     configService,
     notifier: rtcManager,
-    websocketServer,
     playerRepository,
     gameRepository,
     gameService,

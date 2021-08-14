@@ -9,13 +9,11 @@ import { GameService } from '../application/services/GameService';
 import { RandomService } from '../application/services/RandomService';
 
 import { ExternalData } from './ExternalData';
-import { WebsocketServer } from './web/websocket';
 
 export interface Dependencies {
   logger: () => Logger;
   configService: ConfigService;
   notifier: Notifier;
-  websocketServer: WebsocketServer;
   playerRepository: PlayerRepository;
   gameRepository: GameRepository;
   gameService: GameService;

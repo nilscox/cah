@@ -8,8 +8,9 @@ import request from 'supertest';
 import { Connection } from 'typeorm';
 
 import { ConfigurationVariable } from './application/interfaces/ConfigService';
-import { instanciateDependencies } from './infrastructure';
+import { createTypeormConnection, instanciateDependencies } from './infrastructure';
 import { bootstrapServer } from './infrastructure/web';
+import { WebsocketServer } from './infrastructure/web/websocket';
 import { AnonymousAnswerDto, AnswerDto, ChoiceDto, QuestionDto } from './shared/dtos';
 import { EventDto } from './shared/events';
 
@@ -230,7 +231,7 @@ config.set('SESSION_SECRET', 'yolo');
 config.set('DATA_DIR', path.resolve(__dirname, '..', 'data'));
 
 describe('e2e', () => {
-  let connection: Connection;
+  let connection: Connection | undefined;
   let knex: Knex;
   let server: Server;
 
@@ -239,15 +240,20 @@ describe('e2e', () => {
   let [nils, tom, jeanne]: StubPlayer[] = [];
 
   before(async () => {
-    const deps = await instanciateDependencies({
-      configService: config,
-      connectionOptions: {
-        synchronize: true,
-        dropSchema: true,
-      },
+    connection = await createTypeormConnection(config, {
+      synchronize: true,
+      dropSchema: true,
     });
 
-    server = bootstrapServer(deps);
+    const websocketServer = new WebsocketServer();
+
+    const deps = await instanciateDependencies({
+      configService: config,
+      websocketServer,
+      connection,
+    });
+
+    server = bootstrapServer(deps, websocketServer);
 
     // required for websockets
     await new Promise<void>((resolve) => server.listen(port, resolve));
