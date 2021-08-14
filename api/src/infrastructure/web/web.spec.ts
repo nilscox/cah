@@ -9,18 +9,27 @@ import { StubEventPublisher } from '../stubs/StubEventPublisher';
 import { HttpBadRequestError, HttpUnauthorizedError } from './errors';
 import { context, dto, errorHandler, guard, handler, middleware, status } from './middlewaresCreators';
 import { FallbackRoute, Route } from './Route';
-import { createServer, Route as RouteInterface } from './web';
-import { WebsocketServer } from './websocket';
+import { Route as RouteInterface, WebServer } from './web';
 
 describe('web', () => {
+  let server: WebServer;
+
   const defaultHandler = handler({ execute: () => {} });
 
   const createAgent = (routes: RouteInterface[]) => {
-    const websocketServer = new WebsocketServer();
     const config = new Map<ConfigurationVariable, string>();
 
-    return request.agent(createServer(routes, config, websocketServer));
+    server = new WebServer();
+
+    server.init(config);
+    server.register(routes);
+
+    return request.agent(server.httpServer);
   };
+
+  afterEach(async () => {
+    await server.close();
+  });
 
   it('registers a route doing nothing', async () => {
     const route = new Route('get', '/nothing').use(defaultHandler);

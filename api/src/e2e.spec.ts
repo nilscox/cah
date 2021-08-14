@@ -1,16 +1,14 @@
-import { Server } from 'http';
 import path from 'path';
 
 import { expect } from 'chai';
-import { Knex } from 'knex';
 import { io, Socket } from 'socket.io-client';
 import request from 'supertest';
 import { Connection } from 'typeorm';
 
 import { ConfigurationVariable } from './application/interfaces/ConfigService';
 import { createTypeormConnection, instanciateDependencies } from './infrastructure';
-import { bootstrapServer } from './infrastructure/web';
-import { WebsocketServer } from './infrastructure/web/websocket';
+import { createRoutes } from './infrastructure/web';
+import { WebServer } from './infrastructure/web/web';
 import { AnonymousAnswerDto, AnswerDto, ChoiceDto, QuestionDto } from './shared/dtos';
 import { EventDto } from './shared/events';
 
@@ -45,8 +43,8 @@ class StubPlayer {
     return this.questionMaster === this.nick;
   }
 
-  constructor(server: Server, public nick: string) {
-    this.agent = request.agent(server);
+  constructor(server: WebServer, public nick: string) {
+    this.agent = request.agent(server.httpServer);
   }
 
   close() {
@@ -221,6 +219,8 @@ class StubPlayer {
 
 const config = new Map<ConfigurationVariable, string>();
 
+config.set('LISTEN_PORT', String(port));
+
 config.set('LOG_LEVEL', log ? 'info' : 'error');
 
 config.set('DB_FILE', inMemory ? '' : dbFile);
@@ -232,8 +232,7 @@ config.set('DATA_DIR', path.resolve(__dirname, '..', 'data'));
 
 describe('e2e', () => {
   let connection: Connection | undefined;
-  let knex: Knex;
-  let server: Server;
+  let server: WebServer;
 
   const nicks = ['nils', 'tom', 'jeanne', 'vio'] as const;
   const players: StubPlayer[] = [];
@@ -245,18 +244,19 @@ describe('e2e', () => {
       dropSchema: true,
     });
 
-    const websocketServer = new WebsocketServer();
+    server = new WebServer();
 
     const deps = await instanciateDependencies({
       configService: config,
-      websocketServer,
+      websocketServer: server.websocketServer,
       connection,
     });
 
-    server = bootstrapServer(deps, websocketServer);
+    server.init(deps.configService);
+    server.register(createRoutes(deps));
 
     // required for websockets
-    await new Promise<void>((resolve) => server.listen(port, resolve));
+    await server.listen(config, deps.logger());
   });
 
   before(() => {
@@ -273,12 +273,8 @@ describe('e2e', () => {
     }
   });
 
-  after((done) => {
-    server?.close(done) ?? done();
-  });
-
   after(async () => {
-    await knex?.destroy();
+    await server?.close();
     await connection?.close();
   });
 

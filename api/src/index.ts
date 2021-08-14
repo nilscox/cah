@@ -6,8 +6,8 @@ import { createQuestion } from './domain/models/Question';
 import { instanciateDependencies } from './infrastructure';
 import { Dependencies } from './infrastructure/Dependencies';
 import { StubExternalData } from './infrastructure/stubs/StubExternalData';
-import { bootstrapServer } from './infrastructure/web';
-import { WebsocketServer } from './infrastructure/web/websocket';
+import { createRoutes } from './infrastructure/web';
+import { WebServer } from './infrastructure/web/web';
 import { array } from './utils/array';
 
 dotenv.config();
@@ -24,26 +24,16 @@ const overrideDependencies = (): Partial<Dependencies> => {
 };
 
 const main = async () => {
-  const websocketServer = new WebsocketServer();
-  const deps = await instanciateDependencies({ websocketServer });
+  const server = new WebServer();
+  const deps = await instanciateDependencies({ websocketServer: server.websocketServer });
 
   if (process.env.NODE_ENV === 'development') {
     Object.assign(deps, overrideDependencies());
   }
 
-  const server = await bootstrapServer(deps, websocketServer);
-  const logger = deps.logger();
+  server.register(createRoutes(deps));
 
-  const port = Number(deps.configService.get('LISTEN_PORT') ?? '4242');
-  const hostname = deps.configService.get('LISTEN_HOST') ?? 'localhost';
-
-  if (isNaN(port) || port <= 0) {
-    throw new Error(`LISTEN_PORT = "${port}" is not a positive integer`);
-  }
-
-  await new Promise<void>((resolve) => server.listen(port, hostname, resolve));
-
-  logger.info(`server listening on ${hostname}:${port}`);
+  await server.listen(deps.configService, deps.logger());
 };
 
 main().catch(console.error);

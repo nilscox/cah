@@ -2,11 +2,12 @@ import * as http from 'http';
 
 import connectSessionKnex from 'connect-session-knex';
 import cors from 'cors';
-import express, { ErrorRequestHandler, Express } from 'express';
+import express, { ErrorRequestHandler, Express, RequestHandler } from 'express';
 import expressSession from 'express-session';
 import knexFactory, { Knex } from 'knex';
 
 import { ConfigService } from '../../application/interfaces/ConfigService';
+import { Logger } from '../../application/interfaces/Logger';
 
 import { errorHandler } from './middlewaresCreators';
 import { FallbackRoute } from './Route';
@@ -45,28 +46,63 @@ class FallbackErrorHandler {
 
 const fallbackErrorHandler = new FallbackRoute().use(errorHandler(new FallbackErrorHandler()));
 
-export const createServer = (routes: Route[], config: ConfigService, websocketServer: WebsocketServer) => {
-  const session = expressSession({
-    store: createKnexSessionStore(createKnexConnection(config)),
-    secret: config.get('SESSION_SECRET') ?? 'si crête',
-    resave: false,
-    saveUninitialized: true,
-  });
+export class WebServer {
+  app = express();
+  httpServer = http.createServer(this.app);
+  websocketServer = new WebsocketServer();
+  knex?: Knex;
 
-  const app = express();
-  const server = http.createServer(app);
+  session?: RequestHandler;
 
-  websocketServer.connect(server, session);
+  init(config: ConfigService) {
+    this.knex = createKnexConnection(config);
 
-  app.use(cors({ origin: true, credentials: true }));
-  app.use(session);
-  app.use(express.json());
+    this.session = expressSession({
+      store: createKnexSessionStore(this.knex),
+      secret: config.get('SESSION_SECRET') ?? 'si crête',
+      resave: false,
+      saveUninitialized: true,
+    });
 
-  for (const route of routes) {
-    route.register(app);
+    this.websocketServer.connect(this.httpServer, this.session);
+
+    this.app.use(cors({ origin: true, credentials: true }));
+    this.app.use(this.session);
+    this.app.use(express.json());
   }
 
-  fallbackErrorHandler.register(app);
+  register(routes: Route[]) {
+    for (const route of routes) {
+      route.register(this.app);
+    }
 
-  return server;
-};
+    fallbackErrorHandler.register(this.app);
+  }
+
+  async listen(config: ConfigService, logger: Logger) {
+    const port = Number(config.get('LISTEN_PORT') ?? '4242');
+    const hostname = config.get('LISTEN_HOST') ?? 'localhost';
+
+    if (port && (isNaN(port) || port <= 0)) {
+      throw new Error(`LISTEN_PORT = "${config.get('LISTEN_PORT')}" is not a positive integer`);
+    }
+
+    await new Promise<void>((resolve) => {
+      this.httpServer.listen(port, hostname, resolve);
+    });
+
+    logger.info(`server listening on ${hostname}:${port}`);
+  }
+
+  async close() {
+    if (this.httpServer.listening) {
+      await new Promise<void>((resolve, reject) => {
+        this.httpServer.close((err) => (err ? reject(err) : resolve()));
+      });
+    }
+
+    if (this.knex) {
+      this.knex.destroy();
+    }
+  }
+}
