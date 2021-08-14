@@ -302,7 +302,7 @@ export const Fireworks: React.FC = () => {
   }, [size, ref]);
 
   return (
-    <FullScreen ref={(ref) => ref && !size && setSize([ref.clientWidth, ref.clientHeight])}>
+    <FullScreen ref={(ref) => ref && !size && setSize([ref.clientWidth, ref.clientHeight])} style={{ zIndex: -1 }}>
       <canvas ref={ref} width={size?.[0]} height={size?.[1]} />
     </FullScreen>
   );
