@@ -1,8 +1,8 @@
 import expect from 'expect';
 
-import { createGame, createPlayer } from '../../../../tests/factories';
+import { createFullPlayer, createGame, createPlayer } from '../../../../tests/factories';
 import { InMemoryStore } from '../../../../tests/InMemoryStore';
-import { setGame } from '../../../actions';
+import { setGame, setPlayer } from '../../../actions';
 
 import { leaveGame } from './leaveGame';
 
@@ -23,10 +23,25 @@ describe('leaveGame', () => {
     store.expectState('game', null);
   });
 
+  it('does not display a notification when player himself leaves', async () => {
+    const player = createFullPlayer();
+
+    store.setup(({ dispatch, listenRTCMessages }) => {
+      dispatch(setPlayer(player));
+      dispatch(setGame(createGame()));
+      listenRTCMessages();
+    });
+
+    store.rtcGateway.triggerMessage({ type: 'GameLeft', player: player.nick });
+
+    store.expectPartialState('app', { notification: undefined });
+  });
+
   it('another player leaves the game', async () => {
     const player = createPlayer({ nick: 'Toto' });
 
     store.setup(({ dispatch, listenRTCMessages }) => {
+      dispatch(setPlayer(createFullPlayer()));
       dispatch(setGame(createGame({ code: 'OK42', players: [player] })));
       listenRTCMessages();
     });

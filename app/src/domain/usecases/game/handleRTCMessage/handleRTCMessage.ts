@@ -26,7 +26,9 @@ export const handleRTCMessage = createThunk(({ dispatch, getState }, message: RT
   }
 
   if (message.type === 'GameLeft') {
-    dispatch(showNotification(message.player + ' a quitté la partie'));
+    if (message.player !== player.nick) {
+      dispatch(showNotification(message.player + ' a quitté la partie'));
+    }
   }
 
   if (message.type === 'TurnStarted') {
