@@ -28,6 +28,7 @@ describe('startGame', () => {
       playState: PlayState.playersAnswer,
       questionMaster: player,
       question: createQuestion(),
+      totalQuestions: 3,
     });
   });
 

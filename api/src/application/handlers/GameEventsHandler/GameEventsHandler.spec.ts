@@ -15,7 +15,8 @@ import { Blank } from '../../../domain/models/Blank';
 import { createChoice } from '../../../domain/models/Choice';
 import { createGame } from '../../../domain/models/Game';
 import { Player } from '../../../domain/models/Player';
-import { createQuestion } from '../../../domain/models/Question';
+import { createQuestion, createQuestions } from '../../../domain/models/Question';
+import { InMemoryGameRepository } from '../../../infrastructure/database/repositories/game/InMemoryGameRepository';
 import { StubLogger } from '../../../infrastructure/stubs/StubLogger';
 import { StubNotifier } from '../../../infrastructure/stubs/StubNotifier';
 import { StubRTCManager } from '../../../infrastructure/stubs/StubRTCManager';
@@ -28,6 +29,7 @@ import { GameEventsHandler } from './GameEventsHandler';
 describe('GameEventsHandler', () => {
   const logger = new StubLogger();
 
+  let gameRepository: InMemoryGameRepository;
   let notifier: StubNotifier;
   let rtcManager: StubRTCManager;
 
@@ -35,16 +37,16 @@ describe('GameEventsHandler', () => {
 
   beforeEach(() => {
     const deps = instanciateStubDependencies();
-    ({ notifier, rtcManager } = deps);
+    ({ gameRepository, notifier, rtcManager } = deps);
 
     handler = instanciateHandler(GameEventsHandler, deps, logger);
   });
 
-  it('logs the events', () => {
+  it('logs the events', async () => {
     const game = createGame();
     const player = new Player('player');
 
-    handler.execute(new GameJoinedEvent(game, player));
+    await handler.execute(new GameJoinedEvent(game, player));
 
     expect(logger.last('info')).toEqual(['notify', game.code, { type: 'GameJoined' }]);
     expect(logger.last('debug')).toEqual([
@@ -53,13 +55,13 @@ describe('GameEventsHandler', () => {
     ]);
   });
 
-  it('GameJoined event', () => {
+  it('GameJoined event', async () => {
     const game = createGame();
     const player = new Player('player');
 
     rtcManager.setConnected(player);
 
-    handler.execute(new GameJoinedEvent(game, player));
+    await handler.execute(new GameJoinedEvent(game, player));
 
     expect(notifier.lastGameMessage(game)).toEqual({
       type: 'GameJoined',
@@ -71,11 +73,11 @@ describe('GameEventsHandler', () => {
     });
   });
 
-  it('GameLeft event', () => {
+  it('GameLeft event', async () => {
     const game = createGame();
     const player = new Player('player');
 
-    handler.execute(new GameLeftEvent(game, player));
+    await handler.execute(new GameLeftEvent(game, player));
 
     expect(notifier.lastGameMessage(game)).toEqual({
       type: 'GameLeft',
@@ -83,23 +85,26 @@ describe('GameEventsHandler', () => {
     });
   });
 
-  it('GameStarted event', () => {
+  it('GameStarted event', async () => {
     const game = createGame();
 
-    handler.execute(new GameStartedEvent(game));
+    await gameRepository.addQuestions(game.id, createQuestions(2));
+
+    await handler.execute(new GameStartedEvent(game));
 
     expect(notifier.lastGameMessage(game)).toEqual({
       type: 'GameStarted',
+      totalQuestions: 2,
     });
   });
 
-  it('TurnStarted event', () => {
+  it('TurnStarted event', async () => {
     const game = createGame();
 
     game.question = createQuestion({ text: 'question  ?', blanks: [new Blank(9)] });
     game.questionMaster = new Player('question master');
 
-    handler.execute(new TurnStartedEvent(game));
+    await handler.execute(new TurnStartedEvent(game));
 
     expect(notifier.lastGameMessage(game)).toEqual({
       type: 'TurnStarted',
@@ -114,11 +119,11 @@ describe('GameEventsHandler', () => {
     });
   });
 
-  it('PlayerAnswered event', () => {
+  it('PlayerAnswered event', async () => {
     const game = createGame();
     const player = new Player('player');
 
-    handler.execute(new PlayerAnsweredEvent(game, player));
+    await handler.execute(new PlayerAnsweredEvent(game, player));
 
     expect(notifier.lastGameMessage(game)).toEqual({
       type: 'PlayerAnswered',
@@ -126,7 +131,7 @@ describe('GameEventsHandler', () => {
     });
   });
 
-  it('AllPlayersAnswered event', () => {
+  it('AllPlayersAnswered event', async () => {
     const game = createGame();
     const player = new Player('player');
     const answer = new Answer(player, createQuestion({ text: 'Hello !', blanks: [new Blank(6)] }), [
@@ -135,7 +140,7 @@ describe('GameEventsHandler', () => {
 
     game.answers = [answer];
 
-    handler.execute(new AllPlayersAnsweredEvent(game));
+    await handler.execute(new AllPlayersAnsweredEvent(game));
 
     expect(notifier.lastGameMessage(game)).toEqual({
       type: 'AllPlayersAnswered',
@@ -149,7 +154,7 @@ describe('GameEventsHandler', () => {
     });
   });
 
-  it('WinnerSelectedAnswered event', () => {
+  it('WinnerSelectedAnswered event', async () => {
     const game = createGame();
     const player = new Player('player');
     const winner = new Player('winner');
@@ -158,7 +163,7 @@ describe('GameEventsHandler', () => {
     game.answers = [answer];
     game.winner = winner;
 
-    handler.execute(new WinnerSelectedEvent(game));
+    await handler.execute(new WinnerSelectedEvent(game));
 
     expect(notifier.lastGameMessage(game)).toEqual({
       type: 'WinnerSelected',
@@ -174,20 +179,20 @@ describe('GameEventsHandler', () => {
     });
   });
 
-  it('TurnFinished event', () => {
+  it('TurnFinished event', async () => {
     const game = createGame();
 
-    handler.execute(new TurnFinishedEvent(game));
+    await handler.execute(new TurnFinishedEvent(game));
 
     expect(notifier.lastGameMessage(game)).toEqual({
       type: 'TurnFinished',
     });
   });
 
-  it('GameFinished event', () => {
+  it('GameFinished event', async () => {
     const game = createGame();
 
-    handler.execute(new GameFinishedEvent(game));
+    await handler.execute(new GameFinishedEvent(game));
 
     expect(notifier.lastGameMessage(game)).toEqual({
       type: 'GameFinished',

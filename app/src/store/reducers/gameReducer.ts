@@ -46,6 +46,7 @@ const rtcMessageReducer = (state: NotNull<GameState>, message: RTCMessage): Game
     return {
       ...state,
       state: GS.started,
+      totalQuestions: message.totalQuestions,
     };
   }
 

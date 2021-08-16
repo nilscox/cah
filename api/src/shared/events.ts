@@ -27,6 +27,7 @@ export interface GameLeftEvent {
 
 export interface GameStartedEvent {
   type: 'GameStarted';
+  totalQuestions: number;
 }
 
 export interface TurnStartedEvent {

@@ -6,6 +6,7 @@ import { Game, StartedGame } from '../../../domain/models/Game';
 import { AnswerDto } from '../../../shared/dtos';
 import { PlayState } from '../../../shared/enums';
 import { EventDto } from '../../../shared/events';
+import { GameRepository } from '../../interfaces/GameRepository';
 import { Logger } from '../../interfaces/Logger';
 import { Notifier } from '../../interfaces/Notifier';
 import { RTCManager } from '../../interfaces/RTCManager';
@@ -15,11 +16,12 @@ export class GameEventsHandler implements EventHandler<GameEvent> {
     private readonly logger: Logger,
     private readonly notifier: Notifier,
     private readonly rtcManager: RTCManager,
+    private readonly gameRepository: GameRepository,
   ) {
     this.logger.setContext('GameEvent');
   }
 
-  execute(event: GameEvent) {
+  async execute(event: GameEvent) {
     switch (event.type) {
       case 'PlayerConnected':
       case 'PlayerDisconnected':
@@ -49,6 +51,7 @@ export class GameEventsHandler implements EventHandler<GameEvent> {
       case 'GameStarted':
         this.notify(event.game, {
           type: event.type,
+          totalQuestions: await this.gameRepository.getQuestionsCount(event.game.id),
         });
         break;
 

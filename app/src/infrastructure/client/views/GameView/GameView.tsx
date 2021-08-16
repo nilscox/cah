@@ -40,6 +40,7 @@ const MenuIcon = () => {
   const isGameIdle = matchPath(gameHistory.location.pathname, {
     path: gameRoutes.idle,
   });
+  
   const dispatch = useDispatch();
 
   const handleToggleMenu = () => {

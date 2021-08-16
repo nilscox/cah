@@ -36,8 +36,8 @@ export class FakeGameGateway implements GameGateway {
     //
   }
 
-  async startGame(questionMaster: Player, _turns: number): Promise<void> {
-    this.rtcGateway.triggerMessage({ type: 'GameStarted' });
+  async startGame(questionMaster: Player, turns: number): Promise<void> {
+    this.rtcGateway.triggerMessage({ type: 'GameStarted', totalQuestions: turns });
 
     this.rtcGateway.triggerMessage({
       type: 'TurnStarted',
