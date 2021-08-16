@@ -3,7 +3,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 
 import { selectNotification } from '../../../../store/selectors/appStateSelectors';
-import Header from '../../components/domain/Header';
+import Header, { HeaderRightText } from '../../components/domain/Header';
 import { usePlayer } from '../../hooks/usePlayer';
 
 import { BackButton } from './BackButton';
@@ -21,8 +21,8 @@ export const ViewHeader: React.FC<ViewHeaderProps> = ({ open, unsetOpen }) => {
     <Header
       title="CAH"
       notification={notification}
-      player={player}
-      icon={<BackButton show={open !== null} onBack={() => unsetOpen()} />}
+      left={<BackButton show={open !== null} onBack={() => unsetOpen()} />}
+      right={<HeaderRightText>{player.nick}</HeaderRightText>}
     />
   );
 };

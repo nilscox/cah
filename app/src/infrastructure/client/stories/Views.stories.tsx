@@ -108,6 +108,7 @@ QuestionMasterSelection.args = {
     ...startedGame,
     playState: PlayState.questionMasterSelection,
     answers,
+    questionMaster: player,
   },
 };
 

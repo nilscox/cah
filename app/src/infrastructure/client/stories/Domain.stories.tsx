@@ -8,7 +8,7 @@ import { createPlayer, createQuestion } from '../../../tests/factories';
 import { ChoiceCard, ChoiceCardProps } from '../components/domain/ChoiceCard';
 import { ChoiceCardsListProps, ChoicesList } from '../components/domain/ChoicesList';
 import { Fallback } from '../components/domain/ErrorBoundary';
-import Header, { HeaderProps } from '../components/domain/Header';
+import Header, { HeaderProps, HeaderRightText } from '../components/domain/Header';
 import { Notification } from '../components/domain/Notification';
 import { QuestionCard, QuestionCardProps } from '../components/domain/QuestionCard';
 import { Fireworks } from '../components/elements/Fireworks';
@@ -112,17 +112,17 @@ export const header: Story<HeaderProps & { showNotification: boolean }> = ({ sho
   <Header
     notification={showNotification ? notificationText : undefined}
     {...props}
-    icon={
+    left={
       <IconButton>
         <Icon as={Menu} />
       </IconButton>
     }
+    right={<HeaderRightText>good guy</HeaderRightText>}
   />
 );
 
 header.args = {
   showNotification: false,
-  player: createPlayer({ nick: 'good guy' }),
   title: 'The Title',
 };
 

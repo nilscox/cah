@@ -1,17 +1,20 @@
 import React from 'react';
 
+import styled from '@emotion/styled';
 import { createMemoryHistory } from 'history';
 import { useDispatch, useSelector } from 'react-redux';
 import { matchPath, Route, Router, Switch, useRouteMatch } from 'react-router-dom';
 
 import { closeMenu, openMenu } from '../../../../domain/usecases/app/navigate/navigate';
 import { selectNotification } from '../../../../store/selectors/appStateSelectors';
-import Header from '../../components/domain/Header';
+import { selectIsQuestionMaster } from '../../../../store/selectors/playerSelectors';
+import Header, { HeaderRightText } from '../../components/domain/Header';
 import { Icon } from '../../components/elements/Icon';
 import { IconButton } from '../../components/elements/IconButton';
 import { usePlayer } from '../../hooks/usePlayer';
 import Back from '../../icons/back.svg';
 import Menu from '../../icons/menu.svg';
+import { fontSize, spacing } from '../../styles/theme';
 import { View } from '../View';
 
 import { AnswerQuestion } from './AnswerQuestion';
@@ -40,7 +43,7 @@ const MenuIcon = () => {
   const isGameIdle = matchPath(gameHistory.location.pathname, {
     path: gameRoutes.idle,
   });
-  
+
   const dispatch = useDispatch();
 
   const handleToggleMenu = () => {
@@ -58,6 +61,10 @@ const MenuIcon = () => {
   );
 };
 
+const PlayerNick = styled(HeaderRightText)<{ underlined: boolean }>`
+  text-decoration: ${({ underlined }) => (underlined ? 'underline' : 'none')};
+`;
+
 const GameRouter: React.FC = () => (
   <Router history={gameHistory}>
     <Switch>
@@ -74,9 +81,17 @@ const GameRouter: React.FC = () => (
 
 const GameView: React.FC = () => {
   const player = usePlayer();
+  const isQuestionMaster = useSelector(selectIsQuestionMaster);
   const notification = useSelector(selectNotification);
 
-  const header = <Header notification={notification} icon={<MenuIcon />} title="CAH" player={player} />;
+  const header = (
+    <Header
+      notification={notification}
+      left={<MenuIcon />}
+      right={<PlayerNick underlined={isQuestionMaster}>{player.nick}</PlayerNick>}
+      title="CAH"
+    />
+  );
 
   return (
     <View header={header}>
