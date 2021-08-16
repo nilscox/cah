@@ -2,7 +2,7 @@ import React from 'react';
 
 import { createMemoryHistory } from 'history';
 import { useDispatch, useSelector } from 'react-redux';
-import { Route, Router, Switch, useRouteMatch } from 'react-router-dom';
+import { matchPath, Route, Router, Switch, useRouteMatch } from 'react-router-dom';
 
 import { closeMenu, openMenu } from '../../../../domain/usecases/app/navigate/navigate';
 import { selectNotification } from '../../../../store/selectors/appStateSelectors';
@@ -37,11 +37,18 @@ const gameRoutes = {
 
 const MenuIcon = () => {
   const menuOpen = useRouteMatch(gameRoutes.menu);
+  const isGameIdle = matchPath(gameHistory.location.pathname, {
+    path: gameRoutes.idle,
+  });
   const dispatch = useDispatch();
 
   const handleToggleMenu = () => {
     dispatch(menuOpen ? closeMenu() : openMenu());
   };
+
+  if (isGameIdle) {
+    return null;
+  }
 
   return (
     <IconButton onClick={handleToggleMenu}>
