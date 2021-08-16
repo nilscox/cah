@@ -36,6 +36,7 @@ const JoinGame: React.FC = () => {
           value={code}
           onTextChange={handleCodeChange}
           onSubmit={() => dispatch(joinGame(code))}
+          autoCapitalize="characters"
         />
       </Box>
     </>
