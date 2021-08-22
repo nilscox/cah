@@ -1,13 +1,14 @@
 import React from 'react';
 
 import styled from '@emotion/styled';
+import { useSelector } from 'react-redux';
 import { Route } from 'react-router-dom';
 
 import { PlayState } from '../../../../../../shared/enums';
 import { AnonymousAnswer, Answer as AnswerType } from '../../../../domain/entities/Answer';
 import { nextTurn } from '../../../../domain/usecases/game/nextTurn/nextTurn';
 import { selectWinner } from '../../../../domain/usecases/game/selectWinner/selectWinner';
-import { selectGame } from '../../../../store/selectors/gameSelectors';
+import { selectGame, selectIsLastTurn } from '../../../../store/selectors/gameSelectors';
 import { selectIsQuestionMaster } from '../../../../store/selectors/playerSelectors';
 import { AppState } from '../../../../store/types';
 import { QuestionCard } from '../../components/domain/QuestionCard';
@@ -56,6 +57,8 @@ const canEndTurnSelector = (state: AppState) => {
 export const AnswersList: React.FC = () => {
   const game = useGame();
 
+  const isLastTurn = useSelector(selectIsLastTurn);
+
   const handleAnswerClick = useAction(canSelectAnswerSelector, selectWinner);
   const handleNextTurn = useAction(canEndTurnSelector, nextTurn);
 
@@ -78,7 +81,7 @@ export const AnswersList: React.FC = () => {
       </Center>
       <BottomAction visible={handleNextTurn !== undefined}>
         <Route path="/game/:code/started/end-of-turn">
-          <Button onClick={handleNextTurn}>Prochaine question</Button>
+          <Button onClick={handleNextTurn}>{isLastTurn ? 'Terminer la partie' : 'Prochaine question'}</Button>
         </Route>
       </BottomAction>
     </>

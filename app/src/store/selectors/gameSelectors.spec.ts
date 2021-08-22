@@ -19,6 +19,7 @@ import {
   selectCanStartGame,
   selectCurrentQuestion,
   selectGameWinners,
+  selectIsLastTurn,
   selectPlayers,
   selectScores,
   selectScoresExcludingWinners,
@@ -27,6 +28,22 @@ import {
 
 describe('gameSelectors', () => {
   const nicks = ['player1', 'player2', 'player3'];
+
+  describe('selectIsLastTurn', () => {
+    it('returns true when the current turn is the last turn', () => {
+      const turns = createTurns(1);
+      const state = createState({ game: createStartedGame({ totalQuestions: 2, turns }) });
+
+      expect(selectIsLastTurn(state)).toEqual(true);
+    });
+
+    it('returns false when the current turn is not the last turn', () => {
+      const turns = createTurns(1);
+      const state = createState({ game: createStartedGame({ totalQuestions: 3, turns }) });
+
+      expect(selectIsLastTurn(state)).toEqual(false);
+    });
+  });
 
   describe('selectCanStartGame', () => {
     const state = (overrides: Partial<Game> = {}) => {

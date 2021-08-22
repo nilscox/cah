@@ -20,6 +20,13 @@ export const selectPlayers = (state: AppState) => {
   return selectGame(state).players;
 };
 
+export const selectIsLastTurn = (state: AppState) => {
+  const game = selectGame(state);
+  const turns = selectTurns(state);
+
+  return turns.length === game.totalQuestions - 1;
+};
+
 export const selectCanStartGame = (state: AppState) => {
   const game = selectGame(state);
   const isCreator = selectIsGameCreator(state);
