@@ -5,6 +5,7 @@ import { Meta } from '@storybook/react';
 
 import Button from '../components/elements/Button';
 import { Input } from '../components/elements/Input';
+import { Select } from '../components/elements/Select';
 import SubmittableInput from '../components/elements/SubmittableInput';
 import TypedLabel from '../components/elements/TypedLabel';
 import { Center } from '../components/layout/Center';
@@ -35,6 +36,23 @@ export const input = () => {
   });
 
   return <Input placeholder="Type something..." value={value} onTextChange={setValue} />;
+};
+
+export const select = () => {
+  const [value, setValue] = useState('');
+
+  useEffect(() => {
+    action('change')(value);
+  });
+
+  return (
+    <Select value={value} onChange={(e) => setValue(e.target.value)}>
+      <option>Mano</option>
+      <option>Raspout</option>
+      <option>Eugène</option>
+      <option>Sacha</option>
+    </Select>
+  );
 };
 
 export const submittableInput = () => {

@@ -51,7 +51,7 @@ export const instanciateHandlers = (deps: Dependencies, defaultLogger?: Logger) 
     [LeaveGameHandler, new LeaveGameHandler(gameService, playerRepository)],
     [LoginHandler, new LoginHandler(playerRepository, mapper)],
     [SelectWinnerHandler, new SelectWinnerHandler(gameService)],
-    [StartGameHandler, new StartGameHandler(gameService, gameRepository, externalData)],
+    [StartGameHandler, new StartGameHandler(gameService, gameRepository, externalData, randomService)],
     [FlushCardsHandler, new FlushCardsHandler(playerRepository, gameService)],
   ];
 

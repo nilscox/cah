@@ -1,4 +1,4 @@
-import { expect } from 'chai';
+import { expect } from 'earljs';
 
 import { InvalidGameStateError } from '../../../domain/errors/InvalidGameStateError';
 import { NotEnoughPlayersError } from '../../../domain/errors/NotEnoughPlayersError';
@@ -11,8 +11,10 @@ import { InMemoryGameRepository } from '../../../infrastructure/database/reposit
 import { InMemoryPlayerRepository } from '../../../infrastructure/database/repositories/player/InMemoryPlayerRepository';
 import { StubEventPublisher } from '../../../infrastructure/stubs/StubEventPublisher';
 import { StubExternalData } from '../../../infrastructure/stubs/StubExternalData';
+import { StubRandomService } from '../../../infrastructure/stubs/StubRandomService';
 import { GameState, PlayState } from '../../../shared/enums';
 import { instanciateHandler } from '../../../utils/dependencyInjection';
+import { expectError } from '../../../utils/expectError';
 import { GameBuilder } from '../../../utils/GameBuilder';
 import { instanciateStubDependencies } from '../../../utils/stubDependencies';
 
@@ -23,19 +25,20 @@ describe('StartGameCommand', () => {
   let playerRepository: InMemoryPlayerRepository;
   let externalData: StubExternalData;
   let publisher: StubEventPublisher;
+  let randomService: StubRandomService;
   let builder: GameBuilder;
 
   let handler: StartGameHandler;
 
   beforeEach(() => {
     const deps = instanciateStubDependencies();
-    ({ gameRepository, playerRepository, externalData, publisher, builder } = deps);
+    ({ gameRepository, playerRepository, externalData, publisher, randomService, builder } = deps);
 
     handler = instanciateHandler(StartGameHandler, deps);
   });
 
-  const execute = (questionMaster: Player, turns: number, player = questionMaster) => {
-    return handler.execute(new StartGameCommand(questionMaster.id, turns), { player });
+  const execute = (questionMaster: Player | null, turns: number, player: Player) => {
+    return handler.execute(new StartGameCommand(questionMaster?.id ?? null, turns), { player });
   };
 
   describe('when the game starts', () => {
@@ -46,7 +49,7 @@ describe('StartGameCommand', () => {
       game = await builder.addPlayers(4).get();
       questionMaster = game.players[1];
 
-      await execute(questionMaster, 2);
+      await execute(questionMaster, 2, questionMaster);
 
       gameRepository.reload(game);
     });
@@ -55,14 +58,14 @@ describe('StartGameCommand', () => {
       const questions = gameRepository.getQuestions(game.id);
       const choices = gameRepository.getChoices(game.id);
 
-      expect(game.state).to.eql(GameState.started);
-      expect(game.playState).to.eql(PlayState.playersAnswer);
-      expect(game.answers).to.eql([]);
-      expect(game.questionMaster?.id).to.eql(questionMaster.id);
-      expect(game.question?.id).to.eql(questions[0].id);
+      expect(game.state).toEqual(GameState.started);
+      expect(game.playState).toEqual(PlayState.playersAnswer);
+      expect(game.answers).toEqual([]);
+      expect(game.questionMaster?.id).toEqual(questionMaster.id);
+      expect(game.question?.id).toEqual(questions[0].id);
 
-      expect(questions).to.have.length(2);
-      expect(choices).to.have.length(94);
+      expect(questions).toBeAnArrayOfLength(2);
+      expect(choices).toBeAnArrayOfLength(94);
     });
 
     it('computes the number of cards', async () => {
@@ -77,10 +80,10 @@ describe('StartGameCommand', () => {
         createQuestion({ blanks: createBlanks(4) }),
       ]);
 
-      await execute(questionMaster, 4);
+      await execute(questionMaster, 4, questionMaster);
 
-      expect(gameRepository.getQuestions(game.id)).to.have.length(4);
-      expect(gameRepository.getChoices(game.id)).to.have.length(146);
+      expect(gameRepository.getQuestions(game.id)).toBeAnArrayOfLength(4);
+      expect(gameRepository.getChoices(game.id)).toBeAnArrayOfLength(146);
     });
 
     it('deals the cards to all players', () => {
@@ -88,42 +91,55 @@ describe('StartGameCommand', () => {
         const cards = player.cards;
 
         for (const card of cards) {
-          expect(card.available).to.be.false;
+          expect(card.available).toEqual(false);
         }
 
-        expect(cards).to.have.length(11);
-        expect(publisher.events).to.deep.include({ type: 'CardsDealt', player, cards });
+        expect(cards).toBeAnArrayOfLength(11);
+        expect(publisher.events).toBeAnArrayWith(expect.objectWith({ type: 'CardsDealt', player, cards }));
       }
     });
 
     it('notifies that the game has started', () => {
-      expect(publisher.findEvent('GameStarted')).to.shallowDeepEqual({ game: { id: game.id } });
-      expect(publisher.findEvent('TurnStarted')).to.shallowDeepEqual({ game: { id: game.id } });
+      expect(publisher.findEvent('GameStarted')).toEqual(expect.objectWith({ game }));
+      expect(publisher.findEvent('TurnStarted')).toEqual(expect.objectWith({ game }));
+    });
+
+    it('randomly picks the initial question master', async () => {
+      const game = await builder.addPlayers(4).get();
+      const lastPlayer = game.players[game.players.length - 1];
+
+      randomService.randomize = (arr) => arr.reverse();
+
+      await execute(null, 1, game.players[0]);
+
+      gameRepository.reload(game);
+
+      expect(game.questionMaster?.id).toEqual(lastPlayer.id);
     });
   });
 
   it('fails if the question master is not is the game', async () => {
     const game = await builder.addPlayers(3).get();
-    const player = new Player('NOTinDAgame');
+    const questionMaster = new Player('NOTinDAgame');
 
-    await playerRepository.save(player);
+    await playerRepository.save(questionMaster);
 
-    await expect(execute(player, 1, game.players[0])).to.be.rejectedWith(PlayerIsNotInTheGameError);
+    await expect(execute(questionMaster, 1, game.players[0])).toBeRejected(PlayerIsNotInTheGameError);
   });
 
   it('does not start a game that is already started', async () => {
     const game = await builder.addPlayers(3).start().get();
     const player = game.players[0];
 
-    const error = await expect(execute(player, 1)).to.be.rejectedWith(InvalidGameStateError);
-    expect(error).to.shallowDeepEqual({ expected: GameState.idle, actual: GameState.started });
+    const error = await expectError(execute(null, 1, player), InvalidGameStateError);
+    expect(error).toBeAnObjectWith({ expected: GameState.idle, actual: GameState.started });
   });
 
   it('does not start a game containing less than 3 players', async () => {
     const game = await builder.addPlayers(2).get();
     const player = game.players[0];
 
-    const error = await expect(execute(player, 1)).to.be.rejectedWith(NotEnoughPlayersError);
-    expect(error).to.shallowDeepEqual({ minimumNumberOfPlayers: 3, actualNumberOfPlayers: 2 });
+    const error = await expectError(execute(null, 1, player), NotEnoughPlayersError);
+    expect(error).toBeAnObjectWith({ minimumNumberOfPlayers: 3, actualNumberOfPlayers: 2 });
   });
 });

@@ -82,9 +82,9 @@ export class HTTPGameGateway implements GameGateway {
     await this.http.post('/game/leave');
   }
 
-  async startGame(questionMaster: Player, turns: number): Promise<void> {
+  async startGame(questionMaster: Player | null, turns: number): Promise<void> {
     await this.http.post('/start', {
-      questionMasterId: questionMaster.id,
+      questionMasterId: questionMaster?.id ?? null,
       turns,
     });
   }

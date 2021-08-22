@@ -56,7 +56,7 @@ export class StubGameGateway extends ActionLogger implements GameGateway {
     this.log('leave game');
   }
 
-  async startGame(questionMaster: Player, turns: number): Promise<void> {
+  async startGame(questionMaster: Player | null, turns: number): Promise<void> {
     this.log('start game', { questionMaster, turns });
   }
 
