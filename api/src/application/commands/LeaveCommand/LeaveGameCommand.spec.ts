@@ -37,6 +37,8 @@ describe('LeaveGameCommand', () => {
     const game = await builder.addPlayers().start().finish().get();
     const player = game.players[0];
 
+    rtcManager.join(game, player);
+
     await execute(player);
 
     await gameRepository.reload(game);

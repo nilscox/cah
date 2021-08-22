@@ -48,7 +48,7 @@ export const instanciateHandlers = (deps: Dependencies, defaultLogger?: Logger) 
     [CreateGameHandler, new CreateGameHandler(configService, gameService, gameRepository, rtcManager, mapper)],
     [NextTurnHandler, new NextTurnHandler(gameService, gameRepository)],
     [JoinGameHandler, new JoinGameHandler(gameService, gameRepository, rtcManager, mapper)],
-    [LeaveGameHandler, new LeaveGameHandler(gameService, playerRepository)],
+    [LeaveGameHandler, new LeaveGameHandler(gameService, playerRepository, rtcManager)],
     [LoginHandler, new LoginHandler(playerRepository, mapper)],
     [SelectWinnerHandler, new SelectWinnerHandler(gameService)],
     [StartGameHandler, new StartGameHandler(gameService, gameRepository, externalData, randomService)],

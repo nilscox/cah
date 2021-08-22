@@ -108,8 +108,12 @@ export class WebsocketRTCManager implements RTCManager, Notifier {
     }
   }
 
-  leave(_game: Game, _player: Player): void {
-    throw new Error('Method not implemented.');
+  leave(game: Game, player: Player): void {
+    const socket = this.wss.playerSocket(player.id);
+
+    if (socket) {
+      socket.leave(game.roomId);
+    }
   }
 
   notifyPlayer<Message>(player: Player, message: Message): void {
