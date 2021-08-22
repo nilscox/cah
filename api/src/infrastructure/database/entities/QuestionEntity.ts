@@ -14,7 +14,7 @@ export class QuestionEntity {
   text!: string;
 
   @Column({ type: 'simple-array' })
-  blanks!: number[];
+  blanks!: string[];
 
   @ManyToOne(() => GameEntity, { nullable: false })
   game!: GameEntity;
@@ -27,14 +27,14 @@ export class QuestionEntity {
 
     entity.id = question.id;
     entity.text = question.text;
-    entity.blanks = question.blanks ?? [];
+    entity.blanks = (question.blanks ?? []).map(String);
     entity.gameId = gameId;
 
     return entity;
   }
 
   static toDomain(entity: QuestionEntity): Question {
-    const blanks = entity.blanks.length ? entity.blanks.map((value) => new Blank(value)) : undefined;
+    const blanks = entity.blanks.length ? entity.blanks.map((value) => new Blank(Number(value))) : undefined;
 
     const question = new Question(entity.text, blanks);
 

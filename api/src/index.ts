@@ -15,7 +15,10 @@ dotenv.config();
 const overrideDependencies = (): Partial<Dependencies> => {
   const externalData = new StubExternalData();
 
-  externalData.setRandomQuestions(array(100, () => createQuestion({ text: `Question: ?`, blanks: [new Blank(10)] })));
+  externalData.setRandomQuestions(
+    array(1, () => createQuestion({ text: `. good. : bad.`, blanks: [new Blank(0), new Blank(8)] })),
+  );
+
   externalData.setRandomChoices(array(100, (n) => createChoice(`Choice ${n}`, { caseSensitive: n % 4 === 0 })));
 
   return {

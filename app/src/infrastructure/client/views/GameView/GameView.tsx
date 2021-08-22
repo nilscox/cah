@@ -14,7 +14,6 @@ import { IconButton } from '../../components/elements/IconButton';
 import { usePlayer } from '../../hooks/usePlayer';
 import Back from '../../icons/back.svg';
 import Menu from '../../icons/menu.svg';
-import { fontSize, spacing } from '../../styles/theme';
 import { View } from '../View';
 
 import { AnswerQuestion } from './AnswerQuestion';

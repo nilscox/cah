@@ -17,7 +17,10 @@ export class Info extends Command {
     }
   }
 
-  printGame(game: Game) {
+  async printGame(game: Game) {
+    const turns = await this.deps.gameRepository.findTurns(game.id);
+    const questionsCount = await this.deps.gameRepository.getQuestionsCount(game.id);
+
     console.log(`game: ${game.id}`);
     console.log(`code: ${game.code}`);
     console.log(`players: ${game.players.map(({ nick }) => nick).join(', ')}`);
@@ -26,7 +29,7 @@ export class Info extends Command {
     if (game.isStarted()) {
       console.log(`play state: ${game.playState}`);
       console.log(`question master: ${game.questionMaster.nick}`);
-      console.log(`question: ${game.question.toString()}`);
+      console.log(`question ${turns.length + 1} / ${questionsCount}: ${game.question.toString()}`);
 
       console.log(`answers: ${game.answers.length === 0 ? '<empty>' : ''}`);
 
@@ -43,7 +46,7 @@ export class Info extends Command {
       this.printPlayer(this.player);
     } else {
       for (const game of await this.deps.gameRepository.findAll()) {
-        this.printGame(game);
+        await this.printGame(game);
         console.log();
       }
     }

@@ -8,7 +8,6 @@ export class Blank extends ValueObject<number> {
 }
 
 type BlankProps = {
-  text: string;
   blanks: Blank[];
 };
 
