@@ -60,4 +60,13 @@ describe('QuestionCard', () => {
 
     expect(text).toEqual('Hello you. Do you like me?');
   });
+
+  it('keeps the upper case when the choice is in first position', () => {
+    const question = createQuestion({ text: ', how are you?', blanks: [0] });
+    const choice = createChoice({ text: 'Hello' });
+
+    const text = renderQuestionCard({ question, choices: [choice] });
+
+    expect(text).toEqual('Hello, how are you?');
+  });
 });

@@ -17,15 +17,16 @@ const ChoiceText = styled(TypedLabel)`
   color: white;
   text-decoration: underline;
   text-decoration-color: #999;
+  cursor: inherit;
 `;
 
-const getChoiceText = (choice: Choice | null, animate: boolean, questionWithoutBlank = false) => {
+const getChoiceText = (choice: Choice | null, animate: boolean, preserveCase: boolean) => {
   if (!choice) {
     return <Blank />;
   }
 
   const getText = () => {
-    if (choice.caseSensitive || questionWithoutBlank) {
+    if (choice.caseSensitive || preserveCase) {
       return choice.text;
     }
 
@@ -49,7 +50,7 @@ const getChunks = (question: Question, choices: (Choice | null)[], animate: bool
 
   question.blanks.map((pos, n) => {
     chunks.push(<>{question.text.slice(lastPos, pos)}</>);
-    chunks.push(getChoiceText(choices[n], animate));
+    chunks.push(getChoiceText(choices[n], animate, pos === 0));
     lastPos = pos;
   });
 
