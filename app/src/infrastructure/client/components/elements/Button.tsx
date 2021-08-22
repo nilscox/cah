@@ -1,9 +1,10 @@
+import { Theme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { color, fontWeight } from '../../styles/theme';
 
 type ButtonProps = {
-  size?: 'big';
+  size?: keyof Theme['fontSizes'];
 };
 
 export const Button = styled.button<ButtonProps>`
@@ -14,7 +15,7 @@ export const Button = styled.button<ButtonProps>`
   background-color: transparent;
   color: ${color('text')};
   font-weight: ${fontWeight('bold')};
-  font-size: ${({ size, theme }) => size === 'big' && theme.fontSizes.big};
+  font-size: ${({ size = 'default', theme }) => theme.fontSizes[size]};
   border: none;
   padding: 0;
   outline: none;
