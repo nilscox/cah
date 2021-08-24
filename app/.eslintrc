@@ -23,6 +23,11 @@
     "plugin:react/recommended",
     "plugin:react-hooks/recommended"
   ],
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
   "rules": {
     "no-console": "off",
     "no-restricted-imports": ["error", "reflexbox"],

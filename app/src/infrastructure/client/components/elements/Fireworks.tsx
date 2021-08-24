@@ -242,6 +242,7 @@ const randomVector = () => {
   return new V(Math.sin(angle), Math.cos(angle));
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const rad2deg = (rad: number) => (rad * 180) / Math.PI;
 
 const setup = (canvas: HTMLCanvasElement | null) => {

@@ -4,7 +4,7 @@ import { action } from '@storybook/addon-actions';
 import { Meta, Story } from '@storybook/react';
 
 import { Choice } from '../../../domain/entities/Choice';
-import { createPlayer, createQuestion } from '../../../tests/factories';
+import { createQuestion } from '../../../tests/factories';
 import { ChoiceCard, ChoiceCardProps } from '../components/domain/ChoiceCard';
 import { ChoiceCardsListProps, ChoicesList } from '../components/domain/ChoicesList';
 import { Fallback } from '../components/domain/ErrorBoundary';
