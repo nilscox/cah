@@ -12,7 +12,7 @@ export class HTTPServerGateway implements ServerGateway {
 
       return NetworkStatus.up;
     } catch (error) {
-      if ('response' in error && error.response === undefined) {
+      if ('response' in error && (error.response === undefined || error.response.status === 502)) {
         return NetworkStatus.down;
       }
 

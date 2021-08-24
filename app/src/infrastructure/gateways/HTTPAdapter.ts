@@ -17,7 +17,7 @@ export class HTTPAdapter {
   constructor(private readonly axios: AxiosInstance) {}
 
   private handleError = (error: unknown): never => {
-    if (error instanceof Error && error.message === 'Network Error') {
+    if (error instanceof Error && error.message.match(/Request failed with status code 502/)) {
       this.onServerDown?.();
     }
 
