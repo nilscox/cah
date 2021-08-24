@@ -4,6 +4,7 @@ const path = require('path');
 const { DefinePlugin, EnvironmentPlugin, HotModuleReplacementPlugin } = require('webpack');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 const { NODE_ENV = 'development', HOST = '0.0.0.0', PORT = '8000' } = process.env;
@@ -59,6 +60,7 @@ module.exports = {
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin(),
     new DefinePlugin({ process: { env: {} } }),
+    new CopyWebpackPlugin({ patterns: [{ from: 'static' }] }),
     new EnvironmentPlugin({
       API_URL: 'http://localhost:4242',
       WS_URL: 'ws://localhost:4242',
