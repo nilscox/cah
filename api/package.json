@@ -1,8 +1,14 @@
 {
-  "name": "api",
-  "version": "1.0.0",
-  "main": "index.js",
+  "name": "cah-api",
+  "version": "0.1.0",
+  "description": "The backend of Cards Against Humanity",
+  "homepage": "https://cah.nils.cx",
+  "repository": "github:nilscox/cah",
   "license": "MIT",
+  "authors": "Nils <nils@nils.cx>",
+  "contributors": [
+    "Vio"
+  ],
   "scripts": {
     "start": "TS_NODE_TRANSPILE_ONLY=true nodemon src -e ts -x 'ts-node src/index.ts'",
     "cah": "TS_NODE_TRANSPILE_ONLY=true ts-node src/cli.ts",

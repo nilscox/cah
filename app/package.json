@@ -1,8 +1,14 @@
 {
   "name": "cah-app",
-  "version": "1.0.0",
-  "main": "index.js",
+  "version": "0.1.0",
+  "description": "The frontend of Cards Against Humanity",
+  "homepage": "https://cah.nils.cx",
+  "repository": "github:nilscox/cah",
   "license": "MIT",
+  "authors": "Nils <nils@nils.cx>",
+  "contributors": [
+    "Vio"
+  ],
   "scripts": {
     "lint": "eslint src",
     "start": "webpack serve",
