@@ -1,6 +1,6 @@
 {
   "name": "cah-app",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "The frontend of Cards Against Humanity",
   "homepage": "https://cah.nils.cx",
   "repository": "github:nilscox/cah",
@@ -65,7 +65,7 @@
     "typescript": "^4.3.5",
     "webpack": "^5.51.1",
     "webpack-cli": "^4.8.0",
-    "webpack-dev-server": "^4.0.0"
+    "webpack-dev-server": "^3.11.2"
   },
   "dependencies": {
     "@dnd-kit/core": "^3.1.1",
@@ -74,7 +74,7 @@
     "@emotion/react": "^11.4.1",
     "@emotion/styled": "^11.3.0",
     "axios": "^0.21.1",
-    "history": "^5.0.1",
+    "history": "^4",
     "jetbrains-mono": "^1.0.6",
     "normalize.css": "^8.0.1",
     "react": "^17.0.2",
