@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 
 import { leaveGame } from '../../../../domain/usecases/game/leaveGame/leaveGame';
-import { selectGameWinners, selectScoresExcludingWinners } from '../../../../store/selectors/gameSelectors';
+import { selectGameWinners, selectScoresExcludingWinners } from '../../../../store/selectors/scoresSelectors';
 import { NotNull } from '../../../../store/types';
 import Button from '../../components/elements/Button';
 import { Fireworks } from '../../components/elements/Fireworks';

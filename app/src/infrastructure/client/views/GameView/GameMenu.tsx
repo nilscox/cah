@@ -5,8 +5,9 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { Turn } from '../../../../domain/entities/Turn';
 import { flushCards } from '../../../../domain/usecases/game/flushCards/flushCards';
-import { selectGame, selectScores, selectTurns } from '../../../../store/selectors/gameSelectors';
+import { selectGame, selectTurns } from '../../../../store/selectors/gameSelectors';
 import { selectCanFlushCards } from '../../../../store/selectors/playerSelectors';
+import { selectScores } from '../../../../store/selectors/scoresSelectors';
 import { QuestionCard } from '../../components/domain/QuestionCard';
 import Button from '../../components/elements/Button';
 import { Icon } from '../../components/elements/Icon';
