@@ -5,10 +5,10 @@ import { useSelector } from 'react-redux';
 import { Route } from 'react-router-dom';
 
 import { PlayState } from '../../../../../../shared/enums';
-import { AnonymousAnswer, Answer as AnswerType } from '../../../../domain/entities/Answer';
+import { isNotAnonymous } from '../../../../domain/entities/Answer';
 import { nextTurn } from '../../../../domain/usecases/game/nextTurn/nextTurn';
 import { selectWinner } from '../../../../domain/usecases/game/selectWinner/selectWinner';
-import { selectGame, selectIsLastTurn } from '../../../../store/selectors/gameSelectors';
+import { selectGame, selectIsLastTurn, selectIsWinningAnswer } from '../../../../store/selectors/gameSelectors';
 import { selectIsQuestionMaster } from '../../../../store/selectors/playerSelectors';
 import { AppState } from '../../../../store/types';
 import { QuestionCard } from '../../components/domain/QuestionCard';
@@ -58,20 +58,19 @@ export const AnswersList: React.FC = () => {
   const game = useGame();
 
   const isLastTurn = useSelector(selectIsLastTurn);
+  const isWinningAnswer = useSelector(selectIsWinningAnswer);
 
   const handleAnswerClick = useAction(canSelectAnswerSelector, selectWinner);
   const handleNextTurn = useAction(canEndTurnSelector, nextTurn);
-
-  const isWinner = (answer: AnonymousAnswer | AnswerType) => game.winner && game.winner.nick === answer?.player?.nick;
 
   return (
     <>
       <Center flex={1} padding={2} horizontal={false} overflowY="auto">
         {game.answers?.map((answer) => (
           <Answer key={answer.id} role="button" onClick={conditionalCallback(handleAnswerClick, answer)}>
-            <PlayerNick appear show={Boolean(answer.player)}>
-              {answer.player?.nick ?? <>&nbsp;</>}
-              {isWinner(answer) && <WinnerIcon as={Trophy} size={2} />}
+            <PlayerNick appear show={isNotAnonymous(answer)}>
+              {isNotAnonymous(answer) ? answer.player.nick : <>&nbsp;</>}
+              {isWinningAnswer(answer) && <WinnerIcon as={Trophy} size={2} />}
             </PlayerNick>
             <Box marginLeft={2}>
               <QuestionCard question={game.question} choices={answer.choices} />

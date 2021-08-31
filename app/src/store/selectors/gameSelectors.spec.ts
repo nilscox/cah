@@ -3,6 +3,8 @@ import expect from 'expect';
 import { setGame, setPlayer } from '../../domain/actions';
 import { Game } from '../../domain/entities/Game';
 import {
+  createAnonymousAnswer,
+  createAnswer,
   createFullPlayer,
   createGame,
   createPlayer,
@@ -18,6 +20,7 @@ import {
   selectCanStartGame,
   selectCurrentQuestion,
   selectIsLastTurn,
+  selectIsWinningAnswer,
   selectPlayers,
   selectTurns,
 } from './gameSelectors';
@@ -94,6 +97,43 @@ describe('gameSelectors', () => {
       });
 
       expect(selectCurrentQuestion(state)).toEqual(question);
+    });
+  });
+
+  describe('selectIsWinningAnswer', () => {
+    it("returns true when an answer in the winner's answer", () => {
+      const winner = createPlayer();
+      const answer = createAnswer({ player: winner });
+
+      const state = createState({ game: createStartedGame({ winner }) });
+
+      expect(selectIsWinningAnswer(state)(answer)).toEqual(true);
+    });
+
+    it('returns false when the answer is annonymous', () => {
+      const winner = createPlayer();
+      const answer = createAnonymousAnswer();
+
+      const state = createState({ game: createStartedGame({ winner }) });
+
+      expect(selectIsWinningAnswer(state)(answer)).toEqual(false);
+    });
+
+    it('returns false when an answer there is no winner', () => {
+      const answer = createAnswer();
+
+      const state = createState({ game: createStartedGame() });
+
+      expect(selectIsWinningAnswer(state)(answer)).toEqual(false);
+    });
+
+    it("returns false when an answer in not the winner's answer", () => {
+      const winner = createPlayer();
+      const answer = createAnswer();
+
+      const state = createState({ game: createStartedGame({ winner }) });
+
+      expect(selectIsWinningAnswer(state)(answer)).toEqual(false);
     });
   });
 });

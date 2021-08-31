@@ -1,3 +1,4 @@
+import { AnonymousAnswer, Answer, isNotAnonymous } from '../../domain/entities/Answer';
 import { StartedGame } from '../../domain/entities/Game';
 import { AppState } from '../types';
 
@@ -31,4 +32,16 @@ export const selectCanStartGame = (state: AppState) => {
   const isCreator = selectIsGameCreator(state);
 
   return isCreator && game.players.length >= 3;
+};
+
+export const selectIsWinningAnswer = (state: AppState) => {
+  const game = selectGame(state);
+
+  return (answer: AnonymousAnswer | Answer): boolean => {
+    if (!game.winner || !isNotAnonymous(answer)) {
+      return false;
+    }
+
+    return game.winner.id === answer.player.id;
+  };
 };

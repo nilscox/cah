@@ -5,9 +5,12 @@ export interface AnonymousAnswer {
   id: string;
   choices: Choice[];
   formatted: string;
-  player?: Player;
 }
 
 export interface Answer extends AnonymousAnswer {
   player: Player;
 }
+
+export const isNotAnonymous = (answer: AnonymousAnswer | Answer): answer is Answer => {
+  return 'player' in answer;
+};

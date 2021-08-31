@@ -4,7 +4,7 @@ import { createGame, createPlayer, createPlayers, createState, createTurn, creat
 
 import { selectGameWinners, selectScores, selectScoresExcludingWinners } from './scoresSelectors';
 
-describe('gameSelectors', () => {
+describe('scoresSelectors', () => {
   const nicks = ['player1', 'player2', 'player3'];
 
   describe('selectScores', () => {
