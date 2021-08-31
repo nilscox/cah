@@ -9,7 +9,7 @@ import { ConfigurationVariable } from './application/interfaces/ConfigService';
 import { createTypeormConnection, instanciateDependencies } from './infrastructure';
 import { createRoutes } from './infrastructure/web';
 import { WebServer } from './infrastructure/web/web';
-import { AnonymousAnswerDto, AnswerDto, ChoiceDto, QuestionDto } from './shared/dtos';
+import { AnswerDto, ChoiceDto, PlayerDto, QuestionDto } from './shared/dtos';
 import { EventDto } from './shared/events';
 
 const port = 1222;
@@ -30,17 +30,19 @@ class StubPlayer {
   public gameState: 'idle' | 'started' | 'finished' = 'idle';
   public playState?: 'playersAnswer' | 'questionMasterSelection' | 'endOfTurn';
 
+  public players: PlayerDto[] = [];
+
   public cards: ChoiceDto[] = [];
   public questionMaster?: string;
   public question?: QuestionDto;
 
-  public answers: Array<AnonymousAnswerDto | AnswerDto> = [];
+  public answers: Array<AnswerDto> = [];
   public winner?: string;
 
   public events: EventDto[] = [];
 
   get isQuestionMaster() {
-    return this.questionMaster === this.nick;
+    return this.questionMaster === this.playerId;
   }
 
   constructor(server: WebServer, public nick: string) {
@@ -68,6 +70,9 @@ class StubPlayer {
 
     switch (event.type) {
       case 'GameJoined':
+        this.players.push(event.player);
+        break;
+
       case 'GameLeft':
       case 'PlayerAnswered':
         break;

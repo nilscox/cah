@@ -13,7 +13,7 @@ import { WinnerSelectedEvent } from '../../../domain/events/WinnerSelectedEvent'
 import { Answer } from '../../../domain/models/Answer';
 import { Blank } from '../../../domain/models/Blank';
 import { createChoice } from '../../../domain/models/Choice';
-import { createGame } from '../../../domain/models/Game';
+import { createGame, StartedGame } from '../../../domain/models/Game';
 import { Player } from '../../../domain/models/Player';
 import { createQuestion, createQuestions } from '../../../domain/models/Question';
 import { InMemoryGameRepository } from '../../../infrastructure/database/repositories/game/InMemoryGameRepository';
@@ -109,8 +109,9 @@ describe('GameEventsHandler', () => {
     expect(notifier.lastGameMessage(game)).toEqual({
       type: 'TurnStarted',
       playState: PlayState.playersAnswer,
-      questionMaster: 'question master',
+      questionMaster: game.questionMaster.id,
       question: {
+        id: game.question.id,
         text: 'question  ?',
         blanks: [9],
         numberOfBlanks: 1,
@@ -127,7 +128,7 @@ describe('GameEventsHandler', () => {
 
     expect(notifier.lastGameMessage(game)).toEqual({
       type: 'PlayerAnswered',
-      player: player.nick,
+      player: player.id,
     });
   });
 
@@ -167,11 +168,11 @@ describe('GameEventsHandler', () => {
 
     expect(notifier.lastGameMessage(game)).toEqual({
       type: 'WinnerSelected',
-      winner: 'winner',
+      winner: winner.id,
       answers: [
         {
           id: answer.id,
-          player: 'player',
+          player: player.id,
           choices: invokeMap(answer.choices, 'toJSON'),
           formatted: 'Who are you? who who',
         },

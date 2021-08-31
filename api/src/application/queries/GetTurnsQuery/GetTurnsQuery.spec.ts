@@ -1,4 +1,4 @@
-import { expect } from 'chai';
+import { expect } from 'earljs';
 
 import { Answer } from '../../../domain/models/Answer';
 import { createChoice } from '../../../domain/models/Choice';
@@ -45,17 +45,24 @@ describe('GetTurnsQuery', () => {
 
     const turns = await handler.execute({ gameId: game.id }, session);
 
-    expect(turns).to.have.length(2);
-
-    expect(turns[0]).to.eql({
+    expect(turns).toBeAnArrayOfLength(2);
+    expect(turns[0]).toEqual({
+      id: turns[0].id,
       number: 1,
-      questionMaster: questionMaster.nick,
+      questionMaster: questionMaster.id,
       question: question.toJSON(),
-      answers: [answers[0].toJSON()],
-      winner: winner.nick,
+      answers: [
+        {
+          id: answers[0].id,
+          choices: [expect.objectWith({ id: answers[0].choices[0].id })],
+          player: winner.id,
+          formatted: expect.a(String),
+        },
+      ],
+      winner: winner.id,
     });
 
-    expect(turns[1]).to.shallowDeepEqual({
+    expect(turns[1]).toBeAnObjectWith({
       number: 2,
     });
   });

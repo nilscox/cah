@@ -1,5 +1,5 @@
-import { AnonymousAnswerDto, AnswerDto, GameDto, TurnDto } from '../../../../shared/dtos';
-import { Answer } from '../../domain/entities/Answer';
+import { AnswerDto, GameDto, PlayerId, StartedGameDto, TurnDto } from '../../../../shared/dtos';
+import { AnonymousAnswer, Answer } from '../../domain/entities/Answer';
 import { Choice } from '../../domain/entities/Choice';
 import { Game, isStarted, StartedGame } from '../../domain/entities/Game';
 import { Player } from '../../domain/entities/Player';
@@ -8,21 +8,27 @@ import { GameGateway } from '../../domain/gateways/GameGateway';
 
 import { HTTPAdapter } from './HTTPAdapter';
 
-class DtoMapper {
-  private static toAnswer(dto: AnonymousAnswerDto | AnswerDto, findPlayer: (nick: string) => Player): Answer {
-    const answer: Answer = { ...dto } as Answer;
+type FindPlayer = (player: PlayerId) => Player;
 
-    if ('player' in dto) {
+class DtoMapper {
+  private static toAnswer(dto: AnswerDto, findPlayer: FindPlayer): Answer {
+    const answer: AnonymousAnswer = {
+      id: dto.id,
+      choices: dto.choices,
+      formatted: dto.formatted,
+    };
+
+    if (dto.player) {
       answer.player = findPlayer(dto.player);
     }
 
-    return answer;
+    return answer as Answer;
   }
 
-  static toGame(dto: GameDto): Game | StartedGame {
-    const findPlayer = (nick: string) => dto.players.find((player) => player.nick === nick)!;
+  static toGame(dto: GameDto | StartedGameDto): Game | StartedGame {
+    const findPlayer: FindPlayer = (id: string) => dto.players.find((player) => player.id === id)!;
 
-    const game: Game = {
+    const game: Game | StartedGame = {
       ...dto,
       creator: findPlayer(dto.creator),
       state: dto.gameState,
@@ -30,11 +36,13 @@ class DtoMapper {
     };
 
     if (isStarted(game)) {
-      game.questionMaster = findPlayer(dto.questionMaster!);
-      game.answers = dto.answers?.map((answer) => DtoMapper.toAnswer(answer, findPlayer)) ?? [];
+      const { questionMaster, answers, winner } = dto as StartedGameDto;
 
-      if (dto.winner) {
-        game.winner = findPlayer(dto.winner);
+      game.questionMaster = findPlayer(questionMaster);
+      game.answers = answers.map((answer) => DtoMapper.toAnswer(answer, findPlayer)) ?? [];
+
+      if (winner) {
+        game.winner = findPlayer(winner);
       }
     }
 

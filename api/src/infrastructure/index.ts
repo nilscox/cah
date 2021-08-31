@@ -68,10 +68,10 @@ export const instanciateDependencies = async (config: Config = {}): Promise<Depe
 
   const rtcManager = new WebsocketRTCManager(playerRepository, gameRepository, websocketServer, publisher);
 
-  const gameEventsHandler = new GameEventsHandler(logger(), rtcManager, rtcManager, gameRepository);
-  const playerEventsHandler = new PlayerEventsHandler(logger(), rtcManager);
-
   const mapper = new DtoMapperService(gameRepository, rtcManager);
+
+  const gameEventsHandler = new GameEventsHandler(logger(), rtcManager, gameRepository, mapper);
+  const playerEventsHandler = new PlayerEventsHandler(logger(), rtcManager);
 
   publisher.subscribe(gameEventsHandler);
   publisher.subscribe(playerEventsHandler);

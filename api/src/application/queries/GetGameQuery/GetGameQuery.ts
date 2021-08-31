@@ -1,5 +1,5 @@
 import { QueryHandler } from '../../../ddd/QueryHandler';
-import { GameDto } from '../../../shared/dtos';
+import { GameDto, StartedGameDto } from '../../../shared/dtos';
 import { DtoMapperService } from '../../services/DtoMapperService';
 import { GameService } from '../../services/GameService';
 
@@ -7,7 +7,7 @@ export class GetGameQuery {
   constructor(public readonly gameId: string) {}
 }
 
-export class GetGameHandler implements QueryHandler<GetGameQuery, GameDto> {
+export class GetGameHandler implements QueryHandler<GetGameQuery, GameDto | StartedGameDto> {
   constructor(private readonly gameService: GameService, private readonly dtoMapper: DtoMapperService) {}
 
   async execute({ gameId }: GetGameQuery) {

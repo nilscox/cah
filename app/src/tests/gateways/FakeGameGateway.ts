@@ -5,7 +5,7 @@ import { Player } from '../../domain/entities/Player';
 import { Question } from '../../domain/entities/Question';
 import { Turn } from '../../domain/entities/Turn';
 import { GameGateway } from '../../domain/gateways/GameGateway';
-import { createGame, createQuestion } from '../factories';
+import { createGame } from '../factories';
 
 import { FakeRTCGateway } from './FakeRTCGateway';
 
@@ -36,13 +36,17 @@ export class FakeGameGateway implements GameGateway {
     //
   }
 
+  firstQuestion?: Question;
+
   async startGame(questionMaster: Player, turns: number): Promise<void> {
+    if (!this.firstQuestion) throw new Error('question is not set');
+
     this.rtcGateway.triggerMessage({ type: 'GameStarted', totalQuestions: turns });
 
     this.rtcGateway.triggerMessage({
       type: 'TurnStarted',
       playState: PlayState.playersAnswer,
-      question: createQuestion(),
+      question: this.firstQuestion,
       questionMaster: questionMaster.nick,
     });
   }
@@ -75,9 +79,7 @@ export class FakeGameGateway implements GameGateway {
   winner?: Player;
 
   async selectWinningAnswer(answer: AnonymousAnswer): Promise<void> {
-    if (!this.winner) {
-      throw new Error('winner is not set');
-    }
+    if (!this.winner) throw new Error('winner is not set');
 
     this.winningAnswer = answer;
 

@@ -1,28 +1,24 @@
-import { AnonymousAnswerDto, AnswerDto, ChoiceDto, QuestionDto } from './dtos';
+import { AnswerDto, ChoiceDto, PlayerDto, PlayerId, QuestionDto } from './dtos';
 import { PlayState } from './enums';
 
 export interface PlayerConnectedEvent {
   type: 'PlayerConnected';
-  player: string;
+  player: PlayerId;
 }
 
 export interface PlayerDisconnectedEvent {
   type: 'PlayerDisconnected';
-  player: string;
+  player: PlayerId;
 }
 
 export interface GameJoinedEvent {
   type: 'GameJoined';
-  player: {
-    id: string;
-    nick: string;
-    isConnected: boolean;
-  };
+  player: PlayerDto;
 }
 
 export interface GameLeftEvent {
   type: 'GameLeft';
-  player: string;
+  player: PlayerId;
 }
 
 export interface GameStartedEvent {
@@ -34,22 +30,22 @@ export interface TurnStartedEvent {
   type: 'TurnStarted';
   playState: PlayState.playersAnswer;
   question: QuestionDto;
-  questionMaster: string;
+  questionMaster: PlayerId;
 }
 
 export interface PlayerAnsweredEvent {
   type: 'PlayerAnswered';
-  player: string;
+  player: PlayerId;
 }
 
 export interface AllPlayersAnsweredEvent {
   type: 'AllPlayersAnswered';
-  answers: AnonymousAnswerDto[];
+  answers: AnswerDto[];
 }
 
 export interface WinnerSelectedEvent {
   type: 'WinnerSelected';
-  winner: string;
+  winner: PlayerId;
   answers: AnswerDto[];
 }
 

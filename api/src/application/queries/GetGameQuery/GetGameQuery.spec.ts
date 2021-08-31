@@ -11,6 +11,8 @@ import { createQuestion } from '../../../domain/models/Question';
 import { InMemoryGameRepository } from '../../../infrastructure/database/repositories/game/InMemoryGameRepository';
 import { InMemoryPlayerRepository } from '../../../infrastructure/database/repositories/player/InMemoryPlayerRepository';
 import { StubExternalData } from '../../../infrastructure/stubs/StubExternalData';
+import { StubRTCManager } from '../../../infrastructure/stubs/StubRTCManager';
+import { GameDto, StartedGameDto } from '../../../shared/dtos';
 import { GameState, PlayState } from '../../../shared/enums';
 import { instanciateHandler } from '../../../utils/dependencyInjection';
 import { GameBuilder } from '../../../utils/GameBuilder';
@@ -22,12 +24,13 @@ describe('GetGameQuery', () => {
   let gameRepository: InMemoryGameRepository;
   let playerRepository: InMemoryPlayerRepository;
   let externalData: StubExternalData;
+  let rtcManager: StubRTCManager;
 
   let handler: GetGameHandler;
 
   beforeEach(() => {
     const deps = instanciateStubDependencies();
-    ({ gameRepository, playerRepository, externalData } = deps);
+    ({ gameRepository, playerRepository, externalData, rtcManager } = deps);
 
     handler = instanciateHandler(GetGameHandler, deps);
   });
@@ -38,28 +41,34 @@ describe('GetGameQuery', () => {
     builder = new GameBuilder(gameRepository, playerRepository, externalData);
   });
 
+  const query = <T extends GameDto | StartedGameDto>(gameId: string): Promise<T> => {
+    return handler.execute({ gameId }) as Promise<T>;
+  };
+
   it('throws when the game does not exist', async () => {
-    await expect(handler.execute({ gameId: 'nope' })).toBeRejected(GameNotFoundError);
+    await expect(query('nope')).toBeRejected(GameNotFoundError);
   });
 
   it('queries an idle game', async () => {
     const player = new Player('graincheux');
     const game = await builder
-      .from(createGame({ creator: player }))
+      .from(createGame({ code: '12AB', creator: player }))
       .addPlayer(player)
       .get();
 
-    const result = await handler.execute({ gameId: game.id });
+    rtcManager.setConnected(player);
+
+    const result = await query(game.id);
 
     expect(result).toEqual({
       id: game.id,
-      code: game.code,
-      creator: 'graincheux',
+      code: '12AB',
+      creator: player.id,
       players: [
         {
           id: player.id,
           nick: 'graincheux',
-          isConnected: false,
+          isConnected: true,
         },
       ],
       gameState: GameState.idle,
@@ -69,7 +78,7 @@ describe('GetGameQuery', () => {
   it('queries a finished game', async () => {
     const game = await builder.addPlayers().start().finish().get();
 
-    const result = await handler.execute({ gameId: game.id });
+    const result = await query<GameDto>(game.id);
 
     expect(omit(result, 'creator', 'players')).toEqual({
       id: game.id,
@@ -89,16 +98,16 @@ describe('GetGameQuery', () => {
     game.answers = [new Answer(player, question, choices)];
     await gameRepository.save(game);
 
-    const result = await handler.execute({ gameId: game.id });
+    const result = await query<StartedGameDto>(game.id);
 
-    expect(omit(result, 'creator', 'players')).toEqual({
+    expect(omit(result, 'code', 'creator', 'players')).toEqual({
       id: game.id,
-      code: game.code,
       totalQuestions: 6,
       gameState: GameState.started,
       playState: PlayState.playersAnswer,
-      questionMaster: game.questionMaster.nick,
+      questionMaster: game.questionMaster.id,
       question: {
+        id: game.question.id,
         text: 'hell  low ?',
         formatted: 'hell __ low __?',
         blanks: [5, 10],
@@ -119,13 +128,14 @@ describe('GetGameQuery', () => {
     game.answers = [new Answer(player, question, choices)];
     await gameRepository.save(game);
 
-    const result = await handler.execute({ gameId: game.id });
+    const result = await query<StartedGameDto>(game.id);
 
-    expect(omit(result, 'id', 'creator', 'code', 'questionMaster', 'players')).toEqual({
+    expect(omit(result, 'id', 'code', 'creator', 'questionMaster', 'players')).toEqual({
       gameState: GameState.started,
       playState: PlayState.questionMasterSelection,
       totalQuestions: 1,
       question: {
+        id: question.id,
         text: 'Who are you?',
         formatted: 'Who are you? __',
         blanks: undefined,
@@ -160,9 +170,9 @@ describe('GetGameQuery', () => {
 
     await gameRepository.save(game);
 
-    const result = await handler.execute({ gameId: game.id });
+    const result = await query<StartedGameDto>(game.id);
 
-    expect(omit(result, 'id', 'creator', 'code', 'questionMaster', 'question', 'players')).toEqual({
+    expect(omit(result, 'id', 'code', 'creator', 'questionMaster', 'question', 'players')).toEqual({
       gameState: GameState.started,
       playState: PlayState.endOfTurn,
       totalQuestions: 1,
@@ -171,10 +181,10 @@ describe('GetGameQuery', () => {
           id: game.answers[0].id,
           choices: invokeMap(choices, 'toJSON'),
           formatted: 'hell yeah low !?',
-          player: 'joyeux',
+          player: player.id,
         },
       ],
-      winner: 'joyeux',
+      winner: player.id,
     });
   });
 });

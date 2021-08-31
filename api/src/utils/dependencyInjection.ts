@@ -62,7 +62,7 @@ export const instanciateHandlers = (deps: Dependencies, defaultLogger?: Logger) 
   ];
 
   const eventHandlers: HandlersMap<EventHandler<unknown>> = [
-    [GameEventsHandler, new GameEventsHandler(logger(), notifier, rtcManager, gameRepository)],
+    [GameEventsHandler, new GameEventsHandler(logger(), notifier, gameRepository, mapper)],
     [PlayerEventsHandler, new PlayerEventsHandler(logger(), notifier)],
   ];
 

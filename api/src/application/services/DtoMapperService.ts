@@ -2,8 +2,18 @@ import { Answer } from '../../domain/models/Answer';
 import { Choice } from '../../domain/models/Choice';
 import { Game } from '../../domain/models/Game';
 import { Player } from '../../domain/models/Player';
+import { Question } from '../../domain/models/Question';
 import { Turn } from '../../domain/models/Turn';
-import { AnswerDto, ChoiceDto, FullPlayerDto, GameDto, PlayerDto, TurnDto } from '../../shared/dtos';
+import {
+  AnswerDto,
+  ChoiceDto,
+  FullPlayerDto,
+  GameDto,
+  PlayerDto,
+  QuestionDto,
+  StartedGameDto,
+  TurnDto,
+} from '../../shared/dtos';
 import { PlayState } from '../../shared/enums';
 import { GameRepository } from '../interfaces/GameRepository';
 import { RTCManager } from '../interfaces/RTCManager';
@@ -11,37 +21,54 @@ import { RTCManager } from '../interfaces/RTCManager';
 export class DtoMapperService {
   constructor(private readonly gameRepository: GameRepository, private readonly rtcManager: RTCManager) {}
 
-  toChoiceDto(choice: Choice): ChoiceDto {
+  toChoiceDto = (choice: Choice): ChoiceDto => {
     return choice.toJSON();
-  }
+  };
 
-  toPlayerDto(player: Player): PlayerDto {
-    const data = player.toJSON();
+  toQuestionDto = (question: Question): QuestionDto => {
+    return question.toJSON();
+  };
+
+  toAnswerDto = (answer: Answer, anonymous = false): AnswerDto => {
+    const { player, ...dto } = answer.toJSON(anonymous);
+
+    if (!player) {
+      return dto;
+    }
 
     return {
-      id: data.id,
-      nick: data.nick,
+      ...dto,
+      player: player.id,
+    };
+  };
+
+  toPlayerDto = (player: Player): PlayerDto => {
+    const { id, nick } = player.toJSON();
+
+    return {
+      id,
+      nick,
       isConnected: this.rtcManager.isConnected(player),
     };
-  }
+  };
 
-  toFullPlayerDto(player: Player): FullPlayerDto {
-    const data = player.toJSON();
+  toFullPlayerDto = (player: Player): FullPlayerDto => {
+    const { gameId } = player.toJSON();
 
     return {
       ...this.toPlayerDto(player),
-      gameId: data.gameId,
-      cards: player.cards.map((choice) => this.toChoiceDto(choice)),
+      gameId,
+      cards: player.cards.map(this.toChoiceDto),
       hasFlushed: player.hasFlushed,
     };
-  }
+  };
 
-  async gameToDto(game: Game): Promise<GameDto> {
-    const result = {
+  gameToDto = async (game: Game): Promise<GameDto | StartedGameDto> => {
+    const result: GameDto = {
       id: game.id,
-      creator: game.creator.nick,
       code: game.code,
-      players: game.players.map((player) => this.toPlayerDto(player)),
+      creator: game.creator.id,
+      players: game.players.map(this.toPlayerDto),
       gameState: game.state,
     };
 
@@ -49,30 +76,35 @@ export class DtoMapperService {
       return result;
     }
 
-    let answers: Answer[] = [];
+    const getAnswers = (): AnswerDto[] => {
+      if (game.playState === PlayState.playersAnswer) {
+        return [];
+      }
 
-    if (game.playState !== PlayState.playersAnswer) {
-      answers = game.answers;
-    }
+      const anonymous = game.playState !== PlayState.endOfTurn;
+
+      return game.answers.map((answer) => this.toAnswerDto(answer, anonymous));
+    };
 
     return {
       ...result,
       playState: game.playState,
       totalQuestions: await this.gameRepository.getQuestionsCount(game.id),
-      questionMaster: game.questionMaster.nick,
-      question: game.question.toJSON(),
-      answers: answers.map((answer) => answer.toJSON(game.playState !== PlayState.endOfTurn)),
-      winner: game.winner?.nick,
-    };
-  }
+      questionMaster: game.questionMaster.id,
+      question: this.toQuestionDto(game.question),
+      answers: getAnswers(),
+      winner: game.winner?.id,
+    } as StartedGameDto;
+  };
 
-  turnToDto(turn: Turn, index: number): TurnDto {
+  turnToDto = (turn: Turn, index: number): TurnDto => {
     return {
+      id: turn.id,
       number: index + 1,
-      questionMaster: turn.questionMaster.nick,
-      question: turn.question.toJSON(),
-      answers: turn.answers.map((answer) => answer.toJSON() as AnswerDto),
-      winner: turn.winner.nick,
+      questionMaster: turn.questionMaster.id,
+      question: this.toQuestionDto(turn.question),
+      answers: turn.answers.map((answer) => this.toAnswerDto(answer)),
+      winner: turn.winner.id,
     };
-  }
+  };
 }

@@ -1,117 +1,98 @@
-import _ from 'lodash';
-
 import { EventHandler } from '../../../ddd/EventHandler';
 import { GameEvent } from '../../../domain/events';
 import { Game, StartedGame } from '../../../domain/models/Game';
-import { AnswerDto } from '../../../shared/dtos';
 import { PlayState } from '../../../shared/enums';
-import { EventDto } from '../../../shared/events';
+import { GameEventDto } from '../../../shared/events';
 import { GameRepository } from '../../interfaces/GameRepository';
 import { Logger } from '../../interfaces/Logger';
 import { Notifier } from '../../interfaces/Notifier';
-import { RTCManager } from '../../interfaces/RTCManager';
+import { DtoMapperService } from '../../services/DtoMapperService';
 
 export class GameEventsHandler implements EventHandler<GameEvent> {
   constructor(
     private readonly logger: Logger,
     private readonly notifier: Notifier,
-    private readonly rtcManager: RTCManager,
     private readonly gameRepository: GameRepository,
+    private readonly dtoMapper: DtoMapperService,
   ) {
     this.logger.setContext('GameEvent');
   }
 
   async execute(event: GameEvent) {
+    const notify = <Event extends GameEventDto>(eventDto: Event) => {
+      this.notify(event.game, eventDto);
+    };
+
     switch (event.type) {
       case 'PlayerConnected':
       case 'PlayerDisconnected':
-        this.notify(event.game, {
-          type: event.type,
-          player: event.player.nick,
-        });
+        notify({ type: event.type, player: event.player.id });
         break;
 
       case 'GameJoined':
-        this.notify(event.game, {
-          type: event.type,
-          player: {
-            ..._.pick(event.player, 'id', 'nick'),
-            isConnected: this.rtcManager.isConnected(event.player),
-          },
-        });
+        notify({ type: event.type, player: this.dtoMapper.toPlayerDto(event.player) });
         break;
 
       case 'GameLeft':
-        this.notify(event.game, {
-          type: event.type,
-          player: event.player.nick,
-        });
+        notify({ type: event.type, player: event.player.nick });
         break;
 
       case 'GameStarted':
-        this.notify(event.game, {
+        notify({
           type: event.type,
           totalQuestions: await this.gameRepository.getQuestionsCount(event.game.id),
         });
+
         break;
 
       case 'TurnStarted': {
-        const game = event.game as StartedGame;
-        const { question, questionMaster } = game;
+        const { question, questionMaster } = event.game as StartedGame;
 
-        this.notify(event.game, {
+        notify({
           type: event.type,
           playState: PlayState.playersAnswer,
           question: question.toJSON(),
-          questionMaster: questionMaster.nick,
+          questionMaster: questionMaster.id,
         });
 
         break;
       }
 
       case 'PlayerAnswered':
-        this.notify(event.game, {
-          type: event.type,
-          player: event.player.nick,
-        });
+        notify({ type: event.type, player: event.player.id });
         break;
 
       case 'AllPlayersAnswered': {
-        const game = event.game as StartedGame;
-        const { answers } = game;
+        const { answers } = event.game as StartedGame;
 
-        this.notify(event.game, {
+        notify({
           type: event.type,
-          answers: answers.map((answer) => answer.toJSON(true)),
+          answers: answers.map((answer) => this.dtoMapper.toAnswerDto(answer, true)),
         });
 
         break;
       }
 
       case 'WinnerSelected': {
-        const game = event.game as StartedGame;
-        const { answers, winner } = game;
+        const { answers, winner } = event.game as StartedGame;
 
-        this.notify(event.game, {
+        notify({
           type: event.type,
-          winner: winner!.nick,
-          answers: answers.map((answer) => answer.toJSON() as AnswerDto),
+          winner: winner!.id,
+          answers: answers.map((answer) => this.dtoMapper.toAnswerDto(answer)),
         });
 
         break;
       }
 
       case 'TurnFinished':
-        this.notify(event.game, { type: event.type });
-        break;
-
       case 'GameFinished':
-        this.notify(event.game, { type: event.type });
+        notify({ type: event.type });
         break;
     }
   }
 
-  private notify(game: Game, event: EventDto) {
+  private notify(game: Game, event: GameEventDto) {
     this.logger.info('notify', game.code, { type: event.type });
     this.logger.debug('notify', event);
 

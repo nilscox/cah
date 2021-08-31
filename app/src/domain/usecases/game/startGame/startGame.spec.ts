@@ -16,10 +16,13 @@ describe('startGame', () => {
 
   it('starts a game', async () => {
     const player = createPlayer({ nick: 'wat' });
+    const game = createGame({ players: [player] });
+    const question = createQuestion();
 
-    store.dispatch(setGame(createGame({ players: [player] })));
-
+    store.dispatch(setGame(game));
     store.listenRTCMessages();
+
+    store.gameGateway.firstQuestion = question;
 
     await store.dispatch(startGame(player, 3));
 
@@ -27,7 +30,7 @@ describe('startGame', () => {
       state: GameState.started,
       playState: PlayState.playersAnswer,
       questionMaster: player,
-      question: createQuestion(),
+      question,
       totalQuestions: 3,
     });
   });
@@ -37,6 +40,8 @@ describe('startGame', () => {
 
     store.dispatch(setGame(createGame({ code: '1234' })));
     store.listenRTCMessages();
+
+    store.gameGateway.firstQuestion = createQuestion();
 
     await store.dispatch(startGame(player, 3));
 

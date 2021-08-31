@@ -65,6 +65,7 @@ export class Question extends Entity {
 
   toJSON() {
     return {
+      id: this.id,
       text: this.text,
       blanks: this.blanks,
       numberOfBlanks: this.numberOfBlanks,

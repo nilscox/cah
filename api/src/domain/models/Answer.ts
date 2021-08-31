@@ -16,7 +16,7 @@ export class Answer extends Entity {
   toJSON(anonymous = false) {
     return {
       id: this.id,
-      ...(!anonymous && { player: this.player.nick }),
+      ...(!anonymous && { player: this.player }),
       choices: this.choices.map((choice) => choice.toJSON()),
       formatted: this.question.toString(this.choices),
     };

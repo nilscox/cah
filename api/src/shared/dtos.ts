@@ -1,58 +1,67 @@
 import { GameState, PlayState } from './enums';
 
+export type ChoiceId = string;
 export interface ChoiceDto {
-  id: string;
+  id: ChoiceId;
   text: string;
   caseSensitive: boolean;
 }
 
-export interface PlayerDto {
-  id: string;
-  nick: string;
-  isConnected: boolean;
-}
-
-export interface FullPlayerDto extends PlayerDto {
-  gameId?: string;
-  cards: ChoiceDto[];
-  hasFlushed: boolean;
-}
-
+export type QuestionId = string;
 export interface QuestionDto {
+  id: QuestionId;
   text: string;
   blanks?: number[];
   numberOfBlanks: number;
   formatted: string;
 }
 
-export interface AnonymousAnswerDto {
-  id: string;
+export type AnswerId = string;
+export interface AnswerDto {
+  id: AnswerId;
   choices: ChoiceDto[];
   formatted: string;
+  player?: PlayerId;
 }
 
-export interface AnswerDto extends AnonymousAnswerDto {
-  player: string;
+export type PlayerId = string;
+export interface PlayerDto {
+  id: PlayerId;
+  nick: string;
+  isConnected: boolean;
 }
 
+export interface FullPlayerDto extends PlayerDto {
+  gameId?: GameId;
+  cards: ChoiceDto[];
+  hasFlushed: boolean;
+}
+
+export type GameId = string;
 export interface GameDto {
-  id: string;
-  creator: string;
+  id: GameId;
   code: string;
+  creator: PlayerId;
   players: PlayerDto[];
   gameState: GameState;
-  playState?: PlayState;
-  totalQuestions?: number;
-  questionMaster?: string;
-  question?: QuestionDto;
-  answers?: Array<AnonymousAnswerDto | AnswerDto>;
-  winner?: string;
 }
 
-export interface TurnDto {
-  number: number;
-  questionMaster: string;
+export interface StartedGameDto extends GameDto {
+  gameState: GameState.started;
+  playState: PlayState;
+  totalQuestions: number;
+  questionMaster: PlayerId;
   question: QuestionDto;
-  winner: string;
+  answers: Array<AnswerDto>;
+  winner?: PlayerId;
+}
+
+export type TurnId = string;
+export interface TurnDto {
+  id: TurnId;
+  number: number;
+  questionMaster: PlayerId;
+  question: QuestionDto;
+  winner: PlayerId;
   answers: AnswerDto[];
 }

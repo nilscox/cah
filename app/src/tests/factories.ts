@@ -143,6 +143,7 @@ export const [createTurn, createTurns] = factory<Turn>((index) => ({
 }));
 
 export const [createQuestion, createQuestions] = factory<Question>((index) => ({
+  id: createId(),
   text: `question ${index}`,
   formatted: `question ${index}`,
   numberOfBlanks: 1,
