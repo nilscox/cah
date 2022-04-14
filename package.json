@@ -1,0 +1,10 @@
+{
+  "name": "cah",
+  "version": "1.0.0",
+  "repository": "git@github.com:nilscox/cah.git",
+  "author": "nilscox <nils@nils.cx>",
+  "license": "MIT",
+  "engines": {
+    "node": "16.x"
+  }
+}
