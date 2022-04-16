@@ -1,5 +1,6 @@
 node_modules
 dist
+volume
 Dockerfile
 .dockerignore
 .docker-run.sh
