@@ -47,7 +47,7 @@ export class FakeGameGateway implements GameGateway {
       type: 'TurnStarted',
       playState: PlayState.playersAnswer,
       question: this.firstQuestion,
-      questionMaster: questionMaster.nick,
+      questionMaster: questionMaster.id,
     });
   }
 
@@ -85,13 +85,13 @@ export class FakeGameGateway implements GameGateway {
 
     this.rtcGateway.triggerMessage({
       type: 'WinnerSelected',
-      winner: this.winner.nick,
+      winner: this.winner.id,
       answers: [
         {
           id: answer.id,
           choices: answer.choices,
           formatted: answer.formatted,
-          player: this.winner.nick,
+          player: this.winner.id,
         },
       ],
     });
@@ -112,7 +112,7 @@ export class FakeGameGateway implements GameGateway {
       this.rtcGateway.triggerMessage({
         type: 'TurnStarted',
         playState: PlayState.playersAnswer,
-        questionMaster: this.nextQuestionMaster.nick,
+        questionMaster: this.nextQuestionMaster.id,
         question: this.nextQuestion,
       });
     } else {

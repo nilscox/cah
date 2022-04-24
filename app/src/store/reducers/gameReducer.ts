@@ -1,6 +1,7 @@
 import { GameState as GameStateEnum } from '../../../../shared/enums';
 import { Answer } from '../../domain/entities/Answer';
 import { Game, GameState as GS, PlayState, StartedGame } from '../../domain/entities/Game';
+import { Player } from '../../domain/entities/Player';
 import { RTCMessage } from '../../domain/gateways/RTCGateway';
 import { AppAction, NotNull, Nullable } from '../types';
 
@@ -8,15 +9,15 @@ import { append, remove, upsert } from './helpers';
 
 export type GameState = Nullable<Game | StartedGame>;
 
-const setPlayerConnected = (state: NotNull<GameState>, nick: string, isConnected: boolean): GameState => {
+const setPlayerConnected = (state: NotNull<GameState>, id: string, isConnected: boolean): GameState => {
   return {
     ...state,
-    players: upsert(state.players, (player) => player.nick === nick, { isConnected }),
+    players: upsert(state.players, (player) => player.id === id, { isConnected }),
   };
 };
 
-const findPlayer = (state: GameState, nick: string) => {
-  return state?.players.find((player) => player.nick === nick);
+const findPlayer = (state: GameState, id: string) => {
+  return state?.players.find((player) => player.id === id);
 };
 
 const rtcMessageReducer = (state: NotNull<GameState>, message: RTCMessage): GameState => {
@@ -73,7 +74,7 @@ const rtcMessageReducer = (state: NotNull<GameState>, message: RTCMessage): Game
       playState: PlayState.endOfTurn,
       answers: message.answers.map((answer) => ({
         ...answer,
-        player: findPlayer(state, answer.player),
+        player: findPlayer(state, answer.player as string),
       })),
       winner: findPlayer(state, message.winner),
     };
@@ -90,7 +91,7 @@ const rtcMessageReducer = (state: NotNull<GameState>, message: RTCMessage): Game
         number: game.turns.length + 1,
         question: game.question,
         answers: game.answers as Answer[],
-        winner: game.winner!,
+        winner: game.winner as Player,
       }),
     };
   }
