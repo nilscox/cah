@@ -4,6 +4,7 @@ import { FlushCardsHandler } from '../application/commands/FlushCardsCommand/Flu
 import { JoinGameHandler } from '../application/commands/JoinGameCommand/JoinGameCommand';
 import { LeaveGameHandler } from '../application/commands/LeaveCommand/LeaveGameCommand';
 import { LoginHandler } from '../application/commands/LoginCommand/LoginCommand';
+import { LogoutHandler } from '../application/commands/LogoutCommand/LogoutCommand';
 import { NextTurnHandler } from '../application/commands/NextTurnCommand/NextTurnCommand';
 import { SelectWinnerHandler } from '../application/commands/SelectWinnerCommand/SelectWinnerCommand';
 import { StartGameHandler } from '../application/commands/StartGameCommand/StartGameCommand';
@@ -50,6 +51,7 @@ export const instanciateHandlers = (deps: Dependencies, defaultLogger?: Logger) 
     [JoinGameHandler, new JoinGameHandler(gameService, gameRepository, rtcManager, mapper)],
     [LeaveGameHandler, new LeaveGameHandler(gameService, playerRepository, rtcManager)],
     [LoginHandler, new LoginHandler(playerRepository, mapper)],
+    [LogoutHandler, new LogoutHandler()],
     [SelectWinnerHandler, new SelectWinnerHandler(gameService)],
     [StartGameHandler, new StartGameHandler(gameService, gameRepository, externalData, randomService)],
     [FlushCardsHandler, new FlushCardsHandler(playerRepository, gameService)],

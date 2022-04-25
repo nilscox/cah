@@ -4,7 +4,17 @@ import { AppState } from '../types';
 
 import { selectIsGameCreator } from './playerSelectors';
 
-export const selectGame = (state: AppState) => state.game as StartedGame;
+export const selectGameUnsafe = (state: AppState) => state.game;
+
+export const selectGame = (state: AppState) => {
+  const game = selectGameUnsafe(state);
+
+  if (!game) {
+    throw new Error('selectGame: game is null');
+  }
+
+  return game as StartedGame;
+};
 
 export const selectCurrentQuestion = (state: AppState) => selectGame(state).question;
 

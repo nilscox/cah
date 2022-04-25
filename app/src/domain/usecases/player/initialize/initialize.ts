@@ -1,6 +1,6 @@
 import { createThunk } from '../../../../store/createThunk';
 import { NetworkStatus } from '../../../../store/reducers/appStateReducer';
-import { selectPlayer } from '../../../../store/selectors/playerSelectors';
+import { selectPlayerUnsafe } from '../../../../store/selectors/playerSelectors';
 import { networkStatusChanged, setAppReady, setGame, setPlayer, setTurns } from '../../../actions';
 import { FullPlayer } from '../../../entities/Player';
 import { redirect } from '../../game/redirect/redirect';
@@ -36,7 +36,7 @@ const fetchGame = createThunk(async ({ dispatch, gameGateway }, gameId: string) 
 });
 
 export const initialize = createThunk(async ({ dispatch, getState }) => {
-  let player: FullPlayer | undefined = selectPlayer(getState());
+  let player: FullPlayer | undefined = selectPlayerUnsafe(getState()) ?? undefined;
 
   if (!player) {
     player = await dispatch(fetchPlayer());

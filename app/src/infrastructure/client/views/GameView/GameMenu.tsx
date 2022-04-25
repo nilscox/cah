@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { Turn } from '../../../../domain/entities/Turn';
 import { flushCards } from '../../../../domain/usecases/game/flushCards/flushCards';
+import { logout } from '../../../../domain/usecases/game/logout/logout';
 import { selectGame, selectTurns } from '../../../../store/selectors/gameSelectors';
 import { selectCanFlushCards } from '../../../../store/selectors/playerSelectors';
 import { selectScores } from '../../../../store/selectors/scoresSelectors';
@@ -16,10 +17,37 @@ import { Flex } from '../../components/layout/Flex';
 import IconChat from '../../icons/chat.svg';
 import IconDouble from '../../icons/double.svg';
 import IconKey from '../../icons/key.svg';
+import IconLogout from '../../icons/logout.svg';
 import IconLoop from '../../icons/loop.svg';
 import IconPerson from '../../icons/person.svg';
 import IconSkip from '../../icons/skip.svg';
-import { fontSize, fontWeight, spacing } from '../../styles/theme';
+import { color, fontSize, fontWeight, spacing } from '../../styles/theme';
+
+const MenuTitle = styled.div`
+  margin: ${spacing(2, 0)};
+  padding-right: ${spacing(4)};
+  border-bottom: 1px dotted ${color('border')};
+  text-align: right;
+`;
+
+const GameInfo: React.FC = () => {
+  const game = useSelector(selectGame);
+  const dispatch = useDispatch();
+
+  return (
+    <>
+      <MenuTitle>Info</MenuTitle>
+      <MenuItem icon={IconKey}>Code de la partie : {game.code}</MenuItem>
+      <MenuItem icon={IconPerson}>Question Master : {game.questionMaster?.nick}</MenuItem>
+      <MenuItem icon={IconChat}>
+        Question : {game.turns.length + 1} / {game.totalQuestions}
+      </MenuItem>
+      <MenuItem icon={IconLogout}>
+        <LogoutButton onClick={() => dispatch(logout())}>Déconnexion</LogoutButton>
+      </MenuItem>
+    </>
+  );
+};
 
 const TurnContainer = styled(Flex)<{ details: boolean }>`
   margin: ${({ details }) => spacing(details ? 4 : 1, 0)};
@@ -78,8 +106,13 @@ const Turns: React.FC = () => {
     }
   };
 
+  if (!turns.length) {
+    return null;
+  }
+
   return (
     <>
+      <MenuTitle>Turns</MenuTitle>
       {turns.map((turn) => (
         <TurnComponent key={turn.number} turn={turn} details={details === turn.number} onClick={toggle(turn)} />
       ))}
@@ -133,9 +166,7 @@ const Jokers: React.FC = () => {
 
   return (
     <Box paddingY={2}>
-      <Box textAlign="center" marginBottom={1}>
-        Jokers
-      </Box>
+      <MenuTitle>Jokers</MenuTitle>
       <JokersContainer>
         <Joker icon={IconLoop} disabled={!canFlushCards} onClick={() => dispatch(flushCards())}>
           Changer toutes ses cartes
@@ -157,8 +188,8 @@ const Scores: React.FC = () => {
   const scores = useSelector(selectScores);
 
   return (
-    <Box paddingY={2}>
-      <div>Scores :</div>
+    <>
+      <MenuTitle>Scores</MenuTitle>
       <ol>
         {scores.map(([player, score]) => (
           <li key={player.id}>
@@ -166,25 +197,21 @@ const Scores: React.FC = () => {
           </li>
         ))}
       </ol>
-    </Box>
+    </>
   );
 };
 
-const GameMenu: React.FC = () => {
-  const game = useSelector(selectGame);
+const LogoutButton = styled(Button)`
+  font-weight: inherit;
+`;
 
-  return (
-    <Box padding={2}>
-      <MenuItem icon={IconKey}>Code de la partie : {game.code}</MenuItem>
-      <MenuItem icon={IconPerson}>Question Master : {game.questionMaster.nick}</MenuItem>
-      <MenuItem icon={IconChat}>
-        Question : {game.turns.length + 1} / {game.totalQuestions}
-      </MenuItem>
-      <Jokers />
-      <Scores />
-      <Turns />
-    </Box>
-  );
-};
+const GameMenu: React.FC = () => (
+  <Box padding={2}>
+    <GameInfo />
+    <Jokers />
+    <Scores />
+    <Turns />
+  </Box>
+);
 
 export default GameMenu;

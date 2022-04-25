@@ -17,4 +17,8 @@ export class FakePlayerGateway implements PlayerGateway {
       hasFlushed: false,
     };
   }
+
+  async logout(): Promise<void> {
+    this.player = undefined;
+  }
 }

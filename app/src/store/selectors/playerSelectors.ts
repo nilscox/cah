@@ -1,11 +1,20 @@
 import { Choice } from '../../domain/entities/Choice';
 import { PlayState } from '../../domain/entities/Game';
-import { PlayerState } from '../reducers/playerReducer';
-import { AppState, NotNull } from '../types';
+import { AppState } from '../types';
 
 import { selectGame, selectPlayState } from './gameSelectors';
 
-export const selectPlayer = (state: AppState) => state.player as NotNull<PlayerState>;
+export const selectPlayerUnsafe = (state: AppState) => state.player;
+
+export const selectPlayer = (state: AppState) => {
+  const player = selectPlayerUnsafe(state);
+
+  if (player === null) {
+    throw new Error('selectPlayer: player is null');
+  }
+
+  return player;
+};
 
 export const selectPlayerCards = (state: AppState) => selectPlayer(state).cards;
 

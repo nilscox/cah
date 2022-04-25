@@ -7,6 +7,7 @@ import { FullPlayer } from './entities/Player';
 import { Turn } from './entities/Turn';
 import { RTCMessage } from './gateways/RTCGateway';
 
+export const unsetPlayer = createAction('player/unset');
 export const setPlayer = createAction<FullPlayer, 'player/set'>('player/set');
 export const setConnected = createAction('player/set-connected');
 export const setPlayerCards = createAction<Choice[], 'player/set-cards'>('player/set-cards');
@@ -32,6 +33,7 @@ export const choiceUnselected = createAction<Choice, 'choice/unselected'>('choic
 export const log = createAction<unknown, 'debug/log'>('debug/log');
 
 export type Actions = ReturnType<
+  | typeof unsetPlayer
   | typeof setPlayer
   | typeof setConnected
   | typeof setPlayerCards

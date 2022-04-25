@@ -24,4 +24,8 @@ export class HTTPPlayerGateway implements PlayerGateway {
 
     return body;
   }
+
+  async logout() {
+    await this.http.post('/logout');
+  }
 }

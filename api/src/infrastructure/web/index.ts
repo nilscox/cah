@@ -9,6 +9,7 @@ import { FlushCardsHandler } from '../../application/commands/FlushCardsCommand/
 import { JoinGameCommand, JoinGameHandler } from '../../application/commands/JoinGameCommand/JoinGameCommand';
 import { LeaveGameHandler } from '../../application/commands/LeaveCommand/LeaveGameCommand';
 import { LoginCommand, LoginHandler } from '../../application/commands/LoginCommand/LoginCommand';
+import { LogoutCommand, LogoutHandler } from '../../application/commands/LogoutCommand/LogoutCommand';
 import { NextTurnHandler } from '../../application/commands/NextTurnCommand/NextTurnCommand';
 import {
   SelectWinnerCommand,
@@ -109,6 +110,13 @@ export const createRoutes = (deps: Dependencies) => {
       .use(dto(({ body }) => new LoginCommand(body.nick)))
       .use(status(201))
       .use(handler(handlers.get(LoginHandler))),
+
+    new Route('post', '/logout')
+      .use(...playerContext)
+      .use(guard(isAuthenticated))
+      .use(dto(() => new LogoutCommand()))
+      .use(status(204))
+      .use(handler(handlers.get(LogoutHandler))),
 
     new Route('get', '/game/:gameId')
       .use(...authPlayerContext)

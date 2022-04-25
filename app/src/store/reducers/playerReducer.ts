@@ -24,6 +24,10 @@ export const playerReducer = (state: PlayerState = null, action: AppAction): Pla
     };
   }
 
+  if (action.type === 'player/unset') {
+    return null;
+  }
+
   if (state === null) {
     return state;
   }
