@@ -2,8 +2,8 @@ import { Theme } from '@emotion/react';
 
 const getItem = <T>(key: string) => JSON.parse(window.localStorage.getItem(key) ?? 'null') as T;
 
-const fast = getItem<boolean>('fast') ?? false;
-const compact = getItem<boolean>('compact') ?? false;
+const fast = getItem<boolean>('fast') ?? process.env.FAST === 'true' ?? false;
+const compact = getItem<boolean>('compact') ?? process.env.COMPACT === 'true' ?? false;
 
 const makeSpace = (n: number): number[] => {
   const a = [0, 1, 2, 2.5].map((m) => m * n);

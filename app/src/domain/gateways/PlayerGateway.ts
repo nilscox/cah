@@ -1,7 +1,7 @@
-import { FullPlayer } from '../entities/Player';
+import { FullPlayerDto } from '../../../../shared/dtos';
 
 export interface PlayerGateway {
-  fetchMe(): Promise<FullPlayer | undefined>;
-  login(nick: string): Promise<FullPlayer>;
+  fetchMe(): Promise<FullPlayerDto | undefined>;
+  login(nick: string): Promise<FullPlayerDto>;
   logout(): Promise<void>;
 }

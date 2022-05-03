@@ -3,7 +3,7 @@
 function cah() {
   url="${API_URL:-http://localhost:4242}$3"
 
-  http --session "/tmp/httpie-cah-$1.json" "$2" "$url" "${@:4}"
+  http -v --session "/tmp/httpie-cah-$1.json" "$2" "$url" "${@:4}"
 }
 
 auth() {

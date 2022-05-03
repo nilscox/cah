@@ -4,8 +4,8 @@ import { createAnonymousAnswer, createFullPlayer, createPlayer, createStartedGam
 import { InMemoryStore } from '../../../../tests/InMemoryStore';
 import { setGame, setPlayer } from '../../../actions';
 import { AnonymousAnswer } from '../../../entities/Answer';
-import { PlayState } from '../../../entities/Game';
-import { Player } from '../../../entities/Player';
+import { PlayState } from '../../../entities/game';
+import { Player } from '../../../entities/player';
 
 import { selectWinner } from './selectWinner';
 

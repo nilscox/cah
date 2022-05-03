@@ -1,11 +1,11 @@
 import { combineReducers } from 'redux';
 
-import { appStateReducer } from './appStateReducer';
-import { gameReducer } from './gameReducer';
-import { playerReducer } from './playerReducer';
+import { appSlice } from '../slices/app/app.slice';
+import { gameSlice } from '../slices/game/game.slice';
+import { playerSlice } from '../slices/player/player.slice';
 
 export const rootReducer = combineReducers({
-  player: playerReducer,
-  game: gameReducer,
-  app: appStateReducer,
+  player: playerSlice.reducer,
+  game: gameSlice.reducer,
+  app: appSlice.reducer,
 });

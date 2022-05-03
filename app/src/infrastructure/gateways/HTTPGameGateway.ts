@@ -1,8 +1,8 @@
 import { AnswerDto, GameDto, PlayerId, StartedGameDto, TurnDto } from '../../../../shared/dtos';
 import { AnonymousAnswer, Answer } from '../../domain/entities/Answer';
 import { Choice } from '../../domain/entities/Choice';
-import { Game, isStarted, StartedGame } from '../../domain/entities/Game';
-import { Player } from '../../domain/entities/Player';
+import { Game, isStarted, StartedGame } from '../../domain/entities/game';
+import { Player } from '../../domain/entities/player';
 import { Turn } from '../../domain/entities/Turn';
 import { GameGateway } from '../../domain/gateways/GameGateway';
 

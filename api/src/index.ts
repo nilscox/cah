@@ -13,6 +13,8 @@ import { array } from './utils/array';
 dotenv.config();
 
 const overrideDependencies = (): Partial<Dependencies> => {
+  return {};
+
   const externalData = new StubExternalData();
 
   externalData.setRandomQuestions(

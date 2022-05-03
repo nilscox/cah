@@ -1,6 +1,8 @@
 import { PlayState } from '../../../../../../shared/enums';
 import { createThunk } from '../../../../store/createThunk';
-import { Game, isStarted } from '../../../entities/Game';
+import { selectGameUnsafe } from '../../../../store/slices/game/game.selectors';
+import { isGameStarted } from '../../../entities/game';
+import { selectPlayerUnsafe } from '../../../selectors/playerSelectors';
 import { navigate, navigateToGameRoute } from '../../app/navigate/navigate';
 
 const playStateMap = {
@@ -10,10 +12,10 @@ const playStateMap = {
 };
 
 export const redirect = createThunk(({ getState, dispatch }) => {
-  const player = getState().player;
-  const game = getState().game as Game;
+  const player = selectPlayerUnsafe(getState());
+  const game = selectGameUnsafe(getState());
 
-  if (!player) {
+  if (!player.id) {
     return dispatch(navigate('/login'));
   }
 
@@ -21,7 +23,7 @@ export const redirect = createThunk(({ getState, dispatch }) => {
     return dispatch(navigate('/'));
   }
 
-  if (isStarted(game)) {
+  if (isGameStarted(game)) {
     dispatch(navigateToGameRoute(`/${game.state}/${playStateMap[game.playState]}`));
   } else {
     dispatch(navigateToGameRoute(`/${game.state}`));

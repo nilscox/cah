@@ -1,10 +1,10 @@
 import { expect } from 'earljs';
 
-import { selectGameUnsafe } from '../../../../store/selectors/gameSelectors';
-import { selectPlayerUnsafe } from '../../../../store/selectors/playerSelectors';
-import { createFullPlayer, createGame } from '../../../../tests/factories';
+import { selectGameUnsafe } from '../../../../store/slices/game/game.selectors';
+import { createGame, createPlayer } from '../../../../tests/factories';
 import { InMemoryStore } from '../../../../tests/InMemoryStore';
 import { setGame, setPlayer } from '../../../actions';
+import { selectPlayerUnsafe } from '../../../selectors/playerSelectors';
 
 import { logout } from './logout';
 
@@ -15,7 +15,7 @@ describe('logout', () => {
     store = new InMemoryStore();
   });
 
-  const player = createFullPlayer();
+  const player = createPlayer();
   const game = createGame();
 
   beforeEach(() => {

@@ -1,41 +1,38 @@
 import expect from 'expect';
 
 import { NetworkStatus } from '../../../../store/reducers/appStateReducer';
-import { FakeServerGateway } from '../../../../tests/gateways/FakeServerGateway';
-import { FakeTimerGateway } from '../../../../tests/gateways/FakeTimerGateway';
-import { InMemoryStore } from '../../../../tests/InMemoryStore';
-import { serverStatusChanged } from '../../../actions';
+import { appActions } from '../../../../store/slices/app/app.actions';
+import { selectServerStatus } from '../../../../store/slices/app/app.selectors';
+import { TestStore } from '../../../../tests/TestStore';
 
 import { handleServerDown } from './handleServerDown';
 
 describe('handleServerDown', () => {
-  let store: InMemoryStore;
-
-  let timerGateway: FakeTimerGateway;
-  let serverGateway: FakeServerGateway;
+  let store: TestStore;
 
   beforeEach(() => {
-    store = new InMemoryStore();
-    ({ timerGateway, serverGateway } = store);
+    store = new TestStore();
   });
 
   const expectServerStatus = (status: NetworkStatus) => {
-    expect(store.getState().app.server).toEqual(status);
+    expect(store.select(selectServerStatus)).toEqual(status);
   };
 
   it('does not do anything when the server is already down', async () => {
-    serverGateway.serverStatus = NetworkStatus.up;
+    store.serverGateway.serverStatus = NetworkStatus.up;
 
-    store.dispatch(serverStatusChanged(NetworkStatus.down));
+    store.dispatch(appActions.setServerStatus(NetworkStatus.down));
 
     await store.dispatch(handleServerDown());
 
-    await timerGateway.invokeInterval();
+    await store.timerGateway.invokeInterval();
 
     expectServerStatus(NetworkStatus.down);
   });
 
   it('periodically checks if the server is up', async () => {
+    const { serverGateway, timerGateway } = store;
+
     serverGateway.serverStatus = NetworkStatus.down;
 
     await store.dispatch(handleServerDown());
@@ -50,7 +47,7 @@ describe('handleServerDown', () => {
     await timerGateway.invokeInterval();
 
     expectServerStatus(NetworkStatus.up);
-    store.expectPartialState('app', { ready: true });
+    expect(store.app.ready).toBe(true);
 
     serverGateway.serverStatus = NetworkStatus.down;
     await timerGateway.invokeInterval();

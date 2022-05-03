@@ -1,4 +1,4 @@
-import { PlayState } from '../../../domain/entities/Game';
+import { PlayState } from '../../../domain/entities/game';
 import {
   createAnswers,
   createChoice,

@@ -1,70 +1,45 @@
 import expect from 'expect';
 
-import { createFullPlayer, createGame, createPlayer } from '../../../../tests/factories';
-import { InMemoryStore } from '../../../../tests/InMemoryStore';
-import { setGame, setPlayer } from '../../../actions';
-import { GameState } from '../../../entities/Game';
+import { GameDto } from '../../../../../../shared/dtos';
+import { createId } from '../../../../tests/create-id';
+import { createPlayer } from '../../../../tests/factories';
+import { TestBuilder } from '../../../../tests/TestBuilder';
+import { GameState } from '../../../entities/game';
 
 import { joinGame } from './joinGame';
 
 describe('joinGame', () => {
-  let store: InMemoryStore;
+  const player = createPlayer();
+  const gameDto: GameDto = {
+    id: createId(),
+    code: 'OK42',
+    creator: player.id,
+    gameState: GameState.idle,
+    players: [player],
+  };
+
+  const store = new TestBuilder().apply(TestBuilder.setPlayer(player)).getStore();
 
   beforeEach(() => {
-    store = new InMemoryStore();
+    store.gameGateway.joinGame.mockResolvedValueOnce(gameDto);
   });
 
   it('joins a game', async () => {
-    const game = (store.gameGateway.game = createGame({ code: 'OK42' }));
-
     await store.dispatch(joinGame('OK42'));
 
-    store.expectState('game', {
-      id: game.id,
-      creator: game.creator,
+    expect(store.game).toEqual({
+      id: gameDto.id,
+      creator: player.id,
       code: 'OK42',
       state: GameState.idle,
-      players: [],
+      players: [player],
       turns: [],
     });
   });
 
-  it('does not display a notification when player himself joins', async () => {
-    const player = createFullPlayer();
-
-    store.setup(({ dispatch, listenRTCMessages }) => {
-      dispatch(setPlayer(player));
-      dispatch(setGame(createGame()));
-      listenRTCMessages();
-    });
-
-    store.rtcGateway.triggerMessage({ type: 'GameJoined', player });
-
-    store.expectPartialState('app', { notification: undefined });
-  });
-
-  it('another player joins a game', async () => {
-    const game = createGame({ code: 'OK22' });
-    const player = createPlayer({ nick: 'mario', isConnected: true });
-
-    store.setup(({ dispatch, listenRTCMessages }) => {
-      dispatch(setPlayer(createFullPlayer()));
-      dispatch(setGame(game));
-      listenRTCMessages();
-    });
-
-    store.rtcGateway.triggerMessage({ type: 'GameJoined', player });
-
-    store.expectPartialState('game', {
-      players: [player],
-    });
-
-    store.expectPartialState('app', { notification: 'mario a rejoint la partie' });
-  });
-
   it('redirects to the game view', async () => {
-    await store.dispatch(joinGame('OK44'));
+    await store.dispatch(joinGame('OK42'));
 
-    expect(store.routerGateway.gamePathname).toEqual('/game/OK44/idle');
+    expect(store.routerGateway.gamePathname).toEqual('/game/OK42/idle');
   });
 });

@@ -1,29 +1,25 @@
-import { FakeTimerGateway } from '../../../../tests/gateways/FakeTimerGateway';
-import { InMemoryStore } from '../../../../tests/InMemoryStore';
+import expect from 'expect';
+
+import { TestStore } from '../../../../tests/TestStore';
 
 import { showNotification } from './showNotification';
 
 describe('showNotification', () => {
   it('shows a notification', () => {
-    const store = new InMemoryStore();
+    const store = new TestStore();
 
     store.dispatch(showNotification('you see me'));
 
-    store.expectPartialState('app', {
-      notification: 'you see me',
-    });
+    expect(store.app.notification).toEqual('you see me');
   });
 
   it('hides the notification after a timeout', () => {
-    const timerGateway = new FakeTimerGateway();
-    const store = new InMemoryStore({ timerGateway });
+    const store = new TestStore();
 
     store.dispatch(showNotification('you see me'));
 
-    timerGateway.invokeTimeout();
+    store.timerGateway.invokeTimeout();
 
-    store.expectPartialState('app', {
-      notification: undefined,
-    });
+    expect(store.app.notification).toBeUndefined();
   });
 });

@@ -1,13 +1,19 @@
 import { createThunk } from '../../../../store/createThunk';
-import { setPlayer } from '../../../actions';
-import { initialize } from '../initialize/initialize';
-import { setCards } from '../setCards/setCards';
+import { playerActions } from '../../../../store/slices/player/player.actions';
+import { Player } from '../../../entities/player';
+import { initialize } from '../../app/initialize/initialize';
 
 export const login = createThunk(async ({ dispatch, playerGateway }, nick: string) => {
-  const player = await playerGateway.login(nick);
+  const playerDto = await playerGateway.login(nick);
 
-  dispatch(setPlayer(player));
-  dispatch(setCards(player.cards));
+  const player: Player = {
+    id: playerDto.id,
+    nick: playerDto.nick,
+    isConnected: playerDto.isConnected,
+    game: null,
+  };
+
+  dispatch(playerActions.setPlayer(player));
 
   await dispatch(initialize());
 });

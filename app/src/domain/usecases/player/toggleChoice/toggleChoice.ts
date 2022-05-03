@@ -1,23 +1,28 @@
+import { hasId } from '../../../../shared/has-id';
+import { isNotNull } from '../../../../shared/is-not-null';
+import { last } from '../../../../shared/last';
 import { createThunk } from '../../../../store/createThunk';
-import { selectCurrentQuestion } from '../../../../store/selectors/gameSelectors';
-import { selectChoicesSelection } from '../../../../store/selectors/playerSelectors';
-import { choiceSelected, choiceUnselected } from '../../../actions';
+import { playerActions } from '../../../../store/slices/player/player.actions';
+import {
+  selectPlayerChoicesSelection,
+  selectPlayerSelectionFirstBlankIndex,
+} from '../../../../store/slices/player/player.selectors';
 import { Choice } from '../../../entities/Choice';
 
 export const toggleChoice = createThunk(({ dispatch, getState }, choice: Choice) => {
-  const state = getState();
-  const question = selectCurrentQuestion(state);
+  const selection = selectPlayerChoicesSelection(getState());
+  const isSelected = selection.filter(isNotNull).some(hasId(choice.id));
 
-  const selection = selectChoicesSelection(state);
-  const selected = selection.some(({ id }) => id === choice.id);
-
-  if (selected) {
-    dispatch(choiceUnselected(choice));
+  if (isSelected) {
+    dispatch(playerActions.unselectChoice(choice));
   } else {
-    if (selection.length === question.numberOfBlanks) {
-      dispatch(choiceUnselected(selection[selection.length - 1] as Choice));
+    let firstBlankIndex = selectPlayerSelectionFirstBlankIndex(getState());
+
+    if (firstBlankIndex < 0) {
+      dispatch(playerActions.unselectChoice(last(selection) as Choice));
+      firstBlankIndex = selectPlayerSelectionFirstBlankIndex(getState());
     }
 
-    dispatch(choiceSelected(choice));
+    dispatch(playerActions.selectChoice(choice, firstBlankIndex));
   }
 });

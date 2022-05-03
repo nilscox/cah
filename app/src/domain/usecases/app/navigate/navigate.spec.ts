@@ -1,17 +1,12 @@
 import expect from 'expect';
 
-import { createFullPlayer, createGame } from '../../../../tests/factories';
-import { InMemoryStore } from '../../../../tests/InMemoryStore';
-import { setGame, setPlayer } from '../../../actions';
+import { TestBuilder } from '../../../../tests/TestBuilder';
+import { TestStore } from '../../../../tests/TestStore';
 
 import { closeMenu, navigate, navigateToGameRoute, openMenu } from './navigate';
 
 describe('navigate', () => {
-  let store: InMemoryStore;
-
-  beforeEach(() => {
-    store = new InMemoryStore();
-  });
+  const store = new TestStore();
 
   it('navigates to another route', () => {
     store.dispatch(navigate('/lunettes'));
@@ -21,8 +16,8 @@ describe('navigate', () => {
   });
 
   it('navigates to a game route', () => {
-    store.dispatch(setPlayer(createFullPlayer()));
-    store.dispatch(setGame(createGame({ code: 'cafe' })));
+    store.dispatch(TestBuilder.setPlayer());
+    store.dispatch(TestBuilder.createGame({ code: 'cafe' }));
 
     store.dispatch(navigateToGameRoute('/moustache'));
 
@@ -36,8 +31,8 @@ describe('navigate', () => {
   });
 
   it('toggles the game menu', () => {
-    store.dispatch(setPlayer(createFullPlayer()));
-    store.dispatch(setGame(createGame({ code: 'cafe' })));
+    store.dispatch(TestBuilder.setPlayer());
+    store.dispatch(TestBuilder.createGame({ code: 'cafe' }));
 
     store.dispatch(openMenu());
 

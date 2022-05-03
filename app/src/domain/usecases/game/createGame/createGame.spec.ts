@@ -1,29 +1,39 @@
 import expect from 'expect';
 
-import { createGame as createGameFactory } from '../../../../tests/factories';
-import { InMemoryStore } from '../../../../tests/InMemoryStore';
-import { GameState } from '../../../entities/Game';
+import { GameDto } from '../../../../../../shared/dtos';
+import { selectGame } from '../../../../store/slices/game/game.selectors';
+import { createId } from '../../../../tests/create-id';
+import { createPlayer } from '../../../../tests/factories';
+import { TestBuilder } from '../../../../tests/TestBuilder';
+import { GameState } from '../../../entities/game';
 
 import { createGame } from './createGame';
 
 describe('createGame', () => {
-  let store: InMemoryStore;
+  const player = createPlayer();
+  const gameDto: GameDto = {
+    id: createId(),
+    code: 'OK42',
+    creator: player.id,
+    gameState: GameState.idle,
+    players: [player],
+  };
+
+  const store = new TestBuilder().apply(TestBuilder.setPlayer(player)).getStore();
 
   beforeEach(() => {
-    store = new InMemoryStore();
+    store.gameGateway.createGame.mockResolvedValueOnce(gameDto);
   });
 
   it('creates a game', async () => {
-    const game = (store.gameGateway.game = createGameFactory({ code: 'OK42' }));
-
     await store.dispatch(createGame());
 
-    store.expectState('game', {
-      id: game.id,
-      creator: game.creator,
+    expect(store.select(selectGame)).toEqual({
+      id: gameDto.id,
+      creator: player.id,
       code: 'OK42',
       state: GameState.idle,
-      players: [],
+      players: { [player.id]: player },
       turns: [],
     });
   });

@@ -1,10 +1,12 @@
 import { createThunk } from '../../../../store/createThunk';
-import { clearNotification, setNotification } from '../../../actions';
+import { appActions } from '../../../../store/slices/app/app.actions';
+
+const NOTIFICATION_TIMEOUT = 3400;
 
 export const showNotification = createThunk(({ dispatch, timerGateway }, text: string) => {
-  dispatch(setNotification(text));
+  dispatch(appActions.setNotification(text));
 
   timerGateway.setTimeout(() => {
-    dispatch(clearNotification());
-  }, 3400);
+    dispatch(appActions.clearNotification());
+  }, NOTIFICATION_TIMEOUT);
 });

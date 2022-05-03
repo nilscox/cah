@@ -2,8 +2,8 @@ import { createAction } from '../store/createAction';
 import { NetworkStatus } from '../store/reducers/appStateReducer';
 
 import { Choice } from './entities/Choice';
-import { Game } from './entities/Game';
-import { FullPlayer } from './entities/Player';
+import { Game } from './entities/game';
+import { FullPlayer } from './entities/player';
 import { Turn } from './entities/Turn';
 import { RTCMessage } from './gateways/RTCGateway';
 

@@ -64,6 +64,8 @@ module.exports = {
     new EnvironmentPlugin({
       API_URL: 'http://localhost:4242',
       WS_URL: 'ws://localhost:4242',
+      FAST: 'false',
+      COMPACT: 'false',
     }),
   ].filter(Boolean),
 

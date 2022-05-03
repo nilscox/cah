@@ -1,80 +1,42 @@
-import { expect } from 'earljs';
-import { map, reverse, slice } from 'lodash';
+import expect from 'expect';
+import { reverse } from 'lodash';
 
-import { createChoices, createFullPlayer } from '../../../../tests/factories';
-import { InMemoryStore } from '../../../../tests/InMemoryStore';
-import { setPlayer } from '../../../actions';
-import { Choice } from '../../../entities/Choice';
+import { getIds } from '../../../../shared/getIds';
+import { selectPlayerCards } from '../../../../store/slices/player/player.selectors';
+import { createChoices } from '../../../../tests/factories';
+import { TestBuilder } from '../../../../tests/TestBuilder';
 
 import { setCards } from './setCards';
 
 describe('setCards', () => {
-  let store: InMemoryStore;
-
-  beforeEach(() => {
-    store = new InMemoryStore();
-
-    store.setup(({ dispatch }) => {
-      dispatch(setPlayer(createFullPlayer()));
-    });
-  });
-
-  const persistCards = (cards: Choice[]) => {
-    store.persistenceGateway.setItem('cards', map(cards, 'id'));
-  };
-
-  const expectPersistedCards = (cards: Choice[]) => {
-    expect(store.persistenceGateway.getItem('cards')).toEqual(map(cards, 'id'));
-  };
+  const store = new TestBuilder().apply(TestBuilder.setPlayer()).apply(TestBuilder.createGame()).getStore();
+  const cards = createChoices(2);
 
   it("sets the player's cards", () => {
-    const cards = createChoices(2);
+    store.dispatch(setCards(cards));
+
+    expect(store.select(selectPlayerCards)).toEqual(cards);
+  });
+
+  it("sets the player's cards without reordering them by default", () => {
+    store.persistenceGateway.setItem('cards', reverse(getIds(cards)));
 
     store.dispatch(setCards(cards));
 
-    store.expectPartialState('player', {
-      cards,
-    });
+    expect(store.select(selectPlayerCards)).toEqual(cards);
   });
 
-  it("persists the player's cards", () => {
-    const cards = createChoices(2);
+  it("sets the player's cards and reorder them", () => {
+    store.persistenceGateway.setItem('cards', reverse(getIds(cards)));
 
+    store.dispatch(setCards(cards, true));
+
+    expect(store.select(selectPlayerCards)).toEqual(reverse(cards));
+  });
+
+  it("persists the player's cards ordering", () => {
     store.dispatch(setCards(cards));
 
-    expectPersistedCards(cards);
-  });
-
-  it("reorders the player's cards according to the persisted order", () => {
-    const cards = createChoices(3);
-
-    const test = (persisted: Choice[], expected: Choice[]) => {
-      persistCards(persisted);
-
-      store.dispatch(setCards(cards));
-
-      store.expectPartialState('player', {
-        cards: expected,
-      });
-    };
-
-    test([], cards);
-    test(cards, cards);
-    test(reverse(slice(cards)), reverse(slice(cards)));
-    test([cards[0], cards[2]], [cards[1], cards[0], cards[2]]);
-  });
-
-  it("saves the players's cards without reordering them", () => {
-    const cards = createChoices(3);
-
-    persistCards(reverse(slice(cards)));
-
-    store.dispatch(setCards(cards, false));
-
-    store.expectPartialState('player', {
-      cards,
-    });
-
-    expectPersistedCards(cards);
+    expect(store.persistenceGateway.getItem('cards')).toEqual(getIds(cards));
   });
 });

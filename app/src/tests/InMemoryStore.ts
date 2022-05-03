@@ -1,17 +1,17 @@
 import { expect } from 'earljs';
 
-import { handleRTCMessage } from '../domain/usecases/game/handleRTCMessage/handleRTCMessage';
-import { configureStore } from '../store/configureStore';
+import { handleRTCMessage } from '../domain/usecases/events/handleRTCMessage/handleRTCMessage';
+import { createStore } from '../store/configureStore';
 import { AppState, AppStore, Dependencies } from '../store/types';
 
-import { FakeGameGateway } from './gateways/FakeGameGateway';
 import { FakeNetworkGateway } from './gateways/FakeNetworkGateway';
-import { FakePlayerGateway } from './gateways/FakePlayerGateway';
 import { FakeRTCGateway } from './gateways/FakeRTCGateway';
 import { FakeServerGateway } from './gateways/FakeServerGateway';
 import { FakeTimerGateway } from './gateways/FakeTimerGateway';
 import { InMemoryPersistenceGateway } from './gateways/InMemoryPersistenceGateway';
 import { InMemoryRouterGateway } from './gateways/InMemoryRouterGateway';
+import { MockGameGateway } from './gateways/mock-game-gateway';
+import { MockPlayerGateway } from './gateways/mock-player-gateway';
 
 export class InMemoryStore {
   store: AppStore;
@@ -26,8 +26,8 @@ export class InMemoryStore {
   }
 
   rtcGateway = new FakeRTCGateway();
-  playerGateway = new FakePlayerGateway();
-  gameGateway = new FakeGameGateway(this.rtcGateway);
+  playerGateway = new MockPlayerGateway();
+  gameGateway = new MockGameGateway(this.rtcGateway);
   routerGateway = new InMemoryRouterGateway();
   timerGateway = new FakeTimerGateway();
   networkGateway = new FakeNetworkGateway();
@@ -35,7 +35,7 @@ export class InMemoryStore {
   persistenceGateway = new InMemoryPersistenceGateway();
 
   constructor(overrides: Partial<Dependencies> = {}) {
-    this.store = configureStore({ ...this, ...overrides });
+    this.store = createStore({ ...this, ...overrides });
     this.state = this.store.getState();
   }
 

@@ -1,4 +1,4 @@
-import { Game } from '../../domain/entities/Game';
+import { Game } from '../../domain/entities/game';
 import { RouterGateway } from '../../domain/gateways/RouterGateway';
 
 export class InMemoryRouterGateway implements RouterGateway {

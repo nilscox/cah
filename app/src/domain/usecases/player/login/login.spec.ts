@@ -1,34 +1,42 @@
 import expect from 'expect';
 
-import { InMemoryStore } from '../../../../tests/InMemoryStore';
+import { FullPlayerDto } from '../../../../../../shared/dtos';
+import { createId } from '../../../../tests/create-id';
+import { TestStore } from '../../../../tests/TestStore';
+import { selectPlayer } from '../../../selectors/playerSelectors';
 
 import { login } from './login';
 
 describe('login', () => {
-  let store: InMemoryStore;
+  const store = new TestStore();
+
+  const nick = 'Toto';
+  const player: FullPlayerDto = {
+    id: createId(),
+    isConnected: false,
+    nick,
+    cards: [],
+    hasFlushed: false,
+  };
 
   beforeEach(() => {
-    store = new InMemoryStore();
+    store.routerGateway.push('/login');
+    store.playerGateway.login.mockResolvedValueOnce(player);
   });
 
   it('logs in', async () => {
-    await store.dispatch(login('Toto'));
+    await store.dispatch(login(nick));
 
-    store.expectPartialState('player', {
-      id: 'id',
+    expect(store.select(selectPlayer)).toEqual({
+      id: player.id,
+      nick,
       isConnected: true,
-      nick: 'Toto',
-      cards: [],
-      selection: [],
-      selectionValidated: false,
-      hasFlushed: false,
+      game: null,
     });
   });
 
   it('redirects to the home page', async () => {
-    store.routerGateway.push('/login');
-
-    await store.dispatch(login('Tata'));
+    await store.dispatch(login(nick));
 
     expect(store.routerGateway.pathname).toEqual('/');
   });

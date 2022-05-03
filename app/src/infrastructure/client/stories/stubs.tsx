@@ -3,8 +3,8 @@ import { createMemoryHistory } from 'history';
 
 import { Answer } from '../../../domain/entities/Answer';
 import { Choice } from '../../../domain/entities/Choice';
-import { Game, StartedGame } from '../../../domain/entities/Game';
-import { FullPlayer, Player } from '../../../domain/entities/Player';
+import { Game, StartedGame } from '../../../domain/entities/game';
+import { FullPlayer, Player } from '../../../domain/entities/player';
 import { Turn } from '../../../domain/entities/Turn';
 import { GameGateway } from '../../../domain/gateways/GameGateway';
 import { PlayerGateway } from '../../../domain/gateways/PlayerGateway';

@@ -1,5 +1,5 @@
 import { Choice } from '../../domain/entities/Choice';
-import { isStarted } from '../../domain/entities/Game';
+import { isStarted } from '../../domain/entities/game';
 import { AppAction, Nullable } from '../types';
 
 import { findById, isNull, replace, replaceAll } from './helpers';
@@ -63,13 +63,6 @@ export const playerReducer = (state: PlayerState = null, action: AppAction): Pla
     };
   }
 
-  if (action.type === 'rtc/message' && action.payload.type === 'TurnStarted') {
-    return {
-      ...state,
-      selection: Array(action.payload.question.numberOfBlanks).fill(null),
-    };
-  }
-
   if (action.type === 'choice/selected') {
     return {
       ...state,
@@ -96,13 +89,6 @@ export const playerReducer = (state: PlayerState = null, action: AppAction): Pla
       ...state,
       hasFlushed: true,
       selection: replaceAll(state.selection, () => true, null),
-    };
-  }
-
-  if (action.type === 'rtc/message' && action.payload.type === 'TurnFinished') {
-    return {
-      ...state,
-      selectionValidated: false,
     };
   }
 

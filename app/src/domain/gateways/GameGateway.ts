@@ -1,14 +1,13 @@
+import { GameDto, TurnDto } from '../../../../shared/dtos';
 import { AnonymousAnswer } from '../entities/Answer';
 import { Choice } from '../entities/Choice';
-import { Game } from '../entities/Game';
-import { Player } from '../entities/Player';
-import { Turn } from '../entities/Turn';
+import { Player } from '../entities/player';
 
 export interface GameGateway {
-  fetchGame(gameId: string): Promise<Game | undefined>;
-  fetchTurns(gameId: string): Promise<Turn[]>;
-  createGame(): Promise<Game>;
-  joinGame(gameCode: string): Promise<Game>;
+  fetchGame(gameId: string): Promise<GameDto | undefined>;
+  fetchTurns(gameId: string): Promise<TurnDto[]>;
+  createGame(): Promise<GameDto>;
+  joinGame(gameCode: string): Promise<GameDto>;
   leaveGame(): Promise<void>;
   startGame(questionMaster: Player | null, turns: number): Promise<void>;
   flushCards(): Promise<void>;

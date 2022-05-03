@@ -1,5 +1,5 @@
 import { createThunk } from '../../../../store/createThunk';
-import { selectGame } from '../../../../store/selectors/gameSelectors';
+import { selectGame } from '../../../../store/slices/game/game.selectors';
 import { redirect } from '../../game/redirect/redirect';
 
 export const navigate = createThunk(({ routerGateway }, to: string) => {

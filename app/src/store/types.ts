@@ -1,4 +1,5 @@
-import { ThunkMiddleware } from 'redux-thunk';
+import { Selector, ThunkAction } from '@reduxjs/toolkit';
+import { AnyAction } from 'redux';
 
 import { Actions } from '../domain/actions';
 import { GameGateway } from '../domain/gateways/GameGateway';
@@ -10,19 +11,10 @@ import { RTCGateway } from '../domain/gateways/RTCGateway';
 import { ServerGateway } from '../domain/gateways/ServerGateway';
 import { TimerGateway } from '../domain/gateways/TimerGateway';
 
-import { configureStore } from './configureStore';
-import { AppState as StoreAppState } from './reducers/appStateReducer';
-import { GameState } from './reducers/gameReducer';
-import { PlayerState } from './reducers/playerReducer';
+import { createStore } from './configureStore';
 
 export type Nullable<T> = T | null;
 export type NotNull<T> = T extends null ? never : T;
-
-export type AppState = {
-  player: PlayerState;
-  game: GameState;
-  app: StoreAppState;
-};
 
 export type AppAction = Actions;
 
@@ -37,9 +29,15 @@ export type Dependencies = {
   persistenceGateway: PersistenceGateway;
 };
 
-export type AppStore = ReturnType<typeof configureStore>;
+export type AppStore = ReturnType<typeof createStore>;
+
+export type AppGetState = AppStore['getState'];
 export type AppDispatch = AppStore['dispatch'];
 
-export type AppThunkMiddleware = ThunkMiddleware<AppState, AppAction, Dependencies>;
+export type AppState = ReturnType<AppGetState>;
+
+export type AppThunk<ReturnType = void> = ThunkAction<ReturnType, AppState, Dependencies, AnyAction>;
 
 export type AppActionOrThunk = () => Parameters<AppDispatch>[0];
+
+export type AppSelector<Result, Params extends unknown[]> = Selector<AppState, Result, Params>;

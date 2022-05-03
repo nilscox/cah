@@ -7,7 +7,7 @@ import { Provider as ReduxProvider } from 'react-redux';
 import { Router } from 'react-router-dom';
 
 import { handleServerDown } from '../../domain/usecases/app/handleServerDown/handleServerDown';
-import { configureStore } from '../../store/configureStore';
+import { createStore } from '../../store/configureStore';
 import { AppStore, Dependencies } from '../../store/types';
 import { DeviceNetworkGateway } from '../gateways/DeviceNetworkGateway';
 import { HTTPAdapter } from '../gateways/HTTPAdapter';
@@ -59,7 +59,7 @@ const dependencies: Dependencies = {
   persistenceGateway: new StoragePersistenceGateway(localStorage),
 };
 
-const store = configureStore(dependencies);
+const store = createStore(dependencies);
 
 httpAdapter.onServerDown = () => store.dispatch(handleServerDown());
 

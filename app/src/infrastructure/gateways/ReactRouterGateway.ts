@@ -1,6 +1,6 @@
 import { History } from 'history';
 
-import { Game } from '../../domain/entities/Game';
+import { Game } from '../../domain/entities/game';
 import { RouterGateway } from '../../domain/gateways/RouterGateway';
 
 export class ReactRouterGateway implements RouterGateway {

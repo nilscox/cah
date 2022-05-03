@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import { Choice } from '../../../../domain/entities/Choice';
-import { GameState } from '../../../../domain/entities/Game';
+import { GameState } from '../../../../domain/entities/game';
 import { validateChoicesSelection } from '../../../../domain/usecases/game/validateChoicesSelection/validateChoicesSelection';
 import { setCards } from '../../../../domain/usecases/player/setCards/setCards';
 import { toggleChoice } from '../../../../domain/usecases/player/toggleChoice/toggleChoice';

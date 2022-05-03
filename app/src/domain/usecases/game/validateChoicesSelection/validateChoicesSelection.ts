@@ -1,6 +1,6 @@
 import { createThunk } from '../../../../store/createThunk';
-import { selectChoicesSelection, selectPlayerCards } from '../../../../store/selectors/playerSelectors';
 import { selectionValidated } from '../../../actions';
+import { selectChoicesSelection, selectPlayerCards } from '../../../selectors/playerSelectors';
 import { setCards } from '../../player/setCards/setCards';
 
 export const validateChoicesSelection = createThunk(async ({ dispatch, getState, gameGateway }) => {

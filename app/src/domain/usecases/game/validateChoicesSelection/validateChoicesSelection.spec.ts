@@ -10,7 +10,7 @@ import {
 import { InMemoryStore } from '../../../../tests/InMemoryStore';
 import { choiceSelected, setGame, setPlayer } from '../../../actions';
 import { Choice } from '../../../entities/Choice';
-import { PlayState } from '../../../entities/Game';
+import { PlayState } from '../../../entities/game';
 
 import { validateChoicesSelection } from './validateChoicesSelection';
 

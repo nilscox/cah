@@ -5,11 +5,11 @@ import { Meta, Story } from '@storybook/react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { Router } from 'react-router-dom';
 
-import { Game, GameState, isStarted, PlayState, StartedGame } from '../../../domain/entities/Game';
-import { FullPlayer } from '../../../domain/entities/Player';
+import { Game, GameState, isStarted, PlayState, StartedGame } from '../../../domain/entities/game';
+import { FullPlayer } from '../../../domain/entities/player';
 import { Turn } from '../../../domain/entities/Turn';
 import { openMenu } from '../../../domain/usecases/app/navigate/navigate';
-import { configureStore } from '../../../store/configureStore';
+import { createStore } from '../../../store/configureStore';
 import { AppActionOrThunk } from '../../../store/types';
 import { createGame } from '../../../tests/factories';
 import App from '../App';
@@ -42,7 +42,7 @@ type TemplateProps = {
 
 const Template: Story<TemplateProps> = ({ player, game, question, turns, action }) => {
   const deps = stubDependencies();
-  const store = configureStore(deps);
+  const store = createStore(deps);
 
   if (game && isStarted(game)) {
     const questionIndex = ['no blanks', 'one blank', 'multiple blanks'].indexOf(question);

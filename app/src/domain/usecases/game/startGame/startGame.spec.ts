@@ -3,7 +3,7 @@ import expect from 'expect';
 import { createGame, createPlayer, createQuestion } from '../../../../tests/factories';
 import { InMemoryStore } from '../../../../tests/InMemoryStore';
 import { setGame } from '../../../actions';
-import { GameState, PlayState } from '../../../entities/Game';
+import { GameState, PlayState } from '../../../entities/game';
 
 import { startGame } from './startGame';
 

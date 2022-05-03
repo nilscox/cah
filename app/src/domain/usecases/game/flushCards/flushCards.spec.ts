@@ -1,57 +1,58 @@
-import { createChoices, createFullPlayer, createQuestion, createStartedGame } from '../../../../tests/factories';
-import { InMemoryStore } from '../../../../tests/InMemoryStore';
-import { choiceSelected, setGame, setPlayer } from '../../../actions';
+import expect from 'expect';
+
+import { first } from '../../../../shared/first';
+import {
+  selectPlayerCards,
+  selectPlayerChoicesSelection,
+  selectPlayerGame,
+} from '../../../../store/slices/player/player.selectors';
+import { createChoices, createQuestion } from '../../../../tests/factories';
+import { TestBuilder } from '../../../../tests/TestBuilder';
+import { choiceSelected } from '../../../actions';
 import { Choice } from '../../../entities/Choice';
 
 import { flushCards } from './flushCards';
 
 describe('flushCards', () => {
-  let store: InMemoryStore;
+  const store = new TestBuilder()
+    .apply(TestBuilder.setPlayer())
+    .apply(TestBuilder.createGame())
+    .apply(TestBuilder.startGame())
+    .getStore();
 
-  beforeEach(() => {
-    store = new InMemoryStore();
-  });
+  it("replaces all the player's cards with new ones", async () => {
+    const oldCards = store.select(selectPlayerCards);
+    const newCards = createChoices(11);
 
-  const setup = (playerCards?: Choice[]) => {
-    store.setup(({ dispatch, listenRTCMessages }) => {
-      dispatch(setPlayer(createFullPlayer({ cards: playerCards })));
-      dispatch(setGame(createStartedGame({ question: createQuestion({ numberOfBlanks: 2 }) })));
+    store.dispatch(TestBuilder.setPlayerCards(oldCards));
 
-      listenRTCMessages();
-    });
-  };
-
-  it("flushes the player's cards", async () => {
-    const oldCards = createChoices(3);
-    const newCards = createChoices(3);
-
-    setup(oldCards);
-    await store.dispatch(choiceSelected(oldCards[0]));
-    await store.dispatch(choiceSelected(oldCards[2]));
-
-    store.gameGateway.flushCards = async () => {
+    store.gameGateway.flushCards.mockImplementation(async () => {
       store.rtcGateway.triggerMessage({
         type: 'CardsDealt',
         cards: newCards,
       });
-    };
+    });
 
     await store.dispatch(flushCards());
 
-    store.expectPartialState('player', {
-      cards: newCards,
-      hasFlushed: true,
-      selection: [null, null],
-    });
+    expect(store.select(selectPlayerCards)).toEqual(newCards);
+    expect(store.select(selectPlayerGame)).toHaveProperty('hasFlushed', true);
+  });
+
+  it("clears the player's current selection", async () => {
+    const cards = store.select(selectPlayerCards);
+
+    store.dispatch(TestBuilder.setQuestion(createQuestion({ numberOfBlanks: 2 })));
+    store.dispatch(choiceSelected(first(cards) as Choice));
+
+    await store.dispatch(flushCards());
+
+    expect(store.select(selectPlayerChoicesSelection)).toEqual([null, null]);
   });
 
   it('displays a notification', async () => {
-    setup();
-
     await store.dispatch(flushCards());
 
-    store.expectPartialState('app', {
-      notification: 'Nouvelles cartes reçues !',
-    });
+    expect(store.app.notification).toEqual('Nouvelles cartes reçues !');
   });
 });

@@ -1,5 +1,5 @@
 import { FullPlayerDto } from '../../../../shared/dtos';
-import { FullPlayer } from '../../domain/entities/Player';
+import { FullPlayer } from '../../domain/entities/player';
 import { PlayerGateway } from '../../domain/gateways/PlayerGateway';
 
 import { HTTPAdapter } from './HTTPAdapter';

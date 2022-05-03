@@ -1,5 +1,4 @@
 import { Choice } from './Choice';
-import { Player } from './Player';
 
 export interface AnonymousAnswer {
   id: string;
@@ -8,7 +7,7 @@ export interface AnonymousAnswer {
 }
 
 export interface Answer extends AnonymousAnswer {
-  player: Player;
+  player: string;
 }
 
 export const isNotAnonymous = (answer: AnonymousAnswer | Answer): answer is Answer => {

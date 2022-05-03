@@ -37,6 +37,7 @@ export const createTypeormConnection = (config: ConfigService, overrides?: Parti
     entities,
     logging,
     namingStrategy: new SnakeNamingStrategy(),
+    cache: false,
     ...overrides,
   });
 };

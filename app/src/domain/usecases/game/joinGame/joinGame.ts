@@ -1,10 +1,11 @@
 import { createThunk } from '../../../../store/createThunk';
-import { setGame } from '../../../actions';
+import { gameActions } from '../../../../store/slices/game/game.actions';
+import { gameDtoToEntity } from '../../../transformers/gameDtoToEntity';
 import { navigateToGameRoute } from '../../app/navigate/navigate';
 
 export const joinGame = createThunk(async ({ dispatch, gameGateway }, gameCode: string) => {
-  const game = await gameGateway.joinGame(gameCode);
+  const gameDto = await gameGateway.joinGame(gameCode);
 
-  dispatch(setGame(game));
+  dispatch(gameActions.setGame(gameDtoToEntity(gameDto)));
   dispatch(navigateToGameRoute('/idle'));
 });

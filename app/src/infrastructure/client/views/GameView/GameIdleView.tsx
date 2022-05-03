@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { Player } from '../../../../domain/entities/Player';
+import { Player } from '../../../../domain/entities/player';
 import { startGame } from '../../../../domain/usecases/game/startGame/startGame';
 import { selectCanStartGame, selectPlayers } from '../../../../store/selectors/gameSelectors';
 import Button from '../../components/elements/Button';

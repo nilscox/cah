@@ -1,4 +1,4 @@
-import { GameState, PlayState } from './enums';
+import { GameState, PlayState } from "./enums";
 
 export type ChoiceId = string;
 export interface ChoiceDto {
@@ -55,6 +55,10 @@ export interface StartedGameDto extends GameDto {
   answers: Array<AnswerDto>;
   winner?: PlayerId;
 }
+
+export const isGameStartedDto = (game: GameDto): game is StartedGameDto => {
+  return game.gameState === GameState.started;
+};
 
 export type TurnId = string;
 export interface TurnDto {

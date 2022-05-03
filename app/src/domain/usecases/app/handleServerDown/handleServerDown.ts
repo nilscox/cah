@@ -1,7 +1,8 @@
 import { createThunk } from '../../../../store/createThunk';
 import { NetworkStatus } from '../../../../store/reducers/appStateReducer';
-import { serverStatusChanged } from '../../../actions';
-import { initialize } from '../../player/initialize/initialize';
+import { appActions } from '../../../../store/slices/app/app.actions';
+import { selectServerStatus } from '../../../../store/slices/app/app.selectors';
+import { initialize } from '../../app/initialize/initialize';
 
 const checkInterval = 1000;
 
@@ -9,7 +10,7 @@ const healthcheck = createThunk(async ({ getState, dispatch, serverGateway }) =>
   const status = await serverGateway.healthcheck();
 
   if (getState().app.server !== status) {
-    dispatch(serverStatusChanged(status));
+    dispatch(appActions.setServerStatus(status));
   }
 
   return status;
@@ -33,8 +34,10 @@ const checkServerStatus = createThunk(async ({ dispatch, timerGateway }) => {
 });
 
 export const handleServerDown = createThunk(({ dispatch, getState }) => {
-  if (getState().app.server !== NetworkStatus.down) {
-    dispatch(serverStatusChanged(NetworkStatus.down));
+  const serverStatus = selectServerStatus(getState());
+
+  if (serverStatus !== NetworkStatus.down) {
+    dispatch(appActions.setServerStatus(NetworkStatus.down));
     dispatch(checkServerStatus());
   }
 });

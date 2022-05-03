@@ -1,11 +1,11 @@
 import { AnonymousAnswer, Answer } from '../domain/entities/Answer';
 import { Choice } from '../domain/entities/Choice';
-import { Game, GameState, PlayState, StartedGame } from '../domain/entities/Game';
-import { FullPlayer, Player } from '../domain/entities/Player';
+import { Game, GamePlayer, GameState, PlayState, StartedGame } from '../domain/entities/game';
+import { Player } from '../domain/entities/player';
 import { Question } from '../domain/entities/Question';
 import { Turn } from '../domain/entities/Turn';
-import { NetworkStatus } from '../store/reducers/appStateReducer';
-import { AppState } from '../store/types';
+
+import { createId } from './create-id';
 
 type FieldFactory<T, K extends keyof T> = T[K] | Array<T[K]> | ((index: number) => T[K]);
 type ObjectsFactory<T> = { [key in keyof T]: FieldFactory<T, key> };
@@ -102,23 +102,22 @@ export const factory = <T>(defaults: (index: number) => T) => {
   return [createOne, createMany] as const;
 };
 
-const createId = () => Math.random().toString(36).slice(-6);
-
-export const [createPlayer, createPlayers] = factory<Player>(() => ({
+export const [createGamePlayer, createGamePlayers] = factory<GamePlayer>(() => ({
   id: createId(),
   nick: 'nick',
   isConnected: false,
 }));
 
-export const [createFullPlayer] = factory<FullPlayer>(() => ({
-  ...createPlayer(),
-  cards: [],
-  hasFlushed: false,
+export const [createPlayer, createPlayers] = factory<Player>(() => ({
+  id: createId(),
+  nick: 'nick',
+  isConnected: false,
+  game: null,
 }));
 
 export const [createGame, createGames] = factory<Game>(() => ({
   id: createId(),
-  creator: createPlayer({ nick: 'creator' }),
+  creator: 'creatorId',
   code: 'code',
   state: GameState.idle,
   players: [],
@@ -150,13 +149,14 @@ export const [createQuestion, createQuestions] = factory<Question>((index) => ({
 }));
 
 export const [createChoice, createChoices] = factory<Choice>((index) => ({
-  id: `c${index}`,
+  id: createId(),
   text: `choice ${index}`,
   caseSensitive: false,
+  selected: false,
 }));
 
 export const [createAnonymousAnswer, createAnonymousAnswers] = factory<AnonymousAnswer>((index) => ({
-  id: `a ${index}`,
+  id: createId(),
   formatted: `answer ${index}`,
   choices: [],
 }));
@@ -164,10 +164,4 @@ export const [createAnonymousAnswer, createAnonymousAnswers] = factory<Anonymous
 export const [createAnswer, createAnswers] = factory<Answer>(() => ({
   ...createAnonymousAnswer(),
   player: createPlayer(),
-}));
-
-export const [createState] = factory<AppState>(() => ({
-  game: null,
-  player: null,
-  app: { ready: true, network: NetworkStatus.up, server: NetworkStatus.up, menuOpen: false },
 }));
