@@ -2,7 +2,7 @@ import { createContainer, injectableClass } from 'ditox';
 
 import { StubConfigAdapter } from './config/stub-config.adapter';
 import { StubLoggerAdapter } from './logger/stub-logger.adapter';
-import { Server } from './server';
+import { Server } from './server/server';
 import { TOKENS } from './tokens';
 
 describe('Server E2E', () => {

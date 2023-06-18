@@ -1,5 +1,6 @@
-import { StubConfigAdapter } from './config/stub-config.adapter';
-import { StubLoggerAdapter } from './logger/stub-logger.adapter';
+import { StubConfigAdapter } from '../config/stub-config.adapter';
+import { StubLoggerAdapter } from '../logger/stub-logger.adapter';
+
 import { Server } from './server';
 
 describe('server', () => {

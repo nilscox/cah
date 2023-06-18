@@ -4,8 +4,8 @@ import { promisify } from 'util';
 import express from 'express';
 import morgan from 'morgan';
 
-import { ConfigPort } from './config/config.port';
-import { LoggerPort } from './logger/logger.port';
+import { ConfigPort } from '../config/config.port';
+import { LoggerPort } from '../logger/logger.port';
 
 export class Server {
   private app: express.Express;

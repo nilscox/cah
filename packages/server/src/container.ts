@@ -2,7 +2,7 @@ import { createContainer, injectableClass } from 'ditox';
 
 import { StubConfigAdapter } from './config/stub-config.adapter';
 import { ConsoleLoggerAdapter } from './logger/console-logger.adapter';
-import { Server } from './server';
+import { Server } from './server/server';
 import { TOKENS } from './tokens';
 
 export const container = createContainer();
