@@ -1,0 +1,35 @@
+{
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/recommended-requiring-type-checking",
+    "plugin:import/recommended",
+    "plugin:import/typescript"
+  ],
+
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": ["./tsconfig.json"]
+  },
+
+  "plugins": ["@typescript-eslint", "import"],
+
+  "root": true,
+
+  "settings": {
+    "import/resolver": {
+      "typescript": true
+    }
+  },
+
+  "rules": {
+    "import/order": [
+      "warn",
+      {
+        "newlines-between": "always",
+        "alphabetize": { "order": "asc" },
+        "groups": ["builtin", "external", "internal", "parent", "sibling", "index"]
+      }
+    ]
+  }
+}

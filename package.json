@@ -1,0 +1,15 @@
+{
+  "name": "cah",
+  "version": "2.0.0",
+  "private": true,
+  "packageManager": "pnpm@8.5.1",
+  "engines": {
+    "node": "19.x"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "pnpm run -r clean",
+    "lint": "pnpm --no-bail run -r lint",
+    "test": "pnpm --no-bail --workspace-concurrency=1 run -r test"
+  }
+}
