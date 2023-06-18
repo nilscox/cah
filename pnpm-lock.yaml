@@ -73,6 +73,9 @@ importers:
       '@reduxjs/toolkit':
         specifier: ^1.9.5
         version: 1.9.5(react@18.2.0)
+      ditox:
+        specifier: ^2.3.1
+        version: 2.3.1
       express:
         specifier: 5.0.0-beta.1
         version: 5.0.0-beta.1
@@ -1247,6 +1250,11 @@ packages:
     dependencies:
       path-type: 4.0.0
     dev: true
+
+  /ditox@2.3.1:
+    resolution: {integrity: sha512-jXyIF3ygFI8iOF6u2a4stmmpxc7SM/bx+elFr+UtNqslCbQ3ikrWnhJahL4pkr0w8t1Tuz2vGyQ/mPigLspV/Q==}
+    engines: {node: '>=12'}
+    dev: false
 
   /doctrine@2.1.0:
     resolution: {integrity: sha512-35mSku4ZXK0vfCuHEDAwt55dg2jNajHZ1odvF+8SSr82EsZY4QmXfuWso8oEd8zRhVObSN18aM0CjSdoBX7zIw==}

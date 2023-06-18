@@ -1,11 +1,11 @@
-import express from 'express';
+import { container } from './container';
+import { TOKENS } from './tokens';
 
-main();
+main().catch(console.error);
 
-function main() {
-  const app = express();
+async function main() {
+  const server = container.resolve(TOKENS.server);
 
-  app.listen(3000, 'localhost', () => {
-    console.log('server started on port 3000');
-  });
+  await server.listen();
+  console.log('server started');
 }

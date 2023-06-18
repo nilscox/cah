@@ -1,8 +1,8 @@
 import { ConfigPort } from './config.port';
 
 export class StubConfigAdapter implements ConfigPort {
-  constructor(overrides: ConfigPort) {
-    this.server = { ...this.server, ...overrides.server };
+  constructor(overrides?: ConfigPort) {
+    this.server = { ...this.server, ...overrides?.server };
   }
 
   server = {
