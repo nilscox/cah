@@ -10,7 +10,7 @@ describe('Server E2E', () => {
     const container = createContainer();
 
     const config = new StubConfigAdapter({
-      server: { host: 'localhost', port: 7357 },
+      server: { host: 'localhost', port: 0 },
     });
 
     const logger = new StubLoggerAdapter();
