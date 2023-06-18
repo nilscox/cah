@@ -1,8 +1,8 @@
 import { Game, GameState } from '@cah/shared';
 
-import { StubEventPublisherAdapter } from '../../event-publisher/stub-event-publisher.adapter';
-import { StubGeneratorAdapter } from '../../generator/stub-generator.adapter';
-import { InMemoryGameRepository } from '../../persistence/repositories/game/in-memory-game.repository';
+import { StubEventPublisherAdapter } from '../../../event-publisher/stub-event-publisher.adapter';
+import { StubGeneratorAdapter } from '../../../generator/stub-generator.adapter';
+import { InMemoryGameRepository } from '../../../persistence/repositories/game/in-memory-game.repository';
 
 import { CreateGameHandler, GameCreatedEvent } from './create-game';
 

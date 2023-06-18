@@ -1,10 +1,10 @@
 import { Game, GameState } from '@cah/shared';
 
-import { EventPublisherPort } from '../../event-publisher/event-publisher.port';
-import { GeneratorPort } from '../../generator/generator.port';
-import { CommandHandler } from '../../interfaces/command-handler';
-import { DomainEvent } from '../../interfaces/domain-event';
-import { GameRepository } from '../../persistence/repositories/game/game.repository';
+import { EventPublisherPort } from '../../../event-publisher/event-publisher.port';
+import { GeneratorPort } from '../../../generator/generator.port';
+import { CommandHandler } from '../../../interfaces/command-handler';
+import { DomainEvent } from '../../../interfaces/domain-event';
+import { GameRepository } from '../../../persistence/repositories/game/game.repository';
 
 export type GameCreatedEvent = DomainEvent<'game', 'created'>;
 

@@ -1,8 +1,8 @@
 import { createContainer, injectableClass } from 'ditox';
 
+import { CreateGameHandler } from './commands/game/create-game/create-game';
 import { StubConfigAdapter } from './config/stub-config.adapter';
 import { StubEventPublisherAdapter } from './event-publisher/stub-event-publisher.adapter';
-import { CreateGameHandler } from './game/create-game/create-game';
 import { StubGeneratorAdapter } from './generator/stub-generator.adapter';
 import { ConsoleLoggerAdapter } from './logger/console-logger.adapter';
 import { InMemoryGameRepository } from './persistence/repositories/game/in-memory-game.repository';

@@ -1,8 +1,8 @@
 import { Container, token } from 'ditox';
 
+import { CreateGameHandler } from './commands/game/create-game/create-game';
 import { ConfigPort } from './config/config.port';
 import { EventPublisherPort } from './event-publisher/event-publisher.port';
-import { CreateGameHandler } from './game/create-game/create-game';
 import { GeneratorPort } from './generator/generator.port';
 import { LoggerPort } from './logger/logger.port';
 import { GameRepository } from './persistence/repositories/game/game.repository';
