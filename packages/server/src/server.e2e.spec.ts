@@ -2,12 +2,14 @@ import assert from 'node:assert';
 
 import { createContainer, injectableClass } from 'ditox';
 
+import { AddPlayerHandler } from './commands/game/add-player/add-player';
 import { CreateGameHandler } from './commands/game/create-game/create-game';
 import { StubConfigAdapter } from './config/stub-config.adapter';
-import { StubEventPublisherAdapter } from './event-publisher/stub-event-publisher.adapter';
+import { RealEventPublisherAdapter } from './event-publisher/real-event-publisher.adapter';
 import { StubGeneratorAdapter } from './generator/stub-generator.adapter';
 import { StubLoggerAdapter } from './logger/stub-logger.adapter';
 import { InMemoryGameRepository } from './persistence/repositories/game/in-memory-game.repository';
+import { InMemoryPlayerRepository } from './persistence/repositories/player/in-memory-player.repository';
 import { Server } from './server/server';
 import { TOKENS } from './tokens';
 
@@ -33,26 +35,39 @@ class Test {
   config = new StubConfigAdapter({ server: { host: 'localhost', port: 0 } });
   logger = new StubLoggerAdapter();
   generator = new StubGeneratorAdapter();
-  publisher = new StubEventPublisherAdapter();
 
   constructor() {
-    this.container.bindValue(TOKENS.container, this.container);
+    const container = this.container;
 
-    this.container.bindValue(TOKENS.config, this.config);
-    this.container.bindValue(TOKENS.logger, this.logger);
-    this.container.bindValue(TOKENS.generator, this.generator);
-    this.container.bindValue(TOKENS.publisher, this.publisher);
+    container.bindValue(TOKENS.container, container);
 
-    this.container.bindFactory(
+    container.bindValue(TOKENS.config, this.config);
+    container.bindValue(TOKENS.logger, this.logger);
+    container.bindValue(TOKENS.generator, this.generator);
+
+    container.bindFactory(TOKENS.publisher, injectableClass(RealEventPublisherAdapter, TOKENS.logger));
+
+    container.bindFactory(
       TOKENS.server,
       injectableClass(Server, TOKENS.config, TOKENS.logger, TOKENS.container)
     );
 
-    this.container.bindFactory(TOKENS.repositories.game, injectableClass(InMemoryGameRepository));
+    container.bindFactory(TOKENS.repositories.game, injectableClass(InMemoryGameRepository));
+    container.bindFactory(TOKENS.repositories.player, injectableClass(InMemoryPlayerRepository));
 
-    this.container.bindFactory(
+    container.bindFactory(
       TOKENS.commands.createGame,
       injectableClass(CreateGameHandler, TOKENS.generator, TOKENS.publisher, TOKENS.repositories.game)
+    );
+
+    container.bindFactory(
+      TOKENS.commands.addPlayer,
+      injectableClass(
+        AddPlayerHandler,
+        TOKENS.publisher,
+        TOKENS.repositories.game,
+        TOKENS.repositories.player
+      )
     );
   }
 

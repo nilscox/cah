@@ -1,11 +1,14 @@
-import { createServer, Server as NodeServer } from 'http';
-import { promisify } from 'util';
+import assert from 'node:assert';
+import { createServer, Server as NodeServer } from 'node:http';
+import { promisify } from 'node:util';
 
 import { Container } from 'ditox';
 import express from 'express';
 import morgan from 'morgan';
 
+import { GameCreatedEvent } from '../commands/game/create-game/create-game';
 import { ConfigPort } from '../config/config.port';
+import { RealEventPublisherAdapter } from '../event-publisher/real-event-publisher.adapter';
 import { LoggerPort } from '../logger/logger.port';
 import { TOKENS } from '../tokens';
 
@@ -73,8 +76,20 @@ export class Server {
     this.app.post('/game', async (req, res) => {
       const handler = this.container.resolve(TOKENS.commands.createGame);
 
-      await handler.execute({ code: '1234' });
+      await handler.execute({ creatorId: '' });
       res.status(201).end();
+    });
+
+    const publisher = this.container.resolve(TOKENS.publisher);
+    assert(publisher instanceof RealEventPublisherAdapter);
+
+    publisher.register(GameCreatedEvent, async (event) => {
+      const addPlayer = this.container.resolve(TOKENS.commands.addPlayer);
+
+      await addPlayer.execute({
+        gameId: event.entityId,
+        playerId: event.creatorId,
+      });
     });
   }
 

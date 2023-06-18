@@ -1,11 +1,13 @@
 import { Container, token } from 'ditox';
 
+import { AddPlayerHandler } from './commands/game/add-player/add-player';
 import { CreateGameHandler } from './commands/game/create-game/create-game';
 import { ConfigPort } from './config/config.port';
 import { EventPublisherPort } from './event-publisher/event-publisher.port';
 import { GeneratorPort } from './generator/generator.port';
 import { LoggerPort } from './logger/logger.port';
 import { GameRepository } from './persistence/repositories/game/game.repository';
+import { PlayerRepository } from './persistence/repositories/player/player.repository';
 import { Server } from './server/server';
 
 export const TOKENS = {
@@ -19,9 +21,11 @@ export const TOKENS = {
 
   repositories: {
     game: token<GameRepository>('gameRepository'),
+    player: token<PlayerRepository>('playerRepository'),
   },
 
   commands: {
     createGame: token<CreateGameHandler>('createGame'),
+    addPlayer: token<AddPlayerHandler>('addPlayer'),
   },
 };

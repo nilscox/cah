@@ -60,10 +60,7 @@ describe('createGame', () => {
     expect(test.publisher).toContainEqual<GameCreatedEvent>({
       entity: 'game',
       entityId: 'gameId',
-      type: 'created',
-      payload: {
-        creatorId: 'creatorId',
-      },
+      creatorId: 'creatorId',
     });
   });
 });

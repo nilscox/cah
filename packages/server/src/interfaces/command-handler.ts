@@ -1,4 +1,4 @@
-export interface CommandHandler<Command> {
+export interface CommandHandler<Command = unknown> {
   execute(command: Command): Promise<void>;
 }
 

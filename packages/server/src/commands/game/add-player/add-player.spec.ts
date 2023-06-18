@@ -53,10 +53,7 @@ describe('addPlayer', () => {
     expect(test.publisher).toContainEqual<PlayerAddedEvent>({
       entity: 'game',
       entityId: 'gameId',
-      type: 'player-added',
-      payload: {
-        playerId: 'playerId',
-      },
+      playerId: 'playerId',
     });
   });
 

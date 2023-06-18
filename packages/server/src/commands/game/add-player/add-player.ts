@@ -6,7 +6,11 @@ import { DomainEvent } from '../../../interfaces/domain-event';
 import { GameRepository } from '../../../persistence/repositories/game/game.repository';
 import { PlayerRepository } from '../../../persistence/repositories/player/player.repository';
 
-export type PlayerAddedEvent = DomainEvent<'game', 'player-added', { playerId: string }>;
+export class PlayerAddedEvent extends DomainEvent {
+  constructor(gameId: string, public readonly playerId: string) {
+    super('game', gameId);
+  }
+}
 
 type AddPlayerCommand = {
   gameId: string;
@@ -39,10 +43,7 @@ export class AddPlayerHandler implements CommandHandler<AddPlayerCommand> {
     this.publisher.publish<PlayerAddedEvent>({
       entity: 'game',
       entityId: game.id,
-      type: 'player-added',
-      payload: {
-        playerId: player.id,
-      },
+      playerId: player.id,
     });
   }
 }
