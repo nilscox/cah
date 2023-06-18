@@ -1,15 +1,12 @@
 import assert from 'node:assert';
 
-import { createContainer, injectableClass } from 'ditox';
+import { bindModule, createContainer, injectableClass } from 'ditox';
 
-import { AddPlayerHandler } from './commands/game/add-player/add-player';
-import { CreateGameHandler } from './commands/game/create-game/create-game';
 import { StubConfigAdapter } from './config/stub-config.adapter';
+import { appModule, inMemoryPersistenceModule } from './container';
 import { RealEventPublisherAdapter } from './event-publisher/real-event-publisher.adapter';
 import { StubGeneratorAdapter } from './generator/stub-generator.adapter';
 import { StubLoggerAdapter } from './logger/stub-logger.adapter';
-import { InMemoryGameRepository } from './persistence/repositories/game/in-memory-game.repository';
-import { InMemoryPlayerRepository } from './persistence/repositories/player/in-memory-player.repository';
 import { Server } from './server/server';
 import { TOKENS } from './tokens';
 
@@ -46,29 +43,11 @@ class Test {
     container.bindValue(TOKENS.generator, this.generator);
 
     container.bindFactory(TOKENS.publisher, injectableClass(RealEventPublisherAdapter, TOKENS.logger));
+    // prettier-ignore
+    container.bindFactory(TOKENS.server, injectableClass(Server, TOKENS.config, TOKENS.logger, TOKENS.container));
 
-    container.bindFactory(
-      TOKENS.server,
-      injectableClass(Server, TOKENS.config, TOKENS.logger, TOKENS.container)
-    );
-
-    container.bindFactory(TOKENS.repositories.game, injectableClass(InMemoryGameRepository));
-    container.bindFactory(TOKENS.repositories.player, injectableClass(InMemoryPlayerRepository));
-
-    container.bindFactory(
-      TOKENS.commands.createGame,
-      injectableClass(CreateGameHandler, TOKENS.generator, TOKENS.publisher, TOKENS.repositories.game)
-    );
-
-    container.bindFactory(
-      TOKENS.commands.addPlayer,
-      injectableClass(
-        AddPlayerHandler,
-        TOKENS.publisher,
-        TOKENS.repositories.game,
-        TOKENS.repositories.player
-      )
-    );
+    bindModule(container, inMemoryPersistenceModule);
+    bindModule(container, appModule);
   }
 
   get server() {

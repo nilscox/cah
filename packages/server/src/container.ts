@@ -1,4 +1,4 @@
-import { createContainer, injectableClass } from 'ditox';
+import { bindModule, createContainer, declareModule, injectableClass } from 'ditox';
 
 import { AddPlayerHandler } from './commands/game/add-player/add-player';
 import { CreateGameHandler } from './commands/game/create-game/create-game';
@@ -6,34 +6,60 @@ import { StubConfigAdapter } from './config/stub-config.adapter';
 import { RealEventPublisherAdapter } from './event-publisher/real-event-publisher.adapter';
 import { StubGeneratorAdapter } from './generator/stub-generator.adapter';
 import { ConsoleLoggerAdapter } from './logger/console-logger.adapter';
+import { GameRepository } from './persistence/repositories/game/game.repository';
 import { InMemoryGameRepository } from './persistence/repositories/game/in-memory-game.repository';
 import { InMemoryPlayerRepository } from './persistence/repositories/player/in-memory-player.repository';
+import { PlayerRepository } from './persistence/repositories/player/player.repository';
 import { Server } from './server/server';
 import { TOKENS } from './tokens';
+
+type PersistenceModule = {
+  gameRepository: GameRepository;
+  playerRepository: PlayerRepository;
+};
+
+export const inMemoryPersistenceModule = declareModule<PersistenceModule>({
+  factory: () => ({
+    gameRepository: new InMemoryGameRepository(),
+    playerRepository: new InMemoryPlayerRepository(),
+  }),
+  exports: {
+    gameRepository: TOKENS.repositories.game,
+    playerRepository: TOKENS.repositories.player,
+  },
+});
+
+type AppModule = {
+  createGame: CreateGameHandler;
+  addPlayer: AddPlayerHandler;
+};
+
+export const appModule = declareModule<AppModule>({
+  factory: (container) => {
+    const { generator, publisher, repositories } = TOKENS;
+    const { game: gameRepository, player: playerRepository } = repositories;
+
+    return {
+      createGame: injectableClass(CreateGameHandler, generator, publisher, gameRepository)(container),
+      addPlayer: injectableClass(AddPlayerHandler, publisher, gameRepository, playerRepository)(container),
+    };
+  },
+  exports: {
+    createGame: TOKENS.commands.createGame,
+    addPlayer: TOKENS.commands.addPlayer,
+  },
+});
 
 export const container = createContainer();
 
 container.bindValue(TOKENS.container, container);
 
 container.bindValue(TOKENS.config, new StubConfigAdapter());
-
 container.bindFactory(TOKENS.logger, () => new ConsoleLoggerAdapter(), { scope: 'transient' });
-
 container.bindFactory(TOKENS.generator, injectableClass(StubGeneratorAdapter));
 
 container.bindFactory(TOKENS.publisher, injectableClass(RealEventPublisherAdapter, TOKENS.logger));
-
 container.bindFactory(TOKENS.server, injectableClass(Server, TOKENS.config, TOKENS.logger, TOKENS.container));
 
-container.bindFactory(TOKENS.repositories.game, injectableClass(InMemoryGameRepository));
-container.bindFactory(TOKENS.repositories.player, injectableClass(InMemoryPlayerRepository));
-
-container.bindFactory(
-  TOKENS.commands.createGame,
-  injectableClass(CreateGameHandler, TOKENS.generator, TOKENS.publisher, TOKENS.repositories.game)
-);
-
-container.bindFactory(
-  TOKENS.commands.addPlayer,
-  injectableClass(AddPlayerHandler, TOKENS.publisher, TOKENS.repositories.game, TOKENS.repositories.player)
-);
+bindModule(container, inMemoryPersistenceModule);
+bindModule(container, appModule);
