@@ -1,6 +1,7 @@
-import { createContainer, injectable } from 'ditox';
+import { createContainer, injectableClass } from 'ditox';
 
 import { StubConfigAdapter } from './config/stub-config.adapter';
+import { StubLoggerAdapter } from './logger/stub-logger.adapter';
 import { Server } from './server';
 import { TOKENS } from './tokens';
 
@@ -12,12 +13,12 @@ describe('Server E2E', () => {
       server: { host: 'localhost', port: 7357 },
     });
 
-    container.bindValue(TOKENS.config, config);
+    const logger = new StubLoggerAdapter();
 
-    container.bindFactory(
-      TOKENS.server,
-      injectable((config) => new Server(config), TOKENS.config)
-    );
+    container.bindValue(TOKENS.config, config);
+    container.bindValue(TOKENS.logger, logger);
+
+    container.bindFactory(TOKENS.server, injectableClass(Server, TOKENS.config, TOKENS.logger));
 
     const server = container.resolve(TOKENS.server);
 

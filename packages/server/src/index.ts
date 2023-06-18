@@ -4,15 +4,14 @@ import { TOKENS } from './tokens';
 main().catch(console.error);
 
 async function main() {
+  const logger = container.resolve(TOKENS.logger);
   const server = container.resolve(TOKENS.server);
 
   await server.listen();
-  console.log('server started');
 
   const close = async (signal: string) => {
-    console.log(`received signal "${signal}"`);
+    logger.verbose(`received signal "${signal}"`);
     await server.close();
-    console.log('server closed');
   };
 
   process.on('SIGTERM', (signal) => void close(signal));

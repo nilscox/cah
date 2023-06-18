@@ -1,6 +1,7 @@
-import { createContainer, injectable } from 'ditox';
+import { createContainer, injectableClass } from 'ditox';
 
 import { StubConfigAdapter } from './config/stub-config.adapter';
+import { ConsoleLoggerAdapter } from './logger/console-logger.adapter';
 import { Server } from './server';
 import { TOKENS } from './tokens';
 
@@ -8,7 +9,6 @@ export const container = createContainer();
 
 container.bindValue(TOKENS.config, new StubConfigAdapter());
 
-container.bindFactory(
-  TOKENS.server,
-  injectable((config) => new Server(config), TOKENS.config)
-);
+container.bindFactory(TOKENS.logger, () => new ConsoleLoggerAdapter(), { scope: 'transient' });
+
+container.bindFactory(TOKENS.server, injectableClass(Server, TOKENS.config, TOKENS.logger));
