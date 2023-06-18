@@ -6,9 +6,10 @@ import { CommandHandler } from '../../../interfaces/command-handler';
 import { DomainEvent } from '../../../interfaces/domain-event';
 import { GameRepository } from '../../../persistence/repositories/game/game.repository';
 
-export type GameCreatedEvent = DomainEvent<'game', 'created'>;
+export type GameCreatedEvent = DomainEvent<'game', 'created', { creatorId: string }>;
 
 type CreateGameCommand = {
+  creatorId: string;
   code?: string;
 };
 
@@ -32,6 +33,9 @@ export class CreateGameHandler implements CommandHandler<CreateGameCommand> {
       entity: 'game',
       entityId: game.id,
       type: 'created',
+      payload: {
+        creatorId: command.creatorId,
+      },
     });
   }
 }
