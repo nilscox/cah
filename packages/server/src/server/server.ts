@@ -93,7 +93,9 @@ export class Server {
 
     return morgan(format, {
       stream: {
-        write: logger.verbose.bind(logger),
+        write(line) {
+          logger.verbose(line.replace(/\n$/, ''));
+        },
       },
     });
   }
