@@ -3,6 +3,7 @@ import assert from 'node:assert';
 import { createContainer, injectableClass } from 'ditox';
 
 import { StubConfigAdapter } from './config/stub-config.adapter';
+import { StubEventPublisherAdapter } from './event-publisher/stub-event-publisher.adapter';
 import { CreateGameHandler } from './game/create-game/create-game';
 import { StubGeneratorAdapter } from './generator/stub-generator.adapter';
 import { StubLoggerAdapter } from './logger/stub-logger.adapter';
@@ -32,6 +33,7 @@ class Test {
   config = new StubConfigAdapter({ server: { host: 'localhost', port: 0 } });
   logger = new StubLoggerAdapter();
   generator = new StubGeneratorAdapter();
+  publisher = new StubEventPublisherAdapter();
 
   constructor() {
     this.container.bindValue(TOKENS.container, this.container);
@@ -39,6 +41,7 @@ class Test {
     this.container.bindValue(TOKENS.config, this.config);
     this.container.bindValue(TOKENS.logger, this.logger);
     this.container.bindValue(TOKENS.generator, this.generator);
+    this.container.bindValue(TOKENS.publisher, this.publisher);
 
     this.container.bindFactory(
       TOKENS.server,
@@ -49,7 +52,7 @@ class Test {
 
     this.container.bindFactory(
       TOKENS.commands.createGame,
-      injectableClass(CreateGameHandler, TOKENS.generator, TOKENS.repositories.game)
+      injectableClass(CreateGameHandler, TOKENS.generator, TOKENS.publisher, TOKENS.repositories.game)
     );
   }
 

@@ -1,4 +1,5 @@
 import { StubConfigAdapter } from '../config/stub-config.adapter';
+import { container } from '../container';
 import { StubLoggerAdapter } from '../logger/stub-logger.adapter';
 
 import { Server } from './server';
@@ -8,7 +9,7 @@ describe('server', () => {
     const config = new StubConfigAdapter({ server: { host: '0.0.0.0', port: 7357 } });
     const logger = new StubLoggerAdapter();
 
-    const server = new Server(config, logger);
+    const server = new Server(config, logger, container);
 
     await server.listen();
 
@@ -26,7 +27,7 @@ describe('server', () => {
     const config = new StubConfigAdapter({ server: { host: '0.0.0.0', port: 7357 } });
     const logger = new StubLoggerAdapter();
 
-    const server = new Server(config, logger);
+    const server = new Server(config, logger, container);
 
     await server.listen();
     expect(logger.logs.get('info')).toContainEqual(['server listening on 0.0.0.0:7357']);

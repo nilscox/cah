@@ -1,15 +1,17 @@
 import { Game, GameState } from '@cah/shared';
 
+import { StubEventPublisherAdapter } from '../../event-publisher/stub-event-publisher.adapter';
 import { StubGeneratorAdapter } from '../../generator/stub-generator.adapter';
 import { InMemoryGameRepository } from '../../persistence/repositories/game/in-memory-game.repository';
 
-import { CreateGameHandler } from './create-game';
+import { CreateGameHandler, GameCreatedEvent } from './create-game';
 
 class Test {
   generator = new StubGeneratorAdapter();
   gameRepository = new InMemoryGameRepository();
+  publisher = new StubEventPublisherAdapter();
 
-  handler = new CreateGameHandler(this.generator, this.gameRepository);
+  handler = new CreateGameHandler(this.generator, this.publisher, this.gameRepository);
 
   constructor() {
     this.generator.nextId = 'gameId';
@@ -43,5 +45,15 @@ describe('createGame', () => {
     await test.handler.execute({});
 
     expect(await test.game).toHaveProperty('code', 'COCA');
+  });
+
+  it('publishes a GameCreated event', async () => {
+    await test.handler.execute({});
+
+    expect(test.publisher).toContainEqual<GameCreatedEvent>({
+      entity: 'game',
+      entityId: 'gameId',
+      type: 'created',
+    });
   });
 });

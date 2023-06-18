@@ -1,6 +1,7 @@
 import { Container, token } from 'ditox';
 
 import { ConfigPort } from './config/config.port';
+import { EventPublisherPort } from './event-publisher/event-publisher.port';
 import { CreateGameHandler } from './game/create-game/create-game';
 import { GeneratorPort } from './generator/generator.port';
 import { LoggerPort } from './logger/logger.port';
@@ -14,6 +15,7 @@ export const TOKENS = {
   logger: token<LoggerPort>('logger'),
   server: token<Server>('server'),
   generator: token<GeneratorPort>('generator'),
+  publisher: token<EventPublisherPort>('publisher'),
 
   repositories: {
     game: token<GameRepository>('gameRepository'),
