@@ -1,4 +1,5 @@
 export type Game = {
+  id: string;
   code: string;
   state: GameState;
 };

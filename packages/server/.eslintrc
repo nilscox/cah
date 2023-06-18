@@ -23,6 +23,7 @@
   },
 
   "rules": {
+    "@typescript-eslint/require-await": "off",
     "import/order": [
       "warn",
       {
