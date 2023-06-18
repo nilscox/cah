@@ -47,7 +47,7 @@ describe('createGame', () => {
     expect(await test.game).toHaveProperty('code', 'COCA');
   });
 
-  it('publishes a GameCreated event', async () => {
+  it('publishes a GameCreatedEvent', async () => {
     await test.handler.execute({});
 
     expect(test.publisher).toContainEqual<GameCreatedEvent>({

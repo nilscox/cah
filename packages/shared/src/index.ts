@@ -11,5 +11,6 @@ export enum GameState {
 }
 
 export type Player = {
+  id: string;
   gameId?: string;
 };

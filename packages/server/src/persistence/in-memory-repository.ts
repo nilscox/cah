@@ -5,7 +5,7 @@ export class InMemoryRepository<Entity extends BaseEntity> implements BaseReposi
   private items = new Map<string, Entity>();
 
   async findById(id: string): Promise<Entity | undefined> {
-    return this.items.get(id);
+    return this.get(id);
   }
 
   async findByIdOrFail(id: string): Promise<Entity> {
@@ -19,6 +19,18 @@ export class InMemoryRepository<Entity extends BaseEntity> implements BaseReposi
   }
 
   async save(entity: Entity): Promise<void> {
+    this.add(entity);
+  }
+
+  all() {
+    Array.from(this.items.values());
+  }
+
+  add(entity: Entity) {
     this.items.set(entity.id, entity);
+  }
+
+  get(id: string) {
+    return this.items.get(id);
   }
 }
