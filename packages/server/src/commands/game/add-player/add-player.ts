@@ -1,8 +1,7 @@
 import { GameState } from '@cah/shared';
 
 import { EventPublisherPort } from '../../../adapters';
-import { CommandHandler } from '../../../interfaces/command-handler';
-import { DomainEvent } from '../../../interfaces/domain-event';
+import { CommandHandler, DomainEvent } from '../../../interfaces';
 import { GameRepository } from '../../../persistence/repositories/game/game.repository';
 import { PlayerRepository } from '../../../persistence/repositories/player/player.repository';
 

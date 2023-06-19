@@ -1,8 +1,7 @@
 import { Game, GameState } from '@cah/shared';
 
 import { EventPublisherPort, GeneratorPort } from '../../../adapters';
-import { CommandHandler } from '../../../interfaces/command-handler';
-import { DomainEvent } from '../../../interfaces/domain-event';
+import { CommandHandler, DomainEvent } from '../../../interfaces';
 import { GameRepository } from '../../../persistence/repositories/game/game.repository';
 
 export class GameCreatedEvent extends DomainEvent {

@@ -1,7 +1,7 @@
 import { Game, GameState } from '@cah/shared';
 
 import { StubEventPublisherAdapter, StubGeneratorAdapter } from '../../../adapters';
-import { HandlerCommand } from '../../../interfaces/command-handler';
+import { HandlerCommand } from '../../../interfaces';
 import { InMemoryGameRepository } from '../../../persistence/repositories/game/in-memory-game.repository';
 
 import { CreateGameHandler, GameCreatedEvent } from './create-game';
