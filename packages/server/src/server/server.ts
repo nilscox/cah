@@ -6,10 +6,8 @@ import { Container } from 'ditox';
 import express from 'express';
 import morgan from 'morgan';
 
+import { ConfigPort, RealEventPublisherAdapter, LoggerPort } from '../adapters';
 import { GameCreatedEvent } from '../commands/game/create-game/create-game';
-import { ConfigPort } from '../config/config.port';
-import { RealEventPublisherAdapter } from '../event-publisher/real-event-publisher.adapter';
-import { LoggerPort } from '../logger/logger.port';
 import { TOKENS } from '../tokens';
 
 /* eslint-disable @typescript-eslint/no-misused-promises */

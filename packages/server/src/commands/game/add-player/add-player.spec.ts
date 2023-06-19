@@ -1,6 +1,6 @@
 import { GameState } from '@cah/shared';
 
-import { StubEventPublisherAdapter } from '../../../event-publisher/stub-event-publisher.adapter';
+import { StubEventPublisherAdapter } from '../../../adapters';
 import { HandlerCommand } from '../../../interfaces/command-handler';
 import { InMemoryGameRepository } from '../../../persistence/repositories/game/in-memory-game.repository';
 import { InMemoryPlayerRepository } from '../../../persistence/repositories/player/in-memory-player.repository';

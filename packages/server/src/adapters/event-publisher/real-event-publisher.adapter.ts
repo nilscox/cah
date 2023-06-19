@@ -1,7 +1,7 @@
-import { DomainEvent } from '../interfaces/domain-event';
+import { DomainEvent } from '../../interfaces/domain-event';
+import { ClassType } from '../../utils/class-type';
+import { defined } from '../../utils/defined';
 import { LoggerPort } from '../logger/logger.port';
-import { ClassType } from '../utils/class-type';
-import { defined } from '../utils/defined';
 
 import { EventPublisherPort } from './event-publisher.port';
 

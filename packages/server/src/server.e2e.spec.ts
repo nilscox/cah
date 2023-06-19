@@ -2,11 +2,13 @@ import assert from 'node:assert';
 
 import { bindModule, createContainer, injectableClass } from 'ditox';
 
-import { StubConfigAdapter } from './config/stub-config.adapter';
+import {
+  StubConfigAdapter,
+  RealEventPublisherAdapter,
+  StubGeneratorAdapter,
+  StubLoggerAdapter,
+} from './adapters';
 import { appModule, inMemoryPersistenceModule } from './container';
-import { RealEventPublisherAdapter } from './event-publisher/real-event-publisher.adapter';
-import { StubGeneratorAdapter } from './generator/stub-generator.adapter';
-import { StubLoggerAdapter } from './logger/stub-logger.adapter';
 import { Server } from './server/server';
 import { TOKENS } from './tokens';
 

@@ -1,6 +1,5 @@
-import { StubConfigAdapter } from '../config/stub-config.adapter';
+import { StubConfigAdapter, StubLoggerAdapter } from '../adapters';
 import { container } from '../container';
-import { StubLoggerAdapter } from '../logger/stub-logger.adapter';
 
 import { Server } from './server';
 

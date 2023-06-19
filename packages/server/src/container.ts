@@ -1,11 +1,13 @@
 import { bindModule, createContainer, declareModule, injectableClass } from 'ditox';
 
+import {
+  StubConfigAdapter,
+  RealEventPublisherAdapter,
+  StubGeneratorAdapter,
+  ConsoleLoggerAdapter,
+} from './adapters';
 import { AddPlayerHandler } from './commands/game/add-player/add-player';
 import { CreateGameHandler } from './commands/game/create-game/create-game';
-import { StubConfigAdapter } from './config/stub-config.adapter';
-import { RealEventPublisherAdapter } from './event-publisher/real-event-publisher.adapter';
-import { StubGeneratorAdapter } from './generator/stub-generator.adapter';
-import { ConsoleLoggerAdapter } from './logger/console-logger.adapter';
 import { GameRepository } from './persistence/repositories/game/game.repository';
 import { InMemoryGameRepository } from './persistence/repositories/game/in-memory-game.repository';
 import { InMemoryPlayerRepository } from './persistence/repositories/player/in-memory-player.repository';
