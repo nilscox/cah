@@ -49,11 +49,7 @@ describe('addPlayer', () => {
   it('publishes a PlayerAddedEvent', async () => {
     await test.handler.execute(test.command);
 
-    expect(test.publisher).toContainEqual<PlayerAddedEvent>({
-      entity: 'game',
-      entityId: 'gameId',
-      playerId: 'playerId',
-    });
+    expect(test.publisher).toContainEqual(new PlayerAddedEvent('gameId', 'playerId'));
   });
 
   it('prevents adding a player already in a game', async () => {

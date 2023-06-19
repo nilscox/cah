@@ -38,10 +38,6 @@ export class AddPlayerHandler implements CommandHandler<AddPlayerCommand> {
 
     await this.playerRepository.save(player);
 
-    this.publisher.publish<PlayerAddedEvent>({
-      entity: 'game',
-      entityId: game.id,
-      playerId: player.id,
-    });
+    this.publisher.publish(new PlayerAddedEvent(game.id, player.id));
   }
 }

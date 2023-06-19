@@ -56,10 +56,6 @@ describe('createGame', () => {
   it('publishes a GameCreatedEvent', async () => {
     await test.handler.execute(test.command);
 
-    expect(test.publisher).toContainEqual<GameCreatedEvent>({
-      entity: 'game',
-      entityId: 'gameId',
-      creatorId: 'creatorId',
-    });
+    expect(test.publisher).toContainEqual(new GameCreatedEvent('gameId', 'creatorId'));
   });
 });

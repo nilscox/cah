@@ -31,10 +31,6 @@ export class CreateGameHandler implements CommandHandler<CreateGameCommand> {
 
     await this.gameRepository.save(game);
 
-    this.publisher.publish<GameCreatedEvent>({
-      entity: 'game',
-      entityId: game.id,
-      creatorId: command.creatorId,
-    });
+    this.publisher.publish(new GameCreatedEvent(game.id, command.creatorId));
   }
 }
