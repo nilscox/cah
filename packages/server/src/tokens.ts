@@ -11,9 +11,10 @@ export const TOKENS = {
 
   config: token<ConfigPort>('config'),
   logger: token<LoggerPort>('logger'),
-  server: token<Server>('server'),
   generator: token<GeneratorPort>('generator'),
+
   publisher: token<EventPublisherPort>('publisher'),
+  server: token<Server>('server'),
 
   repositories: {
     game: token<GameRepository>('gameRepository'),

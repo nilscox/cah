@@ -64,7 +64,8 @@ container.bindFactory(TOKENS.logger, () => new ConsoleLoggerAdapter(), { scope: 
 container.bindFactory(TOKENS.generator, injectableClass(StubGeneratorAdapter));
 
 container.bindFactory(TOKENS.publisher, injectableClass(RealEventPublisherAdapter, TOKENS.logger));
-container.bindFactory(TOKENS.server, injectableClass(Server, TOKENS.config, TOKENS.logger, TOKENS.container));
+// prettier-ignore
+container.bindFactory(TOKENS.server, injectableClass(Server, TOKENS.config, TOKENS.logger, TOKENS.publisher, TOKENS.container));
 
 bindModule(container, inMemoryPersistenceModule);
 bindModule(container, appModule);

@@ -1,6 +1,7 @@
 import assert from 'node:assert';
 
 import { bindModule, createContainer, injectableClass } from 'ditox';
+import { Socket, io } from 'socket.io-client';
 
 import {
   StubConfigAdapter,
@@ -13,18 +14,47 @@ import { Server } from './server/server';
 import { TOKENS } from './tokens';
 
 class Fetcher {
-  constructor(private server: Server) {}
+  constructor(private readonly baseUrl: string) {}
 
   post = this.mutate('POST');
 
   private mutate(method: string) {
     return async (path: string) => {
-      const url = this.server.url;
-      assert(url);
-
-      const response = await fetch(url + path, { method });
+      const response = await fetch(this.baseUrl + path, { method });
       assert(response.ok);
     };
+  }
+}
+
+class Client {
+  private fetcher: Fetcher;
+  private socket: Socket;
+
+  constructor(private nick: string, server: Server) {
+    const address = server.address;
+    assert(address);
+
+    this.fetcher = new Fetcher(`http://${address}`);
+    this.socket = io(`ws://${address}`);
+
+    this.socket.on('message', this.handleEvent);
+  }
+
+  public debug = false;
+
+  private log(...args: unknown[]) {
+    if (this.debug) {
+      console.log(`* ${this.nick}`, ...args);
+    }
+  }
+
+  private handleEvent = (event: unknown) => {
+    this.log(event);
+  };
+
+  async createGame() {
+    this.log('creates a game');
+    await this.fetcher.post('/game');
   }
 }
 
@@ -46,7 +76,7 @@ class Test {
 
     container.bindFactory(TOKENS.publisher, injectableClass(RealEventPublisherAdapter, TOKENS.logger));
     // prettier-ignore
-    container.bindFactory(TOKENS.server, injectableClass(Server, TOKENS.config, TOKENS.logger, TOKENS.container));
+    container.bindFactory(TOKENS.server, injectableClass(Server, TOKENS.config, TOKENS.logger, TOKENS.publisher, TOKENS.container));
 
     bindModule(container, inMemoryPersistenceModule);
     bindModule(container, appModule);
@@ -56,8 +86,8 @@ class Test {
     return this.container.resolve(TOKENS.server);
   }
 
-  createClient() {
-    return new Fetcher(this.server);
+  createClient(nick: string) {
+    return new Client(nick, this.server);
   }
 }
 
@@ -74,8 +104,9 @@ describe('Server E2E', () => {
   });
 
   it('plays a full game', async () => {
-    const client = test.createClient();
+    const client = test.createClient('riri');
+    // client.debug = true;
 
-    await client.post('/game');
+    await client.createGame();
   });
 });
