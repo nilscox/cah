@@ -27,7 +27,9 @@ describe('server', () => {
   });
 
   afterEach(async () => {
-    await test.server.close();
+    if (test.server.listening) {
+      await test.server.close();
+    }
   });
 
   it('starts a HTTP server', async () => {
@@ -55,7 +57,10 @@ describe('server', () => {
   it('triggers a PlayerConnectedEvent', async () => {
     await test.server.listen();
 
-    const socket = io(`ws://${defined(test.server.address)}`);
+    const socket = io(`ws://${defined(test.server.address)}`, {
+      extraHeaders: { 'player-id': 'playerId' },
+    });
+
     await new Promise<void>((resolve) => socket.on('connect', resolve));
 
     expect(test.publisher).toContainEqual(new PlayerConnectedEvent(''));

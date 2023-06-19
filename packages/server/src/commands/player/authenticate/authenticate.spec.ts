@@ -39,6 +39,10 @@ describe('authenticate', () => {
     expect(test.player).toHaveProperty('nick', 'nick');
   });
 
+  it("returns the player's id", async () => {
+    await expect(test.handler.execute(test.command)).resolves.toEqual('playerId');
+  });
+
   it('publishes a PlayerAuthenticatedEvent', async () => {
     await test.handler.execute(test.command);
 

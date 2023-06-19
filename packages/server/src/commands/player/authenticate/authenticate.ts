@@ -14,14 +14,14 @@ type AuthenticateCommand = {
   nick: string;
 };
 
-export class AuthenticateHandler implements CommandHandler<AuthenticateCommand> {
+export class AuthenticateHandler implements CommandHandler<AuthenticateCommand, string> {
   constructor(
     private readonly generator: GeneratorPort,
     private readonly publisher: EventPublisherPort,
     private readonly playerRepository: PlayerRepository
   ) {}
 
-  async execute(command: AuthenticateCommand): Promise<void> {
+  async execute(command: AuthenticateCommand): Promise<string> {
     const player: Player = {
       id: this.generator.generateId(),
       nick: command.nick,
@@ -30,5 +30,7 @@ export class AuthenticateHandler implements CommandHandler<AuthenticateCommand> 
     await this.playerRepository.save(player);
 
     this.publisher.publish(new PlayerAuthenticatedEvent(player.id));
+
+    return player.id;
   }
 }

@@ -1,16 +1,21 @@
-import assert from 'node:assert';
 import { createServer, Server as NodeServer } from 'node:http';
 import { promisify } from 'node:util';
 
 import bodyParser from 'body-parser';
 import { Container } from 'ditox';
 import express from 'express';
+import session from 'express-session';
 import morgan from 'morgan';
 import * as yup from 'yup';
 
-import { ConfigPort, LoggerPort, RealEventPublisherAdapter } from 'src/adapters';
-import { GameCreatedEvent } from 'src/commands/game/create-game/create-game';
+import { ConfigPort, LoggerPort } from 'src/adapters';
 import { TOKENS } from 'src/tokens';
+
+declare module 'express-session' {
+  interface SessionData {
+    playerId: string;
+  }
+}
 
 /* eslint-disable @typescript-eslint/no-misused-promises */
 
@@ -23,8 +28,6 @@ export class HttpServer {
     private readonly logger: LoggerPort,
     private readonly container: Container
   ) {
-    this.logger.context = 'Server';
-
     this.app = express();
     this.server = createServer(this.app);
 
@@ -46,21 +49,16 @@ export class HttpServer {
   }
 
   async close() {
-    if (!this.server.listening) {
-      return;
+    if (this.server.listening) {
+      await promisify<void>((cb) => this.server.close(cb))();
     }
-
-    this.logger.verbose('closing server');
-
-    await promisify((cb: (err?: Error) => void) => {
-      this.server.close(cb);
-    })();
-
-    this.logger.info('server closed');
   }
 
   private configure() {
+    this.app.set('trust proxy', 1);
+
     this.app.use(this.loggerMiddleware);
+    this.app.use(this.sessionMiddleware);
     this.app.use(bodyParser.json());
 
     this.app.get('/health-check', (req, res) => {
@@ -71,7 +69,9 @@ export class HttpServer {
       const { nick } = await authenticateBodySchema.validate(req.body);
       const handler = this.container.resolve(TOKENS.commands.authenticate);
 
-      await handler.execute({ nick });
+      const playerId = await handler.execute({ nick });
+
+      req.session.playerId = playerId;
       res.status(201).end();
     });
 
@@ -96,16 +96,16 @@ export class HttpServer {
       res.json(result);
     });
 
-    const publisher = this.container.resolve(TOKENS.publisher);
-    assert(publisher instanceof RealEventPublisherAdapter);
+    this.app.get('/me', async (req, res) => {
+      const playerId = req.session.playerId;
+      const handler = this.container.resolve(TOKENS.queries.getPlayer);
 
-    publisher.register(GameCreatedEvent, async (event) => {
-      const addPlayer = this.container.resolve(TOKENS.commands.addPlayer);
+      if (!playerId) {
+        return res.status(404).end();
+      }
 
-      await addPlayer.execute({
-        gameId: event.entityId,
-        playerId: event.creatorId,
-      });
+      const result = await handler.execute({ playerId });
+      res.json(result);
     });
   }
 
@@ -128,6 +128,15 @@ export class HttpServer {
           logger.verbose(line.replace(/\n$/, ''));
         },
       },
+    });
+  }
+
+  private get sessionMiddleware() {
+    return session({
+      secret: 'secret',
+      resave: false,
+      saveUninitialized: true,
+      cookie: { secure: false },
     });
   }
 }
