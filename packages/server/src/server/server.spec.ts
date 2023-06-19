@@ -3,6 +3,7 @@ import { io } from 'socket.io-client';
 
 import { StubConfigAdapter, StubEventPublisherAdapter, StubLoggerAdapter } from 'src/adapters';
 import { container } from 'src/container';
+import { Fetcher } from 'src/test/fetcher';
 import { defined } from 'src/utils/defined';
 
 import { Server } from './server';
@@ -21,30 +22,6 @@ class Test {
 
   get address() {
     return defined(this.server.address);
-  }
-
-  async authenticate() {
-    const response = await fetch(`http://${this.address}/authenticate`, {
-      method: 'POST',
-      body: JSON.stringify({ nick: 'nick' }),
-      headers: new Headers({ 'Content-Type': 'application/json' }),
-    });
-
-    assert(response.ok);
-
-    const setCookie = response.headers.get('set-cookie');
-    assert(typeof setCookie === 'string');
-
-    return setCookie;
-  }
-
-  async getPlayerId(cookie: string) {
-    const response = await fetch(`http://${this.address}/me`, { headers: { cookie } });
-
-    assert(response.ok);
-
-    const body = (await response.json()) as Player;
-    return body.id;
   }
 }
 
@@ -83,14 +60,16 @@ describe('server', () => {
     expect(test.logger.logs.get('info')).toContainEqual(['server closed']);
   });
 
-  it.only('triggers a PlayerConnectedEvent', async () => {
+  it('triggers a PlayerConnectedEvent', async () => {
     await test.server.listen();
 
-    const cookie = await test.authenticate();
-    const playerId = await test.getPlayerId(cookie);
+    const fetcher = new Fetcher(`http://${String(test.server.address)}`);
+
+    await fetcher.post('/authenticate', { nick: 'nick' });
+    const { id: playerId } = await fetcher.get<Player>('/me');
 
     const socket = io(`ws://${defined(test.server.address)}`, {
-      extraHeaders: { cookie },
+      extraHeaders: { cookie: fetcher.cookie },
     });
 
     await new Promise<void>((resolve) => socket.on('connect', resolve));
