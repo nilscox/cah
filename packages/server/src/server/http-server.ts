@@ -82,6 +82,20 @@ export class HttpServer {
       res.status(201).end();
     });
 
+    this.app.get('/game/:gameId', async (req, res) => {
+      const handler = this.container.resolve(TOKENS.queries.getGame);
+
+      const result = await handler.execute({ gameId: req.params.gameId });
+      res.json(result);
+    });
+
+    this.app.get('/player/:playerId', async (req, res) => {
+      const handler = this.container.resolve(TOKENS.queries.getPlayer);
+
+      const result = await handler.execute({ playerId: req.params.playerId });
+      res.json(result);
+    });
+
     const publisher = this.container.resolve(TOKENS.publisher);
     assert(publisher instanceof RealEventPublisherAdapter);
 

@@ -4,7 +4,7 @@
   "type": "module",
   "main": "src/index.ts",
   "scripts": {
-    "start": "ts-node src/index.ts",
+    "start": "node --loader @bleed-believer/path-alias src/index.ts",
     "dev": "nodemon -w src -e ts -x 'pnpm start'",
     "lint": "eslint src",
     "test": "vitest"
@@ -28,6 +28,7 @@
     "vitest": "^0.32.2"
   },
   "dependencies": {
+    "@bleed-believer/path-alias": "^0.15.2",
     "@cah/shared": "workspace:*",
     "@reduxjs/toolkit": "^1.9.5",
     "body-parser": "^1.20.2",

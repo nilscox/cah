@@ -1,11 +1,6 @@
 import { bindModule, createContainer, declareModule, injectableClass } from 'ditox';
 
-import {
-  StubConfigAdapter,
-  RealEventPublisherAdapter,
-  StubGeneratorAdapter,
-  ConsoleLoggerAdapter,
-} from 'src/adapters';
+import { ConsoleLoggerAdapter, RealEventPublisherAdapter, StubConfigAdapter } from 'src/adapters';
 import {
   GameRepository,
   InMemoryGameRepository,
@@ -13,9 +8,12 @@ import {
   PlayerRepository,
 } from 'src/persistence';
 
+import { MathRandomGeneratorAdapter } from './adapters/generator/math-random-generator.adapter';
 import { AddPlayerHandler } from './commands/game/add-player/add-player';
 import { CreateGameHandler } from './commands/game/create-game/create-game';
 import { AuthenticateHandler } from './commands/player/authenticate/authenticate';
+import { GetGameHandler } from './queries/get-game';
+import { GetPlayerHandler } from './queries/get-player';
 import { Server } from './server/server';
 import { TOKENS } from './tokens';
 
@@ -39,6 +37,8 @@ type AppModule = {
   authenticate: AuthenticateHandler;
   createGame: CreateGameHandler;
   addPlayer: AddPlayerHandler;
+  getGame: GetGameHandler;
+  getPlayer: GetPlayerHandler;
 };
 
 export const appModule = declareModule<AppModule>({
@@ -50,12 +50,16 @@ export const appModule = declareModule<AppModule>({
       authenticate: injectableClass(AuthenticateHandler, generator, publisher, playerRepository)(container),
       createGame: injectableClass(CreateGameHandler, generator, publisher, gameRepository)(container),
       addPlayer: injectableClass(AddPlayerHandler, publisher, gameRepository, playerRepository)(container),
+      getGame: injectableClass(GetGameHandler, gameRepository)(container),
+      getPlayer: injectableClass(GetPlayerHandler, playerRepository)(container),
     };
   },
   exports: {
     authenticate: TOKENS.commands.authenticate,
     createGame: TOKENS.commands.createGame,
     addPlayer: TOKENS.commands.addPlayer,
+    getGame: TOKENS.queries.getGame,
+    getPlayer: TOKENS.queries.getPlayer,
   },
 });
 
@@ -65,7 +69,7 @@ container.bindValue(TOKENS.container, container);
 
 container.bindValue(TOKENS.config, new StubConfigAdapter());
 container.bindFactory(TOKENS.logger, () => new ConsoleLoggerAdapter(), { scope: 'transient' });
-container.bindFactory(TOKENS.generator, injectableClass(StubGeneratorAdapter));
+container.bindFactory(TOKENS.generator, injectableClass(MathRandomGeneratorAdapter));
 
 container.bindFactory(TOKENS.publisher, injectableClass(RealEventPublisherAdapter, TOKENS.logger));
 // prettier-ignore

@@ -5,6 +5,8 @@ import { AddPlayerHandler } from './commands/game/add-player/add-player';
 import { CreateGameHandler } from './commands/game/create-game/create-game';
 import { AuthenticateHandler } from './commands/player/authenticate/authenticate';
 import { GameRepository, PlayerRepository } from './persistence';
+import { GetGameHandler } from './queries/get-game';
+import { GetPlayerHandler } from './queries/get-player';
 import { Server } from './server/server';
 
 export const TOKENS = {
@@ -26,5 +28,10 @@ export const TOKENS = {
     authenticate: token<AuthenticateHandler>('authenticate'),
     createGame: token<CreateGameHandler>('createGame'),
     addPlayer: token<AddPlayerHandler>('addPlayer'),
+  },
+
+  queries: {
+    getGame: token<GetGameHandler>('getGame'),
+    getPlayer: token<GetPlayerHandler>('getPlayer'),
   },
 };
