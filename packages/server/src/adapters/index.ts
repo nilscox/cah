@@ -6,6 +6,7 @@ export * from './event-publisher/real-event-publisher.adapter';
 export * from './event-publisher/stub-event-publisher.adapter';
 
 export * from './generator/generator.port';
+export * from './generator/math-random-generator.adapter';
 export * from './generator/stub-generator.adapter';
 
 export * from './logger/console-logger.adapter';

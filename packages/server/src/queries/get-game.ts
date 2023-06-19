@@ -1,5 +1,4 @@
-import { Game } from '@cah/shared';
-
+import { Game } from 'src/entities';
 import { QueryHandler } from 'src/interfaces';
 import { GameRepository } from 'src/persistence';
 

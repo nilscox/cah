@@ -1,4 +1,4 @@
-import { Game } from '@cah/shared';
+import { Game } from 'src/entities';
 
 import { BaseRepository } from '../../base-repository';
 

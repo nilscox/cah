@@ -1,4 +1,4 @@
-import { Game } from '@cah/shared';
+import { Game } from 'src/entities';
 
 import { InMemoryRepository } from '../../in-memory-repository';
 

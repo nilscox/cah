@@ -1,6 +1,5 @@
-import { Player } from '@cah/shared';
-
 import { EventPublisherPort, GeneratorPort } from 'src/adapters';
+import { Player } from 'src/entities';
 import { CommandHandler, DomainEvent } from 'src/interfaces';
 import { PlayerRepository } from 'src/persistence';
 

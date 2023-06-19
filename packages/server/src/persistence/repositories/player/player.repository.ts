@@ -1,4 +1,4 @@
-import { Player } from '@cah/shared';
+import { Player } from 'src/entities';
 
 import { BaseRepository } from '../../base-repository';
 

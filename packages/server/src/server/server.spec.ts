@@ -1,8 +1,8 @@
-import { Player } from '@cah/shared';
 import { io } from 'socket.io-client';
 
 import { StubConfigAdapter, StubEventPublisherAdapter, StubLoggerAdapter } from 'src/adapters';
 import { container } from 'src/container';
+import { Player } from 'src/entities';
 import { Fetcher } from 'src/test/fetcher';
 import { defined } from 'src/utils/defined';
 

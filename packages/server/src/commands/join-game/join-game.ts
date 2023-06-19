@@ -1,6 +1,5 @@
-import { GameState } from '@cah/shared';
-
 import { EventPublisherPort } from 'src/adapters';
+import { GameState } from 'src/entities';
 import { CommandHandler, DomainEvent } from 'src/interfaces';
 import { GameRepository, PlayerRepository } from 'src/persistence';
 

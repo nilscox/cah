@@ -1,5 +1,4 @@
-import { Player } from '@cah/shared';
-
+import { Player } from 'src/entities';
 import { QueryHandler } from 'src/interfaces';
 import { PlayerRepository } from 'src/persistence';
 

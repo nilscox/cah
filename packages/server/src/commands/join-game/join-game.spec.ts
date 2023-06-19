@@ -1,6 +1,5 @@
-import { GameState } from '@cah/shared';
-
 import { StubEventPublisherAdapter } from 'src/adapters';
+import { GameState } from 'src/entities';
 import { HandlerCommand } from 'src/interfaces';
 import { InMemoryGameRepository, InMemoryPlayerRepository } from 'src/persistence';
 import { defined } from 'src/utils/defined';

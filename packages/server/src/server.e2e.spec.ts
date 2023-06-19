@@ -1,17 +1,21 @@
 import assert from 'node:assert';
 
-import { Game, Player } from '@cah/shared';
 import { bindModule, createContainer, injectable, injectableClass } from 'ditox';
 import { Socket, io } from 'socket.io-client';
 
-import { RealEventPublisherAdapter, StubConfigAdapter, StubLoggerAdapter } from './adapters';
-import { MathRandomGeneratorAdapter } from './adapters/generator/math-random-generator.adapter';
-import { appModule, inMemoryPersistenceModule } from './container';
-import { Notifier } from './notifier/notifier';
-import { Server } from './server/server';
-import { Fetcher } from './test/fetcher';
-import { TOKENS } from './tokens';
-import { defined } from './utils/defined';
+import {
+  RealEventPublisherAdapter,
+  StubConfigAdapter,
+  StubLoggerAdapter,
+  MathRandomGeneratorAdapter,
+} from 'src/adapters';
+import { appModule, inMemoryPersistenceModule } from 'src/container';
+import { Game, Player } from 'src/entities';
+import { Notifier } from 'src/notifier/notifier';
+import { Server } from 'src/server/server';
+import { Fetcher } from 'src/test/fetcher';
+import { TOKENS } from 'src/tokens';
+import { defined } from 'src/utils/defined';
 
 class Client {
   private fetcher: Fetcher;
