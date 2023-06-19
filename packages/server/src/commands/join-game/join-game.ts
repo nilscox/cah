@@ -4,25 +4,25 @@ import { EventPublisherPort } from 'src/adapters';
 import { CommandHandler, DomainEvent } from 'src/interfaces';
 import { GameRepository, PlayerRepository } from 'src/persistence';
 
-export class PlayerAddedEvent extends DomainEvent {
+export class PlayerJoinedEvent extends DomainEvent {
   constructor(gameId: string, public readonly playerId: string) {
     super('game', gameId);
   }
 }
 
-type AddPlayerCommand = {
+type JoinGameCommand = {
   gameId: string;
   playerId: string;
 };
 
-export class AddPlayerHandler implements CommandHandler<AddPlayerCommand> {
+export class JoinGameHandler implements CommandHandler<JoinGameCommand> {
   constructor(
     private publisher: EventPublisherPort,
     private gameRepository: GameRepository,
     private playerRepository: PlayerRepository
   ) {}
 
-  async execute(command: AddPlayerCommand): Promise<void> {
+  async execute(command: JoinGameCommand): Promise<void> {
     const game = await this.gameRepository.findByIdOrFail(command.gameId);
     const player = await this.playerRepository.findByIdOrFail(command.playerId);
 
@@ -38,6 +38,6 @@ export class AddPlayerHandler implements CommandHandler<AddPlayerCommand> {
 
     await this.playerRepository.save(player);
 
-    this.publisher.publish(new PlayerAddedEvent(game.id, player.id));
+    this.publisher.publish(new PlayerJoinedEvent(game.id, player.id));
   }
 }

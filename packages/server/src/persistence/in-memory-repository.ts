@@ -28,7 +28,15 @@ export class InMemoryRepository<Entity extends BaseEntity> implements BaseReposi
   }
 
   all() {
-    Array.from(this.items.values()).map(clone);
+    return Array.from(this.items.values()).map(clone);
+  }
+
+  filter(predicate: (entity: Entity) => boolean) {
+    return this.all().filter(predicate);
+  }
+
+  find(predicate: (entity: Entity) => boolean) {
+    return this.all().find(predicate);
   }
 
   set(entity: Entity) {

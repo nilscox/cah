@@ -9,9 +9,9 @@ import {
 } from 'src/persistence';
 
 import { MathRandomGeneratorAdapter } from './adapters/generator/math-random-generator.adapter';
-import { AddPlayerHandler } from './commands/add-player/add-player';
 import { AuthenticateHandler } from './commands/authenticate/authenticate';
 import { CreateGameHandler } from './commands/create-game/create-game';
+import { JoinGameHandler } from './commands/join-game/join-game';
 import { Notifier } from './notifier/notifier';
 import { GetGameHandler } from './queries/get-game';
 import { GetPlayerHandler } from './queries/get-player';
@@ -37,7 +37,7 @@ export const inMemoryPersistenceModule = declareModule<PersistenceModule>({
 type AppModule = {
   authenticate: AuthenticateHandler;
   createGame: CreateGameHandler;
-  addPlayer: AddPlayerHandler;
+  joinGame: JoinGameHandler;
   getGame: GetGameHandler;
   getPlayer: GetPlayerHandler;
 };
@@ -50,7 +50,7 @@ export const appModule = declareModule<AppModule>({
     return {
       authenticate: injectableClass(AuthenticateHandler, generator, publisher, playerRepository)(container),
       createGame: injectableClass(CreateGameHandler, generator, publisher, gameRepository)(container),
-      addPlayer: injectableClass(AddPlayerHandler, publisher, gameRepository, playerRepository)(container),
+      joinGame: injectableClass(JoinGameHandler, publisher, gameRepository, playerRepository)(container),
       getGame: injectableClass(GetGameHandler, gameRepository)(container),
       getPlayer: injectableClass(GetPlayerHandler, playerRepository)(container),
     };
@@ -58,7 +58,7 @@ export const appModule = declareModule<AppModule>({
   exports: {
     authenticate: TOKENS.commands.authenticate,
     createGame: TOKENS.commands.createGame,
-    addPlayer: TOKENS.commands.addPlayer,
+    joinGame: TOKENS.commands.joinGame,
     getGame: TOKENS.queries.getGame,
     getPlayer: TOKENS.queries.getPlayer,
   },

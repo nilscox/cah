@@ -65,9 +65,9 @@ export class Server {
     assert(publisher instanceof RealEventPublisherAdapter);
 
     publisher.register(GameCreatedEvent, async (event) => {
-      const addPlayer = this.container.resolve(TOKENS.commands.addPlayer);
+      const joinGame = this.container.resolve(TOKENS.commands.joinGame);
 
-      await addPlayer.execute({
+      await joinGame.execute({
         gameId: event.entityId,
         playerId: event.creatorId,
       });

@@ -5,14 +5,14 @@ import { HandlerCommand } from 'src/interfaces';
 import { InMemoryGameRepository, InMemoryPlayerRepository } from 'src/persistence';
 import { defined } from 'src/utils/defined';
 
-import { AddPlayerHandler, PlayerAddedEvent } from './add-player';
+import { JoinGameHandler, PlayerJoinedEvent } from './join-game';
 
 class Test {
   gameRepository = new InMemoryGameRepository();
   playerRepository = new InMemoryPlayerRepository();
   publisher = new StubEventPublisherAdapter();
 
-  handler = new AddPlayerHandler(this.publisher, this.gameRepository, this.playerRepository);
+  handler = new JoinGameHandler(this.publisher, this.gameRepository, this.playerRepository);
 
   command: HandlerCommand<typeof this.handler> = {
     gameId: 'gameId',
@@ -33,7 +33,7 @@ class Test {
   }
 }
 
-describe('addPlayer', () => {
+describe('joinGame', () => {
   let test: Test;
 
   beforeEach(() => {
@@ -46,10 +46,10 @@ describe('addPlayer', () => {
     expect(test.player).toHaveProperty('gameId', 'gameId');
   });
 
-  it('publishes a PlayerAddedEvent', async () => {
+  it('publishes a PlayerJoinedEvent', async () => {
     await test.handler.execute(test.command);
 
-    expect(test.publisher).toContainEqual(new PlayerAddedEvent('gameId', 'playerId'));
+    expect(test.publisher).toContainEqual(new PlayerJoinedEvent('gameId', 'playerId'));
   });
 
   it('prevents adding a player already in a game', async () => {
