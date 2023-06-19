@@ -11,3 +11,5 @@ export * from './generator/stub-generator.adapter';
 export * from './logger/console-logger.adapter';
 export * from './logger/logger.port';
 export * from './logger/stub-logger.adapter';
+
+export * from './rtc/rtc.port';

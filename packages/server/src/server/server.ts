@@ -9,22 +9,22 @@ import { TOKENS } from 'src/tokens';
 import { HttpServer } from './http-server';
 import { WsServer } from './ws-server';
 
-/* eslint-disable @typescript-eslint/no-misused-promises */
-
 export class Server {
   private httpServer: HttpServer;
   private wsServer: WsServer;
 
   constructor(
-    config: ConfigPort,
+    private readonly config: ConfigPort,
     private readonly logger: LoggerPort,
     private readonly publisher: EventPublisherPort,
     private readonly container: Container
   ) {
     this.logger.context = 'Server';
 
-    this.httpServer = new HttpServer(config, logger, container);
+    this.httpServer = new HttpServer(this.config, this.logger, this.container);
     this.wsServer = new WsServer(this.httpServer.nodeServer, this.publisher);
+
+    this.wsServer.use(this.httpServer.sessionMiddleware);
 
     this.configure();
   }
@@ -43,6 +43,10 @@ export class Server {
     return this.httpServer.nodeServer.listening;
   }
 
+  get rtc() {
+    return this.wsServer;
+  }
+
   async listen() {
     await this.httpServer.listen();
   }
@@ -54,7 +58,6 @@ export class Server {
     await this.httpServer.close();
 
     this.logger.info('server closed');
-  }
   }
 
   private configure() {

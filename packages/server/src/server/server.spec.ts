@@ -1,3 +1,4 @@
+import { Player } from '@cah/shared';
 import { io } from 'socket.io-client';
 
 import { StubConfigAdapter, StubEventPublisherAdapter, StubLoggerAdapter } from 'src/adapters';
@@ -5,7 +6,7 @@ import { container } from 'src/container';
 import { defined } from 'src/utils/defined';
 
 import { Server } from './server';
-import { PlayerConnectedEvent } from './ws-server';
+import { PlayerConnectedEvent, PlayerDisconnectedEvent } from './ws-server';
 
 class Test {
   config = new StubConfigAdapter({ server: { host: '0.0.0.0', port: 7357 } });
@@ -16,6 +17,34 @@ class Test {
 
   async cleanup() {
     await this.server.close();
+  }
+
+  get address() {
+    return defined(this.server.address);
+  }
+
+  async authenticate() {
+    const response = await fetch(`http://${this.address}/authenticate`, {
+      method: 'POST',
+      body: JSON.stringify({ nick: 'nick' }),
+      headers: new Headers({ 'Content-Type': 'application/json' }),
+    });
+
+    assert(response.ok);
+
+    const setCookie = response.headers.get('set-cookie');
+    assert(typeof setCookie === 'string');
+
+    return setCookie;
+  }
+
+  async getPlayerId(cookie: string) {
+    const response = await fetch(`http://${this.address}/me`, { headers: { cookie } });
+
+    assert(response.ok);
+
+    const body = (await response.json()) as Player;
+    return body.id;
   }
 }
 
@@ -54,15 +83,23 @@ describe('server', () => {
     expect(test.logger.logs.get('info')).toContainEqual(['server closed']);
   });
 
-  it('triggers a PlayerConnectedEvent', async () => {
+  it.only('triggers a PlayerConnectedEvent', async () => {
     await test.server.listen();
 
+    const cookie = await test.authenticate();
+    const playerId = await test.getPlayerId(cookie);
+
     const socket = io(`ws://${defined(test.server.address)}`, {
-      extraHeaders: { 'player-id': 'playerId' },
+      extraHeaders: { cookie },
     });
 
     await new Promise<void>((resolve) => socket.on('connect', resolve));
 
-    expect(test.publisher).toContainEqual(new PlayerConnectedEvent(''));
+    expect(test.publisher).toContainEqual(new PlayerConnectedEvent(playerId));
+
+    socket.disconnect();
+    await new Promise((r) => setTimeout(r, 10));
+
+    expect(test.publisher).toContainEqual(new PlayerDisconnectedEvent(playerId));
   });
 });

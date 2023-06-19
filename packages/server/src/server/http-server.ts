@@ -5,6 +5,7 @@ import bodyParser from 'body-parser';
 import { Container } from 'ditox';
 import express from 'express';
 import session from 'express-session';
+import createMemoryStore from 'memorystore';
 import morgan from 'morgan';
 import * as yup from 'yup';
 
@@ -17,11 +18,15 @@ declare module 'express-session' {
   }
 }
 
+const MemoryStore = createMemoryStore(session);
+
 /* eslint-disable @typescript-eslint/no-misused-promises */
 
 export class HttpServer {
   private app: express.Express;
   private server: NodeServer;
+
+  private sessionStore = new MemoryStore({});
 
   constructor(
     private readonly config: ConfigPort,
@@ -131,12 +136,13 @@ export class HttpServer {
     });
   }
 
-  private get sessionMiddleware() {
+  get sessionMiddleware() {
     return session({
       secret: 'secret',
       resave: false,
       saveUninitialized: true,
       cookie: { secure: false },
+      store: this.sessionStore,
     });
   }
 }

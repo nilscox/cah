@@ -1,4 +1,4 @@
-import { bindModule, createContainer, declareModule, injectableClass } from 'ditox';
+import { bindModule, createContainer, declareModule, injectable, injectableClass } from 'ditox';
 
 import { ConsoleLoggerAdapter, RealEventPublisherAdapter, StubConfigAdapter } from 'src/adapters';
 import {
@@ -12,6 +12,7 @@ import { MathRandomGeneratorAdapter } from './adapters/generator/math-random-gen
 import { AddPlayerHandler } from './commands/game/add-player/add-player';
 import { CreateGameHandler } from './commands/game/create-game/create-game';
 import { AuthenticateHandler } from './commands/player/authenticate/authenticate';
+import { Notifier } from './notifier/notifier';
 import { GetGameHandler } from './queries/get-game';
 import { GetPlayerHandler } from './queries/get-player';
 import { Server } from './server/server';
@@ -71,9 +72,13 @@ container.bindValue(TOKENS.config, new StubConfigAdapter());
 container.bindFactory(TOKENS.logger, () => new ConsoleLoggerAdapter(), { scope: 'transient' });
 container.bindFactory(TOKENS.generator, injectableClass(MathRandomGeneratorAdapter));
 
-container.bindFactory(TOKENS.publisher, injectableClass(RealEventPublisherAdapter, TOKENS.logger));
 // prettier-ignore
-container.bindFactory(TOKENS.server, injectableClass(Server, TOKENS.config, TOKENS.logger, TOKENS.publisher, TOKENS.container));
+{
+  container.bindFactory(TOKENS.publisher, injectableClass(RealEventPublisherAdapter, TOKENS.logger));
+  container.bindFactory(TOKENS.server, injectableClass(Server, TOKENS.config, TOKENS.logger, TOKENS.publisher, TOKENS.container));
+  container.bindFactory(TOKENS.rtc, injectable((server) => server.rtc, TOKENS.server));
+  container.bindFactory(TOKENS.notifier, injectableClass(Notifier, TOKENS.rtc, TOKENS.publisher, TOKENS.repositories.game, TOKENS.repositories.player));
+}
 
 bindModule(container, inMemoryPersistenceModule);
 bindModule(container, appModule);
