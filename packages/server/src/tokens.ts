@@ -1,9 +1,9 @@
 import { Container, token } from 'ditox';
 
 import { ConfigPort, EventPublisherPort, GeneratorPort, LoggerPort, RtcPort } from './adapters';
-import { AddPlayerHandler } from './commands/game/add-player/add-player';
-import { CreateGameHandler } from './commands/game/create-game/create-game';
-import { AuthenticateHandler } from './commands/player/authenticate/authenticate';
+import { AddPlayerHandler } from './commands/add-player/add-player';
+import { AuthenticateHandler } from './commands/authenticate/authenticate';
+import { CreateGameHandler } from './commands/create-game/create-game';
 import { Notifier } from './notifier/notifier';
 import { GameRepository, PlayerRepository } from './persistence';
 import { GetGameHandler } from './queries/get-game';

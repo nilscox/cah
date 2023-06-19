@@ -3,7 +3,7 @@ import assert from 'node:assert';
 import { Container } from 'ditox';
 
 import { ConfigPort, EventPublisherPort, LoggerPort, RealEventPublisherAdapter } from 'src/adapters';
-import { GameCreatedEvent } from 'src/commands/game/create-game/create-game';
+import { GameCreatedEvent } from 'src/commands/create-game/create-game';
 import { TOKENS } from 'src/tokens';
 
 import { HttpServer } from './http-server';
