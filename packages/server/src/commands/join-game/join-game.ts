@@ -11,8 +11,8 @@ export class PlayerJoinedEvent extends DomainEvent {
 }
 
 type JoinGameCommand = {
-  gameId: string;
   playerId: string;
+  code: string;
 };
 
 export class JoinGameHandler implements CommandHandler<JoinGameCommand> {
@@ -23,8 +23,8 @@ export class JoinGameHandler implements CommandHandler<JoinGameCommand> {
   ) {}
 
   async execute(command: JoinGameCommand): Promise<void> {
-    const game = await this.gameRepository.findByIdOrFail(command.gameId);
     const player = await this.playerRepository.findByIdOrFail(command.playerId);
+    const game = await this.gameRepository.findByCode(command.code);
 
     if (player.gameId !== undefined) {
       throw new Error('player is already in a game');

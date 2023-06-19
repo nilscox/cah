@@ -97,6 +97,15 @@ export class HttpServer {
       res.status(201).end();
     });
 
+    this.app.put('/game/:code/join', authenticated, async (req, res) => {
+      const playerId = defined(req.session.playerId);
+      const code = req.params.code;
+      const handler = this.container.resolve(TOKENS.commands.joinGame);
+
+      await handler.execute({ code, playerId });
+      res.status(201).end();
+    });
+
     this.app.get('/game/:gameId', async (req, res) => {
       const handler = this.container.resolve(TOKENS.queries.getGame);
 

@@ -14,7 +14,7 @@ class Test {
   handler = new CreateGameHandler(this.generator, this.publisher, this.gameRepository);
 
   command: HandlerCommand<typeof this.handler> = {
-    creatorId: 'creatorId',
+    playerId: 'creatorId',
   };
 
   constructor() {
@@ -54,8 +54,10 @@ describe('createGame', () => {
   });
 
   it('publishes a GameCreatedEvent', async () => {
+    test.generator.nextGameCode = 'CODE';
+
     await test.handler.execute(test.command);
 
-    expect(test.publisher).toContainEqual(new GameCreatedEvent('gameId', 'creatorId'));
+    expect(test.publisher).toContainEqual(new GameCreatedEvent('gameId', 'CODE', 'creatorId'));
   });
 });

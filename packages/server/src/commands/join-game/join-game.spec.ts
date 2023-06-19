@@ -15,12 +15,12 @@ class Test {
   handler = new JoinGameHandler(this.publisher, this.gameRepository, this.playerRepository);
 
   command: HandlerCommand<typeof this.handler> = {
-    gameId: 'gameId',
+    code: 'CODE',
     playerId: 'playerId',
   };
 
   constructor() {
-    this.gameRepository.set({ id: 'gameId', code: '', state: GameState.idle });
+    this.gameRepository.set({ id: 'gameId', code: 'CODE', state: GameState.idle });
     this.playerRepository.set({ id: 'playerId', nick: '' });
   }
 

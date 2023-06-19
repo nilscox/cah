@@ -4,6 +4,7 @@ import { Container } from 'ditox';
 
 import { ConfigPort, EventPublisherPort, LoggerPort, RealEventPublisherAdapter } from 'src/adapters';
 import { GameCreatedEvent } from 'src/commands/create-game/create-game';
+import { PlayerJoinedEvent } from 'src/commands/join-game/join-game';
 import { TOKENS } from 'src/tokens';
 
 import { HttpServer } from './http-server';
@@ -22,7 +23,7 @@ export class Server {
     this.logger.context = 'Server';
 
     this.httpServer = new HttpServer(this.config, this.logger, this.container);
-    this.wsServer = new WsServer(this.httpServer.nodeServer, this.publisher);
+    this.wsServer = new WsServer(this.logger, this.httpServer.nodeServer, this.publisher);
 
     this.wsServer.use(this.httpServer.sessionMiddleware);
 
@@ -64,12 +65,16 @@ export class Server {
     const publisher = this.container.resolve(TOKENS.publisher);
     assert(publisher instanceof RealEventPublisherAdapter);
 
+    publisher.register(PlayerJoinedEvent, async (event) => {
+      await this.wsServer.join(event.entityId, event.playerId);
+    });
+
     publisher.register(GameCreatedEvent, async (event) => {
       const joinGame = this.container.resolve(TOKENS.commands.joinGame);
 
       await joinGame.execute({
-        gameId: event.entityId,
         playerId: event.creatorId,
+        code: event.gameCode,
       });
     });
   }

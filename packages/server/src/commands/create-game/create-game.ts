@@ -5,13 +5,13 @@ import { CommandHandler, DomainEvent } from 'src/interfaces';
 import { GameRepository } from 'src/persistence';
 
 export class GameCreatedEvent extends DomainEvent {
-  constructor(gameId: string, public readonly creatorId: string) {
+  constructor(gameId: string, public readonly gameCode: string, public readonly creatorId: string) {
     super('game', gameId);
   }
 }
 
 type CreateGameCommand = {
-  creatorId: string;
+  playerId: string;
   code?: string;
 };
 
@@ -31,6 +31,6 @@ export class CreateGameHandler implements CommandHandler<CreateGameCommand> {
 
     await this.gameRepository.save(game);
 
-    this.publisher.publish(new GameCreatedEvent(game.id, command.creatorId));
+    this.publisher.publish(new GameCreatedEvent(game.id, game.code, command.playerId));
   }
 }

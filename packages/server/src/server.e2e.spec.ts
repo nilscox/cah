@@ -47,7 +47,7 @@ class Client {
   }
 
   private handleEvent = (event: unknown) => {
-    this.log(event);
+    this.log('received event', event);
   };
 
   async authenticate() {
@@ -74,6 +74,11 @@ class Client {
   async createGame() {
     this.log('creates a game');
     await this.fetcher.post('/game');
+  }
+
+  async joinGame(code: string) {
+    this.log(`joins the game ${code}`);
+    await this.fetcher.put(`/game/${code}/join`);
   }
 }
 
@@ -137,20 +142,25 @@ describe('Server E2E', () => {
     // const debug = true;
 
     const riri = test.createClient('riri');
-    riri.debug = debug;
-
     const fifi = test.createClient('fifi');
-    fifi.debug = debug;
-
     const loulou = test.createClient('loulou');
-    loulou.debug = debug;
 
-    await riri.authenticate();
-    await riri.connect();
+    const forEachPlayer = async (cb: (player: Client) => Promise<void>) => {
+      for (const player of [riri, fifi, loulou]) {
+        await cb(player);
+      }
+    };
+
+    await forEachPlayer(async (player) => {
+      player.debug = debug;
+      await player.authenticate();
+      await player.connect();
+    });
 
     await riri.createGame();
+    const game = defined(await riri.game());
 
-    // await fifi.joinGame(game.id);
-    // await loulou.joinGame(game.id);
+    await fifi.joinGame(game.code);
+    await loulou.joinGame(game.code);
   });
 });

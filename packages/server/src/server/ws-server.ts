@@ -6,7 +6,7 @@ import { RequestHandler } from 'express';
 import session from 'express-session';
 import { Socket, Server as SocketIOServer } from 'socket.io';
 
-import { EventPublisherPort, RtcPort } from 'src/adapters';
+import { EventPublisherPort, LoggerPort, RtcPort } from 'src/adapters';
 import { DomainEvent } from 'src/interfaces';
 
 export class PlayerConnectedEvent extends DomainEvent {
@@ -24,7 +24,11 @@ export class PlayerDisconnectedEvent extends DomainEvent {
 export class WsServer implements RtcPort {
   private io: SocketIOServer;
 
-  constructor(private readonly server: Server, private readonly publisher: EventPublisherPort) {
+  constructor(
+    private readonly logger: LoggerPort,
+    private readonly server: Server,
+    private readonly publisher: EventPublisherPort
+  ) {
     this.io = new SocketIOServer(this.server);
 
     this.io.on('connection', this.onConnection);
@@ -63,21 +67,26 @@ export class WsServer implements RtcPort {
     return sockets.find((socket) => socket.data.playerId === playerId);
   }
 
-  async join(gameId: string, playerId: string): Promise<void> {
+  async join(room: string, playerId: string): Promise<void> {
     const socket = await this.socket(playerId);
 
     assert(socket, `cannot find socket "${playerId}"`);
-    socket.join(gameId);
+
+    this.logger.verbose('join', room, playerId);
+    socket.join(room);
   }
 
-  async leave(gameId: string, playerId: string): Promise<void> {
+  async leave(room: string, playerId: string): Promise<void> {
     const socket = await this.socket(playerId);
 
     assert(socket, `cannot find socket "${playerId}"`);
-    socket.leave(gameId);
+
+    this.logger.verbose('leave', room, playerId);
+    socket.leave(room);
   }
 
-  async send(room: string, message: unknown): Promise<void> {
-    this.io.in(room).emit('message', message);
+  async send(to: string, message: unknown): Promise<void> {
+    this.logger.verbose('send', to, message);
+    this.io.in(to).emit('message', message);
   }
 }
