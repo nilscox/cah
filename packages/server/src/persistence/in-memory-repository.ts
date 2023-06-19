@@ -1,6 +1,11 @@
 import { BaseEntity } from './base-entity';
 import { BaseRepository } from './base-repository';
 
+const clone = <T>(value: T): T => {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return JSON.parse(JSON.stringify(value));
+};
+
 export class InMemoryRepository<Entity extends BaseEntity> implements BaseRepository<Entity> {
   private items = new Map<string, Entity>();
 
@@ -19,18 +24,18 @@ export class InMemoryRepository<Entity extends BaseEntity> implements BaseReposi
   }
 
   async save(entity: Entity): Promise<void> {
-    this.add(entity);
+    this.set(entity);
   }
 
   all() {
-    Array.from(this.items.values());
+    Array.from(this.items.values()).map(clone);
   }
 
-  add(entity: Entity) {
-    this.items.set(entity.id, entity);
+  set(entity: Entity) {
+    this.items.set(entity.id, clone(entity));
   }
 
   get(id: string) {
-    return this.items.get(id);
+    return clone(this.items.get(id));
   }
 }

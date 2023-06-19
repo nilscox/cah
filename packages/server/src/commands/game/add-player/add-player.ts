@@ -36,7 +36,7 @@ export class AddPlayerHandler implements CommandHandler<AddPlayerCommand> {
 
     player.gameId = game.id;
 
-    await this.playerRepository.save(game);
+    await this.playerRepository.save(player);
 
     this.publisher.publish<PlayerAddedEvent>({
       entity: 'game',

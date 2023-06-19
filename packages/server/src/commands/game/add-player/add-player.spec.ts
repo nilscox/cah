@@ -20,8 +20,8 @@ class Test {
   };
 
   constructor() {
-    this.gameRepository.add({ id: 'gameId', code: '', state: GameState.idle });
-    this.playerRepository.add({ id: 'playerId' });
+    this.gameRepository.set({ id: 'gameId', code: '', state: GameState.idle });
+    this.playerRepository.set({ id: 'playerId', nick: '' });
   }
 
   get game() {
@@ -57,13 +57,13 @@ describe('addPlayer', () => {
   });
 
   it('prevents adding a player already in a game', async () => {
-    test.player.gameId = 'gameId';
+    test.playerRepository.set({ ...test.player, gameId: 'gameId' });
 
     await expect(test.handler.execute(test.command)).rejects.toThrow('player is already in a game');
   });
 
   it('prevents adding a player when the game is already started', async () => {
-    test.game.state = GameState.started;
+    test.gameRepository.set({ ...test.game, state: GameState.started });
 
     await expect(test.handler.execute(test.command)).rejects.toThrow('game is not idle');
   });
