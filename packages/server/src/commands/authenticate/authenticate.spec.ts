@@ -39,6 +39,12 @@ describe('authenticate', () => {
     expect(test.player).toHaveProperty('nick', 'nick');
   });
 
+  it('authenticates as an existing player', async () => {
+    test.playerRepository.set({ id: 'existingPlayerId', nick: 'nick' });
+
+    await expect(test.handler.execute(test.command)).resolves.toEqual('existingPlayerId');
+  });
+
   it("returns the player's id", async () => {
     await expect(test.handler.execute(test.command)).resolves.toEqual('playerId');
   });

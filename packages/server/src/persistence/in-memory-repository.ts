@@ -44,6 +44,10 @@ export class InMemoryRepository<Entity extends BaseEntity> implements BaseReposi
   }
 
   get(id: string) {
-    return clone(this.items.get(id));
+    const item = this.items.get(id);
+
+    if (item) {
+      return clone(item);
+    }
   }
 }

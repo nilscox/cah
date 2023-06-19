@@ -22,6 +22,12 @@ export class AuthenticateHandler implements CommandHandler<AuthenticateCommand, 
   ) {}
 
   async execute(command: AuthenticateCommand): Promise<string> {
+    const existingPlayer = await this.playerRepository.findByNick(command.nick);
+
+    if (existingPlayer) {
+      return existingPlayer.id;
+    }
+
     const player: Player = {
       id: this.generator.generateId(),
       nick: command.nick,

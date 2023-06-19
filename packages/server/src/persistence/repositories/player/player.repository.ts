@@ -2,5 +2,6 @@ import { Player } from '@cah/shared';
 
 import { BaseRepository } from '../../base-repository';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface PlayerRepository extends BaseRepository<Player> {}
+export interface PlayerRepository extends BaseRepository<Player> {
+  findByNick(nick: string): Promise<Player | undefined>;
+}
