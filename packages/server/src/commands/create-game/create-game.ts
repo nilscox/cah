@@ -2,7 +2,7 @@ import { Game, GameState } from '@cah/shared';
 
 import { EventPublisherPort, GeneratorPort } from 'src/adapters';
 import { CommandHandler, DomainEvent } from 'src/interfaces';
-import { GameRepository } from 'src/persistence';
+import { GameRepository, PlayerRepository } from 'src/persistence';
 
 export class GameCreatedEvent extends DomainEvent {
   constructor(gameId: string, public readonly gameCode: string, public readonly creatorId: string) {
@@ -19,10 +19,17 @@ export class CreateGameHandler implements CommandHandler<CreateGameCommand> {
   constructor(
     private generator: GeneratorPort,
     private publisher: EventPublisherPort,
+    private playerRepository: PlayerRepository,
     private gameRepository: GameRepository
   ) {}
 
   async execute(command: CreateGameCommand): Promise<void> {
+    const player = await this.playerRepository.findByIdOrFail(command.playerId);
+
+    if (player.gameId) {
+      throw new Error('player is already in a game');
+    }
+
     const game: Game = {
       id: this.generator.generateId(),
       code: command.code ?? this.generator.generateGameCode(),
@@ -31,6 +38,6 @@ export class CreateGameHandler implements CommandHandler<CreateGameCommand> {
 
     await this.gameRepository.save(game);
 
-    this.publisher.publish(new GameCreatedEvent(game.id, game.code, command.playerId));
+    this.publisher.publish(new GameCreatedEvent(game.id, game.code, player.id));
   }
 }

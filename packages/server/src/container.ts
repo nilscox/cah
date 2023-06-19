@@ -47,9 +47,10 @@ export const appModule = declareModule<AppModule>({
     const { generator, publisher, repositories } = TOKENS;
     const { game: gameRepository, player: playerRepository } = repositories;
 
+    // prettier-ignore
     return {
       authenticate: injectableClass(AuthenticateHandler, generator, publisher, playerRepository)(container),
-      createGame: injectableClass(CreateGameHandler, generator, publisher, gameRepository)(container),
+      createGame: injectableClass(CreateGameHandler, generator, publisher, playerRepository, gameRepository)(container),
       joinGame: injectableClass(JoinGameHandler, publisher, gameRepository, playerRepository)(container),
       getGame: injectableClass(GetGameHandler, gameRepository)(container),
       getPlayer: injectableClass(GetPlayerHandler, playerRepository)(container),

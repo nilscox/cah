@@ -2,16 +2,17 @@ import { Game, GameState } from '@cah/shared';
 
 import { StubEventPublisherAdapter, StubGeneratorAdapter } from 'src/adapters';
 import { HandlerCommand } from 'src/interfaces';
-import { InMemoryGameRepository } from 'src/persistence';
+import { InMemoryGameRepository, InMemoryPlayerRepository } from 'src/persistence';
 
 import { CreateGameHandler, GameCreatedEvent } from './create-game';
 
 class Test {
   generator = new StubGeneratorAdapter();
   gameRepository = new InMemoryGameRepository();
+  playerRepository = new InMemoryPlayerRepository();
   publisher = new StubEventPublisherAdapter();
 
-  handler = new CreateGameHandler(this.generator, this.publisher, this.gameRepository);
+  handler = new CreateGameHandler(this.generator, this.publisher, this.playerRepository, this.gameRepository);
 
   command: HandlerCommand<typeof this.handler> = {
     playerId: 'creatorId',
@@ -19,6 +20,7 @@ class Test {
 
   constructor() {
     this.generator.nextId = 'gameId';
+    this.playerRepository.set({ id: 'creatorId', nick: '' });
   }
 
   get game() {
@@ -59,5 +61,11 @@ describe('createGame', () => {
     await test.handler.execute(test.command);
 
     expect(test.publisher).toContainEqual(new GameCreatedEvent('gameId', 'CODE', 'creatorId'));
+  });
+
+  it('prevents creating a game when already in a game', async () => {
+    test.playerRepository.set({ id: 'creatorId', nick: '', gameId: 'gameId' });
+
+    await expect(test.handler.execute(test.command)).rejects.toThrow('player is already in a game');
   });
 });
