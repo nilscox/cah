@@ -2,8 +2,7 @@ import { GameState } from '@cah/shared';
 
 import { StubEventPublisherAdapter } from '../../../adapters';
 import { HandlerCommand } from '../../../interfaces';
-import { InMemoryGameRepository } from '../../../persistence/repositories/game/in-memory-game.repository';
-import { InMemoryPlayerRepository } from '../../../persistence/repositories/player/in-memory-player.repository';
+import { InMemoryGameRepository, InMemoryPlayerRepository } from '../../../persistence';
 import { defined } from '../../../utils/defined';
 
 import { AddPlayerHandler, PlayerAddedEvent } from './add-player';

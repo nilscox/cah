@@ -2,8 +2,7 @@ import { GameState } from '@cah/shared';
 
 import { EventPublisherPort } from '../../../adapters';
 import { CommandHandler, DomainEvent } from '../../../interfaces';
-import { GameRepository } from '../../../persistence/repositories/game/game.repository';
-import { PlayerRepository } from '../../../persistence/repositories/player/player.repository';
+import { GameRepository, PlayerRepository } from '../../../persistence';
 
 export class PlayerAddedEvent extends DomainEvent {
   constructor(gameId: string, public readonly playerId: string) {

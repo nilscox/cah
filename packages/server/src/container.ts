@@ -8,10 +8,12 @@ import {
 } from './adapters';
 import { AddPlayerHandler } from './commands/game/add-player/add-player';
 import { CreateGameHandler } from './commands/game/create-game/create-game';
-import { GameRepository } from './persistence/repositories/game/game.repository';
-import { InMemoryGameRepository } from './persistence/repositories/game/in-memory-game.repository';
-import { InMemoryPlayerRepository } from './persistence/repositories/player/in-memory-player.repository';
-import { PlayerRepository } from './persistence/repositories/player/player.repository';
+import {
+  GameRepository,
+  InMemoryGameRepository,
+  InMemoryPlayerRepository,
+  PlayerRepository,
+} from './persistence';
 import { Server } from './server/server';
 import { TOKENS } from './tokens';
 
