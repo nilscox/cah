@@ -6,9 +6,9 @@ import { Container } from 'ditox';
 import express from 'express';
 import morgan from 'morgan';
 
-import { ConfigPort, RealEventPublisherAdapter, LoggerPort } from '../adapters';
-import { GameCreatedEvent } from '../commands/game/create-game/create-game';
-import { TOKENS } from '../tokens';
+import { ConfigPort, RealEventPublisherAdapter, LoggerPort } from 'src/adapters';
+import { GameCreatedEvent } from 'src/commands/game/create-game/create-game';
+import { TOKENS } from 'src/tokens';
 
 /* eslint-disable @typescript-eslint/no-misused-promises */
 

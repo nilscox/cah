@@ -24,12 +24,24 @@
 
   "rules": {
     "@typescript-eslint/require-await": "off",
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": ["src/adapters/*", "src/interfaces/*", "src/persistence/*"]
+      }
+    ],
     "import/order": [
       "warn",
       {
         "newlines-between": "always",
         "alphabetize": { "order": "asc" },
-        "groups": ["builtin", "external", "internal", "parent", "sibling", "index"]
+        "groups": ["builtin", "external", "internal", "parent", "sibling", "index"],
+        "pathGroups": [
+          {
+            "pattern": "src/**",
+            "group": "internal"
+          }
+        ]
       }
     ]
   }

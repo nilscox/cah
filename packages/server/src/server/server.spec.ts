@@ -1,5 +1,5 @@
-import { StubConfigAdapter, StubLoggerAdapter } from '../adapters';
-import { container } from '../container';
+import { StubConfigAdapter, StubLoggerAdapter } from 'src/adapters';
+import { container } from 'src/container';
 
 import { Server } from './server';
 

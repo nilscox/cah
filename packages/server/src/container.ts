@@ -5,15 +5,16 @@ import {
   RealEventPublisherAdapter,
   StubGeneratorAdapter,
   ConsoleLoggerAdapter,
-} from './adapters';
-import { AddPlayerHandler } from './commands/game/add-player/add-player';
-import { CreateGameHandler } from './commands/game/create-game/create-game';
+} from 'src/adapters';
 import {
   GameRepository,
   InMemoryGameRepository,
   InMemoryPlayerRepository,
   PlayerRepository,
-} from './persistence';
+} from 'src/persistence';
+
+import { AddPlayerHandler } from './commands/game/add-player/add-player';
+import { CreateGameHandler } from './commands/game/create-game/create-game';
 import { Server } from './server/server';
 import { TOKENS } from './tokens';
 

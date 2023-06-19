@@ -3,7 +3,10 @@
   "include": ["src/**/*"],
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
-    "types": ["vitest/globals"]
+    "types": ["vitest/globals"],
+    "paths": {
+      "src/*": ["./src/*"]
+    }
   },
   "ts-node": {
     "esm": true,

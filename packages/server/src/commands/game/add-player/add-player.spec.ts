@@ -1,9 +1,9 @@
 import { GameState } from '@cah/shared';
 
-import { StubEventPublisherAdapter } from '../../../adapters';
-import { HandlerCommand } from '../../../interfaces';
-import { InMemoryGameRepository, InMemoryPlayerRepository } from '../../../persistence';
-import { defined } from '../../../utils/defined';
+import { StubEventPublisherAdapter } from 'src/adapters';
+import { HandlerCommand } from 'src/interfaces';
+import { InMemoryGameRepository, InMemoryPlayerRepository } from 'src/persistence';
+import { defined } from 'src/utils/defined';
 
 import { AddPlayerHandler, PlayerAddedEvent } from './add-player';
 

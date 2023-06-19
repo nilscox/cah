@@ -1,4 +1,4 @@
-import { DomainEvent } from '../../interfaces';
+import { DomainEvent } from 'src/interfaces';
 
 import { EventPublisherPort } from './event-publisher.port';
 

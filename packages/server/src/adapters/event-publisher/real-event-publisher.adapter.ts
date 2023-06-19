@@ -1,6 +1,7 @@
-import { DomainEvent } from '../../interfaces';
-import { ClassType } from '../../utils/class-type';
-import { defined } from '../../utils/defined';
+import { DomainEvent } from 'src/interfaces';
+import { ClassType } from 'src/utils/class-type';
+import { defined } from 'src/utils/defined';
+
 import { LoggerPort } from '../logger/logger.port';
 
 import { EventPublisherPort } from './event-publisher.port';
