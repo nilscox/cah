@@ -2,9 +2,11 @@ import assert from 'node:assert';
 import { createServer, Server as NodeServer } from 'node:http';
 import { promisify } from 'node:util';
 
+import bodyParser from 'body-parser';
 import { Container } from 'ditox';
 import express from 'express';
 import morgan from 'morgan';
+import * as yup from 'yup';
 
 import { ConfigPort, LoggerPort, RealEventPublisherAdapter } from 'src/adapters';
 import { GameCreatedEvent } from 'src/commands/game/create-game/create-game';
@@ -59,9 +61,18 @@ export class HttpServer {
 
   private configure() {
     this.app.use(this.loggerMiddleware);
+    this.app.use(bodyParser.json());
 
     this.app.get('/health-check', (req, res) => {
       res.status(200).end();
+    });
+
+    this.app.post('/authenticate', async (req, res) => {
+      const { nick } = await authenticateBodySchema.validate(req.body);
+      const handler = this.container.resolve(TOKENS.commands.authenticate);
+
+      await handler.execute({ nick });
+      res.status(201).end();
     });
 
     this.app.post('/game', async (req, res) => {
@@ -106,3 +117,7 @@ export class HttpServer {
     });
   }
 }
+
+const authenticateBodySchema = yup.object({
+  nick: yup.string().min(2).max(24).required(),
+});

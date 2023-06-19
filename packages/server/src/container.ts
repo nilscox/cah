@@ -15,6 +15,7 @@ import {
 
 import { AddPlayerHandler } from './commands/game/add-player/add-player';
 import { CreateGameHandler } from './commands/game/create-game/create-game';
+import { AuthenticateHandler } from './commands/player/authenticate/authenticate';
 import { Server } from './server/server';
 import { TOKENS } from './tokens';
 
@@ -35,6 +36,7 @@ export const inMemoryPersistenceModule = declareModule<PersistenceModule>({
 });
 
 type AppModule = {
+  authenticate: AuthenticateHandler;
   createGame: CreateGameHandler;
   addPlayer: AddPlayerHandler;
 };
@@ -45,11 +47,13 @@ export const appModule = declareModule<AppModule>({
     const { game: gameRepository, player: playerRepository } = repositories;
 
     return {
+      authenticate: injectableClass(AuthenticateHandler, generator, publisher, playerRepository)(container),
       createGame: injectableClass(CreateGameHandler, generator, publisher, gameRepository)(container),
       addPlayer: injectableClass(AddPlayerHandler, publisher, gameRepository, playerRepository)(container),
     };
   },
   exports: {
+    authenticate: TOKENS.commands.authenticate,
     createGame: TOKENS.commands.createGame,
     addPlayer: TOKENS.commands.addPlayer,
   },

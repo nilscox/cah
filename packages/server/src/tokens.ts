@@ -3,6 +3,7 @@ import { Container, token } from 'ditox';
 import { ConfigPort, EventPublisherPort, GeneratorPort, LoggerPort } from './adapters';
 import { AddPlayerHandler } from './commands/game/add-player/add-player';
 import { CreateGameHandler } from './commands/game/create-game/create-game';
+import { AuthenticateHandler } from './commands/player/authenticate/authenticate';
 import { GameRepository, PlayerRepository } from './persistence';
 import { Server } from './server/server';
 
@@ -22,6 +23,7 @@ export const TOKENS = {
   },
 
   commands: {
+    authenticate: token<AuthenticateHandler>('authenticate'),
     createGame: token<CreateGameHandler>('createGame'),
     addPlayer: token<AddPlayerHandler>('addPlayer'),
   },
