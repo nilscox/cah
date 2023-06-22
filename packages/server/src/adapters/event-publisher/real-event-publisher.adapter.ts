@@ -31,6 +31,10 @@ export class RealEventPublisherAdapter implements EventPublisherPort {
     this.handlers.get(key)?.forEach((handler) => {
       handler(event).catch((error) => {
         this.logger.error(error);
+
+        if (process.env.NODE_ENV === 'test') {
+          console.log(error);
+        }
       });
     });
   }
