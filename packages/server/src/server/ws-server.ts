@@ -87,6 +87,6 @@ export class WsServer implements RtcPort {
 
   async send(to: string, message: unknown): Promise<void> {
     this.logger.verbose('send', to, message);
-    this.io.in(to).emit('message', message);
+    this.io.to(to).emit('message', message);
   }
 }

@@ -2,6 +2,12 @@ export type Game = {
   id: string;
   code: string;
   state: GameState;
+  players: Array<{
+    id: string;
+    nick: string;
+  }>;
+  questionMasterId?: string;
+  question?: Question;
 };
 
 export enum GameState {
@@ -14,6 +20,17 @@ export type Player = {
   id: string;
   nick: string;
   gameId?: string;
+};
+
+export type Question = {
+  id: string;
+  text: string;
+};
+
+export type Choice = {
+  id: string;
+  text: string;
+  caseSensitive: boolean;
 };
 
 export type PlayerConnectedEvent = {
@@ -35,14 +52,26 @@ export type GameCreatedEvent = {
 export type PlayerJoinedEvent = {
   type: 'player-joined';
   gameId: string;
+  playerId: string;
   nick: string;
 };
 
 export type GameStartedEvent = {
   type: 'game-started';
   gameId: string;
+};
+
+export type TurnStartedEvent = {
+  type: 'turn-started';
+  gameId: string;
   questionMasterId: string;
-  questionId: string;
+  question: Question;
+};
+
+export type CardsDealtEvent = {
+  type: 'cards-dealt';
+  playerId: string;
+  cards: Choice[];
 };
 
 export type GameEvent =
@@ -50,4 +79,6 @@ export type GameEvent =
   | PlayerDisconnectedEvent
   | GameCreatedEvent
   | PlayerJoinedEvent
-  | GameStartedEvent;
+  | GameStartedEvent
+  | TurnStartedEvent
+  | CardsDealtEvent;

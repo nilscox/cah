@@ -2,5 +2,8 @@ import { Choice } from 'src/entities';
 
 import { BaseRepository } from '../../base-repository';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface ChoiceRepository extends BaseRepository<Choice> {}
+export interface ChoiceRepository extends BaseRepository<Choice> {
+  findPlayersCards(gameId: string): Promise<Record<string, Choice[]>>;
+  findPlayerCards(playerId: string): Promise<Choice[]>;
+  findAvailable(gameId: string, count: number): Promise<Choice[]>;
+}

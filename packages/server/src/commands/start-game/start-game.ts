@@ -2,8 +2,15 @@ import { EventPublisherPort, ExternalDataPort, RandomPort } from 'src/adapters';
 import { Choice, GameState, Question, isStarted } from 'src/entities';
 import { CommandHandler, DomainEvent } from 'src/interfaces';
 import { ChoiceRepository, GameRepository, PlayerRepository, QuestionRepository } from 'src/persistence';
+import { sum } from 'src/utils/sum';
 
 export class GameStartedEvent extends DomainEvent {
+  constructor(gameId: string) {
+    super('game', gameId);
+  }
+}
+
+export class TurnStartedEvent extends DomainEvent {
   constructor(gameId: string) {
     super('game', gameId);
   }
@@ -82,7 +89,6 @@ export class StartGameHandler implements CommandHandler<StartGameCommand> {
     cardsPerPlayer: number,
     questions: Question[]
   ): number {
-    const sum = (numbers: number[]) => numbers.reduce((a, b) => a + b, 0);
     const blanksCounts = sum(questions.map(({ blanks }) => blanks?.length ?? 1));
 
     return sum([cardsPerPlayer * numberOfPlayers, blanksCounts * (numberOfPlayers - 1)]);

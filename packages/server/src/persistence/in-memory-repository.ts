@@ -21,7 +21,7 @@ export class InMemoryRepository<Entity extends BaseEntity> implements BaseReposi
   }
 
   async save(...entities: Entity[]): Promise<void> {
-    entities.forEach((entity) => this.set(entity));
+    this.set(...entities);
   }
 
   all() {
@@ -36,8 +36,8 @@ export class InMemoryRepository<Entity extends BaseEntity> implements BaseReposi
     return this.all().find(predicate);
   }
 
-  set(entity: Entity) {
-    this.items.set(entity.id, clone(entity));
+  set(...entities: Entity[]) {
+    entities.forEach((entity) => this.items.set(entity.id, clone(entity)));
   }
 
   get(id: string) {

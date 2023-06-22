@@ -108,6 +108,18 @@ export class HttpServer {
       res.status(201).end();
     });
 
+    this.app.put('/game/start', authenticated, async (req, res) => {
+      const playerId = defined(req.session.playerId);
+      const player = await this.container.resolve(TOKENS.queries.getPlayer).execute({ playerId });
+
+      assert(player.gameId, 'player is not in a game');
+
+      const handler = this.container.resolve(TOKENS.commands.startGame);
+
+      await handler.execute({ gameId: player.gameId, numberOfQuestions: 10 });
+      res.status(201).end();
+    });
+
     this.app.get('/game/:gameId', async (req, res) => {
       const handler = this.container.resolve(TOKENS.queries.getGame);
 

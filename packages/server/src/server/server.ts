@@ -5,6 +5,7 @@ import { Container } from 'ditox';
 import { ConfigPort, EventPublisherPort, LoggerPort, RealEventPublisherAdapter } from 'src/adapters';
 import { GameCreatedEvent } from 'src/commands/create-game/create-game';
 import { PlayerJoinedEvent } from 'src/commands/join-game/join-game';
+import { GameStartedEvent, TurnStartedEvent } from 'src/commands/start-game/start-game';
 import { TOKENS } from 'src/tokens';
 
 import { HttpServer } from './http-server';
@@ -75,6 +76,18 @@ export class Server {
       await joinGame.execute({
         playerId: event.creatorId,
         code: event.gameCode,
+      });
+    });
+
+    publisher.register(GameStartedEvent, async (event) => {
+      this.publisher.publish(new TurnStartedEvent(event.entityId));
+    });
+
+    publisher.register(TurnStartedEvent, async (event) => {
+      const dealCards = this.container.resolve(TOKENS.commands.dealCards);
+
+      await dealCards.execute({
+        gameId: event.entityId,
       });
     });
   }

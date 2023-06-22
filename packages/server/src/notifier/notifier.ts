@@ -2,10 +2,11 @@ import { GameEvent } from '@cah/shared';
 
 import { EventPublisherPort, RealEventPublisherAdapter, RtcPort } from 'src/adapters';
 import { GameCreatedEvent } from 'src/commands/create-game/create-game';
+import { CardsDealtEvent } from 'src/commands/deal-cards/deal-cards';
 import { PlayerJoinedEvent } from 'src/commands/join-game/join-game';
 import { GameStartedEvent } from 'src/commands/start-game/start-game';
 import { isStarted } from 'src/entities';
-import { GameRepository, PlayerRepository } from 'src/persistence';
+import { ChoiceRepository, GameRepository, PlayerRepository, QuestionRepository } from 'src/persistence';
 import { PlayerConnectedEvent } from 'src/server/ws-server';
 
 export class Notifier {
@@ -13,7 +14,9 @@ export class Notifier {
     private readonly rtc: RtcPort,
     private readonly publisher: EventPublisherPort,
     private readonly gameRepository: GameRepository,
-    private readonly playerRepository: PlayerRepository
+    private readonly playerRepository: PlayerRepository,
+    private readonly choiceRepository: ChoiceRepository,
+    private readonly questionRepository: QuestionRepository
   ) {}
 
   configure() {
@@ -58,8 +61,9 @@ export class Notifier {
 
       await this.send(game.id, {
         type: 'player-joined',
-        nick: player.nick,
         gameId: game.id,
+        playerId: player.id,
+        nick: player.nick,
       });
     });
 
@@ -70,8 +74,38 @@ export class Notifier {
       await this.send(game.id, {
         type: 'game-started',
         gameId: game.id,
+      });
+    });
+
+    publisher.register(GameStartedEvent, async (event) => {
+      const game = await this.gameRepository.findByIdOrFail(event.entityId);
+      assert(isStarted(game));
+
+      const question = await this.questionRepository.findByIdOrFail(game.questionId);
+
+      await this.send(game.id, {
+        type: 'turn-started',
+        gameId: game.id,
         questionMasterId: game.questionMasterId,
-        questionId: game.questionId,
+        question: {
+          id: question.id,
+          text: question.text,
+        },
+      });
+    });
+
+    publisher.register(CardsDealtEvent, async (event) => {
+      const player = await this.playerRepository.findByIdOrFail(event.entityId);
+      const cards = await this.choiceRepository.findPlayerCards(event.entityId);
+
+      await this.send(player.id, {
+        type: 'cards-dealt',
+        playerId: player.id,
+        cards: cards.map((choice) => ({
+          id: choice.id,
+          text: choice.text,
+          caseSensitive: choice.caseSensitive,
+        })),
       });
     });
   }
