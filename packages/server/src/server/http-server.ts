@@ -13,8 +13,6 @@ import { ConfigPort, LoggerPort } from 'src/adapters';
 import { TOKENS } from 'src/tokens';
 import { defined } from 'src/utils/defined';
 
-import { gameToDto, playerToDto } from './game-mapper';
-
 declare module 'express-session' {
   interface SessionData {
     playerId: string;
@@ -123,23 +121,14 @@ export class HttpServer {
     this.app.get('/game/:gameId', async (req, res) => {
       const handler = this.container.resolve(TOKENS.queries.getGame);
 
-      const game = await handler.execute({ gameId: req.params.gameId });
-      res.json(gameToDto(game));
+      res.json(await handler.execute({ gameId: req.params.gameId }));
     });
 
-    this.app.get('/player/:playerId', async (req, res) => {
-      const handler = this.container.resolve(TOKENS.queries.getPlayer);
-
-      const player = await handler.execute({ playerId: req.params.playerId });
-      res.json(playerToDto(player));
-    });
-
-    this.app.get('/me', authenticated, async (req, res) => {
+    this.app.get('/player', authenticated, async (req, res) => {
       const playerId = defined(req.session.playerId);
       const handler = this.container.resolve(TOKENS.queries.getPlayer);
 
-      const player = await handler.execute({ playerId });
-      res.json(playerToDto(player));
+      res.json(await handler.execute({ playerId }));
     });
   }
 

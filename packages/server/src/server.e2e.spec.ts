@@ -112,13 +112,13 @@ class Client {
     await this.fetcher.post('/authenticate', { nick: this.nick });
   }
 
-  async fetchMe() {
+  async fetchPlayer() {
     this.log('retrieves themselves');
-    return this.fetcher.get<Player>('/me');
+    return this.fetcher.get<Player>('/player');
   }
 
   async fetchGame() {
-    const { gameId } = await this.fetchMe();
+    const { gameId } = await this.fetchPlayer();
 
     this.log('retrieves their game');
     this.game = await this.fetcher.get<Game>(`/game/${defined(gameId)}`);

@@ -82,7 +82,7 @@ export const appModule = declareModule<AppModule>({
       startGame: injectableClass(StartGameHandler, random, publisher, externalData, gameRepository, playerRepository, questionRepository, choiceRepository)(container),
       dealCards: injectableClass(DealCardsHandler, publisher, gameRepository, playerRepository, choiceRepository)(container),
       getGame: injectableClass(GetGameHandler, gameRepository, playerRepository, questionRepository)(container),
-      getPlayer: injectableClass(GetPlayerHandler, playerRepository)(container),
+      getPlayer: injectableClass(GetPlayerHandler, playerRepository, choiceRepository)(container),
     };
   },
   exports: {

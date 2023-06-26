@@ -66,7 +66,7 @@ describe('server', () => {
     const fetcher = new Fetcher(`http://${String(test.server.address)}`);
 
     await fetcher.post('/authenticate', { nick: 'nick' });
-    const { id: playerId } = await fetcher.get<Player>('/me');
+    const { id: playerId } = await fetcher.get<Player>('/player');
 
     const socket = io(`ws://${defined(test.server.address)}`, {
       extraHeaders: { cookie: fetcher.cookie },
