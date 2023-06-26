@@ -34,6 +34,7 @@ class Test {
   );
 
   command: HandlerCommand<typeof this.handler> = {
+    playerId: 'player1Id',
     gameId: 'gameId',
     numberOfQuestions: 1,
   };
@@ -102,12 +103,22 @@ describe('StartGameCommand', () => {
   });
 
   it('fails when the game is already started', async () => {
+    test.addPlayer('player1Id');
+
     test.gameRepository.set({ ...test.game, state: GameState.started });
 
     await expect(test.handler.execute(test.command)).rejects.toThrow('the game has already started');
   });
 
-  it('does not start a game containing less than 3 players', async () => {
+  it('fails when the player is not part of this game', async () => {
+    test.playerRepository.set({ id: 'playerId', nick: '' });
+
+    await expect(test.handler.execute({ ...test.command, playerId: 'playerId' })).rejects.toThrow(
+      'player is not part of this game'
+    );
+  });
+
+  it('fails when the game contains less than 3 players', async () => {
     test.addPlayer('player1Id');
     test.addPlayer('player2Id');
 

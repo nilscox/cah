@@ -116,7 +116,7 @@ export class HttpServer {
 
       const handler = this.container.resolve(TOKENS.commands.startGame);
 
-      await handler.execute({ gameId: player.gameId, numberOfQuestions: 10 });
+      await handler.execute({ playerId, gameId: player.gameId, numberOfQuestions: 10 });
       res.status(201).end();
     });
 

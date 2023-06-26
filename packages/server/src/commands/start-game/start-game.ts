@@ -2,6 +2,7 @@ import { EventPublisherPort, ExternalDataPort, RandomPort } from 'src/adapters';
 import { Choice, GameState, Question, isStarted } from 'src/entities';
 import { CommandHandler, DomainEvent } from 'src/interfaces';
 import { ChoiceRepository, GameRepository, PlayerRepository, QuestionRepository } from 'src/persistence';
+import { hasProperty } from 'src/utils/has-property';
 import { sum } from 'src/utils/sum';
 
 export class GameStartedEvent extends DomainEvent {
@@ -17,6 +18,7 @@ export class TurnStartedEvent extends DomainEvent {
 }
 
 type StartGameCommand = {
+  playerId: string;
   gameId: string;
   numberOfQuestions: number;
 };
@@ -35,6 +37,10 @@ export class StartGameHandler implements CommandHandler<StartGameCommand> {
   async execute(command: StartGameCommand): Promise<void> {
     const game = await this.gameRepository.findByIdOrFail(command.gameId);
     const players = await this.playerRepository.findAllByGameId(game.id);
+
+    if (!players.some(hasProperty('id', command.playerId))) {
+      throw new Error('player is not part of this game');
+    }
 
     if (game.state !== GameState.idle) {
       throw new Error('the game has already started');
