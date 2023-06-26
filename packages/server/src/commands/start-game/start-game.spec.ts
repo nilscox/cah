@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 
 import { StubEventPublisherAdapter, StubExternalDataAdapter, StubRandomAdapter } from 'src/adapters';
-import { GameState, createQuestion, isStarted } from 'src/entities';
+import { GameState, createGame, createPlayer, createQuestion, isStarted } from 'src/entities';
 import { HandlerCommand } from 'src/interfaces';
 import {
   InMemoryChoiceRepository,
@@ -40,11 +40,11 @@ class Test {
   };
 
   constructor() {
-    this.gameRepository.set({ id: 'gameId', code: '', state: GameState.idle });
+    this.gameRepository.set(createGame({ id: 'gameId' }));
   }
 
   addPlayer(playerId: string) {
-    this.playerRepository.set({ id: playerId, nick: '', gameId: 'gameId' });
+    this.playerRepository.set(createPlayer({ id: playerId, gameId: 'gameId' }));
   }
 
   get game() {
@@ -111,7 +111,7 @@ describe('StartGameCommand', () => {
   });
 
   it('fails when the player is not part of this game', async () => {
-    test.playerRepository.set({ id: 'playerId', nick: '' });
+    test.playerRepository.set(createPlayer({ id: 'playerId' }));
 
     await expect(test.handler.execute({ ...test.command, playerId: 'playerId' })).rejects.toThrow(
       'player is not part of this game'

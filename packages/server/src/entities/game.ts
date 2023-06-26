@@ -1,3 +1,6 @@
+import { createId } from 'src/utils/create-id';
+import { factory } from 'src/utils/factory';
+
 import { Answer } from './answer';
 
 export type Game = {
@@ -5,6 +8,12 @@ export type Game = {
   code: string;
   state: GameState;
 };
+
+export const createGame = factory<Game>(() => ({
+  id: createId(),
+  code: '',
+  state: GameState.idle,
+}));
 
 export type StartedGame = Game & {
   questionMasterId: string;

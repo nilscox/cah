@@ -1,5 +1,5 @@
 import { StubEventPublisherAdapter } from 'src/adapters';
-import { GameState } from 'src/entities';
+import { GameState, createGame, createPlayer } from 'src/entities';
 import { HandlerCommand } from 'src/interfaces';
 import { InMemoryGameRepository, InMemoryPlayerRepository } from 'src/persistence';
 import { defined } from 'src/utils/defined';
@@ -19,8 +19,8 @@ class Test {
   };
 
   constructor() {
-    this.gameRepository.set({ id: 'gameId', code: 'CODE', state: GameState.idle });
-    this.playerRepository.set({ id: 'playerId', nick: '' });
+    this.gameRepository.set(createGame({ id: 'gameId', code: 'CODE' }));
+    this.playerRepository.set(createPlayer({ id: 'playerId' }));
   }
 
   get game() {

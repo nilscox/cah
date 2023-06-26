@@ -1,5 +1,5 @@
 import { StubEventPublisherAdapter, StubGeneratorAdapter } from 'src/adapters';
-import { Game, GameState } from 'src/entities';
+import { Game, GameState, createPlayer } from 'src/entities';
 import { HandlerCommand } from 'src/interfaces';
 import { InMemoryGameRepository, InMemoryPlayerRepository } from 'src/persistence';
 
@@ -19,7 +19,7 @@ class Test {
 
   constructor() {
     this.generator.nextId = 'gameId';
-    this.playerRepository.set({ id: 'creatorId', nick: '' });
+    this.playerRepository.set(createPlayer({ id: 'creatorId' }));
   }
 
   get game() {
@@ -63,7 +63,7 @@ describe('createGame', () => {
   });
 
   it('prevents creating a game when already in a game', async () => {
-    test.playerRepository.set({ id: 'creatorId', nick: '', gameId: 'gameId' });
+    test.playerRepository.set(createPlayer({ id: 'creatorId', gameId: 'gameId' }));
 
     await expect(test.handler.execute(test.command)).rejects.toThrow('player is already in a game');
   });

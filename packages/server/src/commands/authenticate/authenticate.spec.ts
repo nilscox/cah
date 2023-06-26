@@ -1,4 +1,5 @@
 import { StubEventPublisherAdapter, StubGeneratorAdapter } from 'src/adapters';
+import { createPlayer } from 'src/entities';
 import { HandlerCommand } from 'src/interfaces';
 import { InMemoryPlayerRepository } from 'src/persistence';
 import { defined } from 'src/utils/defined';
@@ -40,7 +41,7 @@ describe('authenticate', () => {
   });
 
   it('authenticates as an existing player', async () => {
-    test.playerRepository.set({ id: 'existingPlayerId', nick: 'nick' });
+    test.playerRepository.set(createPlayer({ id: 'existingPlayerId', nick: 'nick' }));
 
     await expect(test.handler.execute(test.command)).resolves.toEqual('existingPlayerId');
   });

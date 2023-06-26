@@ -1,5 +1,5 @@
 import { StubEventPublisherAdapter } from 'src/adapters';
-import { GameState, Player, createChoice } from 'src/entities';
+import { GameState, createChoice, createGame, createPlayer } from 'src/entities';
 import { HandlerCommand } from 'src/interfaces';
 import { InMemoryChoiceRepository, InMemoryGameRepository, InMemoryPlayerRepository } from 'src/persistence';
 import { array } from 'src/utils/array';
@@ -26,16 +26,15 @@ class Test {
   choices = array(12, () => createChoice({ gameId: 'gameId' }));
 
   constructor() {
-    this.gameRepository.set({ id: 'gameId', code: '', state: GameState.started });
+    this.gameRepository.set(createGame({ id: 'gameId', state: GameState.started }));
     this.choiceRepository.set(...this.choices);
   }
 
   addPlayer(playerId: string, numberOfCards: number) {
-    const player: Player = {
+    const player = createPlayer({
       id: playerId,
-      nick: '',
       gameId: 'gameId',
-    };
+    });
 
     this.playerRepository.set(player);
     this.choiceRepository.set(...array(numberOfCards, () => createChoice({ gameId: 'gameId', playerId })));
