@@ -1,7 +1,10 @@
+import { injectableClass } from 'ditox';
+
 import { EventPublisherPort } from 'src/adapters';
 import { GameState } from 'src/entities';
 import { CommandHandler, DomainEvent } from 'src/interfaces';
 import { GameRepository, PlayerRepository } from 'src/persistence';
+import { TOKENS } from 'src/tokens';
 
 export class PlayerJoinedEvent extends DomainEvent {
   constructor(gameId: string, public readonly playerId: string) {
@@ -15,6 +18,13 @@ type JoinGameCommand = {
 };
 
 export class JoinGameHandler implements CommandHandler<JoinGameCommand> {
+  static inject = injectableClass(
+    this,
+    TOKENS.publisher,
+    TOKENS.repositories.game,
+    TOKENS.repositories.player
+  );
+
   constructor(
     private publisher: EventPublisherPort,
     private gameRepository: GameRepository,

@@ -1,7 +1,10 @@
+import { injectableClass } from 'ditox';
+
 import { EventPublisherPort, GeneratorPort } from 'src/adapters';
 import { Game, GameState } from 'src/entities';
 import { CommandHandler, DomainEvent } from 'src/interfaces';
 import { GameRepository, PlayerRepository } from 'src/persistence';
+import { TOKENS } from 'src/tokens';
 
 export class GameCreatedEvent extends DomainEvent {
   constructor(gameId: string, public readonly gameCode: string, public readonly creatorId: string) {
@@ -15,6 +18,14 @@ type CreateGameCommand = {
 };
 
 export class CreateGameHandler implements CommandHandler<CreateGameCommand> {
+  static inject = injectableClass(
+    this,
+    TOKENS.generator,
+    TOKENS.publisher,
+    TOKENS.repositories.player,
+    TOKENS.repositories.game
+  );
+
   constructor(
     private generator: GeneratorPort,
     private publisher: EventPublisherPort,

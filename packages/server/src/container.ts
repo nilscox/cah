@@ -31,6 +31,7 @@ import { GetGameHandler } from './queries/get-game';
 import { GetPlayerHandler } from './queries/get-player';
 import { Server } from './server/server';
 import { TOKENS } from './tokens';
+import { toObject } from './utils/to-object';
 
 type PersistenceModule = {
   gameRepository: GameRepository;
@@ -68,31 +69,19 @@ type AppModule = {
 };
 
 export const appModule = declareModule<AppModule>({
-  factory: (container) => {
-    const { random, generator, publisher, externalData, repositories } = TOKENS;
-
-    // prettier-ignore
-    const { game: gameRepository, player: playerRepository, question: questionRepository, choice: choiceRepository } = repositories;
-
-    // prettier-ignore
-    return {
-      authenticate: injectableClass(AuthenticateHandler, generator, publisher, playerRepository)(container),
-      createGame: injectableClass(CreateGameHandler, generator, publisher, playerRepository, gameRepository)(container),
-      joinGame: injectableClass(JoinGameHandler, publisher, gameRepository, playerRepository)(container),
-      startGame: injectableClass(StartGameHandler, random, publisher, externalData, gameRepository, playerRepository, questionRepository, choiceRepository)(container),
-      dealCards: injectableClass(DealCardsHandler, publisher, gameRepository, playerRepository, choiceRepository)(container),
-      getGame: injectableClass(GetGameHandler, gameRepository, playerRepository, questionRepository)(container),
-      getPlayer: injectableClass(GetPlayerHandler, playerRepository, choiceRepository)(container),
-    };
-  },
+  factory: (container) => ({
+    authenticate: AuthenticateHandler.inject(container),
+    createGame: CreateGameHandler.inject(container),
+    joinGame: JoinGameHandler.inject(container),
+    startGame: StartGameHandler.inject(container),
+    dealCards: DealCardsHandler.inject(container),
+    getGame: GetGameHandler.inject(container),
+    getPlayer: GetPlayerHandler.inject(container),
+  }),
+  // prettier-ignore
   exports: {
-    authenticate: TOKENS.commands.authenticate,
-    createGame: TOKENS.commands.createGame,
-    joinGame: TOKENS.commands.joinGame,
-    startGame: TOKENS.commands.startGame,
-    dealCards: TOKENS.commands.dealCards,
-    getGame: TOKENS.queries.getGame,
-    getPlayer: TOKENS.queries.getPlayer,
+    ...toObject(Object.entries(TOKENS.commands), ([key]) => key, ([, token]) => token),
+    ...toObject(Object.entries(TOKENS.queries), ([key]) => key, ([, token]) => token),
   },
 });
 

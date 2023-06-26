@@ -1,7 +1,10 @@
+import { injectableClass } from 'ditox';
+
 import { EventPublisherPort } from 'src/adapters';
 import { Player, isStarted } from 'src/entities';
 import { CommandHandler, DomainEvent } from 'src/interfaces';
 import { ChoiceRepository, GameRepository, PlayerRepository } from 'src/persistence';
+import { TOKENS } from 'src/tokens';
 import { sum } from 'src/utils/sum';
 
 export class CardsDealtEvent extends DomainEvent {
@@ -15,6 +18,14 @@ type DealCardsCommand = {
 };
 
 export class DealCardsHandler implements CommandHandler<DealCardsCommand> {
+  static inject = injectableClass(
+    this,
+    TOKENS.publisher,
+    TOKENS.repositories.game,
+    TOKENS.repositories.player,
+    TOKENS.repositories.choice
+  );
+
   constructor(
     private readonly publisher: EventPublisherPort,
     private readonly gameRepository: GameRepository,

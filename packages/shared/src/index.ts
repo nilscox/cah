@@ -20,6 +20,7 @@ export type Player = {
   id: string;
   nick: string;
   gameId?: string;
+  cards?: Array<Choice>;
 };
 
 export type Question = {

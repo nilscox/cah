@@ -1,7 +1,10 @@
+import { injectableClass } from 'ditox';
+
 import { EventPublisherPort, ExternalDataPort, RandomPort } from 'src/adapters';
 import { Choice, GameState, Question, isStarted } from 'src/entities';
 import { CommandHandler, DomainEvent } from 'src/interfaces';
 import { ChoiceRepository, GameRepository, PlayerRepository, QuestionRepository } from 'src/persistence';
+import { TOKENS } from 'src/tokens';
 import { hasProperty } from 'src/utils/has-property';
 import { sum } from 'src/utils/sum';
 
@@ -24,6 +27,17 @@ type StartGameCommand = {
 };
 
 export class StartGameHandler implements CommandHandler<StartGameCommand> {
+  static inject = injectableClass(
+    this,
+    TOKENS.random,
+    TOKENS.publisher,
+    TOKENS.externalData,
+    TOKENS.repositories.game,
+    TOKENS.repositories.player,
+    TOKENS.repositories.question,
+    TOKENS.repositories.choice
+  );
+
   constructor(
     private readonly random: RandomPort,
     private readonly publisher: EventPublisherPort,
