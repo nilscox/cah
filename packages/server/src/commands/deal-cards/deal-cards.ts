@@ -42,14 +42,16 @@ export class DealCardsHandler implements CommandHandler<DealCardsCommand> {
     for (const player of players) {
       const cards = availableChoices.splice(0, 11 - getCards(player).length);
 
+      if (cards.length === 0) {
+        continue;
+      }
+
       cards.forEach((card) => {
         card.playerId = player.id;
       });
 
-      if (cards.length > 0) {
-        const choicesIds = cards.map((card) => card.id);
-        events.push(new CardsDealtEvent(player.id, choicesIds));
-      }
+      const choicesIds = cards.map((card) => card.id);
+      events.push(new CardsDealtEvent(player.id, choicesIds));
     }
 
     await this.choiceRepository.save(...choices);
