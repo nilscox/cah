@@ -23,7 +23,7 @@ class Test {
   }
 
   get game() {
-    return this.gameRepository.findById('gameId');
+    return this.gameRepository.get('gameId');
   }
 }
 
@@ -39,7 +39,7 @@ describe('createGame', () => {
 
     await test.handler.execute(test.command);
 
-    expect(await test.game).toEqual<Game>({
+    expect(test.game).toEqual<Game>({
       id: 'gameId',
       code: 'CAFE',
       state: GameState.idle,
@@ -51,7 +51,7 @@ describe('createGame', () => {
 
     await test.handler.execute(test.command);
 
-    expect(await test.game).toHaveProperty('code', 'COCA');
+    expect(test.game).toHaveProperty('code', 'COCA');
   });
 
   it('publishes a GameCreatedEvent', async () => {

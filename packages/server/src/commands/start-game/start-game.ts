@@ -74,9 +74,9 @@ export class StartGameHandler implements CommandHandler<StartGameCommand> {
     game.questionId = questions[0].id;
     game.answers = [];
 
-    await this.gameRepository.save(game);
-    await this.questionRepository.save(...questions);
-    await this.choiceRepository.save(...choices);
+    await this.gameRepository.update(game);
+    await this.questionRepository.insertMany(questions);
+    await this.choiceRepository.insertMany(choices);
 
     this.publisher.publish(new GameStartedEvent(game.id));
   }

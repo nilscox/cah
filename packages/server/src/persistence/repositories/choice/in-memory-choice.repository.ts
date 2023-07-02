@@ -31,4 +31,12 @@ export class InMemoryChoiceRepository extends InMemoryRepository<Choice> impleme
       .filter((choice) => choice.playerId === undefined)
       .slice(0, limit);
   }
+
+  async insertMany(choices: Choice[]): Promise<void> {
+    this.set(...choices);
+  }
+
+  async updateMany(choices: Choice[]): Promise<void> {
+    this.set(...choices);
+  }
 }

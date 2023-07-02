@@ -65,7 +65,7 @@ export class DealCardsHandler implements CommandHandler<DealCardsCommand> {
       events.push(new CardsDealtEvent(player.id, choicesIds));
     }
 
-    await this.choiceRepository.save(...choices);
+    await this.choiceRepository.updateMany(choices);
 
     for (const event of events) {
       this.publisher.publish(event);

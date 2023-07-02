@@ -45,7 +45,7 @@ export class JoinGameHandler implements CommandHandler<JoinGameCommand> {
 
     player.gameId = game.id;
 
-    await this.playerRepository.save(player);
+    await this.playerRepository.update(player);
 
     this.publisher.publish(new PlayerJoinedEvent(game.id, player.id));
   }

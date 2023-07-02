@@ -37,7 +37,7 @@ export class AuthenticateHandler implements CommandHandler<AuthenticateCommand, 
       nick: command.nick,
     };
 
-    await this.playerRepository.save(player);
+    await this.playerRepository.insert(player);
 
     this.publisher.publish(new PlayerAuthenticatedEvent(player.id));
 

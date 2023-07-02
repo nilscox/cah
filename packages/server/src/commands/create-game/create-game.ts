@@ -46,7 +46,7 @@ export class CreateGameHandler implements CommandHandler<CreateGameCommand> {
       state: GameState.idle,
     };
 
-    await this.gameRepository.save(game);
+    await this.gameRepository.insert(game);
 
     this.publisher.publish(new GameCreatedEvent(game.id, game.code, player.id));
   }
