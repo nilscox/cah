@@ -18,7 +18,7 @@ export class GetPlayerHandler implements QueryHandler<GetPlayerQuery, Player> {
   ) {}
 
   async execute({ playerId }: GetPlayerQuery): Promise<Player> {
-    const player = await this.playerRepository.findByIdOrFail(playerId);
+    const player = await this.playerRepository.findById(playerId);
     const cards = player.gameId ? await this.choiceRepository.findPlayerCards(playerId) : undefined;
 
     const result: Player = {

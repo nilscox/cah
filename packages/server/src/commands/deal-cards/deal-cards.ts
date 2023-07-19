@@ -34,7 +34,7 @@ export class DealCardsHandler implements CommandHandler<DealCardsCommand> {
   ) {}
 
   async execute(command: DealCardsCommand): Promise<void> {
-    const game = await this.gameRepository.findByIdOrFail(command.gameId);
+    const game = await this.gameRepository.findById(command.gameId);
     const players = await this.playerRepository.findAllByGameId(game.id);
 
     if (!isStarted(game)) {

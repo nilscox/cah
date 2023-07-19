@@ -5,7 +5,7 @@ import { InMemoryRepository } from '../../in-memory-repository';
 import { QuestionRepository } from './question.repository';
 
 export class InMemoryQuestionRepository extends InMemoryRepository<Question> implements QuestionRepository {
-  async findByIdOrFail(id: string): Promise<Question> {
+  async findById(id: string): Promise<Question> {
     const item = this.get(id);
 
     if (!item) {

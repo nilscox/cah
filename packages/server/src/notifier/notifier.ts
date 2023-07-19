@@ -25,13 +25,13 @@ export class Notifier {
 
     publisher.register(PlayerConnectedEvent, async (event) => {
       const playerId = event.entityId;
-      const player = await this.playerRepository.findByIdOrFail(playerId);
+      const player = await this.playerRepository.findById(playerId);
 
       if (!player.gameId) {
         return;
       }
 
-      const game = await this.gameRepository.findByIdOrFail(player.gameId);
+      const game = await this.gameRepository.findById(player.gameId);
 
       await this.send(game.id, {
         type: 'player-connected',
@@ -40,7 +40,7 @@ export class Notifier {
     });
 
     publisher.register(GameCreatedEvent, async (event) => {
-      const game = await this.gameRepository.findByIdOrFail(event.entityId);
+      const game = await this.gameRepository.findById(event.entityId);
 
       await this.send(game.id, {
         type: 'game-created',
@@ -51,13 +51,13 @@ export class Notifier {
 
     publisher.register(PlayerJoinedEvent, async (event) => {
       const playerId = event.playerId;
-      const player = await this.playerRepository.findByIdOrFail(playerId);
+      const player = await this.playerRepository.findById(playerId);
 
       if (!player.gameId) {
         return;
       }
 
-      const game = await this.gameRepository.findByIdOrFail(player.gameId);
+      const game = await this.gameRepository.findById(player.gameId);
 
       await this.send(game.id, {
         type: 'player-joined',
@@ -68,7 +68,7 @@ export class Notifier {
     });
 
     publisher.register(GameStartedEvent, async (event) => {
-      const game = await this.gameRepository.findByIdOrFail(event.entityId);
+      const game = await this.gameRepository.findById(event.entityId);
       assert(isStarted(game));
 
       await this.send(game.id, {
@@ -78,10 +78,10 @@ export class Notifier {
     });
 
     publisher.register(GameStartedEvent, async (event) => {
-      const game = await this.gameRepository.findByIdOrFail(event.entityId);
+      const game = await this.gameRepository.findById(event.entityId);
       assert(isStarted(game));
 
-      const question = await this.questionRepository.findByIdOrFail(game.questionId);
+      const question = await this.questionRepository.findById(game.questionId);
 
       await this.send(game.id, {
         type: 'turn-started',
@@ -95,7 +95,7 @@ export class Notifier {
     });
 
     publisher.register(CardsDealtEvent, async (event) => {
-      const player = await this.playerRepository.findByIdOrFail(event.entityId);
+      const player = await this.playerRepository.findById(event.entityId);
       const cards = await this.choiceRepository.findPlayerCards(event.entityId);
 
       await this.send(player.id, {

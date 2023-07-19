@@ -49,7 +49,7 @@ export class StartGameHandler implements CommandHandler<StartGameCommand> {
   ) {}
 
   async execute(command: StartGameCommand): Promise<void> {
-    const game = await this.gameRepository.findByIdOrFail(command.gameId);
+    const game = await this.gameRepository.findById(command.gameId);
     const players = await this.playerRepository.findAllByGameId(game.id);
 
     if (!players.some(hasProperty('id', command.playerId))) {

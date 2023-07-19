@@ -25,7 +25,7 @@ export class GetGameHandler implements QueryHandler<GetGameQuery, Game> {
   ) {}
 
   async execute({ gameId }: GetGameQuery): Promise<Game> {
-    const game = await this.gameRepository.findByIdOrFail(gameId);
+    const game = await this.gameRepository.findById(gameId);
     const players = await this.playerRepository.findAllByGameId(gameId);
 
     const result: Game = {
@@ -41,7 +41,7 @@ export class GetGameHandler implements QueryHandler<GetGameQuery, Game> {
     if (isStarted(game)) {
       result.questionMasterId = game.questionMasterId;
 
-      const question = await this.questionRepository.findByIdOrFail(game.questionId);
+      const question = await this.questionRepository.findById(game.questionId);
 
       result.question = {
         id: question.id,

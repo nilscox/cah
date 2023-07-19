@@ -32,7 +32,7 @@ export class JoinGameHandler implements CommandHandler<JoinGameCommand> {
   ) {}
 
   async execute(command: JoinGameCommand): Promise<void> {
-    const player = await this.playerRepository.findByIdOrFail(command.playerId);
+    const player = await this.playerRepository.findById(command.playerId);
     const game = await this.gameRepository.findByCode(command.code);
 
     if (player.gameId !== undefined) {

@@ -6,7 +6,7 @@ import { InMemoryRepository } from '../../in-memory-repository';
 import { PlayerRepository } from './player.repository';
 
 export class InMemoryPlayerRepository extends InMemoryRepository<Player> implements PlayerRepository {
-  async findByIdOrFail(id: string): Promise<Player> {
+  async findById(id: string): Promise<Player> {
     const item = this.get(id);
 
     if (!item) {
@@ -16,12 +16,12 @@ export class InMemoryPlayerRepository extends InMemoryRepository<Player> impleme
     return Promise.resolve(item);
   }
 
-  async findAllByGameId(gameId: string): Promise<Player[]> {
-    return this.filter(hasProperty('gameId', gameId));
-  }
-
   async findByNick(nick: string): Promise<Player | undefined> {
     return this.find(hasProperty('nick', nick));
+  }
+
+  async findAllByGameId(gameId: string): Promise<Player[]> {
+    return this.filter(hasProperty('gameId', gameId));
   }
 
   async insert(player: Player): Promise<void> {

@@ -5,7 +5,7 @@ import { InMemoryRepository } from '../../in-memory-repository';
 import { GameRepository } from './game.repository';
 
 export class InMemoryGameRepository extends InMemoryRepository<Game> implements GameRepository {
-  async findByIdOrFail(id: string): Promise<Game> {
+  async findById(id: string): Promise<Game> {
     const item = this.get(id);
 
     if (!item) {

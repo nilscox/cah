@@ -34,7 +34,7 @@ export class CreateGameHandler implements CommandHandler<CreateGameCommand> {
   ) {}
 
   async execute(command: CreateGameCommand): Promise<void> {
-    const player = await this.playerRepository.findByIdOrFail(command.playerId);
+    const player = await this.playerRepository.findById(command.playerId);
 
     if (player.gameId) {
       throw new Error('player is already in a game');
