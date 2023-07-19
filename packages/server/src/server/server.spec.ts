@@ -1,7 +1,8 @@
+import { bindModule } from 'ditox';
 import { io } from 'socket.io-client';
 
 import { StubConfigAdapter, StubEventPublisherAdapter, StubLoggerAdapter } from 'src/adapters';
-import { container } from 'src/container';
+import { container, inMemoryPersistenceModule } from 'src/container';
 import { Player } from 'src/entities';
 import { Fetcher } from 'src/test/fetcher';
 import { defined } from 'src/utils/defined';
@@ -29,6 +30,7 @@ describe('server', () => {
   let test: Test;
 
   beforeEach(() => {
+    bindModule(container, inMemoryPersistenceModule);
     test = new Test();
   });
 

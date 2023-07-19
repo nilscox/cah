@@ -5,5 +5,7 @@ export default defineConfig({
   plugins: [tsconfigPaths()],
   test: {
     globals: true,
+    threads: false,
+    reporters: ['verbose'],
   },
 });

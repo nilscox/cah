@@ -13,9 +13,11 @@ import {
   StubLoggerAdapter,
   StubRandomAdapter,
 } from 'src/adapters';
-import { appModule, inMemoryPersistenceModule } from 'src/container';
+import { appModule, sqlPersistenceModule } from 'src/container';
 import { Player } from 'src/entities';
 import { Notifier } from 'src/notifier/notifier';
+// eslint-disable-next-line no-restricted-imports
+import { Database } from 'src/persistence/database';
 import { Server } from 'src/server/server';
 import { Fetcher } from 'src/test/fetcher';
 import { TOKENS } from 'src/tokens';
@@ -146,7 +148,11 @@ class Client {
 class Test {
   private container = createContainer();
 
-  config = new StubConfigAdapter({ server: { host: 'localhost', port: 0 } });
+  config = new StubConfigAdapter({
+    server: { host: 'localhost', port: 0 },
+    database: { url: 'postgres://postgres@localhost:5432/cah' },
+  });
+
   logger = new StubLoggerAdapter();
   random = new StubRandomAdapter();
   generator = new MathRandomGeneratorAdapter();
@@ -170,8 +176,10 @@ class Test {
     container.bindFactory(TOKENS.rtc, injectable((server) => server.rtc, TOKENS.server));
     // prettier-ignore
     container.bindFactory(TOKENS.notifier, injectableClass(Notifier, TOKENS.rtc, TOKENS.publisher, TOKENS.repositories.game, TOKENS.repositories.player, TOKENS.repositories.choice, TOKENS.repositories.question));
+    // prettier-ignore
+    container.bindFactory(TOKENS.database, Database.inject);
 
-    bindModule(container, inMemoryPersistenceModule);
+    bindModule(container, sqlPersistenceModule);
     bindModule(container, appModule);
 
     container.resolve(TOKENS.notifier).configure();
@@ -179,6 +187,10 @@ class Test {
 
   get server() {
     return this.container.resolve(TOKENS.server);
+  }
+
+  get database() {
+    return this.container.resolve(TOKENS.database);
   }
 
   createClient(nick: string) {
@@ -191,11 +203,13 @@ describe('Server E2E', () => {
 
   beforeEach(async () => {
     test = new Test();
+
+    await test.database.clear('cah');
     await test.server.listen();
   });
 
   afterEach(async () => {
-    if (test.server.listening) {
+    if (test?.server.listening) {
       await test.server.close();
     }
   });
@@ -230,6 +244,7 @@ describe('Server E2E', () => {
     await fifi.fetchGame();
     await loulou.fetchGame();
 
+    // await new Promise((r) => setTimeout(r, 100));
     // console.log(loulou);
   });
 });

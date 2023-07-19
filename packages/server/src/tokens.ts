@@ -22,6 +22,7 @@ import {
   PlayerRepository,
   QuestionRepository,
 } from './persistence';
+import { Database } from './persistence/database';
 import { GetGameHandler } from './queries/get-game';
 import { GetPlayerHandler } from './queries/get-player';
 import { Server } from './server/server';
@@ -39,6 +40,7 @@ export const TOKENS = {
   server: token<Server>('server'),
   rtc: token<RtcPort>('rtc'),
   notifier: token<Notifier>('notifier'),
+  database: token<Database>('database'),
 
   repositories: {
     game: token<GameRepository>('gameRepository'),

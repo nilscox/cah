@@ -3,4 +3,7 @@ export interface ConfigPort {
     host: string;
     port: number;
   };
+  database: {
+    url: string;
+  };
 }

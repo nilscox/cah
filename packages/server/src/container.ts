@@ -27,6 +27,12 @@ import { DealCardsHandler } from './commands/deal-cards/deal-cards';
 import { JoinGameHandler } from './commands/join-game/join-game';
 import { StartGameHandler } from './commands/start-game/start-game';
 import { Notifier } from './notifier/notifier';
+import { Database } from './persistence/database';
+import { SqlAnswerRepository } from './persistence/repositories/answer/sql-answer.repository';
+import { SqlChoiceRepository } from './persistence/repositories/choice/sql-choice.repository';
+import { SqlGameRepository } from './persistence/repositories/game/sql-game.repository';
+import { SqlPlayerRepository } from './persistence/repositories/player/sql-player.repository';
+import { SqlQuestionRepository } from './persistence/repositories/question/sql-question.repository';
 import { GetGameHandler } from './queries/get-game';
 import { GetPlayerHandler } from './queries/get-player';
 import { Server } from './server/server';
@@ -49,6 +55,26 @@ export const inMemoryPersistenceModule = declareModule<PersistenceModule>({
     choiceRepository: new InMemoryChoiceRepository(),
     answerRepository: new InMemoryAnswerRepository(),
   }),
+  exports: {
+    gameRepository: TOKENS.repositories.game,
+    playerRepository: TOKENS.repositories.player,
+    questionRepository: TOKENS.repositories.question,
+    choiceRepository: TOKENS.repositories.choice,
+    answerRepository: TOKENS.repositories.answer,
+  },
+});
+
+export const sqlPersistenceModule = declareModule<PersistenceModule>({
+  factory: injectable(
+    (db) => ({
+      gameRepository: new SqlGameRepository(db),
+      playerRepository: new SqlPlayerRepository(db),
+      questionRepository: new SqlQuestionRepository(db),
+      choiceRepository: new SqlChoiceRepository(db),
+      answerRepository: new SqlAnswerRepository(db),
+    }),
+    TOKENS.database
+  ),
   exports: {
     gameRepository: TOKENS.repositories.game,
     playerRepository: TOKENS.repositories.player,
@@ -101,7 +127,8 @@ container.bindFactory(TOKENS.externalData, injectableClass(StubExternalDataAdapt
   container.bindFactory(TOKENS.server, injectableClass(Server, TOKENS.config, TOKENS.logger, TOKENS.publisher, TOKENS.container));
   container.bindFactory(TOKENS.rtc, injectable((server) => server.rtc, TOKENS.server));
   container.bindFactory(TOKENS.notifier, injectableClass(Notifier, TOKENS.rtc, TOKENS.publisher, TOKENS.repositories.game, TOKENS.repositories.player, TOKENS.repositories.choice, TOKENS.repositories.question));
+  container.bindFactory(TOKENS.database, Database.inject);
 }
 
-bindModule(container, inMemoryPersistenceModule);
+bindModule(container, sqlPersistenceModule);
 bindModule(container, appModule);
