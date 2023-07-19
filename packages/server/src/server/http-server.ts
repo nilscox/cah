@@ -3,7 +3,7 @@ import { promisify } from 'node:util';
 
 import bodyParser from 'body-parser';
 import { Container } from 'ditox';
-import express, { RequestHandler } from 'express';
+import express, { ErrorRequestHandler, RequestHandler, Router } from 'express';
 import session from 'express-session';
 import createMemoryStore from 'memorystore';
 import morgan from 'morgan';
@@ -66,70 +66,8 @@ export class HttpServer {
     this.app.use(this.sessionMiddleware);
     this.app.use(this.loggerMiddleware);
     this.app.use(bodyParser.json());
-
-    const authenticated: RequestHandler = (req, res, next) => {
-      if (!req.session.playerId) {
-        res.status(401).send('request must be authenticated');
-      } else {
-        next();
-      }
-    };
-
-    this.app.get('/health-check', (req, res) => {
-      res.status(200).end();
-    });
-
-    this.app.post('/authenticate', async (req, res) => {
-      const { nick } = await authenticateBodySchema.validate(req.body);
-      const handler = this.container.resolve(TOKENS.commands.authenticate);
-
-      const playerId = await handler.execute({ nick });
-
-      req.session.playerId = playerId;
-      res.status(201).end();
-    });
-
-    this.app.post('/game', authenticated, async (req, res) => {
-      const playerId = defined(req.session.playerId);
-      const handler = this.container.resolve(TOKENS.commands.createGame);
-
-      await handler.execute({ playerId });
-      res.status(201).end();
-    });
-
-    this.app.put('/game/:code/join', authenticated, async (req, res) => {
-      const playerId = defined(req.session.playerId);
-      const code = req.params.code;
-      const handler = this.container.resolve(TOKENS.commands.joinGame);
-
-      await handler.execute({ code, playerId });
-      res.status(201).end();
-    });
-
-    this.app.put('/game/start', authenticated, async (req, res) => {
-      const playerId = defined(req.session.playerId);
-      const player = await this.container.resolve(TOKENS.queries.getPlayer).execute({ playerId });
-
-      assert(player.gameId, 'player is not in a game');
-
-      const handler = this.container.resolve(TOKENS.commands.startGame);
-
-      await handler.execute({ playerId, gameId: player.gameId, numberOfQuestions: 10 });
-      res.status(201).end();
-    });
-
-    this.app.get('/game/:gameId', async (req, res) => {
-      const handler = this.container.resolve(TOKENS.queries.getGame);
-
-      res.json(await handler.execute({ gameId: req.params.gameId }));
-    });
-
-    this.app.get('/player', authenticated, async (req, res) => {
-      const playerId = defined(req.session.playerId);
-      const handler = this.container.resolve(TOKENS.queries.getPlayer);
-
-      res.json(await handler.execute({ playerId }));
-    });
+    this.app.use(this.endpoints());
+    this.app.use(this.errorHandler);
   }
 
   private get loggerMiddleware() {
@@ -165,6 +103,85 @@ export class HttpServer {
       cookie: { secure: false },
       store: this.sessionStore,
     });
+  }
+
+  private errorHandler: ErrorRequestHandler = (err, req, res, _next) => {
+    const error = err instanceof Error ? err : new Error('Unknown error');
+
+    console.error(err);
+
+    res.status(500);
+    res.send(error.message);
+  };
+
+  private authenticated: RequestHandler = (req, res, next) => {
+    if (!req.session.playerId) {
+      res.status(401).send('request must be authenticated');
+    } else {
+      next();
+    }
+  };
+
+  private endpoints() {
+    const router = Router();
+
+    router.get('/health-check', (req, res) => {
+      res.status(200).end();
+    });
+
+    router.post('/authenticate', async (req, res) => {
+      const { nick } = await authenticateBodySchema.validate(req.body);
+      const handler = this.container.resolve(TOKENS.commands.authenticate);
+
+      const playerId = await handler.execute({ nick });
+
+      req.session.playerId = playerId;
+      res.status(201).end();
+    });
+
+    router.post('/game', this.authenticated, async (req, res) => {
+      const playerId = defined(req.session.playerId);
+      const handler = this.container.resolve(TOKENS.commands.createGame);
+
+      await handler.execute({ playerId });
+      res.status(201).end();
+    });
+
+    router.put('/game/:code/join', this.authenticated, async (req, res) => {
+      const playerId = defined(req.session.playerId);
+      const code = req.params.code;
+      const handler = this.container.resolve(TOKENS.commands.joinGame);
+
+      await handler.execute({ code, playerId });
+      res.status(201).end();
+    });
+
+    router.put('/game/start', this.authenticated, async (req, res) => {
+      const playerId = defined(req.session.playerId);
+      const player = await this.container.resolve(TOKENS.queries.getPlayer).execute({ playerId });
+
+      assert(player.gameId, 'player is not in a game');
+
+      const handler = this.container.resolve(TOKENS.commands.startGame);
+
+      await handler.execute({ playerId, gameId: player.gameId, numberOfQuestions: 10 });
+      res.status(201).end();
+    });
+
+    router.get('/game/:gameId', async (req, res) => {
+      const handler = this.container.resolve(TOKENS.queries.getGame);
+
+      res.json(await handler.execute({ gameId: req.params.gameId }));
+    });
+
+    router.get('/player', this.authenticated, async (req, res) => {
+      const playerId = defined(req.session.playerId);
+      const handler = this.container.resolve(TOKENS.queries.getPlayer);
+
+      res.json(await handler.execute({ playerId }));
+    });
+
+    return router;
   }
 }
 
