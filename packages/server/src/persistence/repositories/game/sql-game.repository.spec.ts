@@ -2,7 +2,7 @@ import { eq } from 'drizzle-orm';
 
 import { Game, GameState, createGame } from 'src/entities';
 
-import { games } from '../../drizzle-schema';
+import { SqlGame, games } from '../../drizzle-schema';
 import { EntityNotFoundError } from '../../entity-not-found-error';
 import { TestRepository } from '../../test-repository';
 
@@ -21,7 +21,7 @@ describe('SqlGameRepository', () => {
     let expected: Game;
 
     beforeEach(async () => {
-      await test.db.insert(games).values({ id: 'gameId', code: 'ABCD', state: 'idle' });
+      await test.create.game({ id: 'gameId', code: 'ABCD', state: 'idle' });
 
       expected = createGame({
         id: 'gameId',
@@ -61,11 +61,13 @@ describe('SqlGameRepository', () => {
 
       await expect(repository.insert(game)).resolves.toBeUndefined();
 
-      expect(await test.db.select().from(games).where(eq(games.id, 'gameId'))).toEqual([
+      expect(await test.db.select().from(games).where(eq(games.id, 'gameId'))).toEqual<SqlGame[]>([
         {
           id: 'gameId',
           code: 'ABCD',
           state: 'idle',
+          questionMasterId: null,
+          questionId: null,
         },
       ]);
     });
@@ -73,7 +75,7 @@ describe('SqlGameRepository', () => {
 
   describe('update', () => {
     it('updates an existing game', async () => {
-      await test.db.insert(games).values({ id: 'gameId', code: 'ABCD', state: 'idle' });
+      await test.create.game({ id: 'gameId', code: 'ABCD', state: 'idle' });
 
       const game = createGame({
         id: 'gameId',
@@ -83,11 +85,13 @@ describe('SqlGameRepository', () => {
 
       await expect(repository.update(game)).resolves.toBeUndefined();
 
-      expect(await test.db.select().from(games).where(eq(games.id, 'gameId'))).toEqual([
+      expect(await test.db.select().from(games).where(eq(games.id, 'gameId'))).toEqual<SqlGame[]>([
         {
           id: 'gameId',
           code: 'CAFE',
           state: 'idle',
+          questionMasterId: null,
+          questionId: null,
         },
       ]);
     });
