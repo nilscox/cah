@@ -1,12 +1,20 @@
 import { GameEvent } from '@cah/shared';
 
 import { EventPublisherPort, RealEventPublisherAdapter, RtcPort } from 'src/adapters';
+import { AnswerCreatedEvent } from 'src/commands/create-answer/create-answer';
 import { GameCreatedEvent } from 'src/commands/create-game/create-game';
 import { CardsDealtEvent } from 'src/commands/deal-cards/deal-cards';
+import { AllAnswersSubmittedEvent } from 'src/commands/handle-end-of-players-answer/handle-end-of-players-answer';
 import { PlayerJoinedEvent } from 'src/commands/join-game/join-game';
 import { GameStartedEvent } from 'src/commands/start-game/start-game';
 import { isStarted } from 'src/entities';
-import { ChoiceRepository, GameRepository, PlayerRepository, QuestionRepository } from 'src/persistence';
+import {
+  AnswerRepository,
+  ChoiceRepository,
+  GameRepository,
+  PlayerRepository,
+  QuestionRepository,
+} from 'src/persistence';
 import { PlayerConnectedEvent } from 'src/server/ws-server';
 
 export class Notifier {
@@ -16,7 +24,8 @@ export class Notifier {
     private readonly gameRepository: GameRepository,
     private readonly playerRepository: PlayerRepository,
     private readonly choiceRepository: ChoiceRepository,
-    private readonly questionRepository: QuestionRepository
+    private readonly questionRepository: QuestionRepository,
+    private readonly answerRepository: AnswerRepository
   ) {}
 
   configure() {
@@ -105,6 +114,29 @@ export class Notifier {
           id: choice.id,
           text: choice.text,
           caseSensitive: choice.caseSensitive,
+        })),
+      });
+    });
+
+    publisher.register(AnswerCreatedEvent, async (event) => {
+      const answer = await this.answerRepository.findById(event.entityId);
+      const game = await this.gameRepository.findById(answer.gameId);
+
+      await this.send(game.id, {
+        type: 'player-answered',
+        playerId: answer.playerId,
+      });
+    });
+
+    publisher.register(AllAnswersSubmittedEvent, async (event) => {
+      const game = await this.gameRepository.query(event.entityId);
+      assert(game.answers);
+
+      await this.send(game.id, {
+        type: 'all-players-answered',
+        answers: game.answers.map((answer) => ({
+          id: answer.id,
+          choices: answer.choices,
         })),
       });
     });

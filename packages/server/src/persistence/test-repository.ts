@@ -70,8 +70,10 @@ class EntitiesCreator {
     id: createId(),
     gameId: '',
     playerId: null,
+    answerId: null,
     text: '',
     caseSensitive: false,
+    place: null,
   };
 
   choice = this.createInsert(choices, this.defaultChoice);

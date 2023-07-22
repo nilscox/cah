@@ -1,0 +1,1 @@
+ALTER TABLE "cah"."choices" ADD COLUMN "place" integer;

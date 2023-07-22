@@ -1,8 +1,6 @@
 import { createId } from 'src/utils/create-id';
 import { factory } from 'src/utils/factory';
 
-import { Answer } from './answer';
-
 export type Game = {
   id: string;
   code: string;
@@ -18,8 +16,13 @@ export const createGame = factory<Game>(() => ({
 export type StartedGame = Game & {
   questionMasterId: string;
   questionId: string;
-  answers: Answer[];
 };
+
+export const createStartedGame = factory<StartedGame>(() => ({
+  ...createGame(),
+  questionMasterId: '',
+  questionId: '',
+}));
 
 export enum GameState {
   idle = 'idle',

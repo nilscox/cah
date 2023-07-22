@@ -10,8 +10,10 @@ import {
   RtcPort,
 } from './adapters';
 import { AuthenticateHandler } from './commands/authenticate/authenticate';
+import { CreateAnswerHandler } from './commands/create-answer/create-answer';
 import { CreateGameHandler } from './commands/create-game/create-game';
 import { DealCardsHandler } from './commands/deal-cards/deal-cards';
+import { HandleEndOfPlayersAnswerHandler } from './commands/handle-end-of-players-answer/handle-end-of-players-answer';
 import { JoinGameHandler } from './commands/join-game/join-game';
 import { StartGameHandler } from './commands/start-game/start-game';
 import { Notifier } from './notifier/notifier';
@@ -56,6 +58,8 @@ export const TOKENS = {
     joinGame: token<JoinGameHandler>('joinGame'),
     startGame: token<StartGameHandler>('startGame'),
     dealCards: token<DealCardsHandler>('dealCards'),
+    createAnswer: token<CreateAnswerHandler>('createAnswer'),
+    handleEndOfPlayersAnswer: token<HandleEndOfPlayersAnswerHandler>('handleEndOfPlayersAnswer'),
   },
 
   queries: {

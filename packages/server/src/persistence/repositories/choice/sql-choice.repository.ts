@@ -19,14 +19,17 @@ export class SqlChoiceRepository implements ChoiceRepository {
     playerId: model.playerId ?? undefined,
     text: model.text,
     caseSensitive: model.caseSensitive,
+    place: model.place ?? undefined,
   });
 
   private toSql = (choice: Choice): SqlChoice => ({
     id: choice.id,
     gameId: choice.gameId,
     playerId: choice.playerId ?? null,
+    answerId: choice.answerId ?? null,
     text: choice.text,
     caseSensitive: choice.caseSensitive,
+    place: choice.place ?? null,
   });
 
   async findPlayersCards(gameId: string): Promise<Record<string, Choice[]>> {

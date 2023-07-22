@@ -1,3 +1,5 @@
+import { Game as GameDto } from '@cah/shared';
+
 import { Game } from 'src/entities';
 
 import { InMemoryRepository } from '../../in-memory-repository';
@@ -5,14 +7,18 @@ import { InMemoryRepository } from '../../in-memory-repository';
 import { GameRepository } from './game.repository';
 
 export class InMemoryGameRepository extends InMemoryRepository<Game> implements GameRepository {
-  async findById(id: string): Promise<Game> {
-    const item = this.get(id);
+  async query(): Promise<GameDto> {
+    throw new Error('Not implemented');
+  }
 
-    if (!item) {
+  async findById(gameId: string): Promise<Game> {
+    const game = this.get(gameId);
+
+    if (!game) {
       throw new Error('Game not found');
     }
 
-    return Promise.resolve(item);
+    return game;
   }
 
   async findByCode(code: string): Promise<Game> {

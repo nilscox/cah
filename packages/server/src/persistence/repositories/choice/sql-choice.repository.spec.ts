@@ -82,14 +82,18 @@ describe('SqlChoiceRepository', () => {
         gameId: 'gameId',
         text: '',
         playerId: null,
+        answerId: null,
         caseSensitive: false,
+        place: null,
       },
       {
         id: 'choiceId2',
         gameId: 'gameId',
         text: '',
         playerId: null,
+        answerId: null,
         caseSensitive: false,
+        place: null,
       },
     ]);
   });

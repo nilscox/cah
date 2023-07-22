@@ -22,8 +22,10 @@ import {
 
 import { MathRandomGeneratorAdapter } from './adapters/generator/math-random-generator.adapter';
 import { AuthenticateHandler } from './commands/authenticate/authenticate';
+import { CreateAnswerHandler } from './commands/create-answer/create-answer';
 import { CreateGameHandler } from './commands/create-game/create-game';
 import { DealCardsHandler } from './commands/deal-cards/deal-cards';
+import { HandleEndOfPlayersAnswerHandler } from './commands/handle-end-of-players-answer/handle-end-of-players-answer';
 import { JoinGameHandler } from './commands/join-game/join-game';
 import { StartGameHandler } from './commands/start-game/start-game';
 import { Notifier } from './notifier/notifier';
@@ -101,6 +103,8 @@ export const appModule = declareModule<AppModule>({
     joinGame: JoinGameHandler.inject(container),
     startGame: StartGameHandler.inject(container),
     dealCards: DealCardsHandler.inject(container),
+    createAnswer: CreateAnswerHandler.inject(container),
+    handleEndOfPlayersAnswer: HandleEndOfPlayersAnswerHandler.inject(container),
     getGame: GetGameHandler.inject(container),
     getPlayer: GetPlayerHandler.inject(container),
   }),
@@ -126,7 +130,7 @@ container.bindFactory(TOKENS.externalData, injectableClass(StubExternalDataAdapt
   container.bindFactory(TOKENS.publisher, injectableClass(RealEventPublisherAdapter, TOKENS.logger));
   container.bindFactory(TOKENS.server, injectableClass(Server, TOKENS.config, TOKENS.logger, TOKENS.publisher, TOKENS.container));
   container.bindFactory(TOKENS.rtc, injectable((server) => server.rtc, TOKENS.server));
-  container.bindFactory(TOKENS.notifier, injectableClass(Notifier, TOKENS.rtc, TOKENS.publisher, TOKENS.repositories.game, TOKENS.repositories.player, TOKENS.repositories.choice, TOKENS.repositories.question));
+  container.bindFactory(TOKENS.notifier, injectableClass(Notifier, TOKENS.rtc, TOKENS.publisher, TOKENS.repositories.game, TOKENS.repositories.player, TOKENS.repositories.choice, TOKENS.repositories.question, TOKENS.repositories.answer));
   container.bindFactory(TOKENS.database, Database.inject);
 }
 

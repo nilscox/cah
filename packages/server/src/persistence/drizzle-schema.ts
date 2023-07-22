@@ -1,5 +1,5 @@
 import { GameState } from '@cah/shared';
-import { InferModel } from 'drizzle-orm';
+import { InferModel, relations } from 'drizzle-orm';
 import { AnyPgColumn, boolean, integer, pgEnum, pgSchema, text, varchar } from 'drizzle-orm/pg-core';
 
 const typedPgEnum = <Enum extends object>(name: string, e: Enum) => {
@@ -23,6 +23,11 @@ export const games = cah.table('games', {
   questionId: id('questionId').references((): AnyPgColumn => questions.id),
 });
 
+export const gamesRelations = relations(games, ({ many }) => ({
+  players: many(players),
+  answers: many(answers),
+}));
+
 export type SqlGame = InferModel<typeof games>;
 
 export const players = cah.table('players', {
@@ -30,6 +35,10 @@ export const players = cah.table('players', {
   nick: text('nick').notNull(),
   gameId: id('gameId').references(() => games.id),
 });
+
+export const playersRelations = relations(players, ({ one }) => ({
+  game: one(games, { fields: [players.gameId], references: [games.id] }),
+}));
 
 export type SqlPlayer = InferModel<typeof players>;
 
@@ -50,8 +59,35 @@ export const choices = cah.table('choices', {
     .notNull()
     .references(() => games.id),
   playerId: varchar('playerId').references(() => players.id),
+  answerId: varchar('answerId').references(() => answers.id),
   text: text('text').notNull(),
   caseSensitive: boolean('caseSensitive').notNull(),
+  place: integer('place'),
 });
 
+export const choicesRelations = relations(choices, ({ one }) => ({
+  answer: one(answers, { fields: [choices.answerId], references: [answers.id] }),
+}));
+
 export type SqlChoice = InferModel<typeof choices>;
+
+export const answers = cah.table('answers', {
+  id: primaryKey(),
+  gameId: varchar('gameId')
+    .notNull()
+    .references(() => games.id),
+  playerId: varchar('playerId')
+    .notNull()
+    .references(() => players.id),
+  questionId: text('questionId')
+    .notNull()
+    .references(() => questions.id),
+  place: integer('place'),
+});
+
+export const answersRelations = relations(answers, ({ one, many }) => ({
+  game: one(games, { fields: [answers.gameId], references: [games.id] }),
+  choices: many(choices),
+}));
+
+export type SqlAnswer = InferModel<typeof answers>;

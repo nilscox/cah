@@ -72,7 +72,6 @@ export class StartGameHandler implements CommandHandler<StartGameCommand> {
 
     game.questionMasterId = this.random.randomItem(players).id;
     game.questionId = questions[0].id;
-    game.answers = [];
 
     await this.questionRepository.insertMany(questions);
     await this.choiceRepository.insertMany(choices);

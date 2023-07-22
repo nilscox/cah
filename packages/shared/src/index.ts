@@ -8,6 +8,7 @@ export type Game = {
   }>;
   questionMasterId?: string;
   question?: Question;
+  answers?: Array<Answer | AnonymousAnswer>;
 };
 
 export enum GameState {
@@ -26,6 +27,7 @@ export type Player = {
 export type Question = {
   id: string;
   text: string;
+  blanks?: number[];
 };
 
 export type Choice = {
@@ -33,6 +35,14 @@ export type Choice = {
   text: string;
   caseSensitive: boolean;
 };
+
+export type Answer = {
+  id: string;
+  playerId: string;
+  choices: Array<Choice>;
+};
+
+export type AnonymousAnswer = Omit<Answer, 'playerId'>;
 
 export type PlayerConnectedEvent = {
   type: 'player-connected';
@@ -75,6 +85,16 @@ export type CardsDealtEvent = {
   cards: Choice[];
 };
 
+export type PlayerAnsweredEvent = {
+  type: 'player-answered';
+  playerId: string;
+};
+
+export type AllPlayerAnsweredEvent = {
+  type: 'all-players-answered';
+  answers: Array<AnonymousAnswer>;
+};
+
 export type GameEvent =
   | PlayerConnectedEvent
   | PlayerDisconnectedEvent
@@ -82,4 +102,6 @@ export type GameEvent =
   | PlayerJoinedEvent
   | GameStartedEvent
   | TurnStartedEvent
-  | CardsDealtEvent;
+  | CardsDealtEvent
+  | PlayerAnsweredEvent
+  | AllPlayerAnsweredEvent;

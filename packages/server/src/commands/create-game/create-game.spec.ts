@@ -27,7 +27,7 @@ class Test {
   }
 }
 
-describe('createGame', () => {
+describe('CreateGameCommand', () => {
   let test: Test;
 
   beforeEach(() => {

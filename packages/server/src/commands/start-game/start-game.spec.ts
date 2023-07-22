@@ -74,7 +74,6 @@ describe('StartGameCommand', () => {
 
       expect(test.game.questionMasterId).toEqual('player1Id');
       expect(test.game.questionId).toEqual('question1Id');
-      expect(test.game.answers).toEqual([]);
     });
 
     it('triggers a GameStartedEvent', async () => {

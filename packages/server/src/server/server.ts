@@ -3,6 +3,7 @@ import assert from 'node:assert';
 import { Container } from 'ditox';
 
 import { ConfigPort, EventPublisherPort, LoggerPort, RealEventPublisherAdapter } from 'src/adapters';
+import { AnswerCreatedEvent } from 'src/commands/create-answer/create-answer';
 import { GameCreatedEvent } from 'src/commands/create-game/create-game';
 import { PlayerJoinedEvent } from 'src/commands/join-game/join-game';
 import { GameStartedEvent, TurnStartedEvent } from 'src/commands/start-game/start-game';
@@ -88,6 +89,14 @@ export class Server {
 
       await dealCards.execute({
         gameId: event.entityId,
+      });
+    });
+
+    publisher.register(AnswerCreatedEvent, async (event) => {
+      const handleEndOfPlayersAnswer = this.container.resolve(TOKENS.commands.handleEndOfPlayersAnswer);
+
+      await handleEndOfPlayersAnswer.execute({
+        answerId: event.entityId,
       });
     });
   }

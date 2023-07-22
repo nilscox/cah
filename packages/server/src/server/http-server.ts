@@ -168,6 +168,16 @@ export class HttpServer {
       res.status(201).end();
     });
 
+    router.post('/game/answer', this.authenticated, async (req, res) => {
+      const playerId = defined(req.session.playerId);
+      const { choicesIds } = await createAnswerBodySchema.validate(req.body);
+      const handler = this.container.resolve(TOKENS.commands.createAnswer);
+
+      await handler.execute({ playerId, choicesIds });
+
+      res.status(200).end();
+    });
+
     router.get('/game/:gameId', async (req, res) => {
       const handler = this.container.resolve(TOKENS.queries.getGame);
 
@@ -181,10 +191,23 @@ export class HttpServer {
       res.json(await handler.execute({ playerId }));
     });
 
+    router.use(((err: unknown, req, res, next) => {
+      if (err instanceof yup.ValidationError) {
+        res.status(400);
+        res.json({ message: err.message, type: err.type, path: err.path });
+      } else {
+        next(err);
+      }
+    }) satisfies ErrorRequestHandler);
+
     return router;
   }
 }
 
 const authenticateBodySchema = yup.object({
   nick: yup.string().min(2).max(24).required(),
+});
+
+const createAnswerBodySchema = yup.object({
+  choicesIds: yup.array(yup.string().required()).min(1).required(),
 });

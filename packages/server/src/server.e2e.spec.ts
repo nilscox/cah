@@ -24,6 +24,9 @@ import { TOKENS } from 'src/tokens';
 import { defined } from 'src/utils/defined';
 import { hasProperty } from 'src/utils/has-property';
 
+import { getIds } from './utils/id';
+import { waitFor } from './utils/wait-for';
+
 class Client {
   private fetcher: Fetcher;
   private socket?: Socket;
@@ -49,8 +52,20 @@ class Client {
     await new Promise<void>((resolve) => this.socket?.on('connect', resolve));
   }
 
+  async disconnect() {
+    const socket = this.socket;
+
+    assert(socket);
+
+    return new Promise<void>((resolve) => {
+      socket.on('disconnect', () => resolve());
+      return socket.disconnect();
+    });
+  }
+
   public game!: Game;
   public cards: Choice[] = [];
+  public playersAnswered: string[] = [];
 
   public debug = false;
   public debugEvents = false;
@@ -78,10 +93,20 @@ class Client {
       case 'turn-started':
         this.game.questionMasterId = event.questionMasterId;
         this.game.question = event.question;
+        this.playersAnswered = [];
+        this.game.answers = [];
         break;
 
       case 'cards-dealt':
         this.cards.push(...event.cards);
+        break;
+
+      case 'player-answered':
+        this.playersAnswered.push(event.playerId);
+        break;
+
+      case 'all-players-answered':
+        this.game.answers = event.answers;
         break;
     }
   };
@@ -93,7 +118,7 @@ class Client {
   }
 
   get question() {
-    return this.game.question?.text;
+    return this.game.question;
   }
 
   [inspect.custom]() {
@@ -103,7 +128,10 @@ class Client {
       `players: ${this.game.players.map(({ id, nick }) => `${nick} (${id})`).join(', ')}`,
       `gameState: ${this.game.state}`,
       `questionMaster: ${this.questionMaster?.nick ?? '-'}`,
-      `question: ${this.question ?? '-'}`,
+      `question: ${this.question?.text ?? '-'}`,
+      `answers: ${
+        this.game.answers?.map((answer) => answer.choices?.map((choice) => choice.text)).join(', ') ?? '-'
+      }`,
       `cards:`,
       ...this.cards.map((choice) => `- ${choice.text} (${choice.id})`),
     ].join('\n');
@@ -141,7 +169,16 @@ class Client {
 
   async startGame() {
     this.log('start the game');
-    await this.fetcher.put(`/game/start`);
+    await this.fetcher.put('/game/start');
+  }
+
+  async answer() {
+    const choices = this.cards.slice(0, this.question?.blanks?.length ?? 1);
+
+    this.log('answers the current question:', choices.map((choice) => choice.text).join(', '));
+
+    await this.fetcher.post('/game/answer', { choicesIds: getIds(choices) });
+    this.cards.splice(0, choices.length);
   }
 }
 
@@ -175,7 +212,7 @@ class Test {
     // prettier-ignore
     container.bindFactory(TOKENS.rtc, injectable((server) => server.rtc, TOKENS.server));
     // prettier-ignore
-    container.bindFactory(TOKENS.notifier, injectableClass(Notifier, TOKENS.rtc, TOKENS.publisher, TOKENS.repositories.game, TOKENS.repositories.player, TOKENS.repositories.choice, TOKENS.repositories.question));
+    container.bindFactory(TOKENS.notifier, injectableClass(Notifier, TOKENS.rtc, TOKENS.publisher, TOKENS.repositories.game, TOKENS.repositories.player, TOKENS.repositories.choice, TOKENS.repositories.question, TOKENS.repositories.answer));
     // prettier-ignore
     container.bindFactory(TOKENS.database, Database.inject);
 
@@ -212,6 +249,8 @@ describe('Server E2E', () => {
     if (test?.server.listening) {
       await test.server.close();
     }
+
+    // await test.database.closeConnection();
   });
 
   // cspell:word riri fifi loulou
@@ -221,7 +260,7 @@ describe('Server E2E', () => {
     const fifi = test.createClient('fifi');
     const loulou = test.createClient('loulou');
 
-    const forEachPlayer = async (cb: (player: Client) => Promise<void>) => {
+    const forEachPlayer = async (cb: (player: Client) => void | Promise<void>) => {
       for (const player of [riri, fifi, loulou]) {
         await cb(player);
       }
@@ -229,6 +268,7 @@ describe('Server E2E', () => {
 
     await forEachPlayer(async (player) => {
       // player.debug = true;
+      // player.debugEvents = true;
       await player.authenticate();
       await player.connect();
     });
@@ -240,11 +280,16 @@ describe('Server E2E', () => {
 
     await riri.startGame();
 
-    await riri.fetchGame();
-    await fifi.fetchGame();
-    await loulou.fetchGame();
+    await forEachPlayer((player) => void player.fetchGame());
+
+    await waitFor(() => forEachPlayer((player) => assert(player.cards.length > 0)));
+
+    await fifi.answer();
+    await loulou.answer();
 
     // await new Promise((r) => setTimeout(r, 100));
     // console.log(loulou);
+
+    await forEachPlayer((player) => player.disconnect());
   });
 });

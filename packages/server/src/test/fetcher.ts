@@ -33,7 +33,7 @@ export class Fetcher {
     if (cookieString) headers.set('cookie', cookieString);
 
     const response = await fetch(this.baseUrl + path, init);
-    assert(response.ok, await response.clone().text());
+    assert(response.ok, `Error ${response.status}: ${await response.clone().text()}`);
 
     const setCookie = response.headers.get('set-cookie');
     if (setCookie) await this.jar.setCookie(setCookie, this.currentUrl);
