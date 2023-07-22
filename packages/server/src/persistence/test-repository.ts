@@ -21,7 +21,7 @@ import {
 export class TestRepository {
   config = new StubConfigAdapter({
     database: {
-      url: 'postgres://postgres@localhost:5432/cah',
+      url: process.env.DATABASE_URL ?? 'postgres://postgres@localhost:5432/cah',
       debug: true,
     },
   });
@@ -38,7 +38,8 @@ export class TestRepository {
   }
 
   async setup() {
-    await this.db.clear('cah');
+    await this.db.migrate();
+    await this.db.clear();
   }
 
   getRepository<T>(Repository: { new (database: Database): T }) {

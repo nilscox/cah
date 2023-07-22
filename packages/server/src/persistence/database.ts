@@ -1,6 +1,10 @@
+import path from 'node:path';
+import url from 'node:url';
+
 import { injectableClass } from 'ditox';
 import { sql } from 'drizzle-orm';
 import { PostgresJsDatabase, drizzle } from 'drizzle-orm/postgres-js';
+import { migrate } from 'drizzle-orm/postgres-js/migrator';
 import postgres from 'postgres';
 
 import { ConfigPort } from 'src/adapters';
@@ -39,7 +43,7 @@ export class Database {
   update: DrizzleDb['update'];
   delete: DrizzleDb['delete'];
 
-  async clear(schema = 'public') {
+  async clear(schema = 'cah') {
     const result = await this.execute(
       sql`select tablename from pg_catalog.pg_tables where schemaname=${schema}`,
     );
@@ -50,6 +54,20 @@ export class Database {
 
     const tables = result.map(({ tablename }) => `${schema}.${tablename as string}`);
     await this.execute(sql.raw(`truncate table ${tables.join(', ')} cascade`));
+  }
+
+  async migrate(schema = 'cah') {
+    const result = await this.execute(
+      sql`SELECT schema_name FROM information_schema.schemata where schema_name = ${schema}`,
+    );
+
+    if (result.length === 1) {
+      return;
+    }
+
+    const dirname = url.fileURLToPath(new URL('.', import.meta.url));
+
+    await migrate(this.db, { migrationsFolder: path.join(dirname, 'migrations') });
   }
 
   async closeConnection() {

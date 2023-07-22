@@ -162,13 +162,11 @@ class Client {
   async createGame() {
     this.log('creates a game');
     await this.fetcher.post('/game');
-    await this.fetchGame();
   }
 
   async joinGame(code: string) {
     this.log(`joins the game ${code}`);
     await this.fetcher.put(`/game/${code}/join`);
-    await this.fetchGame();
   }
 
   async startGame() {
@@ -189,7 +187,6 @@ class Client {
     const [answer] = defined(this.game.answers);
 
     this.log('selects answer:', answer.id);
-
     await this.fetcher.put(`/game/answer/${answer.id}/select`);
   }
 }
@@ -199,7 +196,7 @@ class Test {
 
   config = new StubConfigAdapter({
     server: { host: 'localhost', port: 0 },
-    database: { url: 'postgres://postgres@localhost:5432/cah', debug: true },
+    database: { url: process.env.DATABASE_URL ?? 'postgres://postgres@localhost:5432/cah', debug: true },
   });
 
   logger = new StubLoggerAdapter();
@@ -239,7 +236,10 @@ describe('Server E2E', () => {
     test = new Test();
 
     test.notifier.configure();
-    await test.database.clear('cah');
+
+    await test.database.migrate();
+    await test.database.clear();
+
     await test.server.listen();
   });
 
@@ -272,9 +272,13 @@ describe('Server E2E', () => {
     });
 
     await riri.createGame();
+    await waitFor(() => riri.fetchGame());
 
     await fifi.joinGame(riri.game.code);
+    await fifi.fetchGame();
+
     await loulou.joinGame(riri.game.code);
+    await loulou.fetchGame();
 
     await riri.startGame();
 
