@@ -45,6 +45,10 @@ export type Answer = {
 
 export type AnonymousAnswer = Omit<Answer, 'playerId'>;
 
+export type Turn = {
+  id: string;
+};
+
 export type PlayerConnectedEvent = {
   type: 'player-connected';
   nick: string;

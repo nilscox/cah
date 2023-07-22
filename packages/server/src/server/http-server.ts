@@ -188,6 +188,15 @@ export class HttpServer {
       res.status(200).end();
     });
 
+    router.put('/game/end-turn', this.authenticated, async (req, res) => {
+      const playerId = defined(req.session.playerId);
+      const handler = this.container.resolve(TOKENS.commands.endTurn);
+
+      await handler.execute({ playerId });
+
+      res.status(200).end();
+    });
+
     router.get('/game/:gameId', async (req, res) => {
       const handler = this.container.resolve(TOKENS.queries.getGame);
 

@@ -13,6 +13,7 @@ import { AuthenticateHandler } from './commands/authenticate/authenticate';
 import { CreateAnswerHandler } from './commands/create-answer/create-answer';
 import { CreateGameHandler } from './commands/create-game/create-game';
 import { DealCardsHandler } from './commands/deal-cards/deal-cards';
+import { EndTurnHandler } from './commands/end-turn/end-turn';
 import { HandleEndOfPlayersAnswerHandler } from './commands/handle-end-of-players-answer/handle-end-of-players-answer';
 import { JoinGameHandler } from './commands/join-game/join-game';
 import { SelectWinningAnswerHandler } from './commands/select-winning-answer/select-winning-answer';
@@ -24,6 +25,7 @@ import {
   GameRepository,
   PlayerRepository,
   QuestionRepository,
+  TurnRepository,
 } from './persistence';
 import { Database } from './persistence/database';
 import { GetGameHandler } from './queries/get-game';
@@ -51,6 +53,7 @@ export const TOKENS = {
     question: token<QuestionRepository>('questionRepository'),
     choice: token<ChoiceRepository>('choiceRepository'),
     answer: token<AnswerRepository>('answerRepository'),
+    turn: token<TurnRepository>('turnRepository'),
   },
 
   commands: {
@@ -62,6 +65,7 @@ export const TOKENS = {
     createAnswer: token<CreateAnswerHandler>('createAnswer'),
     handleEndOfPlayersAnswer: token<HandleEndOfPlayersAnswerHandler>('handleEndOfPlayersAnswer'),
     selectWinningAnswer: token<SelectWinningAnswerHandler>('selectWinningAnswer'),
+    endTurn: token<EndTurnHandler>('endTurn'),
   },
 
   queries: {

@@ -1,18 +1,18 @@
 import { createId } from 'src/utils/create-id';
 import { factory } from 'src/utils/factory';
 
-export type Answer = {
+export type Turn = {
   id: string;
   gameId: string;
-  playerId: string;
+  questionMasterId: string;
   questionId: string;
-  turnId?: string;
-  place?: number;
+  selectedAnswerId: string;
 };
 
-export const createAnswer = factory<Answer>(() => ({
+export const createTurn = factory<Turn>(() => ({
   id: createId(),
   gameId: '',
-  playerId: '',
+  questionMasterId: '',
   questionId: '',
+  selectedAnswerId: '',
 }));

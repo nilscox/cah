@@ -189,6 +189,11 @@ class Client {
     this.log('selects answer:', answer.id);
     await this.fetcher.put(`/game/answer/${answer.id}/select`);
   }
+
+  async endTurn() {
+    this.log('ends the current turn');
+    await this.fetcher.put('/game/end-turn');
+  }
 }
 
 class Test {
@@ -292,6 +297,8 @@ describe('Server E2E', () => {
     await waitFor(() => assert(riri.game.answers?.length === 2));
 
     await riri.selectAnswer();
+
+    await riri.endTurn();
 
     // await new Promise((r) => setTimeout(r, 100));
     // console.log(loulou);

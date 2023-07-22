@@ -17,6 +17,9 @@ import { SqlPlayerRepository } from './repositories/player/sql-player.repository
 import { InMemoryQuestionRepository } from './repositories/question/in-memory-question.repository';
 import { QuestionRepository } from './repositories/question/question.repository';
 import { SqlQuestionRepository } from './repositories/question/sql-question.repository';
+import { InMemoryTurnRepository } from './repositories/turn/in-memory-turn.repository';
+import { SqlTurnRepository } from './repositories/turn/sql-turn.repository';
+import { TurnRepository } from './repositories/turn/turn.repository';
 
 type PersistenceModule = {
   gameRepository: GameRepository;
@@ -24,6 +27,7 @@ type PersistenceModule = {
   questionRepository: QuestionRepository;
   choiceRepository: ChoiceRepository;
   answerRepository: AnswerRepository;
+  turnRepository: TurnRepository;
 };
 
 export const inMemoryPersistenceModule = declareModule<PersistenceModule>({
@@ -33,6 +37,7 @@ export const inMemoryPersistenceModule = declareModule<PersistenceModule>({
     questionRepository: new InMemoryQuestionRepository(),
     choiceRepository: new InMemoryChoiceRepository(),
     answerRepository: new InMemoryAnswerRepository(),
+    turnRepository: new InMemoryTurnRepository(),
   }),
   exports: {
     gameRepository: TOKENS.repositories.game,
@@ -40,6 +45,7 @@ export const inMemoryPersistenceModule = declareModule<PersistenceModule>({
     questionRepository: TOKENS.repositories.question,
     choiceRepository: TOKENS.repositories.choice,
     answerRepository: TOKENS.repositories.answer,
+    turnRepository: TOKENS.repositories.turn,
   },
 });
 
@@ -51,6 +57,7 @@ export const sqlPersistenceModule = declareModule<PersistenceModule>({
       questionRepository: new SqlQuestionRepository(db),
       choiceRepository: new SqlChoiceRepository(db),
       answerRepository: new SqlAnswerRepository(db),
+      turnRepository: new SqlTurnRepository(db),
     }),
     TOKENS.database,
   ),
@@ -60,5 +67,6 @@ export const sqlPersistenceModule = declareModule<PersistenceModule>({
     questionRepository: TOKENS.repositories.question,
     choiceRepository: TOKENS.repositories.choice,
     answerRepository: TOKENS.repositories.answer,
+    turnRepository: TOKENS.repositories.turn,
   },
 });

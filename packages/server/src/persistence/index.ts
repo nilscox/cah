@@ -13,4 +13,7 @@ export * from './repositories/player/player.repository';
 export * from './repositories/question/in-memory-question.repository';
 export * from './repositories/question/question.repository';
 
+export * from './repositories/turn/in-memory-turn.repository';
+export * from './repositories/turn/turn.repository';
+
 export * from './persistence.module';

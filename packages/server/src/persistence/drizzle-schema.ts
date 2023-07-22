@@ -77,15 +77,16 @@ export type SqlChoice = InferModel<typeof choices>;
 
 export const answers = cah.table('answers', {
   id: primaryKey(),
-  gameId: varchar('gameId')
+  gameId: id('gameId')
     .notNull()
     .references(() => games.id),
-  playerId: varchar('playerId')
+  playerId: id('playerId')
     .notNull()
     .references(() => players.id),
-  questionId: text('questionId')
+  questionId: id('questionId')
     .notNull()
     .references(() => questions.id),
+  turnId: id('turnId').references((): AnyPgColumn => turns.id),
   place: integer('place'),
 });
 
@@ -95,3 +96,22 @@ export const answersRelations = relations(answers, ({ one, many }) => ({
 }));
 
 export type SqlAnswer = InferModel<typeof answers>;
+
+export const turns = cah.table('turns', {
+  id: primaryKey(),
+  gameId: varchar('gameId')
+    .notNull()
+    .references(() => games.id),
+  questionMasterId: text('questionMasterId')
+    .notNull()
+    .references(() => players.id),
+  questionId: text('questionId')
+    .notNull()
+    .references(() => questions.id),
+  selectedAnswerId: text('selectedAnswerId')
+    .notNull()
+    .references(() => answers.id),
+  place: integer('place'),
+});
+
+export type SqlTurn = InferModel<typeof turns>;

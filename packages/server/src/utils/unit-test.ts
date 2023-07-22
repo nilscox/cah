@@ -10,6 +10,7 @@ import {
   InMemoryQuestionRepository,
   InMemoryChoiceRepository,
   InMemoryAnswerRepository,
+  InMemoryTurnRepository,
 } from 'src/persistence';
 
 export class UnitTest {
@@ -23,4 +24,5 @@ export class UnitTest {
   questionRepository = new InMemoryQuestionRepository();
   choiceRepository = new InMemoryChoiceRepository();
   answerRepository = new InMemoryAnswerRepository();
+  turnRepository = new InMemoryTurnRepository();
 }
