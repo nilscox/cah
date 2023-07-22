@@ -11,5 +11,8 @@
     "clean": "pnpm run -r clean",
     "lint": "pnpm --no-bail run -r lint",
     "test": "pnpm --no-bail --workspace-concurrency=1 run -r test"
+  },
+  "devDependencies": {
+    "typescript": "^5.1.6"
   }
 }
