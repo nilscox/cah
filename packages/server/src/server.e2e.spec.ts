@@ -2,28 +2,23 @@ import assert from 'node:assert';
 import { inspect } from 'node:util';
 
 import { Choice, Game, GameEvent, GameState } from '@cah/shared';
-import { bindModule, createContainer, injectable, injectableClass } from 'ditox';
 import { Socket, io } from 'socket.io-client';
 
 import {
-  MathRandomGeneratorAdapter,
-  RealEventPublisherAdapter,
   StubConfigAdapter,
   StubExternalDataAdapter,
   StubLoggerAdapter,
   StubRandomAdapter,
 } from 'src/adapters';
-import { appModule, sqlPersistenceModule } from 'src/container';
+import { createContainer } from 'src/container';
 import { Player } from 'src/entities';
-import { Notifier } from 'src/notifier/notifier';
 // eslint-disable-next-line no-restricted-imports
-import { Database } from 'src/persistence/database';
 import { Server } from 'src/server/server';
-import { Fetcher } from 'src/test/fetcher';
 import { TOKENS } from 'src/tokens';
 import { defined } from 'src/utils/defined';
 import { hasProperty } from 'src/utils/has-property';
 
+import { Fetcher } from './utils/fetcher';
 import { getIds } from './utils/id';
 import { waitFor } from './utils/wait-for';
 
@@ -201,43 +196,28 @@ class Test {
 
   config = new StubConfigAdapter({
     server: { host: 'localhost', port: 0 },
-    database: { url: 'postgres://postgres@localhost:5432/cah' },
+    database: { url: 'postgres://postgres@localhost:5432/cah', debug: true },
   });
 
   logger = new StubLoggerAdapter();
   random = new StubRandomAdapter();
-  generator = new MathRandomGeneratorAdapter();
   externalData = new StubExternalDataAdapter();
 
   constructor() {
     const container = this.container;
 
-    container.bindValue(TOKENS.container, container);
-
     container.bindValue(TOKENS.config, this.config);
     container.bindValue(TOKENS.logger, this.logger);
     container.bindValue(TOKENS.random, this.random);
-    container.bindValue(TOKENS.generator, this.generator);
     container.bindValue(TOKENS.externalData, this.externalData);
-
-    container.bindFactory(TOKENS.publisher, injectableClass(RealEventPublisherAdapter, TOKENS.logger));
-    // prettier-ignore
-    container.bindFactory(TOKENS.server, injectableClass(Server, TOKENS.config, TOKENS.logger, TOKENS.publisher, TOKENS.container));
-    // prettier-ignore
-    container.bindFactory(TOKENS.rtc, injectable((server) => server.rtc, TOKENS.server));
-    // prettier-ignore
-    container.bindFactory(TOKENS.notifier, injectableClass(Notifier, TOKENS.rtc, TOKENS.publisher, TOKENS.repositories.game, TOKENS.repositories.player, TOKENS.repositories.choice, TOKENS.repositories.question, TOKENS.repositories.answer));
-    // prettier-ignore
-    container.bindFactory(TOKENS.database, Database.inject);
-
-    bindModule(container, sqlPersistenceModule);
-    bindModule(container, appModule);
-
-    container.resolve(TOKENS.notifier).configure();
   }
 
   get server() {
     return this.container.resolve(TOKENS.server);
+  }
+
+  get notifier() {
+    return this.container.resolve(TOKENS.notifier);
   }
 
   get database() {
@@ -255,6 +235,7 @@ describe('Server E2E', () => {
   beforeEach(async () => {
     test = new Test();
 
+    test.notifier.configure();
     await test.database.clear('cah');
     await test.server.listen();
   });

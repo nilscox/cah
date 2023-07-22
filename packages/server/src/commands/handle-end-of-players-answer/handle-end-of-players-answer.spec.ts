@@ -1,17 +1,11 @@
-import { StubEventPublisherAdapter, StubRandomAdapter } from 'src/adapters';
 import { createAnswer, createPlayer } from 'src/entities';
 import { HandlerCommand } from 'src/interfaces';
-import { InMemoryAnswerRepository, InMemoryPlayerRepository } from 'src/persistence';
 import { array } from 'src/utils/array';
+import { UnitTest } from 'src/utils/unit-test';
 
 import { AllAnswersSubmittedEvent, HandleEndOfPlayersAnswerHandler } from './handle-end-of-players-answer';
 
-class Test {
-  publisher = new StubEventPublisherAdapter();
-  random = new StubRandomAdapter();
-  playerRepository = new InMemoryPlayerRepository();
-  answerRepository = new InMemoryAnswerRepository();
-
+class Test extends UnitTest {
   handler = new HandleEndOfPlayersAnswerHandler(
     this.publisher,
     this.random,
@@ -27,6 +21,8 @@ class Test {
   answers = array(2, (i) => createAnswer({ gameId: 'gameId', playerId: this.players[i].id }));
 
   constructor() {
+    super();
+
     this.playerRepository.set(...this.players);
     this.answerRepository.set(...this.answers);
 

@@ -5,5 +5,6 @@ export interface ConfigPort {
   };
   database: {
     url: string;
+    debug: boolean;
   };
 }

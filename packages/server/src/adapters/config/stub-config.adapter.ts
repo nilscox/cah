@@ -6,12 +6,13 @@ export class StubConfigAdapter implements ConfigPort {
     this.database = { ...this.database, ...overrides?.database };
   }
 
-  server = {
+  server: ConfigPort['server'] = {
     host: 'localhost',
     port: 3000,
   };
 
-  database = {
+  database: ConfigPort['database'] = {
     url: '',
+    debug: false,
   };
 }

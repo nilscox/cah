@@ -22,6 +22,7 @@ export class TestRepository {
   config = new StubConfigAdapter({
     database: {
       url: 'postgres://postgres@localhost:5432/cah',
+      debug: true,
     },
   });
 

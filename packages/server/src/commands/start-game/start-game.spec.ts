@@ -1,28 +1,14 @@
 import assert from 'node:assert';
 
-import { StubEventPublisherAdapter, StubExternalDataAdapter, StubRandomAdapter } from 'src/adapters';
 import { GameState, createGame, createPlayer, createQuestion, isStarted } from 'src/entities';
 import { HandlerCommand } from 'src/interfaces';
-import {
-  InMemoryChoiceRepository,
-  InMemoryGameRepository,
-  InMemoryPlayerRepository,
-  InMemoryQuestionRepository,
-} from 'src/persistence';
 import { defined } from 'src/utils/defined';
 import { hasProperty } from 'src/utils/has-property';
+import { UnitTest } from 'src/utils/unit-test';
 
 import { GameStartedEvent, StartGameHandler } from './start-game';
 
-class Test {
-  random = new StubRandomAdapter();
-  publisher = new StubEventPublisherAdapter();
-  externalData = new StubExternalDataAdapter();
-  gameRepository = new InMemoryGameRepository();
-  playerRepository = new InMemoryPlayerRepository();
-  questionRepository = new InMemoryQuestionRepository();
-  choiceRepository = new InMemoryChoiceRepository();
-
+class Test extends UnitTest {
   handler = new StartGameHandler(
     this.random,
     this.publisher,
@@ -40,6 +26,8 @@ class Test {
   };
 
   constructor() {
+    super();
+
     this.gameRepository.set(createGame({ id: 'gameId' }));
   }
 

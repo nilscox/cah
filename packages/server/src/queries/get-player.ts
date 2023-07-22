@@ -2,7 +2,7 @@ import { Player } from '@cah/shared';
 import { injectableClass } from 'ditox';
 
 import { QueryHandler } from 'src/interfaces';
-import { ChoiceRepository, PlayerRepository } from 'src/persistence';
+import { PlayerRepository } from 'src/persistence';
 import { TOKENS } from 'src/tokens';
 
 export type GetPlayerQuery = {
@@ -10,28 +10,11 @@ export type GetPlayerQuery = {
 };
 
 export class GetPlayerHandler implements QueryHandler<GetPlayerQuery, Player> {
-  static inject = injectableClass(this, TOKENS.repositories.player, TOKENS.repositories.choice);
+  static inject = injectableClass(this, TOKENS.repositories.player);
 
-  constructor(
-    private readonly playerRepository: PlayerRepository,
-    private readonly choiceRepository: ChoiceRepository
-  ) {}
+  constructor(private readonly playerRepository: PlayerRepository) {}
 
   async execute({ playerId }: GetPlayerQuery): Promise<Player> {
-    const player = await this.playerRepository.findById(playerId);
-    const cards = player.gameId ? await this.choiceRepository.findPlayerCards(playerId) : undefined;
-
-    const result: Player = {
-      id: player.id,
-      nick: player.nick,
-      gameId: player.gameId,
-      cards: cards?.map((choice) => ({
-        id: choice.id,
-        text: choice.text,
-        caseSensitive: choice.caseSensitive,
-      })),
-    };
-
-    return result;
+    return this.playerRepository.query(playerId);
   }
 }

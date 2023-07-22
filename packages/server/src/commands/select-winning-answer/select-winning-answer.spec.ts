@@ -1,16 +1,10 @@
-import { StubEventPublisherAdapter } from 'src/adapters';
 import { GameState, createAnswer, createPlayer, createStartedGame } from 'src/entities';
 import { HandlerCommand } from 'src/interfaces';
-import { InMemoryAnswerRepository, InMemoryGameRepository, InMemoryPlayerRepository } from 'src/persistence';
+import { UnitTest } from 'src/utils/unit-test';
 
 import { AnswerSelectedEvent, SelectWinningAnswerHandler } from './select-winning-answer';
 
-class Test {
-  publisher = new StubEventPublisherAdapter();
-  gameRepository = new InMemoryGameRepository();
-  playerRepository = new InMemoryPlayerRepository();
-  answerRepository = new InMemoryAnswerRepository();
-
+class Test extends UnitTest {
   handler = new SelectWinningAnswerHandler(
     this.publisher,
     this.gameRepository,
@@ -29,6 +23,8 @@ class Test {
   answer = createAnswer({ id: 'answerId', gameId: 'gameId', playerId: 'playerId' });
 
   constructor() {
+    super();
+
     this.gameRepository.set(this.game);
     this.playerRepository.set(this.questionMaster);
     this.playerRepository.set(this.player);

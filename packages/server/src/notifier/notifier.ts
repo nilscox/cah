@@ -1,4 +1,5 @@
 import * as shared from '@cah/shared';
+import { injectableClass } from 'ditox';
 
 import { EventPublisherPort, RealEventPublisherAdapter, RtcPort } from 'src/adapters';
 import { AnswerCreatedEvent } from 'src/commands/create-answer/create-answer';
@@ -17,8 +18,20 @@ import {
   QuestionRepository,
 } from 'src/persistence';
 import { PlayerConnectedEvent } from 'src/server/ws-server';
+import { TOKENS } from 'src/tokens';
 
 export class Notifier {
+  static inject = injectableClass(
+    this,
+    TOKENS.rtc,
+    TOKENS.publisher,
+    TOKENS.repositories.game,
+    TOKENS.repositories.player,
+    TOKENS.repositories.choice,
+    TOKENS.repositories.question,
+    TOKENS.repositories.answer
+  );
+
   constructor(
     private readonly rtc: RtcPort,
     private readonly publisher: EventPublisherPort,

@@ -1,17 +1,11 @@
-import { StubEventPublisherAdapter } from 'src/adapters';
 import { GameState, createChoice, createGame, createPlayer } from 'src/entities';
 import { HandlerCommand } from 'src/interfaces';
-import { InMemoryChoiceRepository, InMemoryGameRepository, InMemoryPlayerRepository } from 'src/persistence';
 import { array } from 'src/utils/array';
+import { UnitTest } from 'src/utils/unit-test';
 
 import { CardsDealtEvent, DealCardsHandler } from './deal-cards';
 
-class Test {
-  publisher = new StubEventPublisherAdapter();
-  gameRepository = new InMemoryGameRepository();
-  playerRepository = new InMemoryPlayerRepository();
-  choiceRepository = new InMemoryChoiceRepository();
-
+class Test extends UnitTest {
   handler = new DealCardsHandler(
     this.publisher,
     this.gameRepository,
@@ -26,6 +20,8 @@ class Test {
   choices = array(12, () => createChoice({ gameId: 'gameId' }));
 
   constructor() {
+    super();
+
     this.gameRepository.set(createGame({ id: 'gameId', state: GameState.started }));
     this.choiceRepository.set(...this.choices);
   }

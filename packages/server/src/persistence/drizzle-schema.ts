@@ -38,8 +38,9 @@ export const players = cah.table('players', {
   gameId: id('gameId').references(() => games.id),
 });
 
-export const playersRelations = relations(players, ({ one }) => ({
+export const playersRelations = relations(players, ({ one, many }) => ({
   game: one(games, { fields: [players.gameId], references: [games.id] }),
+  cards: many(choices),
 }));
 
 export type SqlPlayer = InferModel<typeof players>;
@@ -68,6 +69,7 @@ export const choices = cah.table('choices', {
 });
 
 export const choicesRelations = relations(choices, ({ one }) => ({
+  player: one(players, { fields: [choices.playerId], references: [players.id] }),
   answer: one(answers, { fields: [choices.answerId], references: [answers.id] }),
 }));
 

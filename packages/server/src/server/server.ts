@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 
-import { Container } from 'ditox';
+import { Container, injectableClass } from 'ditox';
 
 import { ConfigPort, EventPublisherPort, LoggerPort, RealEventPublisherAdapter } from 'src/adapters';
 import { AnswerCreatedEvent } from 'src/commands/create-answer/create-answer';
@@ -13,6 +13,8 @@ import { HttpServer } from './http-server';
 import { WsServer } from './ws-server';
 
 export class Server {
+  static inject = injectableClass(this, TOKENS.config, TOKENS.logger, TOKENS.publisher, TOKENS.container);
+
   private httpServer: HttpServer;
   private wsServer: WsServer;
 

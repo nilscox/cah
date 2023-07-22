@@ -1,19 +1,35 @@
+import * as shared from '@cah/shared';
+
 import { Player } from 'src/entities';
 import { hasProperty } from 'src/utils/has-property';
 
+import { EntityNotFoundError } from '../../entity-not-found-error';
 import { InMemoryRepository } from '../../in-memory-repository';
 
 import { PlayerRepository } from './player.repository';
 
 export class InMemoryPlayerRepository extends InMemoryRepository<Player> implements PlayerRepository {
-  async findById(id: string): Promise<Player> {
-    const item = this.get(id);
+  async query(playerId: string): Promise<shared.Player> {
+    const player = this.get(playerId);
 
-    if (!item) {
-      throw new Error('Player not found');
+    if (!player) {
+      throw new EntityNotFoundError('Player', { id: playerId });
     }
 
-    return Promise.resolve(item);
+    return {
+      id: player.id,
+      nick: player.nick,
+    };
+  }
+
+  async findById(playerId: string): Promise<Player> {
+    const player = this.get(playerId);
+
+    if (!player) {
+      throw new EntityNotFoundError('Player', { id: playerId });
+    }
+
+    return player;
   }
 
   async findByNick(nick: string): Promise<Player | undefined> {

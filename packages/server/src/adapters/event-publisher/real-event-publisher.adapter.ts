@@ -1,4 +1,7 @@
+import { injectableClass } from 'ditox';
+
 import { DomainEvent } from 'src/interfaces';
+import { TOKENS } from 'src/tokens';
 import { ClassType } from 'src/utils/class-type';
 import { defined } from 'src/utils/defined';
 
@@ -9,6 +12,8 @@ import { EventPublisherPort } from './event-publisher.port';
 type EventHandler<Event extends DomainEvent> = (event: Event) => Promise<void>;
 
 export class RealEventPublisherAdapter implements EventPublisherPort {
+  static inject = injectableClass(this, TOKENS.logger);
+
   private handlers = new Map<string, Array<EventHandler<DomainEvent>>>();
 
   constructor(private readonly logger: LoggerPort) {

@@ -210,6 +210,13 @@ export class HttpServer {
       }
     }) satisfies ErrorRequestHandler);
 
+    router.use(((err: unknown, req, res, _next) => {
+      console.debug(err);
+
+      res.status(500);
+      res.send(err instanceof Error ? err.message : 'Unknown error');
+    }) satisfies ErrorRequestHandler);
+
     return router;
   }
 }

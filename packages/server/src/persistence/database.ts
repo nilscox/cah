@@ -17,7 +17,9 @@ export class Database {
   private db: DrizzleDb;
 
   constructor(config: ConfigPort) {
-    this.client = postgres(config.database.url);
+    const { url, debug } = config.database;
+
+    this.client = postgres(url, { debug });
     this.db = drizzle(this.client, { schema });
 
     this.query = this.db.query;

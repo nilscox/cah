@@ -1,4 +1,4 @@
-import { Game as GameDto } from '@cah/shared';
+import * as shared from '@cah/shared';
 
 import { Game } from 'src/entities';
 
@@ -7,8 +7,8 @@ import { InMemoryRepository } from '../../in-memory-repository';
 import { GameRepository } from './game.repository';
 
 export class InMemoryGameRepository extends InMemoryRepository<Game> implements GameRepository {
-  async query(): Promise<GameDto> {
-    throw new Error('Not implemented');
+  query(): Promise<shared.Game> {
+    throw new Error('Method not implemented.');
   }
 
   async findById(gameId: string): Promise<Game> {

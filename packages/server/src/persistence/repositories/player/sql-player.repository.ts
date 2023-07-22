@@ -1,3 +1,4 @@
+import * as shared from '@cah/shared';
 import { InferModel, eq } from 'drizzle-orm';
 
 import { Player } from 'src/entities';
@@ -17,11 +18,35 @@ export class SqlPlayerRepository implements PlayerRepository {
     gameId: model.gameId ?? undefined,
   });
 
-  async findById(id: string): Promise<Player> {
-    const [result] = await this.db.select().from(players).where(eq(players.id, id));
+  async query(playerId: string): Promise<shared.Player> {
+    const result = await this.db.query.players.findFirst({
+      where: eq(players.id, playerId),
+      with: {
+        cards: true,
+      },
+    });
 
     if (!result) {
-      throw new EntityNotFoundError('Player', { id });
+      throw new EntityNotFoundError('Player', { id: playerId });
+    }
+
+    return {
+      id: result.id,
+      nick: result.nick,
+      gameId: result.gameId ?? undefined,
+      cards: result.cards?.map((choice) => ({
+        id: choice.id,
+        text: choice.text,
+        caseSensitive: choice.caseSensitive,
+      })),
+    };
+  }
+
+  async findById(playerId: string): Promise<Player> {
+    const [result] = await this.db.select().from(players).where(eq(players.id, playerId));
+
+    if (!result) {
+      throw new EntityNotFoundError('Player', { id: playerId });
     }
 
     return this.toPlayer(result);

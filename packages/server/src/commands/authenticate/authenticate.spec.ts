@@ -1,16 +1,11 @@
-import { StubEventPublisherAdapter, StubGeneratorAdapter } from 'src/adapters';
 import { createPlayer } from 'src/entities';
 import { HandlerCommand } from 'src/interfaces';
-import { InMemoryPlayerRepository } from 'src/persistence';
 import { defined } from 'src/utils/defined';
+import { UnitTest } from 'src/utils/unit-test';
 
 import { AuthenticateHandler, PlayerAuthenticatedEvent } from './authenticate';
 
-class Test {
-  generator = new StubGeneratorAdapter();
-  publisher = new StubEventPublisherAdapter();
-  playerRepository = new InMemoryPlayerRepository();
-
+class Test extends UnitTest {
   handler = new AuthenticateHandler(this.generator, this.publisher, this.playerRepository);
 
   command: HandlerCommand<typeof this.handler> = {
@@ -18,6 +13,8 @@ class Test {
   };
 
   constructor() {
+    super();
+
     this.generator.nextId = 'playerId';
   }
 
@@ -26,7 +23,7 @@ class Test {
   }
 }
 
-describe('authenticate', () => {
+describe('AuthenticateCommand', () => {
   let test: Test;
 
   beforeEach(() => {

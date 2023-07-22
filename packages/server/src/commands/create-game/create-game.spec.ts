@@ -1,16 +1,10 @@
-import { StubEventPublisherAdapter, StubGeneratorAdapter } from 'src/adapters';
 import { Game, GameState, createPlayer } from 'src/entities';
 import { HandlerCommand } from 'src/interfaces';
-import { InMemoryGameRepository, InMemoryPlayerRepository } from 'src/persistence';
+import { UnitTest } from 'src/utils/unit-test';
 
 import { CreateGameHandler, GameCreatedEvent } from './create-game';
 
-class Test {
-  generator = new StubGeneratorAdapter();
-  gameRepository = new InMemoryGameRepository();
-  playerRepository = new InMemoryPlayerRepository();
-  publisher = new StubEventPublisherAdapter();
-
+class Test extends UnitTest {
   handler = new CreateGameHandler(this.generator, this.publisher, this.playerRepository, this.gameRepository);
 
   command: HandlerCommand<typeof this.handler> = {
@@ -18,6 +12,8 @@ class Test {
   };
 
   constructor() {
+    super();
+
     this.generator.nextId = 'gameId';
     this.playerRepository.set(createPlayer({ id: 'creatorId' }));
   }

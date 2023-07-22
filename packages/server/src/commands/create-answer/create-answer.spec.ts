@@ -1,4 +1,3 @@
-import { StubEventPublisherAdapter, StubGeneratorAdapter } from 'src/adapters';
 import {
   Answer,
   GameState,
@@ -9,25 +8,11 @@ import {
   createStartedGame,
 } from 'src/entities';
 import { HandlerCommand } from 'src/interfaces';
-import {
-  InMemoryAnswerRepository,
-  InMemoryChoiceRepository,
-  InMemoryGameRepository,
-  InMemoryPlayerRepository,
-  InMemoryQuestionRepository,
-} from 'src/persistence';
+import { UnitTest } from 'src/utils/unit-test';
 
 import { AnswerCreatedEvent, CreateAnswerHandler } from './create-answer';
 
-class Test {
-  generator = new StubGeneratorAdapter();
-  publisher = new StubEventPublisherAdapter();
-  gameRepository = new InMemoryGameRepository();
-  playerRepository = new InMemoryPlayerRepository();
-  questionRepository = new InMemoryQuestionRepository();
-  choiceRepository = new InMemoryChoiceRepository();
-  answerRepository = new InMemoryAnswerRepository();
-
+class Test extends UnitTest {
   handler = new CreateAnswerHandler(
     this.generator,
     this.publisher,
@@ -49,6 +34,8 @@ class Test {
   choice = createChoice({ id: 'choiceId', gameId: 'gameId', playerId: 'playerId' });
 
   constructor() {
+    super();
+
     this.generator.nextId = 'answerId';
 
     this.gameRepository.set(this.game);

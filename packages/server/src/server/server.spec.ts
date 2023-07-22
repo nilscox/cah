@@ -2,20 +2,27 @@ import { bindModule } from 'ditox';
 import { io } from 'socket.io-client';
 
 import { StubConfigAdapter, StubEventPublisherAdapter, StubLoggerAdapter } from 'src/adapters';
-import { container, inMemoryPersistenceModule } from 'src/container';
+import { createContainer } from 'src/container';
 import { Player } from 'src/entities';
-import { Fetcher } from 'src/test/fetcher';
+import { inMemoryPersistenceModule } from 'src/persistence';
 import { defined } from 'src/utils/defined';
+import { Fetcher } from 'src/utils/fetcher';
 
 import { Server } from './server';
 import { PlayerConnectedEvent, PlayerDisconnectedEvent } from './ws-server';
 
 class Test {
+  container = createContainer();
+
   config = new StubConfigAdapter({ server: { host: '0.0.0.0', port: 7357 } });
   logger = new StubLoggerAdapter();
   publisher = new StubEventPublisherAdapter();
 
-  server = new Server(this.config, this.logger, this.publisher, container);
+  server = new Server(this.config, this.logger, this.publisher, this.container);
+
+  constructor() {
+    bindModule(this.container, inMemoryPersistenceModule);
+  }
 
   async cleanup() {
     await this.server.close();
@@ -30,7 +37,6 @@ describe('server', () => {
   let test: Test;
 
   beforeEach(() => {
-    bindModule(container, inMemoryPersistenceModule);
     test = new Test();
   });
 

@@ -1,16 +1,11 @@
-import { StubEventPublisherAdapter } from 'src/adapters';
 import { GameState, createGame, createPlayer } from 'src/entities';
 import { HandlerCommand } from 'src/interfaces';
-import { InMemoryGameRepository, InMemoryPlayerRepository } from 'src/persistence';
 import { defined } from 'src/utils/defined';
+import { UnitTest } from 'src/utils/unit-test';
 
 import { JoinGameHandler, PlayerJoinedEvent } from './join-game';
 
-class Test {
-  gameRepository = new InMemoryGameRepository();
-  playerRepository = new InMemoryPlayerRepository();
-  publisher = new StubEventPublisherAdapter();
-
+class Test extends UnitTest {
   handler = new JoinGameHandler(this.publisher, this.gameRepository, this.playerRepository);
 
   command: HandlerCommand<typeof this.handler> = {
@@ -19,6 +14,8 @@ class Test {
   };
 
   constructor() {
+    super();
+
     this.gameRepository.set(createGame({ id: 'gameId', code: 'CODE' }));
     this.playerRepository.set(createPlayer({ id: 'playerId' }));
   }
