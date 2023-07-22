@@ -21,11 +21,13 @@ export const games = cah.table('games', {
   state: gameStateEnum('state').notNull(),
   questionMasterId: id('questionMasterId').references((): AnyPgColumn => players.id),
   questionId: id('questionId').references((): AnyPgColumn => questions.id),
+  selectedAnswerId: id('selectedAnswerId').references((): AnyPgColumn => answers.id),
 });
 
-export const gamesRelations = relations(games, ({ many }) => ({
+export const gamesRelations = relations(games, ({ one, many }) => ({
   players: many(players),
   answers: many(answers),
+  selectedAnswer: one(answers, { fields: [games.selectedAnswerId], references: [answers.id] }),
 }));
 
 export type SqlGame = InferModel<typeof games>;

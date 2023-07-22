@@ -15,6 +15,7 @@ import { CreateGameHandler } from './commands/create-game/create-game';
 import { DealCardsHandler } from './commands/deal-cards/deal-cards';
 import { HandleEndOfPlayersAnswerHandler } from './commands/handle-end-of-players-answer/handle-end-of-players-answer';
 import { JoinGameHandler } from './commands/join-game/join-game';
+import { SelectWinningAnswerHandler } from './commands/select-winning-answer/select-winning-answer';
 import { StartGameHandler } from './commands/start-game/start-game';
 import { Notifier } from './notifier/notifier';
 import {
@@ -60,6 +61,7 @@ export const TOKENS = {
     dealCards: token<DealCardsHandler>('dealCards'),
     createAnswer: token<CreateAnswerHandler>('createAnswer'),
     handleEndOfPlayersAnswer: token<HandleEndOfPlayersAnswerHandler>('handleEndOfPlayersAnswer'),
+    selectWinningAnswer: token<SelectWinningAnswerHandler>('selectWinningAnswer'),
   },
 
   queries: {

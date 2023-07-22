@@ -27,6 +27,7 @@ import { CreateGameHandler } from './commands/create-game/create-game';
 import { DealCardsHandler } from './commands/deal-cards/deal-cards';
 import { HandleEndOfPlayersAnswerHandler } from './commands/handle-end-of-players-answer/handle-end-of-players-answer';
 import { JoinGameHandler } from './commands/join-game/join-game';
+import { SelectWinningAnswerHandler } from './commands/select-winning-answer/select-winning-answer';
 import { StartGameHandler } from './commands/start-game/start-game';
 import { Notifier } from './notifier/notifier';
 import { Database } from './persistence/database';
@@ -105,6 +106,7 @@ export const appModule = declareModule<AppModule>({
     dealCards: DealCardsHandler.inject(container),
     createAnswer: CreateAnswerHandler.inject(container),
     handleEndOfPlayersAnswer: HandleEndOfPlayersAnswerHandler.inject(container),
+    selectWinningAnswer: SelectWinningAnswerHandler.inject(container),
     getGame: GetGameHandler.inject(container),
     getPlayer: GetPlayerHandler.inject(container),
   }),

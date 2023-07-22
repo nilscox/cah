@@ -1,4 +1,4 @@
-import { GameEvent } from '@cah/shared';
+import * as shared from '@cah/shared';
 
 import { EventPublisherPort, RealEventPublisherAdapter, RtcPort } from 'src/adapters';
 import { AnswerCreatedEvent } from 'src/commands/create-answer/create-answer';
@@ -6,6 +6,7 @@ import { GameCreatedEvent } from 'src/commands/create-game/create-game';
 import { CardsDealtEvent } from 'src/commands/deal-cards/deal-cards';
 import { AllAnswersSubmittedEvent } from 'src/commands/handle-end-of-players-answer/handle-end-of-players-answer';
 import { PlayerJoinedEvent } from 'src/commands/join-game/join-game';
+import { AnswerSelectedEvent } from 'src/commands/select-winning-answer/select-winning-answer';
 import { GameStartedEvent } from 'src/commands/start-game/start-game';
 import { isStarted } from 'src/entities';
 import {
@@ -140,9 +141,21 @@ export class Notifier {
         })),
       });
     });
+
+    publisher.register(AnswerSelectedEvent, async (event) => {
+      const game = await this.gameRepository.query(event.entityId);
+      assert(game.selectedAnswerId);
+      assert(game.answers);
+
+      await this.send(game.id, {
+        type: 'winning-answer-selected',
+        selectedAnswerId: game.selectedAnswerId,
+        answers: game.answers as shared.Answer[],
+      });
+    });
   }
 
-  private async send(to: string, event: GameEvent) {
+  private async send(to: string, event: shared.GameEvent) {
     await this.rtc.send(to, event);
   }
 }

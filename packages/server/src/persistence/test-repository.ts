@@ -54,6 +54,7 @@ class EntitiesCreator {
     state: GameState.idle,
     questionMasterId: null,
     questionId: null,
+    selectedAnswerId: null,
   };
 
   game = this.createInsert(games, this.defaultGame);

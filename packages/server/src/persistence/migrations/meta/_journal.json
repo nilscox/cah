@@ -22,6 +22,13 @@
       "when": 1690038057891,
       "tag": "0002_soft_winter_soldier",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1690050514041,
+      "tag": "0003_wandering_blue_blade",
+      "breakpoints": true
     }
   ]
 }

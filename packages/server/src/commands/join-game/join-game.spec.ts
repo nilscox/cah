@@ -32,7 +32,7 @@ class Test {
   }
 }
 
-describe('joinGame', () => {
+describe('JoinGameCommand', () => {
   let test: Test;
 
   beforeEach(() => {

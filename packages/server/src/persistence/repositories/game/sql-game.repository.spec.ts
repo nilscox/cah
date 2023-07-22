@@ -68,6 +68,7 @@ describe('SqlGameRepository', () => {
           state: 'idle',
           questionMasterId: null,
           questionId: null,
+          selectedAnswerId: null,
         },
       ]);
     });
@@ -92,6 +93,7 @@ describe('SqlGameRepository', () => {
           state: 'idle',
           questionMasterId: null,
           questionId: null,
+          selectedAnswerId: null,
         },
       ]);
     });

@@ -108,6 +108,11 @@ class Client {
       case 'all-players-answered':
         this.game.answers = event.answers;
         break;
+
+      case 'winning-answer-selected':
+        this.game.selectedAnswerId = event.selectedAnswerId;
+        this.game.answers = event.answers;
+        break;
     }
   };
 
@@ -132,6 +137,7 @@ class Client {
       `answers: ${
         this.game.answers?.map((answer) => answer.choices?.map((choice) => choice.text)).join(', ') ?? '-'
       }`,
+      `selectedAnswerId: ${this.game.selectedAnswerId ?? '-'}`,
       `cards:`,
       ...this.cards.map((choice) => `- ${choice.text} (${choice.id})`),
     ].join('\n');
@@ -179,6 +185,14 @@ class Client {
 
     await this.fetcher.post('/game/answer', { choicesIds: getIds(choices) });
     this.cards.splice(0, choices.length);
+  }
+
+  async selectAnswer() {
+    const [answer] = defined(this.game.answers);
+
+    this.log('selects answer:', answer.id);
+
+    await this.fetcher.put(`/game/answer/${answer.id}/select`);
   }
 }
 
@@ -286,6 +300,10 @@ describe('Server E2E', () => {
 
     await fifi.answer();
     await loulou.answer();
+
+    await waitFor(() => assert(riri.game.answers?.length === 2));
+
+    await riri.selectAnswer();
 
     // await new Promise((r) => setTimeout(r, 100));
     // console.log(loulou);

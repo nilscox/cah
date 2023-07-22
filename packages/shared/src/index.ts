@@ -9,6 +9,7 @@ export type Game = {
   questionMasterId?: string;
   question?: Question;
   answers?: Array<Answer | AnonymousAnswer>;
+  selectedAnswerId?: string;
 };
 
 export enum GameState {
@@ -95,6 +96,12 @@ export type AllPlayerAnsweredEvent = {
   answers: Array<AnonymousAnswer>;
 };
 
+export type WinningAnswerSelectedEvent = {
+  type: 'winning-answer-selected';
+  selectedAnswerId: string;
+  answers: Array<Answer>;
+};
+
 export type GameEvent =
   | PlayerConnectedEvent
   | PlayerDisconnectedEvent
@@ -104,4 +111,5 @@ export type GameEvent =
   | TurnStartedEvent
   | CardsDealtEvent
   | PlayerAnsweredEvent
-  | AllPlayerAnsweredEvent;
+  | AllPlayerAnsweredEvent
+  | WinningAnswerSelectedEvent;

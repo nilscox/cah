@@ -16,10 +16,12 @@ export const createGame = factory<Game>(() => ({
 export type StartedGame = Game & {
   questionMasterId: string;
   questionId: string;
+  selectedAnswerId?: string;
 };
 
 export const createStartedGame = factory<StartedGame>(() => ({
   ...createGame(),
+  state: GameState.started,
   questionMasterId: '',
   questionId: '',
 }));

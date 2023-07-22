@@ -19,6 +19,7 @@ export class SqlGameRepository implements GameRepository {
     state: toEnum(GameState, model.state),
     questionMasterId: model.questionMasterId ?? undefined,
     questionId: model.questionId ?? undefined,
+    selectedAnswerId: model.selectedAnswerId ?? undefined,
   });
 
   private toSql = (game: Game | StartedGame): SqlGame => {
@@ -28,11 +29,16 @@ export class SqlGameRepository implements GameRepository {
       state: game.state,
       questionMasterId: null,
       questionId: null,
+      selectedAnswerId: null,
     };
 
     if (isStarted(game)) {
       model.questionMasterId = game.questionMasterId;
       model.questionId = game.questionId;
+
+      if (game.selectedAnswerId) {
+        model.selectedAnswerId = game.selectedAnswerId;
+      }
     }
 
     return model;
@@ -70,6 +76,8 @@ export class SqlGameRepository implements GameRepository {
 
     if (game.state === GameState.started) {
       const allPlayersAnswered = model.answers.length === game.players.length - 1;
+
+      game.selectedAnswerId = model.selectedAnswerId ?? undefined;
 
       game.answers = model.answers.map((model) => {
         const answer: shared.AnonymousAnswer = {
