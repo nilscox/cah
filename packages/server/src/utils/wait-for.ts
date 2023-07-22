@@ -1,4 +1,4 @@
-export const waitFor = async (check: () => unknown | Promise<unknown>, timeout = 1000) => {
+export const waitFor = async (check: () => unknown, timeout = 1000) => {
   const start = Date.now();
   const elapsed = () => Date.now() - start;
 

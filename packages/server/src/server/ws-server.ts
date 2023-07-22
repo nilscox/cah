@@ -43,7 +43,7 @@ export class WsServer implements RtcPort {
     const playerId = request.session.playerId;
     assert(typeof playerId === 'string', 'invalid session');
 
-    socket.data.playerId = playerId;
+    (socket.data as session.SessionData).playerId = playerId;
     void socket.join(playerId);
 
     this.publisher.publish(new PlayerConnectedEvent(playerId));

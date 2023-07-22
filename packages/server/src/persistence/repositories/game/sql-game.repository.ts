@@ -74,7 +74,7 @@ export class SqlGameRepository implements GameRepository {
       })),
     };
 
-    if (game.state === GameState.started) {
+    if (game.state === shared.GameState.started) {
       const allPlayersAnswered = model.answers.length === game.players.length - 1;
 
       game.selectedAnswerId = model.selectedAnswerId ?? undefined;
