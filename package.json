@@ -13,6 +13,7 @@
     "test": "pnpm --no-bail --workspace-concurrency=1 run -r test"
   },
   "devDependencies": {
+    "prettier": "^3.0.0",
     "typescript": "^5.1.6"
   }
 }

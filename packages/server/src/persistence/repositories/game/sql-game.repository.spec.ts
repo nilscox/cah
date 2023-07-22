@@ -36,7 +36,7 @@ describe('SqlGameRepository', () => {
 
     it('throws a EntityNotFoundError when the given id does not exist', async () => {
       await expect(repository.findById('nope')).rejects.toEqual(
-        new EntityNotFoundError('Game', { id: 'nope' })
+        new EntityNotFoundError('Game', { id: 'nope' }),
       );
     });
 
@@ -46,7 +46,7 @@ describe('SqlGameRepository', () => {
 
     it('throws a EntityNotFoundError when the given code does not exist', async () => {
       await expect(repository.findByCode('nope')).rejects.toEqual(
-        new EntityNotFoundError('Game', { code: 'nope' })
+        new EntityNotFoundError('Game', { code: 'nope' }),
       );
     });
   });

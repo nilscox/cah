@@ -10,7 +10,7 @@ import { ChoiceRepository } from './choice.repository';
 export class InMemoryChoiceRepository extends InMemoryRepository<Choice> implements ChoiceRepository {
   async findPlayersCards(gameId: string): Promise<Record<string, Choice[]>> {
     const choices = this.filter(hasProperty('gameId', gameId)).filter(
-      (choice) => choice.playerId !== undefined
+      (choice) => choice.playerId !== undefined,
     );
 
     const playersIds = Array.from(new Set(choices.map((choice) => defined(choice.playerId))));
@@ -18,7 +18,7 @@ export class InMemoryChoiceRepository extends InMemoryRepository<Choice> impleme
     return toObject(
       playersIds,
       (playerId) => playerId,
-      (playerId) => choices.filter(hasProperty('playerId', playerId))
+      (playerId) => choices.filter(hasProperty('playerId', playerId)),
     );
   }
 

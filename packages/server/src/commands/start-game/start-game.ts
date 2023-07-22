@@ -35,7 +35,7 @@ export class StartGameHandler implements CommandHandler<StartGameCommand> {
     TOKENS.repositories.game,
     TOKENS.repositories.player,
     TOKENS.repositories.question,
-    TOKENS.repositories.choice
+    TOKENS.repositories.choice,
   );
 
   constructor(
@@ -45,7 +45,7 @@ export class StartGameHandler implements CommandHandler<StartGameCommand> {
     private readonly gameRepository: GameRepository,
     private readonly playerRepository: PlayerRepository,
     private readonly questionRepository: QuestionRepository,
-    private readonly choiceRepository: ChoiceRepository
+    private readonly choiceRepository: ChoiceRepository,
   ) {}
 
   async execute(command: StartGameCommand): Promise<void> {
@@ -92,7 +92,7 @@ export class StartGameHandler implements CommandHandler<StartGameCommand> {
   private async getChoices(
     gameId: string,
     numberOfPlayers: number,
-    questions: Question[]
+    questions: Question[],
   ): Promise<Choice[]> {
     const numberOfChoices = this.computeNumberOfChoices(numberOfPlayers, 11, questions);
     const choices = await this.externalData.getChoices(numberOfChoices);
@@ -106,7 +106,7 @@ export class StartGameHandler implements CommandHandler<StartGameCommand> {
   private computeNumberOfChoices(
     numberOfPlayers: number,
     cardsPerPlayer: number,
-    questions: Question[]
+    questions: Question[],
   ): number {
     const blanksCounts = sum(questions.map(({ blanks }) => blanks?.length ?? 1));
 

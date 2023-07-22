@@ -16,7 +16,7 @@ class Test extends UnitTest {
     this.gameRepository,
     this.playerRepository,
     this.questionRepository,
-    this.choiceRepository
+    this.choiceRepository,
   );
 
   command: HandlerCommand<typeof this.handler> = {
@@ -84,7 +84,7 @@ describe('StartGameCommand', () => {
 
       expect(test.questionRepository.filter(hasProperty('gameId', 'gameId'))).toHaveLength(3);
       expect(test.choiceRepository.filter(hasProperty('gameId', 'gameId'))).toHaveLength(
-        4 * 11 + 3 * 1 + 3 * 1 + 3 * 2
+        4 * 11 + 3 * 1 + 3 * 1 + 3 * 2,
       );
     });
   });
@@ -101,7 +101,7 @@ describe('StartGameCommand', () => {
     test.playerRepository.set(createPlayer({ id: 'playerId' }));
 
     await expect(test.handler.execute({ ...test.command, playerId: 'playerId' })).rejects.toThrow(
-      'player is not part of this game'
+      'player is not part of this game',
     );
   });
 
@@ -110,7 +110,7 @@ describe('StartGameCommand', () => {
     test.addPlayer('player2Id');
 
     await expect(test.handler.execute(test.command)).rejects.toThrow(
-      'there is not enough players to start (min: 3)'
+      'there is not enough players to start (min: 3)',
     );
   });
 });

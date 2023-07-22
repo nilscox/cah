@@ -8,7 +8,10 @@ import { TOKENS } from 'src/tokens';
 import { sum } from 'src/utils/sum';
 
 export class CardsDealtEvent extends DomainEvent {
-  constructor(playerId: string, public readonly choicesIds: string[]) {
+  constructor(
+    playerId: string,
+    public readonly choicesIds: string[],
+  ) {
     super('player', playerId);
   }
 }
@@ -23,14 +26,14 @@ export class DealCardsHandler implements CommandHandler<DealCardsCommand> {
     TOKENS.publisher,
     TOKENS.repositories.game,
     TOKENS.repositories.player,
-    TOKENS.repositories.choice
+    TOKENS.repositories.choice,
   );
 
   constructor(
     private readonly publisher: EventPublisherPort,
     private readonly gameRepository: GameRepository,
     private readonly playerRepository: PlayerRepository,
-    private readonly choiceRepository: ChoiceRepository
+    private readonly choiceRepository: ChoiceRepository,
   ) {}
 
   async execute(command: DealCardsCommand): Promise<void> {

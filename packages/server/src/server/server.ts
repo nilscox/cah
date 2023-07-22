@@ -22,7 +22,7 @@ export class Server {
     private readonly config: ConfigPort,
     private readonly logger: LoggerPort,
     private readonly publisher: EventPublisherPort,
-    private readonly container: Container
+    private readonly container: Container,
   ) {
     this.logger.context = 'Server';
 

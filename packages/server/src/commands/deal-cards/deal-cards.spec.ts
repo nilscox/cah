@@ -10,7 +10,7 @@ class Test extends UnitTest {
     this.publisher,
     this.gameRepository,
     this.playerRepository,
-    this.choiceRepository
+    this.choiceRepository,
   );
 
   command: HandlerCommand<typeof this.handler> = {

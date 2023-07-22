@@ -91,7 +91,7 @@ class EntitiesCreator {
 
   private createInsert<Table extends AnyPgTable>(
     table: Table,
-    defaultValues: InferModel<Table>
+    defaultValues: InferModel<Table>,
   ): AsyncFactory<InferModel<Table>> {
     return async (values) => {
       const model: InferModel<Table> = { ...defaultValues, ...values };

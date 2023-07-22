@@ -27,7 +27,7 @@ export class WsServer implements RtcPort {
   constructor(
     private readonly logger: LoggerPort,
     private readonly server: Server,
-    private readonly publisher: EventPublisherPort
+    private readonly publisher: EventPublisherPort,
   ) {
     this.io = new SocketIOServer(this.server);
 

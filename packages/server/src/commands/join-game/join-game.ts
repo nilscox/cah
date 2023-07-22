@@ -7,7 +7,10 @@ import { GameRepository, PlayerRepository } from 'src/persistence';
 import { TOKENS } from 'src/tokens';
 
 export class PlayerJoinedEvent extends DomainEvent {
-  constructor(gameId: string, public readonly playerId: string) {
+  constructor(
+    gameId: string,
+    public readonly playerId: string,
+  ) {
     super('game', gameId);
   }
 }
@@ -22,13 +25,13 @@ export class JoinGameHandler implements CommandHandler<JoinGameCommand> {
     this,
     TOKENS.publisher,
     TOKENS.repositories.game,
-    TOKENS.repositories.player
+    TOKENS.repositories.player,
   );
 
   constructor(
     private publisher: EventPublisherPort,
     private gameRepository: GameRepository,
-    private playerRepository: PlayerRepository
+    private playerRepository: PlayerRepository,
   ) {}
 
   async execute(command: JoinGameCommand): Promise<void> {

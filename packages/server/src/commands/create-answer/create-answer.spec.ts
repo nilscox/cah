@@ -20,7 +20,7 @@ class Test extends UnitTest {
     this.playerRepository,
     this.questionRepository,
     this.choiceRepository,
-    this.answerRepository
+    this.answerRepository,
   );
 
   command: HandlerCommand<typeof this.handler> = {
@@ -127,7 +127,7 @@ describe('CreateAnswerCommand', () => {
     test.choiceRepository.set(test.choice);
 
     await expect(test.handler.execute(test.command)).rejects.toThrow(
-      'player does not own some of the choice'
+      'player does not own some of the choice',
     );
   });
 
@@ -135,7 +135,7 @@ describe('CreateAnswerCommand', () => {
     test.answerRepository.set(createAnswer({ gameId: 'gameId', playerId: 'playerId' }));
 
     await expect(test.handler.execute(test.command)).rejects.toThrow(
-      'player has already submitted an answer'
+      'player has already submitted an answer',
     );
   });
 

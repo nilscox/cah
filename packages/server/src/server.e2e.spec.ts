@@ -26,7 +26,10 @@ class Client {
   private fetcher: Fetcher;
   private socket?: Socket;
 
-  constructor(private nick: string, private readonly server: Server) {
+  constructor(
+    private nick: string,
+    private readonly server: Server,
+  ) {
     this.fetcher = new Fetcher(`http://${this.address}`);
   }
 

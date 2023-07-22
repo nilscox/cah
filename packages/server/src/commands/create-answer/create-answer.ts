@@ -35,7 +35,7 @@ export class CreateAnswerHandler implements CommandHandler<CreateAnswerCommand> 
     TOKENS.repositories.player,
     TOKENS.repositories.question,
     TOKENS.repositories.choice,
-    TOKENS.repositories.answer
+    TOKENS.repositories.answer,
   );
 
   constructor(
@@ -45,7 +45,7 @@ export class CreateAnswerHandler implements CommandHandler<CreateAnswerCommand> 
     private readonly playerRepository: PlayerRepository,
     private readonly questionRepository: QuestionRepository,
     private readonly choiceRepository: ChoiceRepository,
-    private readonly answerRepository: AnswerRepository
+    private readonly answerRepository: AnswerRepository,
   ) {}
 
   async execute(command: CreateAnswerCommand): Promise<void> {

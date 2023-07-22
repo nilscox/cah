@@ -22,7 +22,7 @@ export class AuthenticateHandler implements CommandHandler<AuthenticateCommand, 
   constructor(
     private readonly generator: GeneratorPort,
     private readonly publisher: EventPublisherPort,
-    private readonly playerRepository: PlayerRepository
+    private readonly playerRepository: PlayerRepository,
   ) {}
 
   async execute(command: AuthenticateCommand): Promise<string> {

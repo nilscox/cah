@@ -9,7 +9,7 @@ class Test extends UnitTest {
     this.publisher,
     this.gameRepository,
     this.playerRepository,
-    this.answerRepository
+    this.answerRepository,
   );
 
   command: HandlerCommand<typeof this.handler> = {
@@ -75,7 +75,7 @@ describe('SelectWinningAnswerCommand', () => {
     test.playerRepository.set(createPlayer({ gameId: 'gameId' }));
 
     await expect(test.handler.execute(test.command)).rejects.toThrow(
-      'not all player have submitted an answer'
+      'not all player have submitted an answer',
     );
   });
 

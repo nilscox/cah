@@ -7,7 +7,11 @@ import { GameRepository, PlayerRepository } from 'src/persistence';
 import { TOKENS } from 'src/tokens';
 
 export class GameCreatedEvent extends DomainEvent {
-  constructor(gameId: string, public readonly gameCode: string, public readonly creatorId: string) {
+  constructor(
+    gameId: string,
+    public readonly gameCode: string,
+    public readonly creatorId: string,
+  ) {
     super('game', gameId);
   }
 }
@@ -23,14 +27,14 @@ export class CreateGameHandler implements CommandHandler<CreateGameCommand> {
     TOKENS.generator,
     TOKENS.publisher,
     TOKENS.repositories.player,
-    TOKENS.repositories.game
+    TOKENS.repositories.game,
   );
 
   constructor(
     private generator: GeneratorPort,
     private publisher: EventPublisherPort,
     private playerRepository: PlayerRepository,
-    private gameRepository: GameRepository
+    private gameRepository: GameRepository,
   ) {}
 
   async execute(command: CreateGameCommand): Promise<void> {

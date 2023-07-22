@@ -45,7 +45,7 @@ export class SqlChoiceRepository implements ChoiceRepository {
     return toObject(
       playersIds,
       (playerId) => playerId,
-      (playerId) => results.filter(hasProperty('playerId', playerId)).map(this.toChoice)
+      (playerId) => results.filter(hasProperty('playerId', playerId)).map(this.toChoice),
     );
   }
 

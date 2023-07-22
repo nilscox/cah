@@ -52,7 +52,7 @@ export const sqlPersistenceModule = declareModule<PersistenceModule>({
       choiceRepository: new SqlChoiceRepository(db),
       answerRepository: new SqlAnswerRepository(db),
     }),
-    TOKENS.database
+    TOKENS.database,
   ),
   exports: {
     gameRepository: TOKENS.repositories.game,

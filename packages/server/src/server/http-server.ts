@@ -32,7 +32,7 @@ export class HttpServer {
   constructor(
     private readonly config: ConfigPort,
     private readonly logger: LoggerPort,
-    private readonly container: Container
+    private readonly container: Container,
   ) {
     this.app = express();
     this.server = createServer(this.app);

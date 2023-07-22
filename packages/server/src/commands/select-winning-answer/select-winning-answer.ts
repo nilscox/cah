@@ -24,14 +24,14 @@ export class SelectWinningAnswerHandler implements CommandHandler<SelectWinningA
     TOKENS.publisher,
     TOKENS.repositories.game,
     TOKENS.repositories.player,
-    TOKENS.repositories.answer
+    TOKENS.repositories.answer,
   );
 
   constructor(
     private readonly publisher: EventPublisherPort,
     private readonly gameRepository: GameRepository,
     private readonly playerRepository: PlayerRepository,
-    private readonly answerRepository: AnswerRepository
+    private readonly answerRepository: AnswerRepository,
   ) {}
 
   async execute(command: SelectWinningAnswerCommand): Promise<void> {

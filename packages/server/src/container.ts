@@ -80,7 +80,7 @@ export const createContainer = () => {
 
   container.bindFactory(
     TOKENS.rtc,
-    injectable((server) => server.rtc, TOKENS.server)
+    injectable((server) => server.rtc, TOKENS.server),
   );
 
   bindModule(container, sqlPersistenceModule);

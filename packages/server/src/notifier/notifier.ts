@@ -29,7 +29,7 @@ export class Notifier {
     TOKENS.repositories.player,
     TOKENS.repositories.choice,
     TOKENS.repositories.question,
-    TOKENS.repositories.answer
+    TOKENS.repositories.answer,
   );
 
   constructor(
@@ -39,7 +39,7 @@ export class Notifier {
     private readonly playerRepository: PlayerRepository,
     private readonly choiceRepository: ChoiceRepository,
     private readonly questionRepository: QuestionRepository,
-    private readonly answerRepository: AnswerRepository
+    private readonly answerRepository: AnswerRepository,
   ) {}
 
   configure() {

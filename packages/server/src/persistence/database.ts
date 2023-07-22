@@ -41,7 +41,7 @@ export class Database {
 
   async clear(schema = 'public') {
     const result = await this.execute(
-      sql`select tablename from pg_catalog.pg_tables where schemaname=${schema}`
+      sql`select tablename from pg_catalog.pg_tables where schemaname=${schema}`,
     );
 
     if (result.length === 0) {
