@@ -11,6 +11,7 @@ import morgan from 'morgan';
 import * as yup from 'yup';
 
 import { ConfigPort, LoggerPort } from 'src/adapters';
+import { EntityNotFoundError } from 'src/persistence';
 import { TOKENS } from 'src/tokens';
 import { defined } from 'src/utils/defined';
 
@@ -225,6 +226,15 @@ export class HttpServer {
 
       res.status(200).end();
     });
+
+    router.use(((err: unknown, req, res, next) => {
+      if (err instanceof EntityNotFoundError) {
+        res.status(404);
+        res.json({ message: err.message, ...err.criteria });
+      } else {
+        next(err);
+      }
+    }) satisfies ErrorRequestHandler);
 
     router.use(((err: unknown, req, res, next) => {
       if (err instanceof yup.ValidationError) {

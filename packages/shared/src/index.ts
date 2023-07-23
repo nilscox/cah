@@ -8,10 +8,17 @@ export type Game = {
     id: string;
     nick: string;
   }>;
-  questionMasterId?: string;
-  question?: Question;
-  answers?: Array<Answer | AnonymousAnswer>;
+};
+
+export type StartedGame = Game & {
+  questionMasterId: string;
+  question: Question;
+  answers: Array<Answer | AnonymousAnswer>;
   selectedAnswerId?: string;
+};
+
+export const isStarted = (game: Game | undefined): game is StartedGame => {
+  return game?.state === GameState.started;
 };
 
 export enum GameState {

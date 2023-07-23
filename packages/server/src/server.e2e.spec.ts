@@ -1,5 +1,4 @@
 import assert from 'node:assert';
-import { inspect } from 'node:util';
 
 import { CahClient } from '@cah/client';
 import * as shared from '@cah/shared';
@@ -79,7 +78,7 @@ class Client {
     this.cah.addEventListener('turn-started', (event) => {
       this.logEvent(event);
 
-      assert(this.game);
+      assert(shared.isStarted(this.game));
       this.game.questionMasterId = event.questionMasterId;
       this.game.question = event.question;
     });
@@ -98,14 +97,14 @@ class Client {
     this.cah.addEventListener('all-players-answered', (event) => {
       this.logEvent(event);
 
-      assert(this.game);
+      assert(shared.isStarted(this.game));
       this.game.answers = event.answers;
     });
 
     this.cah.addEventListener('winning-answer-selected', (event) => {
       this.logEvent(event);
 
-      assert(this.game);
+      assert(shared.isStarted(this.game));
       this.game.selectedAnswerId = event.selectedAnswerId;
       this.game.answers = event.answers;
     });
@@ -113,19 +112,21 @@ class Client {
     this.cah.addEventListener('turn-ended', (event) => {
       this.logEvent(event);
 
-      assert(this.game);
+      assert(shared.isStarted(this.game));
       this.game.answers = [];
     });
 
     this.cah.addEventListener('game-ended', (event) => {
       this.logEvent(event);
 
-      assert(this.game);
+      assert(shared.isStarted(this.game));
       this.game.state = shared.GameState.finished;
-      delete this.game.questionMasterId;
-      delete this.game.question;
-      delete this.game.answers;
-      delete this.game.selectedAnswerId;
+
+      const game = this.game as Partial<shared.StartedGame>;
+      delete game.questionMasterId;
+      delete game.question;
+      delete game.answers;
+      delete game.selectedAnswerId;
 
       assert(this.player);
       delete this.player.cards;
@@ -133,13 +134,15 @@ class Client {
   };
 
   get questionMaster() {
-    if (this.game?.questionMasterId) {
+    if (shared.isStarted(this.game)) {
       return this.game.players.find(hasId(this.game.questionMasterId));
     }
   }
 
   get question() {
-    return this.game?.question;
+    if (shared.isStarted(this.game)) {
+      return this.game.question;
+    }
   }
 
   get id() {
@@ -148,26 +151,6 @@ class Client {
 
   get cards() {
     return this.player?.cards;
-  }
-
-  [inspect.custom]() {
-    assert(this.player);
-    assert(this.cards);
-    assert(this.game);
-
-    return [
-      this.player.nick,
-      `players: ${this.game.players.map(({ id, nick }) => `${nick} (${id})`).join(', ')}`,
-      `gameState: ${this.game.state ?? '-'}`,
-      `questionMaster: ${this.questionMaster?.nick ?? '-'}`,
-      `question: ${this.question?.text ?? '-'}`,
-      `answers: ${
-        this.game?.answers?.map((answer) => answer.choices?.map((choice) => choice.text)).join(', ') ?? '-'
-      }`,
-      `selectedAnswerId: ${this.game?.selectedAnswerId ?? '-'}`,
-      `cards:`,
-      ...this.cards.map((choice) => `- ${choice.text} (${choice.id})`),
-    ].join('\n');
   }
 
   async authenticate() {
@@ -219,7 +202,7 @@ class Client {
   }
 
   async selectAnswer() {
-    assert(this.game?.answers);
+    assert(shared.isStarted(this.game));
 
     const [answer] = this.game.answers;
 
@@ -331,8 +314,16 @@ describe('Server E2E', () => {
 
     await waitFor(() => forEachPlayer((player) => assert(player.cards?.length)));
 
+    const hasAllAnswers = (questionMaster: Client) => {
+      return shared.isStarted(questionMaster.game) && questionMaster.game.answers.length === 2;
+    };
+
+    const getQuestionMaster = () => {
+      return players.find((player) => player.id === riri.questionMaster?.id);
+    };
+
     for (let turn = 1; turn <= numberOfQuestions; ++turn) {
-      const questionMaster = players.find((player) => player.id === riri.questionMaster?.id);
+      const questionMaster = getQuestionMaster();
       assert(questionMaster);
 
       await forEachPlayer(async (player) => {
@@ -341,12 +332,12 @@ describe('Server E2E', () => {
         }
       });
 
-      await waitFor(() => assert(defined(questionMaster.game?.answers).length === 2));
+      await waitFor(() => assert(hasAllAnswers(questionMaster)));
 
       await questionMaster.selectAnswer();
       await questionMaster.endTurn();
 
-      await waitFor(() => expect(riri.game?.questionMasterId).not.toBe(questionMaster.id));
+      await waitFor(() => assert(getQuestionMaster() !== questionMaster));
     }
 
     expect(riri.game?.state).toBe(shared.GameState.finished);

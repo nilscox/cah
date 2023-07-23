@@ -1,3 +1,5 @@
+import assert from 'node:assert';
+
 import * as shared from '@cah/shared';
 import { asc, eq, isNull } from 'drizzle-orm';
 
@@ -49,6 +51,7 @@ export class SqlGameRepository implements GameRepository {
       where: eq(games.id, gameId),
       with: {
         players: true,
+        question: true,
         answers: {
           orderBy: [asc(answers.place)],
           where: isNull(answers.turnId),
@@ -62,7 +65,7 @@ export class SqlGameRepository implements GameRepository {
     });
 
     if (!model) {
-      throw new EntityNotFoundError('Game', { gameId });
+      throw new EntityNotFoundError('Game', { id: gameId });
     }
 
     const game: shared.Game = {
@@ -75,10 +78,22 @@ export class SqlGameRepository implements GameRepository {
       })),
     };
 
-    if (game.state === shared.GameState.started) {
+    if (shared.isStarted(game)) {
       const allPlayersAnswered = model.answers.length === game.players.length - 1;
 
-      game.selectedAnswerId = model.selectedAnswerId ?? undefined;
+      assert(model.questionMasterId);
+      assert(model.question);
+
+      game.questionMasterId = model.questionMasterId;
+
+      game.question = {
+        id: model.question.id,
+        text: model.question.text,
+      };
+
+      if (model.question.blanks.length > 0) {
+        game.question.blanks = model.question.blanks;
+      }
 
       game.answers = model.answers.map((model) => {
         const answer: shared.AnonymousAnswer = {
@@ -96,6 +111,10 @@ export class SqlGameRepository implements GameRepository {
 
         return answer;
       });
+
+      if (model.selectedAnswerId) {
+        game.selectedAnswerId = model.selectedAnswerId;
+      }
     }
 
     return game;

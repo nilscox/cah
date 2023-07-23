@@ -1,0 +1,15 @@
+{
+  "name": "@cah/cli",
+  "version": "2.0.0",
+  "type": "module",
+  "bin": {
+    "cah": "node dist/index.js"
+  },
+  "scripts": {
+    "start": "ts-node src/index.ts"
+  },
+  "dependencies": {
+    "@cah/client": "workspace:*",
+    "commander": "^11.0.0"
+  }
+}

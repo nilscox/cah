@@ -6,13 +6,9 @@ import {
   injectableClass,
 } from 'ditox';
 
-import {
-  ConsoleLoggerAdapter,
-  RealEventPublisherAdapter,
-  StubConfigAdapter,
-  StubExternalDataAdapter,
-} from 'src/adapters';
+import { ConsoleLoggerAdapter, RealEventPublisherAdapter, StubExternalDataAdapter } from 'src/adapters';
 
+import { EnvConfigAdapter } from './adapters/config/env-config.adapter';
 import { RandomGeneratorAdapter } from './adapters/generator/random-generator.adapter';
 import { MathRandomAdapter } from './adapters/random/math-random.adapter';
 import { AuthenticateHandler } from './commands/authenticate/authenticate';
@@ -61,7 +57,7 @@ export const createContainer = () => {
 
   container.bindValue(TOKENS.container, container);
 
-  container.bindValue(TOKENS.config, new StubConfigAdapter());
+  container.bindFactory(TOKENS.config, injectableClass(EnvConfigAdapter));
   container.bindFactory(TOKENS.logger, injectableClass(ConsoleLoggerAdapter), { scope: 'transient' });
   container.bindFactory(TOKENS.random, injectableClass(MathRandomAdapter));
   container.bindFactory(TOKENS.generator, injectableClass(RandomGeneratorAdapter, TOKENS.random));

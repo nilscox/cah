@@ -1,4 +1,4 @@
 {
   "ignorePaths": ["**/*.svg"],
-  "words": ["ditox", "memorystore", "reduxjs", "resave", "schemaname", "tablename", "varchar"]
+  "words": ["ditox", "inspectable", "memorystore", "reduxjs", "resave", "schemaname", "tablename", "varchar"]
 }

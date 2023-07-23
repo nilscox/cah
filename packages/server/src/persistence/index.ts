@@ -16,4 +16,5 @@ export * from './repositories/question/question.repository';
 export * from './repositories/turn/in-memory-turn.repository';
 export * from './repositories/turn/turn.repository';
 
+export * from './entity-not-found-error';
 export * from './persistence.module';

@@ -26,6 +26,7 @@ export const games = cah.table('games', {
 
 export const gamesRelations = relations(games, ({ one, many }) => ({
   players: many(players),
+  question: one(questions, { fields: [games.questionId], references: [questions.id] }),
   answers: many(answers),
   selectedAnswer: one(answers, { fields: [games.selectedAnswerId], references: [answers.id] }),
 }));
