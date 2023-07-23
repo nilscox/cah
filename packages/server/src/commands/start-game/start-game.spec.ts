@@ -1,4 +1,4 @@
-import { GameState, createGame, createPlayer, createQuestion, isStarted } from 'src/entities';
+import { GameState, createGame, createPlayer, createQuestion } from 'src/entities';
 import { HandlerCommand } from 'src/interfaces';
 import { hasProperty } from 'src/utils/has-property';
 import { UnitTest } from 'src/utils/unit-test';

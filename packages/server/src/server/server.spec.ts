@@ -1,12 +1,11 @@
+import { CahClient } from '@cah/client';
 import { bindModule } from 'ditox';
-import { io } from 'socket.io-client';
 
 import { StubConfigAdapter, StubEventPublisherAdapter, StubLoggerAdapter } from 'src/adapters';
 import { createContainer } from 'src/container';
-import { Player } from 'src/entities';
 import { inMemoryPersistenceModule } from 'src/persistence';
 import { defined } from 'src/utils/defined';
-import { Fetcher } from 'src/utils/fetcher';
+import { waitFor } from 'src/utils/wait-for';
 
 import { Server } from './server';
 import { PlayerConnectedEvent, PlayerDisconnectedEvent } from './ws-server';
@@ -68,25 +67,18 @@ describe('server', () => {
     expect(test.logger.logs.get('info')).toContainEqual(['server closed']);
   });
 
-  it('triggers a PlayerConnectedEvent', async () => {
+  it('triggers a events when the player connects and disconnects', async () => {
     await test.server.listen();
 
-    const fetcher = new Fetcher(`http://${String(test.server.address)}`);
+    const client = new CahClient(defined(test.server.address));
 
-    await fetcher.post('/authenticate', { nick: 'nick' });
-    const { id: playerId } = await fetcher.get<Player>('/player');
+    await client.authenticate('nick');
+    const { id: playerId } = await client.getAuthenticatedPlayer();
 
-    const socket = io(`ws://${defined(test.server.address)}`, {
-      extraHeaders: { cookie: fetcher.cookie },
-    });
+    await client.connect();
+    await waitFor(() => expect(test.publisher).toContainEqual(new PlayerConnectedEvent(playerId)));
 
-    await new Promise<void>((resolve) => socket.on('connect', resolve));
-
-    expect(test.publisher).toContainEqual(new PlayerConnectedEvent(playerId));
-
-    socket.disconnect();
-    await new Promise((r) => setTimeout(r, 10));
-
-    expect(test.publisher).toContainEqual(new PlayerDisconnectedEvent(playerId));
+    await client.disconnect();
+    await waitFor(() => expect(test.publisher).toContainEqual(new PlayerDisconnectedEvent(playerId)));
   });
 });

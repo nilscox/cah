@@ -1,6 +1,7 @@
 import { createServer, IncomingMessage, Server as NodeServer } from 'node:http';
 import { promisify } from 'node:util';
 
+import * as shared from '@cah/shared';
 import bodyParser from 'body-parser';
 import { Container } from 'ditox';
 import express, { ErrorRequestHandler, RequestHandler, Router } from 'express';
@@ -129,8 +130,27 @@ export class HttpServer {
       res.status(200).end();
     });
 
+    router.get('/game/:gameId', async (req, res) => {
+      const gameRepository = this.container.resolve(TOKENS.repositories.game);
+
+      res.json(await gameRepository.query(req.params.gameId));
+    });
+
+    router.get('/game/:gameId/turns', async (req, res) => {
+      const turnRepository = this.container.resolve(TOKENS.repositories.turn);
+
+      res.json(await turnRepository.queryForGame(req.params.gameId));
+    });
+
+    router.get('/player', this.authenticated, async (req, res) => {
+      const playerId = defined(req.session.playerId);
+      const playerRepository = this.container.resolve(TOKENS.repositories.player);
+
+      res.json(await playerRepository.query(playerId));
+    });
+
     router.post('/authenticate', async (req, res) => {
-      const { nick } = await authenticateBodySchema.validate(req.body);
+      const { nick } = await shared.authenticateBodySchema.validate(req.body);
       const handler = this.container.resolve(TOKENS.commands.authenticate);
 
       const playerId = await handler.execute({ nick });
@@ -144,6 +164,7 @@ export class HttpServer {
       const handler = this.container.resolve(TOKENS.commands.createGame);
 
       await handler.execute({ playerId });
+
       res.status(201).end();
     });
 
@@ -168,7 +189,7 @@ export class HttpServer {
 
     router.put('/game/start', this.authenticated, async (req, res) => {
       const playerId = defined(req.session.playerId);
-      const { numberOfQuestions } = await startGameBodySchema.validate(req.body);
+      const { numberOfQuestions } = await shared.startGameBodySchema.validate(req.body);
       const handler = this.container.resolve(TOKENS.commands.startGame);
 
       await handler.execute({ playerId, numberOfQuestions });
@@ -178,7 +199,7 @@ export class HttpServer {
 
     router.post('/game/answer', this.authenticated, async (req, res) => {
       const playerId = defined(req.session.playerId);
-      const { choicesIds } = await createAnswerBodySchema.validate(req.body);
+      const { choicesIds } = await shared.createAnswerBodySchema.validate(req.body);
       const handler = this.container.resolve(TOKENS.commands.createAnswer);
 
       await handler.execute({ playerId, choicesIds });
@@ -205,25 +226,6 @@ export class HttpServer {
       res.status(200).end();
     });
 
-    router.get('/game/:gameId', async (req, res) => {
-      const gameRepository = this.container.resolve(TOKENS.repositories.game);
-
-      res.json(await gameRepository.query(req.params.gameId));
-    });
-
-    router.get('/game/:gameId/turns', async (req, res) => {
-      const turnRepository = this.container.resolve(TOKENS.repositories.turn);
-
-      res.json(await turnRepository.queryForGame(req.params.gameId));
-    });
-
-    router.get('/player', this.authenticated, async (req, res) => {
-      const playerId = defined(req.session.playerId);
-      const playerRepository = this.container.resolve(TOKENS.repositories.player);
-
-      res.json(await playerRepository.query(playerId));
-    });
-
     router.use(((err: unknown, req, res, next) => {
       if (err instanceof yup.ValidationError) {
         res.status(400);
@@ -243,15 +245,3 @@ export class HttpServer {
     return router;
   }
 }
-
-const authenticateBodySchema = yup.object({
-  nick: yup.string().min(2).max(24).required(),
-});
-
-const startGameBodySchema = yup.object({
-  numberOfQuestions: yup.number().min(1).required(),
-});
-
-const createAnswerBodySchema = yup.object({
-  choicesIds: yup.array(yup.string().required()).min(1).required(),
-});

@@ -1,3 +1,5 @@
+import * as yup from 'yup';
+
 export type Game = {
   id: string;
   code: string;
@@ -59,7 +61,7 @@ export type PlayerConnectedEvent = {
 };
 
 export type PlayerDisconnectedEvent = {
-  type: 'player-connected';
+  type: 'player-disconnected';
   nick: string;
 };
 
@@ -136,3 +138,21 @@ export type GameEvent =
   | WinningAnswerSelectedEvent
   | TurnEndedEvent
   | GameEndedEvent;
+
+export const authenticateBodySchema = yup.object({
+  nick: yup.string().min(2).max(24).required(),
+});
+
+export type AuthenticateBody = yup.InferType<typeof authenticateBodySchema>;
+
+export const startGameBodySchema = yup.object({
+  numberOfQuestions: yup.number().min(1).required(),
+});
+
+export type StartGameBody = yup.InferType<typeof startGameBodySchema>;
+
+export const createAnswerBodySchema = yup.object({
+  choicesIds: yup.array(yup.string().required()).min(1).required(),
+});
+
+export type CreateAnswerBody = yup.InferType<typeof createAnswerBodySchema>;

@@ -1,72 +1,42 @@
 import assert from 'node:assert';
 import { inspect } from 'node:util';
 
-import { Choice, Game, GameEvent, GameState } from '@cah/shared';
-import { Socket, io } from 'socket.io-client';
+import { CahClient } from '@cah/client';
+import * as shared from '@cah/shared';
 
-import {
-  StubConfigAdapter,
-  StubExternalDataAdapter,
-  StubLoggerAdapter,
-  StubRandomAdapter,
-} from 'src/adapters';
+import { StubConfigAdapter, StubExternalDataAdapter, StubLoggerAdapter } from 'src/adapters';
 import { createContainer } from 'src/container';
-import { Player } from 'src/entities';
 // eslint-disable-next-line no-restricted-imports
 import { Server } from 'src/server/server';
 import { TOKENS } from 'src/tokens';
 import { defined } from 'src/utils/defined';
-import { hasProperty } from 'src/utils/has-property';
 
-import { Fetcher } from './utils/fetcher';
-import { getIds, hasId } from './utils/id';
+import { hasId } from './utils/id';
 import { waitFor } from './utils/wait-for';
 
 class Client {
-  private fetcher: Fetcher;
-  private socket?: Socket;
+  private cah: CahClient;
+  private nick: string;
 
-  constructor(
-    private nick: string,
-    private readonly server: Server,
-  ) {
-    this.fetcher = new Fetcher(`http://${this.address}`);
-  }
-
-  private get address() {
-    return defined(this.server.address);
-  }
-
-  async connect() {
-    const sessionId = this.fetcher.sessionId;
-    assert(sessionId);
-
-    this.socket = io(`ws://${this.address}`, {
-      extraHeaders: { cookie: this.fetcher.cookie },
-    });
-
-    this.socket.on('message', this.handleEvent);
-
-    await new Promise<void>((resolve) => this.socket?.on('connect', resolve));
-  }
-
-  async disconnect() {
-    const socket = this.socket;
-
-    assert(socket);
-
-    return new Promise<void>((resolve) => {
-      socket.on('disconnect', () => resolve());
-      return socket.disconnect();
-    });
-  }
-
-  public game!: Game;
-  public cards: Choice[] = [];
-  public playersAnswered: string[] = [];
+  public player?: shared.Player;
+  public game?: shared.Game;
 
   public debug = false;
   public debugEvents = false;
+
+  constructor(nick: string, server: Server) {
+    this.cah = new CahClient(defined(server.address));
+    this.nick = nick;
+    this.registerEventsListeners();
+  }
+
+  async connect() {
+    await this.cah.connect();
+  }
+
+  async disconnect() {
+    await this.cah.disconnect();
+  }
 
   private log(...args: unknown[]) {
     if (this.debug) {
@@ -74,83 +44,127 @@ class Client {
     }
   }
 
-  private handleEvent = (event: GameEvent) => {
+  private logEvent(event: shared.GameEvent) {
     if (this.debugEvents) {
-      this.log('received event', event);
+      console.log(`* received event`, event);
     }
+  }
 
-    switch (event.type) {
-      case 'player-joined':
-        this.game?.players.push({ id: event.playerId, nick: event.nick });
-        break;
+  private registerEventsListeners = () => {
+    this.cah.addEventListener('player-joined', (event) => {
+      this.logEvent(event);
 
-      case 'player-left':
-        this.game.players.splice(this.game.players.findIndex(hasId(event.playerId)), 1);
-        break;
+      if (this.game) {
+        this.game.players.push({ id: event.playerId, nick: event.nick });
+      }
+    });
 
-      case 'game-started':
-        this.game.state = GameState.started;
-        break;
+    this.cah.addEventListener('player-left', (event) => {
+      this.logEvent(event);
 
-      case 'turn-started':
-        this.game.questionMasterId = event.questionMasterId;
-        this.game.question = event.question;
-        break;
+      assert(this.game);
+      this.game.players.splice(this.game.players.findIndex(hasId(event.playerId)), 1);
+    });
 
-      case 'cards-dealt':
-        this.cards.push(...event.cards);
-        break;
+    this.cah.addEventListener('game-started', (event) => {
+      this.logEvent(event);
 
-      case 'player-answered':
-        this.playersAnswered.push(event.playerId);
-        break;
+      assert(this.game);
+      this.game.state = shared.GameState.started;
 
-      case 'all-players-answered':
-        this.game.answers = event.answers;
-        break;
+      assert(this.player);
+      this.player.cards = [];
+    });
 
-      case 'winning-answer-selected':
-        this.game.selectedAnswerId = event.selectedAnswerId;
-        this.game.answers = event.answers;
-        break;
+    this.cah.addEventListener('turn-started', (event) => {
+      this.logEvent(event);
 
-      case 'turn-ended':
-        this.playersAnswered = [];
-        this.game.answers = [];
-        break;
+      assert(this.game);
+      this.game.questionMasterId = event.questionMasterId;
+      this.game.question = event.question;
+    });
 
-      case 'game-ended':
-        this.game.state = GameState.finished;
-        delete this.game.questionMasterId;
-        delete this.game.question;
-        delete this.game.answers;
-        delete this.game.selectedAnswerId;
-        break;
-    }
+    this.cah.addEventListener('cards-dealt', (event) => {
+      this.logEvent(event);
+
+      assert(this.player?.cards);
+      this.player.cards.push(...event.cards);
+    });
+
+    this.cah.addEventListener('player-answered', (event) => {
+      this.logEvent(event);
+    });
+
+    this.cah.addEventListener('all-players-answered', (event) => {
+      this.logEvent(event);
+
+      assert(this.game);
+      this.game.answers = event.answers;
+    });
+
+    this.cah.addEventListener('winning-answer-selected', (event) => {
+      this.logEvent(event);
+
+      assert(this.game);
+      this.game.selectedAnswerId = event.selectedAnswerId;
+      this.game.answers = event.answers;
+    });
+
+    this.cah.addEventListener('turn-ended', (event) => {
+      this.logEvent(event);
+
+      assert(this.game);
+      this.game.answers = [];
+    });
+
+    this.cah.addEventListener('game-ended', (event) => {
+      this.logEvent(event);
+
+      assert(this.game);
+      this.game.state = shared.GameState.finished;
+      delete this.game.questionMasterId;
+      delete this.game.question;
+      delete this.game.answers;
+      delete this.game.selectedAnswerId;
+
+      assert(this.player);
+      delete this.player.cards;
+    });
   };
 
   get questionMaster() {
-    if (this.game.questionMasterId) {
-      return this.game.players.find(hasProperty('id', this.game.questionMasterId));
+    if (this.game?.questionMasterId) {
+      return this.game.players.find(hasId(this.game.questionMasterId));
     }
   }
 
   get question() {
-    return this.game.question;
+    return this.game?.question;
+  }
+
+  get id() {
+    return this.player?.id;
+  }
+
+  get cards() {
+    return this.player?.cards;
   }
 
   [inspect.custom]() {
+    assert(this.player);
+    assert(this.cards);
+    assert(this.game);
+
     return [
-      this.nick,
-      this.nick.replace(/./g, '-'),
+      this.player.nick,
       `players: ${this.game.players.map(({ id, nick }) => `${nick} (${id})`).join(', ')}`,
-      `gameState: ${this.game.state}`,
+      `gameState: ${this.game.state ?? '-'}`,
       `questionMaster: ${this.questionMaster?.nick ?? '-'}`,
       `question: ${this.question?.text ?? '-'}`,
       `answers: ${
-        this.game.answers?.map((answer) => answer.choices?.map((choice) => choice.text)).join(', ') ?? '-'
+        this.game?.answers?.map((answer) => answer.choices?.map((choice) => choice.text)).join(', ') ?? '-'
       }`,
-      `selectedAnswerId: ${this.game.selectedAnswerId ?? '-'}`,
+      `selectedAnswerId: ${this.game?.selectedAnswerId ?? '-'}`,
       `cards:`,
       ...this.cards.map((choice) => `- ${choice.text} (${choice.id})`),
     ].join('\n');
@@ -158,61 +172,69 @@ class Client {
 
   async authenticate() {
     this.log('authenticates');
-    await this.fetcher.post('/authenticate', { nick: this.nick });
+    await this.cah.authenticate(this.nick);
   }
 
   async fetchPlayer() {
     this.log('retrieves themselves');
-    return this.fetcher.get<Player>('/player');
+    this.player = await this.cah.getAuthenticatedPlayer();
+
+    return this.player;
   }
 
   async fetchGame() {
     const { gameId } = await this.fetchPlayer();
+    assert(gameId);
 
     this.log('retrieves their game');
-    this.game = await this.fetcher.get<Game>(`/game/${defined(gameId)}`);
+    this.game = await this.cah.getGame(gameId);
+
     return this.game;
   }
 
   async createGame() {
     this.log('creates a game');
-    await this.fetcher.post('/game');
+    await this.cah.createGame();
   }
 
   async joinGame(code: string) {
     this.log(`joins the game ${code}`);
-    await this.fetcher.put(`/game/${code}/join`);
+    await this.cah.joinGame(code);
   }
 
   async startGame(numberOfQuestions: number) {
     this.log('start the game');
-    await this.fetcher.put('/game/start', { numberOfQuestions });
+    await this.cah.startGame(numberOfQuestions);
   }
 
   async answer() {
+    assert(this.cards);
+
     const choices = this.cards.slice(0, this.question?.blanks?.length ?? 1);
 
     this.log('answers the current question:', choices.map((choice) => choice.text).join(', '));
+    await this.cah.createAnswer(choices);
 
-    await this.fetcher.post('/game/answer', { choicesIds: getIds(choices) });
     this.cards.splice(0, choices.length);
   }
 
   async selectAnswer() {
-    const [answer] = defined(this.game.answers);
+    assert(this.game?.answers);
+
+    const [answer] = this.game.answers;
 
     this.log('selects answer:', answer.id);
-    await this.fetcher.put(`/game/answer/${answer.id}/select`);
+    await this.cah.selectAnswer(answer);
   }
 
   async endTurn() {
     this.log('ends the current turn');
-    await this.fetcher.put('/game/end-turn');
+    await this.cah.endTurn();
   }
 
   async leaveGame() {
     this.log('leaves the current game');
-    await this.fetcher.put('/game/leave');
+    await this.cah.leaveGame();
   }
 }
 
@@ -277,14 +299,16 @@ describe('Server E2E', () => {
   // cspell:word riri fifi loulou
 
   it('plays a full game', async () => {
+    const numberOfQuestions = 3;
+
     const riri = test.createClient('riri');
     const fifi = test.createClient('fifi');
     const loulou = test.createClient('loulou');
 
+    const players = [riri, fifi, loulou];
+
     const forEachPlayer = async (cb: (player: Client) => void | Promise<void>) => {
-      for (const player of [riri, fifi, loulou]) {
-        await cb(player);
-      }
+      await Promise.all(players.map(cb));
     };
 
     await forEachPlayer(async (player) => {
@@ -294,29 +318,22 @@ describe('Server E2E', () => {
       await player.connect();
     });
 
-    const mapPlayersIds: Record<string, Client> = {};
-
-    await forEachPlayer(async (player) => {
-      const { id } = await player.fetchPlayer();
-      mapPlayersIds[id] = player;
-    });
-
     await riri.createGame();
-    await waitFor(() => riri.fetchGame());
+    const { code } = await waitFor(() => riri.fetchGame());
 
-    await fifi.joinGame(riri.game.code);
+    await fifi.joinGame(code);
     await fifi.fetchGame();
 
-    await loulou.joinGame(riri.game.code);
+    await loulou.joinGame(code);
     await loulou.fetchGame();
 
-    await riri.startGame(3);
+    await riri.startGame(numberOfQuestions);
 
-    await waitFor(() => forEachPlayer((player) => assert(player.cards.length > 0)));
+    await waitFor(() => forEachPlayer((player) => assert(player.cards?.length)));
 
-    for (let i = 0; i < 3; ++i) {
-      const questionMasterId = defined(riri.game.questionMasterId);
-      const questionMaster = mapPlayersIds[questionMasterId];
+    for (let turn = 1; turn <= numberOfQuestions; ++turn) {
+      const questionMaster = players.find((player) => player.id === riri.questionMaster?.id);
+      assert(questionMaster);
 
       await forEachPlayer(async (player) => {
         if (player !== questionMaster) {
@@ -324,15 +341,15 @@ describe('Server E2E', () => {
         }
       });
 
-      await waitFor(() => assert(questionMaster.game.answers?.length === 2));
+      await waitFor(() => assert(defined(questionMaster.game?.answers).length === 2));
 
       await questionMaster.selectAnswer();
       await questionMaster.endTurn();
 
-      await waitFor(() => expect(riri.game.questionMasterId).not.toBe(questionMasterId));
+      await waitFor(() => expect(riri.game?.questionMasterId).not.toBe(questionMaster.id));
     }
 
-    expect(riri.game.state).toBe(GameState.finished);
+    expect(riri.game?.state).toBe(shared.GameState.finished);
 
     await forEachPlayer(async (player) => {
       await player.leaveGame();

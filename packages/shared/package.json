@@ -13,5 +13,8 @@
     "eslint": "^8.45.0",
     "eslint-import-resolver-typescript": "^3.5.5",
     "eslint-plugin-import": "npm:eslint-plugin-i@2.27.5-2"
+  },
+  "dependencies": {
+    "yup": "^1.2.0"
   }
 }

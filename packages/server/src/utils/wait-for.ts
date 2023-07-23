@@ -1,20 +1,17 @@
-export const waitFor = async (check: () => unknown, timeout = 1000) => {
+export const waitFor = async <T>(check: () => T | Promise<T>, timeout = 1000): Promise<T> => {
   const start = Date.now();
   const elapsed = () => Date.now() - start;
 
   let error: unknown;
 
-  do {
+  while (elapsed() <= timeout) {
     try {
-      await check();
-      error = undefined;
+      return await check();
     } catch (err) {
       error = err;
       await new Promise((r) => setTimeout(r, 10));
     }
+  }
 
-    if (elapsed() > timeout) {
-      throw error ?? new Error('Timeout');
-    }
-  } while (error);
+  throw error ?? new Error('Timeout');
 };

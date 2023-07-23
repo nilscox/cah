@@ -1,20 +1,12 @@
 import { CookieJar } from 'tough-cookie';
 
 export class Fetcher {
-  private currentUrl = 'http://localhost';
   private jar = new CookieJar();
 
   constructor(private readonly baseUrl: string) {}
 
   get cookie() {
-    return this.jar.getCookieStringSync(this.currentUrl);
-  }
-
-  get sessionId() {
-    const cookies = this.jar.getCookiesSync(this.currentUrl);
-    const sessionCookie = cookies.find((cookie) => cookie.key === 'connect.sid');
-
-    return sessionCookie?.value;
+    return this.jar.getCookieStringSync(this.baseUrl);
   }
 
   async get<Result>(path: string): Promise<Result> {
@@ -29,14 +21,17 @@ export class Fetcher {
     const headers = new Headers(init?.headers);
     init.headers = headers;
 
-    const cookieString = await this.jar.getCookieString(this.currentUrl);
+    const cookieString = await this.jar.getCookieString(this.baseUrl);
     if (cookieString) headers.set('cookie', cookieString);
 
     const response = await fetch(this.baseUrl + path, init);
-    assert(response.ok, `Error ${response.status}: ${await response.clone().text()}`);
+
+    if (!response.ok) {
+      throw new Error(`Error ${response.status}: ${await response.clone().text()}`);
+    }
 
     const setCookie = response.headers.get('set-cookie');
-    if (setCookie) await this.jar.setCookie(setCookie, this.currentUrl);
+    if (setCookie) await this.jar.setCookie(setCookie, this.baseUrl);
 
     const contentType = response.headers.get('Content-Type');
 
@@ -48,7 +43,7 @@ export class Fetcher {
   }
 
   private mutate(method: string) {
-    return async <Result>(path: string, body?: unknown): Promise<Result> => {
+    return async <Body, Result = void>(path: string, body?: Body): Promise<Result> => {
       const headers = new Headers();
       const init: RequestInit = {
         method,
