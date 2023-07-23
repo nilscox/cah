@@ -9,6 +9,7 @@ import { GameEndedEvent } from 'src/commands/end-game/end-game';
 import { TurnEndedEvent } from 'src/commands/end-turn/end-turn';
 import { AllAnswersSubmittedEvent } from 'src/commands/handle-end-of-players-answer/handle-end-of-players-answer';
 import { PlayerJoinedEvent } from 'src/commands/join-game/join-game';
+import { PlayerLeftEvent } from 'src/commands/leave-game/leave-game';
 import { AnswerSelectedEvent } from 'src/commands/select-winning-answer/select-winning-answer';
 import { GameStartedEvent } from 'src/commands/start-game/start-game';
 import { TurnStartedEvent } from 'src/commands/start-turn/start-turn';
@@ -78,20 +79,19 @@ export class Notifier {
     });
 
     publisher.register(PlayerJoinedEvent, async (event) => {
-      const playerId = event.playerId;
-      const player = await this.playerRepository.findById(playerId);
+      const player = await this.playerRepository.findById(event.playerId);
 
-      if (!player.gameId) {
-        return;
-      }
-
-      const game = await this.gameRepository.findById(player.gameId);
-
-      await this.send(game.id, {
+      await this.send(event.entityId, {
         type: 'player-joined',
-        gameId: game.id,
         playerId: player.id,
         nick: player.nick,
+      });
+    });
+
+    publisher.register(PlayerLeftEvent, async (event) => {
+      await this.send(event.entityId, {
+        type: 'player-left',
+        playerId: event.playerId,
       });
     });
 

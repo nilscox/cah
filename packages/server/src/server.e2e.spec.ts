@@ -19,7 +19,7 @@ import { defined } from 'src/utils/defined';
 import { hasProperty } from 'src/utils/has-property';
 
 import { Fetcher } from './utils/fetcher';
-import { getIds } from './utils/id';
+import { getIds, hasId } from './utils/id';
 import { waitFor } from './utils/wait-for';
 
 class Client {
@@ -82,6 +82,10 @@ class Client {
     switch (event.type) {
       case 'player-joined':
         this.game?.players.push({ id: event.playerId, nick: event.nick });
+        break;
+
+      case 'player-left':
+        this.game.players.splice(this.game.players.findIndex(hasId(event.playerId)), 1);
         break;
 
       case 'game-started':
@@ -205,6 +209,11 @@ class Client {
     this.log('ends the current turn');
     await this.fetcher.put('/game/end-turn');
   }
+
+  async leaveGame() {
+    this.log('leaves the current game');
+    await this.fetcher.put('/game/leave');
+  }
 }
 
 class Test {
@@ -327,6 +336,9 @@ describe('Server E2E', () => {
 
     expect(riri.game.state).toBe(GameState.finished);
 
-    await forEachPlayer((player) => player.disconnect());
+    await forEachPlayer(async (player) => {
+      await player.leaveGame();
+      await player.disconnect();
+    });
   });
 });

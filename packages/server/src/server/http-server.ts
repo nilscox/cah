@@ -156,6 +156,15 @@ export class HttpServer {
       res.status(201).end();
     });
 
+    router.put('/game/leave', this.authenticated, async (req, res) => {
+      const playerId = defined(req.session.playerId);
+      const handler = this.container.resolve(TOKENS.commands.leaveGame);
+
+      await handler.execute({ playerId });
+
+      res.status(200).end();
+    });
+
     router.put('/game/start', this.authenticated, async (req, res) => {
       const playerId = defined(req.session.playerId);
       const { numberOfQuestions } = await startGameBodySchema.validate(req.body);

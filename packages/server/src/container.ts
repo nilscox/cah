@@ -23,6 +23,7 @@ import { EndGameHandler } from './commands/end-game/end-game';
 import { EndTurnHandler } from './commands/end-turn/end-turn';
 import { HandleEndOfPlayersAnswerHandler } from './commands/handle-end-of-players-answer/handle-end-of-players-answer';
 import { JoinGameHandler } from './commands/join-game/join-game';
+import { LeaveGameHandler } from './commands/leave-game/leave-game';
 import { SelectWinningAnswerHandler } from './commands/select-winning-answer/select-winning-answer';
 import { StartGameHandler } from './commands/start-game/start-game';
 import { StartTurnHandler } from './commands/start-turn/start-turn';
@@ -48,6 +49,7 @@ export const appModule = declareModule({
     selectWinningAnswer: SelectWinningAnswerHandler.inject(container),
     endTurn: EndTurnHandler.inject(container),
     endGame: EndGameHandler.inject(container),
+    leaveGame: LeaveGameHandler.inject(container),
     getGame: GetGameHandler.inject(container),
     getPlayer: GetPlayerHandler.inject(container),
   }),

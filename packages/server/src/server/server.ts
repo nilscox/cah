@@ -7,6 +7,7 @@ import { AnswerCreatedEvent } from 'src/commands/create-answer/create-answer';
 import { GameCreatedEvent } from 'src/commands/create-game/create-game';
 import { TurnEndedEvent } from 'src/commands/end-turn/end-turn';
 import { PlayerJoinedEvent } from 'src/commands/join-game/join-game';
+import { PlayerLeftEvent } from 'src/commands/leave-game/leave-game';
 import { GameStartedEvent } from 'src/commands/start-game/start-game';
 import { TurnStartedEvent } from 'src/commands/start-turn/start-turn';
 import { TOKENS } from 'src/tokens';
@@ -73,6 +74,10 @@ export class Server {
 
     publisher.register(PlayerJoinedEvent, async (event) => {
       await this.wsServer.join(event.entityId, event.playerId);
+    });
+
+    publisher.register(PlayerLeftEvent, async (event) => {
+      await this.wsServer.leave(event.entityId, event.playerId);
     });
 
     publisher.register(GameCreatedEvent, async (event) => {

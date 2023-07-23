@@ -67,9 +67,13 @@ export type GameCreatedEvent = {
 
 export type PlayerJoinedEvent = {
   type: 'player-joined';
-  gameId: string;
   playerId: string;
   nick: string;
+};
+
+export type PlayerLeftEvent = {
+  type: 'player-left';
+  playerId: string;
 };
 
 export type GameStartedEvent = {
@@ -119,6 +123,7 @@ export type GameEvent =
   | PlayerDisconnectedEvent
   | GameCreatedEvent
   | PlayerJoinedEvent
+  | PlayerLeftEvent
   | GameStartedEvent
   | TurnStartedEvent
   | CardsDealtEvent
