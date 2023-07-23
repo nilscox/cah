@@ -158,6 +158,7 @@ export class Notifier {
     publisher.register(AllAnswersSubmittedEvent, async (event) => {
       const game = await this.gameRepository.query(event.entityId);
       assert(shared.isStarted(game));
+      assert(game.answers);
 
       await this.send(game.id, {
         type: 'all-players-answered',

@@ -2,7 +2,7 @@ import assert from 'node:assert';
 
 import { injectableClass } from 'ditox';
 
-import { EventPublisherPort, ExternalDataPort, RandomPort } from 'src/adapters';
+import { EventPublisherPort, ExternalDataPort, GeneratorPort, RandomPort } from 'src/adapters';
 import { Choice, GameState, Question, isStarted } from 'src/entities';
 import { CommandHandler, DomainEvent } from 'src/interfaces';
 import { ChoiceRepository, GameRepository, PlayerRepository, QuestionRepository } from 'src/persistence';
@@ -27,6 +27,7 @@ export class StartGameHandler implements CommandHandler<StartGameCommand> {
   static inject = injectableClass(
     this,
     TOKENS.random,
+    TOKENS.generator,
     TOKENS.publisher,
     TOKENS.externalData,
     TOKENS.repositories.game,
@@ -37,6 +38,7 @@ export class StartGameHandler implements CommandHandler<StartGameCommand> {
 
   constructor(
     private readonly random: RandomPort,
+    private readonly generator: GeneratorPort,
     private readonly publisher: EventPublisherPort,
     private readonly externalData: ExternalDataPort,
     private readonly gameRepository: GameRepository,
@@ -74,8 +76,9 @@ export class StartGameHandler implements CommandHandler<StartGameCommand> {
     const questions = await this.externalData.getQuestions(numberOfQuestions);
 
     return questions.map((question) => ({
-      ...question,
+      id: this.generator.generateId(),
       gameId,
+      ...question,
     }));
   }
 
@@ -88,8 +91,9 @@ export class StartGameHandler implements CommandHandler<StartGameCommand> {
     const choices = await this.externalData.getChoices(numberOfChoices);
 
     return choices.map((choice) => ({
-      ...choice,
+      id: this.generator.generateId(),
       gameId,
+      ...choice,
     }));
   }
 

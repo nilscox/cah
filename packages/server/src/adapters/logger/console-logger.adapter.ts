@@ -1,6 +1,10 @@
+import { injectableClass } from 'ditox';
+
 import { Log, LogLevel, LoggerPort } from './logger.port';
 
 export class ConsoleLoggerAdapter implements LoggerPort {
+  static inject = injectableClass(this);
+
   context?: string;
 
   verbose: Log = (...args) => this.log('verbose', ...args);

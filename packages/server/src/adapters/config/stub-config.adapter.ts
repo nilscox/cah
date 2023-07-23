@@ -11,6 +11,10 @@ export class StubConfigAdapter implements ConfigPort {
     port: 3000,
   };
 
+  data: ConfigPort['data'] = {
+    path: '',
+  };
+
   database: ConfigPort['database'] = {
     url: '',
     debug: false,

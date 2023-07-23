@@ -79,7 +79,8 @@ export class SqlGameRepository implements GameRepository {
     };
 
     if (shared.isStarted(game)) {
-      const allPlayersAnswered = model.answers.length === game.players.length - 1;
+      const allPlayersAnswered = model.answers.length === model.players.length - 1;
+      const selectedAnswerId = model.selectedAnswerId;
 
       assert(model.questionMasterId);
       assert(model.question);
@@ -95,25 +96,27 @@ export class SqlGameRepository implements GameRepository {
         game.question.blanks = model.question.blanks;
       }
 
-      game.answers = model.answers.map((model) => {
-        const answer: shared.AnonymousAnswer = {
-          id: model.id,
-          choices: model.choices.map((choice) => ({
-            id: choice.id,
-            text: choice.text,
-            caseSensitive: choice.caseSensitive,
-          })),
-        };
+      if (allPlayersAnswered) {
+        game.answers = model.answers.map((model) => {
+          const answer: shared.AnonymousAnswer = {
+            id: model.id,
+            choices: model.choices.map((choice) => ({
+              id: choice.id,
+              text: choice.text,
+              caseSensitive: choice.caseSensitive,
+            })),
+          };
 
-        if (allPlayersAnswered) {
-          (answer as shared.Answer).playerId = model.playerId;
-        }
+          if (selectedAnswerId) {
+            (answer as shared.Answer).playerId = model.playerId;
+          }
 
-        return answer;
-      });
+          return answer;
+        });
+      }
 
-      if (model.selectedAnswerId) {
-        game.selectedAnswerId = model.selectedAnswerId;
+      if (selectedAnswerId) {
+        game.selectedAnswerId = selectedAnswerId;
       }
     }
 

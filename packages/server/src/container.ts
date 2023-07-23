@@ -1,14 +1,9 @@
-import {
-  bindModule,
-  declareModule,
-  createContainer as ditoxCreateContainer,
-  injectable,
-  injectableClass,
-} from 'ditox';
+import { bindModule, declareModule, createContainer as ditoxCreateContainer, injectable } from 'ditox';
 
-import { ConsoleLoggerAdapter, RealEventPublisherAdapter, StubExternalDataAdapter } from 'src/adapters';
+import { ConsoleLoggerAdapter, RealEventPublisherAdapter } from 'src/adapters';
 
 import { EnvConfigAdapter } from './adapters/config/env-config.adapter';
+import { FilesystemExternalDataAdapter } from './adapters/external-data/filesystem-external-data.adapter';
 import { RandomGeneratorAdapter } from './adapters/generator/random-generator.adapter';
 import { MathRandomAdapter } from './adapters/random/math-random.adapter';
 import { AuthenticateHandler } from './commands/authenticate/authenticate';
@@ -57,11 +52,11 @@ export const createContainer = () => {
 
   container.bindValue(TOKENS.container, container);
 
-  container.bindFactory(TOKENS.config, injectableClass(EnvConfigAdapter));
-  container.bindFactory(TOKENS.logger, injectableClass(ConsoleLoggerAdapter), { scope: 'transient' });
-  container.bindFactory(TOKENS.random, injectableClass(MathRandomAdapter));
-  container.bindFactory(TOKENS.generator, injectableClass(RandomGeneratorAdapter, TOKENS.random));
-  container.bindFactory(TOKENS.externalData, injectableClass(StubExternalDataAdapter));
+  container.bindFactory(TOKENS.config, EnvConfigAdapter.inject);
+  container.bindFactory(TOKENS.logger, ConsoleLoggerAdapter.inject, { scope: 'transient' });
+  container.bindFactory(TOKENS.random, MathRandomAdapter.inject);
+  container.bindFactory(TOKENS.generator, RandomGeneratorAdapter.inject);
+  container.bindFactory(TOKENS.externalData, FilesystemExternalDataAdapter.inject);
 
   container.bindFactory(TOKENS.publisher, RealEventPublisherAdapter.inject);
   container.bindFactory(TOKENS.server, Server.inject);

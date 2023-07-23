@@ -13,7 +13,7 @@ export type Game = {
 export type StartedGame = Game & {
   questionMasterId: string;
   question: Question;
-  answers: Array<Answer | AnonymousAnswer>;
+  answers?: Array<Answer | AnonymousAnswer>;
   selectedAnswerId?: string;
 };
 

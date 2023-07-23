@@ -151,7 +151,7 @@ const inspectGame = (game: Game): string => {
 
     lines.push(`- question: ${inspectQuestion(game.question)}`);
 
-    if (game.answers.length > 0) {
+    if (game.answers && game.answers.length > 0) {
       lines.push('- answers:');
 
       lines.push(
@@ -160,12 +160,12 @@ const inspectGame = (game: Game): string => {
           const playerId = 'playerId' in answer && answer.playerId;
 
           const parts = [
+            playerId && f(`${game.players.find(({ id }) => id === playerId)?.nick}:`),
             inspectQuestion(game.question, answer.choices),
             dimId(answer.id),
-            playerId && chalk.light(`${game.players.find(({ id }) => id === playerId)?.nick}`),
           ].filter(Boolean);
 
-          return f(parts.join(' '));
+          return parts.join(' ');
         }),
       );
     }
@@ -186,20 +186,18 @@ const inspectQuestion = (question: Question, choices?: Choice[]): string => {
     }
 
     if (choice.caseSensitive || blanks === undefined) {
-      return choice.text;
+      return chalk.underline(choice.text);
     }
 
-    return choice.text.toLowerCase();
+    return chalk.underline(choice.text.toLowerCase());
   };
 
   if (blanks === undefined) {
-    return [text, chalk.bold(getBlankValue(0))].join(' ');
+    return [text, getBlankValue(0)].join(' ');
   }
 
   for (const [i, place] of Object.entries(blanks.slice().reverse())) {
-    text = [text.slice(0, place), text.slice(place)].join(
-      chalk.bold(getBlankValue(blanks.length - Number(i) - 1)),
-    );
+    text = [text.slice(0, place), text.slice(place)].join(getBlankValue(blanks.length - Number(i) - 1));
   }
 
   return text;

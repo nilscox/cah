@@ -3,6 +3,11 @@ export interface ConfigPort {
     host: string;
     port: number;
   };
+
+  data: {
+    path: string;
+  };
+
   database: {
     url: string;
     debug: boolean;

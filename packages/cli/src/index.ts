@@ -119,7 +119,7 @@ program
     const index = parseInt(arg) - 1;
     const player = await client.getAuthenticatedPlayer();
     const game = await client.getGame(player.gameId!);
-    const answer = 'answers' in game ? game.answers[index] : undefined;
+    const answer = 'answers' in game ? game.answers?.[index] : undefined;
 
     await client.selectAnswer(answer!);
   });

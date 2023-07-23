@@ -1,6 +1,10 @@
+import { injectableClass } from 'ditox';
+
 import { RandomPort } from './random.port';
 
 export class MathRandomAdapter implements RandomPort {
+  static inject = injectableClass(this);
+
   randomize<T>(array: T[]): T[] {
     for (let i = array.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));

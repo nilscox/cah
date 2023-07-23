@@ -8,6 +8,7 @@ import { GameStartedEvent, StartGameHandler } from './start-game';
 class Test extends UnitTest {
   handler = new StartGameHandler(
     this.random,
+    this.generator,
     this.publisher,
     this.externalData,
     this.gameRepository,

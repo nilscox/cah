@@ -201,6 +201,7 @@ class Client {
 
   async selectAnswer() {
     assert(shared.isStarted(this.game));
+    assert(this.game.answers);
 
     const [answer] = this.game.answers;
 
@@ -313,7 +314,7 @@ describe('Server E2E', () => {
     await waitFor(() => forEachPlayer((player) => assert(player.cards?.length)));
 
     const hasAllAnswers = (questionMaster: Client) => {
-      return shared.isStarted(questionMaster.game) && questionMaster.game.answers.length === 2;
+      return shared.isStarted(questionMaster.game) && questionMaster.game.answers?.length === 2;
     };
 
     const getQuestionMaster = () => {

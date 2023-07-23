@@ -1,13 +1,22 @@
+import { injectableClass } from 'ditox';
+
 import { ConfigPort } from './config.port';
 
 export class EnvConfigAdapter implements ConfigPort {
+  static inject = injectableClass(this);
+
   server: ConfigPort['server'];
+  data: ConfigPort['data'];
   database: ConfigPort['database'];
 
   constructor() {
     this.server = {
       host: this.getEnv('HOST', String, 'localhost'),
       port: this.getEnv('PORT', parseInt, 3000),
+    };
+
+    this.data = {
+      path: this.getEnv('DATA_DIR', String, './data'),
     };
 
     this.database = {
