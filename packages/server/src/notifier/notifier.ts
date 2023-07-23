@@ -1,7 +1,7 @@
 import * as shared from '@cah/shared';
 import { injectableClass } from 'ditox';
 
-import { EventPublisherPort, RealEventPublisherAdapter, RtcPort } from 'src/adapters';
+import { EventPublisherPort, LoggerPort, RealEventPublisherAdapter, RtcPort } from 'src/adapters';
 import { AnswerCreatedEvent } from 'src/commands/create-answer/create-answer';
 import { GameCreatedEvent } from 'src/commands/create-game/create-game';
 import { CardsDealtEvent } from 'src/commands/deal-cards/deal-cards';
@@ -29,6 +29,7 @@ import { hasId } from 'src/utils/id';
 export class Notifier {
   static inject = injectableClass(
     this,
+    TOKENS.logger,
     TOKENS.rtc,
     TOKENS.publisher,
     TOKENS.repositories.game,
@@ -39,6 +40,7 @@ export class Notifier {
   );
 
   constructor(
+    private readonly logger: LoggerPort,
     private readonly rtc: RtcPort,
     private readonly publisher: EventPublisherPort,
     private readonly gameRepository: GameRepository,
@@ -46,7 +48,9 @@ export class Notifier {
     private readonly choiceRepository: ChoiceRepository,
     private readonly questionRepository: QuestionRepository,
     private readonly answerRepository: AnswerRepository,
-  ) {}
+  ) {
+    this.logger.context = 'Notifier';
+  }
 
   configure() {
     const publisher = this.publisher;
@@ -188,6 +192,7 @@ export class Notifier {
   }
 
   private async send(to: string, event: shared.GameEvent) {
+    this.logger.verbose('notify', to, event.type);
     await this.rtc.send(to, event);
   }
 }

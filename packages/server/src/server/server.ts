@@ -5,6 +5,7 @@ import { Container, injectableClass } from 'ditox';
 import { ConfigPort, EventPublisherPort, LoggerPort, RealEventPublisherAdapter } from 'src/adapters';
 import { AnswerCreatedEvent } from 'src/commands/create-answer/create-answer';
 import { GameCreatedEvent } from 'src/commands/create-game/create-game';
+import { GameEndedEvent } from 'src/commands/end-game/end-game';
 import { TurnEndedEvent } from 'src/commands/end-turn/end-turn';
 import { PlayerJoinedEvent } from 'src/commands/join-game/join-game';
 import { PlayerLeftEvent } from 'src/commands/leave-game/leave-game';
@@ -73,14 +74,20 @@ export class Server {
     assert(publisher instanceof RealEventPublisherAdapter);
 
     publisher.register(PlayerJoinedEvent, async (event) => {
+      this.logger.info('player joined', { gameId: event.entityId, playerId: event.playerId });
+
       await this.wsServer.join(event.entityId, event.playerId);
     });
 
     publisher.register(PlayerLeftEvent, async (event) => {
+      this.logger.info('player left', { gameId: event.entityId, playerId: event.playerId });
+
       await this.wsServer.leave(event.entityId, event.playerId);
     });
 
     publisher.register(GameCreatedEvent, async (event) => {
+      this.logger.info('game created', { entityId: event.entityId, playerId: event.creatorId });
+
       const joinGame = this.container.resolve(TOKENS.commands.joinGame);
 
       await joinGame.execute({
@@ -90,6 +97,8 @@ export class Server {
     });
 
     publisher.register(GameStartedEvent, async (event) => {
+      this.logger.info('game started', { gameId: event.entityId });
+
       const startTurn = this.container.resolve(TOKENS.commands.startTurn);
 
       await startTurn.execute({
@@ -99,6 +108,8 @@ export class Server {
     });
 
     publisher.register(TurnStartedEvent, async (event) => {
+      this.logger.info('turn started', { playerId: event.entityId });
+
       const dealCards = this.container.resolve(TOKENS.commands.dealCards);
 
       await dealCards.execute({
@@ -107,6 +118,8 @@ export class Server {
     });
 
     publisher.register(AnswerCreatedEvent, async (event) => {
+      this.logger.info('answer created', { gameId: event.entityId });
+
       const handleEndOfPlayersAnswer = this.container.resolve(TOKENS.commands.handleEndOfPlayersAnswer);
 
       await handleEndOfPlayersAnswer.execute({
@@ -115,6 +128,8 @@ export class Server {
     });
 
     publisher.register(TurnEndedEvent, async (event) => {
+      this.logger.info('turn ended', { gameId: event.entityId, winnerId: event.winnerId });
+
       if (event.hasMoreQuestions) {
         const startTurn = this.container.resolve(TOKENS.commands.startTurn);
 
@@ -129,6 +144,10 @@ export class Server {
           gameId: event.entityId,
         });
       }
+    });
+
+    publisher.register(GameEndedEvent, async (event) => {
+      this.logger.info('game ended', { gameId: event.entityId });
     });
   }
 }
