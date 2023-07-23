@@ -5,6 +5,8 @@ import { EventPublisherPort, RealEventPublisherAdapter, RtcPort } from 'src/adap
 import { AnswerCreatedEvent } from 'src/commands/create-answer/create-answer';
 import { GameCreatedEvent } from 'src/commands/create-game/create-game';
 import { CardsDealtEvent } from 'src/commands/deal-cards/deal-cards';
+import { GameEndedEvent } from 'src/commands/end-game/end-game';
+import { TurnEndedEvent } from 'src/commands/end-turn/end-turn';
 import { AllAnswersSubmittedEvent } from 'src/commands/handle-end-of-players-answer/handle-end-of-players-answer';
 import { PlayerJoinedEvent } from 'src/commands/join-game/join-game';
 import { AnswerSelectedEvent } from 'src/commands/select-winning-answer/select-winning-answer';
@@ -169,6 +171,18 @@ export class Notifier {
         type: 'winning-answer-selected',
         selectedAnswerId: game.selectedAnswerId,
         answers: game.answers as shared.Answer[],
+      });
+    });
+
+    publisher.register(TurnEndedEvent, async (event) => {
+      await this.send(event.entityId, {
+        type: 'turn-ended',
+      });
+    });
+
+    publisher.register(GameEndedEvent, async (event) => {
+      await this.send(event.entityId, {
+        type: 'game-ended',
       });
     });
   }

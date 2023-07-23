@@ -91,8 +91,6 @@ class Client {
       case 'turn-started':
         this.game.questionMasterId = event.questionMasterId;
         this.game.question = event.question;
-        this.playersAnswered = [];
-        this.game.answers = [];
         break;
 
       case 'cards-dealt':
@@ -110,6 +108,19 @@ class Client {
       case 'winning-answer-selected':
         this.game.selectedAnswerId = event.selectedAnswerId;
         this.game.answers = event.answers;
+        break;
+
+      case 'turn-ended':
+        this.playersAnswered = [];
+        this.game.answers = [];
+        break;
+
+      case 'game-ended':
+        this.game.state = GameState.finished;
+        delete this.game.questionMasterId;
+        delete this.game.question;
+        delete this.game.answers;
+        delete this.game.selectedAnswerId;
         break;
     }
   };
@@ -253,7 +264,7 @@ describe('Server E2E', () => {
       await test.server.close();
     }
 
-    // await test.database.closeConnection();
+    await test.database.closeConnection();
   });
 
   // cspell:word riri fifi loulou
@@ -270,8 +281,8 @@ describe('Server E2E', () => {
     };
 
     await forEachPlayer(async (player) => {
-      player.debug = true;
-      player.debugEvents = true;
+      // player.debug = true;
+      // player.debugEvents = true;
       await player.authenticate();
       await player.connect();
     });
@@ -297,7 +308,8 @@ describe('Server E2E', () => {
     await waitFor(() => forEachPlayer((player) => assert(player.cards.length > 0)));
 
     for (let i = 0; i < 3; ++i) {
-      const questionMaster = mapPlayersIds[defined(riri.game.questionMasterId)];
+      const questionMasterId = defined(riri.game.questionMasterId);
+      const questionMaster = mapPlayersIds[questionMasterId];
 
       await forEachPlayer(async (player) => {
         if (player !== questionMaster) {
@@ -310,11 +322,10 @@ describe('Server E2E', () => {
       await questionMaster.selectAnswer();
       await questionMaster.endTurn();
 
-      await new Promise((r) => setTimeout(r, 100));
+      await waitFor(() => expect(riri.game.questionMasterId).not.toBe(questionMasterId));
     }
 
-    // await new Promise((r) => setTimeout(r, 100));
-    // console.log(loulou);
+    expect(riri.game.state).toBe(GameState.finished);
 
     await forEachPlayer((player) => player.disconnect());
   });

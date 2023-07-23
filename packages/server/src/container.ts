@@ -19,6 +19,7 @@ import { AuthenticateHandler } from './commands/authenticate/authenticate';
 import { CreateAnswerHandler } from './commands/create-answer/create-answer';
 import { CreateGameHandler } from './commands/create-game/create-game';
 import { DealCardsHandler } from './commands/deal-cards/deal-cards';
+import { EndGameHandler } from './commands/end-game/end-game';
 import { EndTurnHandler } from './commands/end-turn/end-turn';
 import { HandleEndOfPlayersAnswerHandler } from './commands/handle-end-of-players-answer/handle-end-of-players-answer';
 import { JoinGameHandler } from './commands/join-game/join-game';
@@ -46,6 +47,7 @@ export const appModule = declareModule({
     handleEndOfPlayersAnswer: HandleEndOfPlayersAnswerHandler.inject(container),
     selectWinningAnswer: SelectWinningAnswerHandler.inject(container),
     endTurn: EndTurnHandler.inject(container),
+    endGame: EndGameHandler.inject(container),
     getGame: GetGameHandler.inject(container),
     getPlayer: GetPlayerHandler.inject(container),
   }),

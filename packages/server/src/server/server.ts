@@ -110,12 +110,18 @@ export class Server {
     });
 
     publisher.register(TurnEndedEvent, async (event) => {
-      const startTurn = this.container.resolve(TOKENS.commands.startTurn);
-
       if (event.hasMoreQuestions) {
+        const startTurn = this.container.resolve(TOKENS.commands.startTurn);
+
         await startTurn.execute({
           gameId: event.entityId,
           questionMasterId: event.winnerId,
+        });
+      } else {
+        const endGame = this.container.resolve(TOKENS.commands.endGame);
+
+        await endGame.execute({
+          gameId: event.entityId,
         });
       }
     });

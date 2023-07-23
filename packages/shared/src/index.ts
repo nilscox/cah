@@ -106,6 +106,14 @@ export type WinningAnswerSelectedEvent = {
   answers: Array<Answer>;
 };
 
+export type TurnEndedEvent = {
+  type: 'turn-ended';
+};
+
+export type GameEndedEvent = {
+  type: 'game-ended';
+};
+
 export type GameEvent =
   | PlayerConnectedEvent
   | PlayerDisconnectedEvent
@@ -116,4 +124,6 @@ export type GameEvent =
   | CardsDealtEvent
   | PlayerAnsweredEvent
   | AllPlayerAnsweredEvent
-  | WinningAnswerSelectedEvent;
+  | WinningAnswerSelectedEvent
+  | TurnEndedEvent
+  | GameEndedEvent;
