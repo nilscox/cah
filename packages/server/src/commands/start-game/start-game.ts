@@ -5,7 +5,6 @@ import { Choice, GameState, Question, isStarted } from 'src/entities';
 import { CommandHandler, DomainEvent } from 'src/interfaces';
 import { ChoiceRepository, GameRepository, PlayerRepository, QuestionRepository } from 'src/persistence';
 import { TOKENS } from 'src/tokens';
-import { hasProperty } from 'src/utils/has-property';
 import { sum } from 'src/utils/sum';
 
 export class GameStartedEvent extends DomainEvent {
@@ -19,7 +18,6 @@ export class GameStartedEvent extends DomainEvent {
 
 type StartGameCommand = {
   playerId: string;
-  gameId: string;
   numberOfQuestions: number;
 };
 
@@ -46,20 +44,14 @@ export class StartGameHandler implements CommandHandler<StartGameCommand> {
   ) {}
 
   async execute(command: StartGameCommand): Promise<void> {
-    const game = await this.gameRepository.findById(command.gameId);
+    const player = await this.playerRepository.findById(command.playerId);
+    assert(player.gameId, 'player is not in a game');
+
+    const game = await this.gameRepository.findById(player.gameId);
+    assert(game.state === GameState.idle, 'game has already started');
+
     const players = await this.playerRepository.findAllByGameId(game.id);
-
-    if (!players.some(hasProperty('id', command.playerId))) {
-      throw new Error('player is not part of this game');
-    }
-
-    if (game.state !== GameState.idle) {
-      throw new Error('the game has already started');
-    }
-
-    if (players.length <= 2) {
-      throw new Error('there is not enough players to start (min: 3)');
-    }
+    assert(players.length >= 3, 'there is not enough players to start (min: 3)');
 
     const questions = await this.getQuestions(game.id, command.numberOfQuestions);
     const choices = await this.getChoices(game.id, players.length, questions);

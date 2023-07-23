@@ -153,6 +153,7 @@ export class HttpServer {
       const handler = this.container.resolve(TOKENS.commands.joinGame);
 
       await handler.execute({ code, playerId });
+
       res.status(201).end();
     });
 
@@ -168,13 +169,10 @@ export class HttpServer {
     router.put('/game/start', this.authenticated, async (req, res) => {
       const playerId = defined(req.session.playerId);
       const { numberOfQuestions } = await startGameBodySchema.validate(req.body);
-      const player = await this.container.resolve(TOKENS.queries.getPlayer).execute({ playerId });
-
-      assert(player.gameId, 'player is not in a game');
-
       const handler = this.container.resolve(TOKENS.commands.startGame);
 
-      await handler.execute({ playerId, gameId: player.gameId, numberOfQuestions });
+      await handler.execute({ playerId, numberOfQuestions });
+
       res.status(201).end();
     });
 
@@ -208,22 +206,22 @@ export class HttpServer {
     });
 
     router.get('/game/:gameId', async (req, res) => {
-      const handler = this.container.resolve(TOKENS.queries.getGame);
+      const gameRepository = this.container.resolve(TOKENS.repositories.game);
 
-      res.json(await handler.execute({ gameId: req.params.gameId }));
+      res.json(await gameRepository.query(req.params.gameId));
     });
 
     router.get('/game/:gameId/turns', async (req, res) => {
-      const handler = this.container.resolve(TOKENS.queries.getTurns);
+      const turnRepository = this.container.resolve(TOKENS.repositories.turn);
 
-      res.json(await handler.execute({ gameId: req.params.gameId }));
+      res.json(await turnRepository.queryForGame(req.params.gameId));
     });
 
     router.get('/player', this.authenticated, async (req, res) => {
       const playerId = defined(req.session.playerId);
-      const handler = this.container.resolve(TOKENS.queries.getPlayer);
+      const playerRepository = this.container.resolve(TOKENS.repositories.player);
 
-      res.json(await handler.execute({ playerId }));
+      res.json(await playerRepository.query(playerId));
     });
 
     router.use(((err: unknown, req, res, next) => {

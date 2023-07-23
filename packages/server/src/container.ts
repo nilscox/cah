@@ -30,8 +30,6 @@ import { StartTurnHandler } from './commands/start-turn/start-turn';
 import { Notifier } from './notifier/notifier';
 import { sqlPersistenceModule } from './persistence';
 import { Database } from './persistence/database';
-import { GetGameHandler } from './queries/get-game';
-import { GetPlayerHandler } from './queries/get-player';
 import { Server } from './server/server';
 import { TOKENS } from './tokens';
 import { toObject } from './utils/to-object';
@@ -50,14 +48,12 @@ export const appModule = declareModule({
     endTurn: EndTurnHandler.inject(container),
     endGame: EndGameHandler.inject(container),
     leaveGame: LeaveGameHandler.inject(container),
-    getGame: GetGameHandler.inject(container),
-    getPlayer: GetPlayerHandler.inject(container),
   }),
-  // prettier-ignore
-  exports: {
-    ...toObject(Object.entries(TOKENS.commands), ([key]) => key, ([, token]) => token),
-    ...toObject(Object.entries(TOKENS.queries), ([key]) => key, ([, token]) => token),
-  },
+  exports: toObject(
+    Object.entries(TOKENS.commands),
+    ([key]) => key,
+    ([, token]) => token,
+  ),
 });
 
 export const createContainer = () => {

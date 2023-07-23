@@ -1,6 +1,5 @@
 import { GameState, createGame, createPlayer, createQuestion, isStarted } from 'src/entities';
 import { HandlerCommand } from 'src/interfaces';
-import { defined } from 'src/utils/defined';
 import { hasProperty } from 'src/utils/has-property';
 import { UnitTest } from 'src/utils/unit-test';
 
@@ -19,22 +18,19 @@ class Test extends UnitTest {
 
   command: HandlerCommand<typeof this.handler> = {
     playerId: 'playerId1',
-    gameId: 'gameId',
     numberOfQuestions: 1,
   };
+
+  game = createGame({ id: 'gameId', state: GameState.idle });
 
   constructor() {
     super();
 
-    this.gameRepository.set(createGame({ id: 'gameId' }));
+    this.gameRepository.set(this.game);
   }
 
   addPlayer(playerId: string) {
     this.playerRepository.set(createPlayer({ id: playerId, gameId: 'gameId' }));
-  }
-
-  get game() {
-    return defined(this.gameRepository.get('gameId'));
   }
 }
 
@@ -55,8 +51,7 @@ describe('StartGameCommand', () => {
     it('starts a game', async () => {
       await test.handler.execute(test.command);
 
-      expect(test.game.state).toEqual(GameState.started);
-      expect(isStarted(test.game)).toBe(true);
+      expect(test.gameRepository.get('gameId')).toHaveProperty('state', GameState.started);
     });
 
     it('triggers a GameStartedEvent', async () => {
@@ -84,20 +79,20 @@ describe('StartGameCommand', () => {
     });
   });
 
+  it('fails when the player is not in a game', async () => {
+    test.playerRepository.set(createPlayer({ id: 'playerId' }));
+    test.command.playerId = 'playerId';
+
+    await expect(test.handler.execute(test.command)).rejects.toThrow('player is not in a game');
+  });
+
   it('fails when the game is already started', async () => {
     test.addPlayer('playerId1');
 
-    test.gameRepository.set({ ...test.game, state: GameState.started });
+    test.game.state = GameState.started;
+    test.gameRepository.set(test.game);
 
-    await expect(test.handler.execute(test.command)).rejects.toThrow('the game has already started');
-  });
-
-  it('fails when the player is not part of this game', async () => {
-    test.playerRepository.set(createPlayer({ id: 'playerId' }));
-
-    await expect(test.handler.execute({ ...test.command, playerId: 'playerId' })).rejects.toThrow(
-      'player is not part of this game',
-    );
+    await expect(test.handler.execute(test.command)).rejects.toThrow('game has already started');
   });
 
   it('fails when the game contains less than 3 players', async () => {

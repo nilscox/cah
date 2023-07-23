@@ -31,9 +31,6 @@ import {
   TurnRepository,
 } from './persistence';
 import { Database } from './persistence/database';
-import { GetGameHandler } from './queries/get-game';
-import { GetPlayerHandler } from './queries/get-player';
-import { GetTurnsHandler } from './queries/get-turns';
 import { Server } from './server/server';
 
 export const TOKENS = {
@@ -73,11 +70,5 @@ export const TOKENS = {
     endTurn: token<EndTurnHandler>('endTurn'),
     endGame: token<EndGameHandler>('endGame'),
     leaveGame: token<LeaveGameHandler>('leaveGame'),
-  },
-
-  queries: {
-    getGame: token<GetGameHandler>('getGame'),
-    getTurns: token<GetTurnsHandler>('getTurns'),
-    getPlayer: token<GetPlayerHandler>('getPlayer'),
   },
 };
