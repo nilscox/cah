@@ -104,6 +104,8 @@ export type SqlAnswer = InferModel<typeof answers>;
 
 export const turns = cah.table('turns', {
   id: primaryKey(),
+  // todo: unique
+  number: integer('number').notNull(),
   gameId: id('gameId')
     .notNull()
     .references(() => games.id),
@@ -116,7 +118,6 @@ export const turns = cah.table('turns', {
   selectedAnswerId: id('selectedAnswerId')
     .notNull()
     .references(() => answers.id),
-  place: integer('place'),
 });
 
 export type SqlTurn = InferModel<typeof turns>;

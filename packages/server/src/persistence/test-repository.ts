@@ -107,11 +107,11 @@ class EntitiesCreator {
 
   private defaultTurn = factory<SqlTurn>(() => ({
     id: createId(),
+    number: 0,
     gameId: '',
     questionMasterId: '',
     questionId: '',
     selectedAnswerId: '',
-    place: 0,
   }));
 
   turn = this.createInsert(turns, this.defaultTurn);

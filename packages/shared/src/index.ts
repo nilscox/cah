@@ -47,6 +47,10 @@ export type AnonymousAnswer = Omit<Answer, 'playerId'>;
 
 export type Turn = {
   id: string;
+  number: number;
+  question: Question;
+  answers: Answer[];
+  winningAnswerId: string;
 };
 
 export type PlayerConnectedEvent = {

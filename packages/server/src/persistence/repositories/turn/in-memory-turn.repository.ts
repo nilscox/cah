@@ -2,22 +2,17 @@ import * as shared from '@cah/shared';
 
 import { Turn } from 'src/entities';
 
-import { EntityNotFoundError } from '../../entity-not-found-error';
 import { InMemoryRepository } from '../../in-memory-repository';
 
 import { TurnRepository } from './turn.repository';
 
 export class InMemoryTurnRepository extends InMemoryRepository<Turn> implements TurnRepository {
-  async query(turnId: string): Promise<shared.Turn> {
-    const turn = this.get(turnId);
+  query(): Promise<shared.Turn> {
+    throw new Error('Method not implemented.');
+  }
 
-    if (!turn) {
-      throw new EntityNotFoundError('Turn', { id: turnId });
-    }
-
-    return {
-      id: turn.id,
-    };
+  queryForGame(): Promise<shared.Turn[]> {
+    throw new Error('Method not implemented.');
   }
 
   async insert(turn: Turn): Promise<void> {

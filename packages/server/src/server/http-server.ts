@@ -213,6 +213,12 @@ export class HttpServer {
       res.json(await handler.execute({ gameId: req.params.gameId }));
     });
 
+    router.get('/game/:gameId/turns', async (req, res) => {
+      const handler = this.container.resolve(TOKENS.queries.getTurns);
+
+      res.json(await handler.execute({ gameId: req.params.gameId }));
+    });
+
     router.get('/player', this.authenticated, async (req, res) => {
       const playerId = defined(req.session.playerId);
       const handler = this.container.resolve(TOKENS.queries.getPlayer);

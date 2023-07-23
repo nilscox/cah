@@ -4,6 +4,7 @@ import { Turn } from 'src/entities';
 
 export interface TurnRepository {
   query(turnId: string): Promise<shared.Turn>;
+  queryForGame(gameId: string): Promise<shared.Turn[]>;
 
   insert(turn: Turn): Promise<void>;
 }
