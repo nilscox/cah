@@ -18,6 +18,7 @@ import { HandleEndOfPlayersAnswerHandler } from './commands/handle-end-of-player
 import { JoinGameHandler } from './commands/join-game/join-game';
 import { SelectWinningAnswerHandler } from './commands/select-winning-answer/select-winning-answer';
 import { StartGameHandler } from './commands/start-game/start-game';
+import { StartTurnHandler } from './commands/start-turn/start-turn';
 import { Notifier } from './notifier/notifier';
 import {
   AnswerRepository,
@@ -61,6 +62,7 @@ export const TOKENS = {
     createGame: token<CreateGameHandler>('createGame'),
     joinGame: token<JoinGameHandler>('joinGame'),
     startGame: token<StartGameHandler>('startGame'),
+    startTurn: token<StartTurnHandler>('startTurn'),
     dealCards: token<DealCardsHandler>('dealCards'),
     createAnswer: token<CreateAnswerHandler>('createAnswer'),
     handleEndOfPlayersAnswer: token<HandleEndOfPlayersAnswerHandler>('handleEndOfPlayersAnswer'),

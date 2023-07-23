@@ -169,9 +169,9 @@ class Client {
     await this.fetcher.put(`/game/${code}/join`);
   }
 
-  async startGame() {
+  async startGame(numberOfQuestions: number) {
     this.log('start the game');
-    await this.fetcher.put('/game/start');
+    await this.fetcher.put('/game/start', { numberOfQuestions });
   }
 
   async answer() {
@@ -270,10 +270,17 @@ describe('Server E2E', () => {
     };
 
     await forEachPlayer(async (player) => {
-      // player.debug = true;
-      // player.debugEvents = true;
+      player.debug = true;
+      player.debugEvents = true;
       await player.authenticate();
       await player.connect();
+    });
+
+    const mapPlayersIds: Record<string, Client> = {};
+
+    await forEachPlayer(async (player) => {
+      const { id } = await player.fetchPlayer();
+      mapPlayersIds[id] = player;
     });
 
     await riri.createGame();
@@ -285,20 +292,26 @@ describe('Server E2E', () => {
     await loulou.joinGame(riri.game.code);
     await loulou.fetchGame();
 
-    await riri.startGame();
-
-    await forEachPlayer((player) => void player.fetchGame());
+    await riri.startGame(3);
 
     await waitFor(() => forEachPlayer((player) => assert(player.cards.length > 0)));
 
-    await fifi.answer();
-    await loulou.answer();
+    for (let i = 0; i < 3; ++i) {
+      const questionMaster = mapPlayersIds[defined(riri.game.questionMasterId)];
 
-    await waitFor(() => assert(riri.game.answers?.length === 2));
+      await forEachPlayer(async (player) => {
+        if (player !== questionMaster) {
+          await player.answer();
+        }
+      });
 
-    await riri.selectAnswer();
+      await waitFor(() => assert(questionMaster.game.answers?.length === 2));
 
-    await riri.endTurn();
+      await questionMaster.selectAnswer();
+      await questionMaster.endTurn();
+
+      await new Promise((r) => setTimeout(r, 100));
+    }
 
     // await new Promise((r) => setTimeout(r, 100));
     // console.log(loulou);

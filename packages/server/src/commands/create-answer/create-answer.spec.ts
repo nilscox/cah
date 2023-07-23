@@ -95,6 +95,14 @@ describe('CreateAnswerCommand', () => {
     expect(test.choiceRepository.get('choiceId2')).toHaveProperty('place', 2);
   });
 
+  it("removes the cards from the player's hand", async () => {
+    test.choiceRepository.set(createChoice({ id: 'choiceId', gameId: 'gameId', playerId: 'playerId' }));
+
+    await expect(test.handler.execute(test.command)).resolves.toBeUndefined();
+
+    expect(test.choiceRepository.get('choiceId')).not.toHaveProperty('playerId');
+  });
+
   it('publishes an AnswerCreatedEvent', async () => {
     await expect(test.handler.execute(test.command)).resolves.toBeUndefined();
 

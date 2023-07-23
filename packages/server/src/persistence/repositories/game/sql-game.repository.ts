@@ -1,11 +1,11 @@
 import * as shared from '@cah/shared';
-import { asc, eq } from 'drizzle-orm';
+import { asc, eq, isNull } from 'drizzle-orm';
 
 import { Game, GameState, StartedGame, isStarted } from 'src/entities';
 import { toEnum } from 'src/utils/to-enum';
 
 import { Database } from '../../database';
-import { SqlGame, answers, choices, games } from '../../drizzle-schema';
+import { SqlGame, answers, choices, games, turns } from '../../drizzle-schema';
 import { EntityNotFoundError } from '../../entity-not-found-error';
 
 import { GameRepository } from './game.repository';
@@ -51,6 +51,7 @@ export class SqlGameRepository implements GameRepository {
         players: true,
         answers: {
           orderBy: [asc(answers.place)],
+          where: isNull(answers.turnId),
           with: {
             choices: {
               orderBy: [asc(choices.place)],

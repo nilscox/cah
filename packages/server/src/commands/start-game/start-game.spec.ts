@@ -1,5 +1,3 @@
-import assert from 'node:assert';
-
 import { GameState, createGame, createPlayer, createQuestion, isStarted } from 'src/entities';
 import { HandlerCommand } from 'src/interfaces';
 import { defined } from 'src/utils/defined';
@@ -20,7 +18,7 @@ class Test extends UnitTest {
   );
 
   command: HandlerCommand<typeof this.handler> = {
-    playerId: 'player1Id',
+    playerId: 'playerId1',
     gameId: 'gameId',
     numberOfQuestions: 1,
   };
@@ -49,25 +47,22 @@ describe('StartGameCommand', () => {
 
   describe('when the game starts', () => {
     beforeEach(() => {
-      test.addPlayer('player1Id');
-      test.addPlayer('player2Id');
-      test.addPlayer('player3Id');
+      test.addPlayer('playerId1');
+      test.addPlayer('playerId2');
+      test.addPlayer('playerId3');
     });
 
-    it("initializes the game's properties", async () => {
+    it('starts a game', async () => {
       await test.handler.execute(test.command);
 
       expect(test.game.state).toEqual(GameState.started);
-      assert(isStarted(test.game));
-
-      expect(test.game.questionMasterId).toEqual('player1Id');
-      expect(test.game.questionId).toEqual('question1Id');
+      expect(isStarted(test.game)).toBe(true);
     });
 
     it('triggers a GameStartedEvent', async () => {
       await test.handler.execute(test.command);
 
-      expect(test.publisher).toContainEqual(new GameStartedEvent('gameId'));
+      expect(test.publisher).toContainEqual(new GameStartedEvent('gameId', 'playerId1'));
     });
 
     it('computes the number of cards', async () => {
@@ -90,7 +85,7 @@ describe('StartGameCommand', () => {
   });
 
   it('fails when the game is already started', async () => {
-    test.addPlayer('player1Id');
+    test.addPlayer('playerId1');
 
     test.gameRepository.set({ ...test.game, state: GameState.started });
 
@@ -106,8 +101,8 @@ describe('StartGameCommand', () => {
   });
 
   it('fails when the game contains less than 3 players', async () => {
-    test.addPlayer('player1Id');
-    test.addPlayer('player2Id');
+    test.addPlayer('playerId1');
+    test.addPlayer('playerId2');
 
     await expect(test.handler.execute(test.command)).rejects.toThrow(
       'there is not enough players to start (min: 3)',

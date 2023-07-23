@@ -5,8 +5,10 @@ import { Container, injectableClass } from 'ditox';
 import { ConfigPort, EventPublisherPort, LoggerPort, RealEventPublisherAdapter } from 'src/adapters';
 import { AnswerCreatedEvent } from 'src/commands/create-answer/create-answer';
 import { GameCreatedEvent } from 'src/commands/create-game/create-game';
+import { TurnEndedEvent } from 'src/commands/end-turn/end-turn';
 import { PlayerJoinedEvent } from 'src/commands/join-game/join-game';
-import { GameStartedEvent, TurnStartedEvent } from 'src/commands/start-game/start-game';
+import { GameStartedEvent } from 'src/commands/start-game/start-game';
+import { TurnStartedEvent } from 'src/commands/start-turn/start-turn';
 import { TOKENS } from 'src/tokens';
 
 import { HttpServer } from './http-server';
@@ -83,7 +85,12 @@ export class Server {
     });
 
     publisher.register(GameStartedEvent, async (event) => {
-      this.publisher.publish(new TurnStartedEvent(event.entityId));
+      const startTurn = this.container.resolve(TOKENS.commands.startTurn);
+
+      await startTurn.execute({
+        gameId: event.entityId,
+        questionMasterId: event.initialQuestionMasterId,
+      });
     });
 
     publisher.register(TurnStartedEvent, async (event) => {
@@ -100,6 +107,17 @@ export class Server {
       await handleEndOfPlayersAnswer.execute({
         answerId: event.entityId,
       });
+    });
+
+    publisher.register(TurnEndedEvent, async (event) => {
+      const startTurn = this.container.resolve(TOKENS.commands.startTurn);
+
+      if (event.hasMoreQuestions) {
+        await startTurn.execute({
+          gameId: event.entityId,
+          questionMasterId: event.winnerId,
+        });
+      }
     });
   }
 }

@@ -47,12 +47,16 @@ export type SqlPlayer = InferModel<typeof players>;
 
 export const questions = cah.table('questions', {
   id: primaryKey(),
-  gameId: varchar('gameId')
+  gameId: id('gameId')
     .notNull()
     .references(() => games.id),
   text: text('text').notNull(),
   blanks: integer('blanks').array().notNull(),
 });
+
+export const questionsRelations = relations(questions, ({ one }) => ({
+  turn: one(turns),
+}));
 
 export type SqlQuestion = InferModel<typeof questions>;
 
@@ -93,25 +97,34 @@ export const answers = cah.table('answers', {
 export const answersRelations = relations(answers, ({ one, many }) => ({
   game: one(games, { fields: [answers.gameId], references: [games.id] }),
   choices: many(choices),
+  turn: one(turns, { fields: [answers.turnId], references: [turns.id] }),
 }));
 
 export type SqlAnswer = InferModel<typeof answers>;
 
 export const turns = cah.table('turns', {
   id: primaryKey(),
-  gameId: varchar('gameId')
+  gameId: id('gameId')
     .notNull()
     .references(() => games.id),
-  questionMasterId: text('questionMasterId')
+  questionMasterId: id('questionMasterId')
     .notNull()
     .references(() => players.id),
-  questionId: text('questionId')
+  questionId: id('questionId')
     .notNull()
     .references(() => questions.id),
-  selectedAnswerId: text('selectedAnswerId')
+  selectedAnswerId: id('selectedAnswerId')
     .notNull()
     .references(() => answers.id),
   place: integer('place'),
 });
 
 export type SqlTurn = InferModel<typeof turns>;
+
+export const turnsRelations = relations(turns, ({ one, many }) => ({
+  game: one(games, { fields: [turns.gameId], references: [games.id] }),
+  questionMaster: one(players, { fields: [turns.questionMasterId], references: [players.id] }),
+  question: one(questions, { fields: [turns.questionId], references: [questions.id] }),
+  selectedAnswer: one(answers, { fields: [turns.selectedAnswerId], references: [answers.id] }),
+  answers: many(answers),
+}));

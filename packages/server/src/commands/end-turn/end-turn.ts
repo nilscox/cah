@@ -4,11 +4,21 @@ import { EventPublisherPort, GeneratorPort } from 'src/adapters';
 import { isStarted } from 'src/entities';
 import { Turn } from 'src/entities/turn';
 import { CommandHandler, DomainEvent } from 'src/interfaces';
-import { AnswerRepository, GameRepository, PlayerRepository, TurnRepository } from 'src/persistence';
+import {
+  AnswerRepository,
+  GameRepository,
+  PlayerRepository,
+  QuestionRepository,
+  TurnRepository,
+} from 'src/persistence';
 import { TOKENS } from 'src/tokens';
 
 export class TurnEndedEvent extends DomainEvent {
-  constructor(gameId: string) {
+  constructor(
+    gameId: string,
+    public readonly winnerId: string,
+    public readonly hasMoreQuestions: boolean,
+  ) {
     super('game', gameId);
   }
 }
@@ -24,6 +34,7 @@ export class EndTurnHandler implements CommandHandler<EndTurnCommand> {
     TOKENS.publisher,
     TOKENS.repositories.game,
     TOKENS.repositories.player,
+    TOKENS.repositories.question,
     TOKENS.repositories.answer,
     TOKENS.repositories.turn,
   );
@@ -33,6 +44,7 @@ export class EndTurnHandler implements CommandHandler<EndTurnCommand> {
     private publisher: EventPublisherPort,
     private gameRepository: GameRepository,
     private playerRepository: PlayerRepository,
+    private questionRepository: QuestionRepository,
     private answerRepository: AnswerRepository,
     private turnRepository: TurnRepository,
   ) {}
@@ -62,6 +74,9 @@ export class EndTurnHandler implements CommandHandler<EndTurnCommand> {
     await this.turnRepository.insert(turn);
     await this.answerRepository.updateMany(answers);
 
-    this.publisher.publish(new TurnEndedEvent(game.id));
+    const winningAnswer = await this.answerRepository.findById(turn.selectedAnswerId);
+    const nextQuestion = await this.questionRepository.findNextAvailableQuestion(game.id);
+
+    this.publisher.publish(new TurnEndedEvent(game.id, winningAnswer.playerId, nextQuestion !== undefined));
   }
 }

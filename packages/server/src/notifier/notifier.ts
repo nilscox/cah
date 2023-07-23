@@ -9,6 +9,7 @@ import { AllAnswersSubmittedEvent } from 'src/commands/handle-end-of-players-ans
 import { PlayerJoinedEvent } from 'src/commands/join-game/join-game';
 import { AnswerSelectedEvent } from 'src/commands/select-winning-answer/select-winning-answer';
 import { GameStartedEvent } from 'src/commands/start-game/start-game';
+import { TurnStartedEvent } from 'src/commands/start-turn/start-turn';
 import { isStarted } from 'src/entities';
 import {
   AnswerRepository,
@@ -19,6 +20,8 @@ import {
 } from 'src/persistence';
 import { PlayerConnectedEvent } from 'src/server/ws-server';
 import { TOKENS } from 'src/tokens';
+import { defined } from 'src/utils/defined';
+import { hasId } from 'src/utils/id';
 
 export class Notifier {
   static inject = injectableClass(
@@ -100,7 +103,7 @@ export class Notifier {
       });
     });
 
-    publisher.register(GameStartedEvent, async (event) => {
+    publisher.register(TurnStartedEvent, async (event) => {
       const game = await this.gameRepository.findById(event.entityId);
       assert(isStarted(game));
 
@@ -124,11 +127,13 @@ export class Notifier {
       await this.send(player.id, {
         type: 'cards-dealt',
         playerId: player.id,
-        cards: cards.map((choice) => ({
-          id: choice.id,
-          text: choice.text,
-          caseSensitive: choice.caseSensitive,
-        })),
+        cards: event.choicesIds
+          .map((choiceId) => defined(cards.find(hasId(choiceId))))
+          .map((choice) => ({
+            id: choice.id,
+            text: choice.text,
+            caseSensitive: choice.caseSensitive,
+          })),
       });
     });
 

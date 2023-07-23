@@ -10,6 +10,7 @@ class Test extends UnitTest {
     this.publisher,
     this.gameRepository,
     this.playerRepository,
+    this.questionRepository,
     this.answerRepository,
     this.turnRepository,
   );
@@ -27,7 +28,7 @@ class Test extends UnitTest {
   });
 
   player = createPlayer({ id: 'playerId', gameId: 'gameId' });
-  answer = createAnswer({ id: 'answerId', gameId: 'gameId' });
+  answer = createAnswer({ id: 'answerId', gameId: 'gameId', playerId: 'winnerId' });
 
   constructor() {
     super();
@@ -64,7 +65,7 @@ describe('EndTurnCommand', () => {
   it('publishes a TurnEndedEvent', async () => {
     await expect(test.handler.execute(test.command)).resolves.toBeUndefined();
 
-    expect(test.publisher).toContainEqual(new TurnEndedEvent('gameId'));
+    expect(test.publisher).toContainEqual(new TurnEndedEvent('gameId', 'winnerId', false));
   });
 
   it('fails when the player is not in a game', async () => {

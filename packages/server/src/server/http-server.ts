@@ -158,13 +158,14 @@ export class HttpServer {
 
     router.put('/game/start', this.authenticated, async (req, res) => {
       const playerId = defined(req.session.playerId);
+      const { numberOfQuestions } = await startGameBodySchema.validate(req.body);
       const player = await this.container.resolve(TOKENS.queries.getPlayer).execute({ playerId });
 
       assert(player.gameId, 'player is not in a game');
 
       const handler = this.container.resolve(TOKENS.commands.startGame);
 
-      await handler.execute({ playerId, gameId: player.gameId, numberOfQuestions: 10 });
+      await handler.execute({ playerId, gameId: player.gameId, numberOfQuestions });
       res.status(201).end();
     });
 
@@ -232,6 +233,10 @@ export class HttpServer {
 
 const authenticateBodySchema = yup.object({
   nick: yup.string().min(2).max(24).required(),
+});
+
+const startGameBodySchema = yup.object({
+  numberOfQuestions: yup.number().min(1).required(),
 });
 
 const createAnswerBodySchema = yup.object({

@@ -24,6 +24,7 @@ import { HandleEndOfPlayersAnswerHandler } from './commands/handle-end-of-player
 import { JoinGameHandler } from './commands/join-game/join-game';
 import { SelectWinningAnswerHandler } from './commands/select-winning-answer/select-winning-answer';
 import { StartGameHandler } from './commands/start-game/start-game';
+import { StartTurnHandler } from './commands/start-turn/start-turn';
 import { Notifier } from './notifier/notifier';
 import { sqlPersistenceModule } from './persistence';
 import { Database } from './persistence/database';
@@ -33,22 +34,13 @@ import { Server } from './server/server';
 import { TOKENS } from './tokens';
 import { toObject } from './utils/to-object';
 
-type AppModule = {
-  authenticate: AuthenticateHandler;
-  createGame: CreateGameHandler;
-  joinGame: JoinGameHandler;
-  startGame: StartGameHandler;
-  dealCards: DealCardsHandler;
-  getGame: GetGameHandler;
-  getPlayer: GetPlayerHandler;
-};
-
-export const appModule = declareModule<AppModule>({
+export const appModule = declareModule({
   factory: (container) => ({
     authenticate: AuthenticateHandler.inject(container),
     createGame: CreateGameHandler.inject(container),
     joinGame: JoinGameHandler.inject(container),
     startGame: StartGameHandler.inject(container),
+    startTurn: StartTurnHandler.inject(container),
     dealCards: DealCardsHandler.inject(container),
     createAnswer: CreateAnswerHandler.inject(container),
     handleEndOfPlayersAnswer: HandleEndOfPlayersAnswerHandler.inject(container),

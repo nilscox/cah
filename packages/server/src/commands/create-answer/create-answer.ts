@@ -72,7 +72,9 @@ export class CreateAnswerHandler implements CommandHandler<CreateAnswerCommand> 
       const choice = playerCards.find(hasId(choiceId));
       assert(choice, 'player does not own some of the choices');
 
+      delete choice.playerId;
       choice.place = ++place;
+
       choices.push(choice);
     }
 

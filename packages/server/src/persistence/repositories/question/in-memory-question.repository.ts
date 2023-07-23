@@ -1,4 +1,5 @@
 import { Question } from 'src/entities';
+import { hasProperty } from 'src/utils/has-property';
 
 import { InMemoryRepository } from '../../in-memory-repository';
 
@@ -13,6 +14,10 @@ export class InMemoryQuestionRepository extends InMemoryRepository<Question> imp
     }
 
     return Promise.resolve(item);
+  }
+
+  async findNextAvailableQuestion(gameId: string): Promise<Question | undefined> {
+    return this.find(hasProperty('gameId', gameId));
   }
 
   async insertMany(questions: Question[]): Promise<void> {

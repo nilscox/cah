@@ -9,13 +9,10 @@ import { hasProperty } from 'src/utils/has-property';
 import { sum } from 'src/utils/sum';
 
 export class GameStartedEvent extends DomainEvent {
-  constructor(gameId: string) {
-    super('game', gameId);
-  }
-}
-
-export class TurnStartedEvent extends DomainEvent {
-  constructor(gameId: string) {
+  constructor(
+    gameId: string,
+    public readonly initialQuestionMasterId: string,
+  ) {
     super('game', gameId);
   }
 }
@@ -67,17 +64,16 @@ export class StartGameHandler implements CommandHandler<StartGameCommand> {
     const questions = await this.getQuestions(game.id, command.numberOfQuestions);
     const choices = await this.getChoices(game.id, players.length, questions);
 
+    await this.questionRepository.insertMany(questions);
+    await this.choiceRepository.insertMany(choices);
+
     game.state = GameState.started;
     assert(isStarted(game));
 
-    game.questionMasterId = this.random.randomItem(players).id;
-    game.questionId = questions[0].id;
-
-    await this.questionRepository.insertMany(questions);
-    await this.choiceRepository.insertMany(choices);
     await this.gameRepository.update(game);
 
-    this.publisher.publish(new GameStartedEvent(game.id));
+    const questionMasterId = this.random.randomItem(players).id;
+    this.publisher.publish(new GameStartedEvent(game.id, questionMasterId));
   }
 
   private async getQuestions(gameId: string, numberOfQuestions: number): Promise<Question[]> {
