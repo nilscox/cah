@@ -23,6 +23,10 @@ importers:
       commander:
         specifier: ^11.0.0
         version: 11.0.0
+    devDependencies:
+      '@types/node':
+        specifier: ^20.3.1
+        version: 20.3.1
 
   packages/client:
     dependencies:

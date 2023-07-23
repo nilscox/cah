@@ -3,13 +3,17 @@
   "version": "2.0.0",
   "type": "module",
   "bin": {
-    "cah": "node dist/index.js"
+    "cah": "./cah.sh"
   },
   "scripts": {
-    "start": "ts-node src/index.ts"
+    "start": "ts-node src/index.ts",
+    "build": "tsc -b"
   },
   "dependencies": {
     "@cah/client": "workspace:*",
     "commander": "^11.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.3.1"
   }
 }

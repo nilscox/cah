@@ -5,10 +5,8 @@ import * as shared from '@cah/shared';
 
 import { StubConfigAdapter, StubExternalDataAdapter, StubLoggerAdapter } from 'src/adapters';
 import { createContainer } from 'src/container';
-// eslint-disable-next-line no-restricted-imports
 import { Server } from 'src/server/server';
 import { TOKENS } from 'src/tokens';
-import { defined } from 'src/utils/defined';
 
 import { hasId } from './utils/id';
 import { waitFor } from './utils/wait-for';
@@ -24,7 +22,7 @@ class Client {
   public debugEvents = false;
 
   constructor(nick: string, server: Server) {
-    this.cah = new CahClient(defined(server.address));
+    this.cah = new CahClient(`http://${server.address}`);
     this.nick = nick;
     this.registerEventsListeners();
   }

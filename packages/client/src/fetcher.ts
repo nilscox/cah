@@ -9,6 +9,10 @@ export class Fetcher {
     return this.jar.getCookieStringSync(this.baseUrl);
   }
 
+  set cookie(value: string) {
+    this.jar.setCookieSync(value, this.baseUrl);
+  }
+
   async get<Result>(path: string): Promise<Result> {
     return this.request(path);
   }

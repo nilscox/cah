@@ -8,6 +8,7 @@ import {
   Player,
   Question,
   StartGameBody,
+  StartedGame,
   Turn,
   isStarted,
 } from '@cah/shared';
@@ -26,8 +27,16 @@ export class CahClient {
   private socket?: Socket;
 
   constructor(private readonly baseUrl: string) {
-    this.fetcher = new Fetcher(`http://${baseUrl}`);
+    this.fetcher = new Fetcher(baseUrl);
     this.listeners = new Map();
+  }
+
+  get cookie() {
+    return this.fetcher.cookie;
+  }
+
+  set cookie(value: string) {
+    this.fetcher.cookie = value;
   }
 
   addEventListener<Type extends GameEventType>(type: Type, listener: GameEventListener<Type>) {
@@ -43,7 +52,7 @@ export class CahClient {
   }
 
   async connect() {
-    this.socket = io(`ws://${this.baseUrl}`, {
+    this.socket = io(this.baseUrl.replace(/^http(s)?/, 'ws$1'), {
       extraHeaders: { cookie: this.fetcher.cookie },
     });
 
@@ -67,7 +76,7 @@ export class CahClient {
     });
   }
 
-  async getGame(gameId: string): Promise<Game> {
+  async getGame(gameId: string): Promise<Game | StartedGame> {
     return inspectable(await this.fetcher.get<Game>(`/game/${gameId}`), inspectGame);
   }
 
@@ -76,7 +85,7 @@ export class CahClient {
   }
 
   async getAuthenticatedPlayer(): Promise<Player> {
-    return this.fetcher.get<Player>('/player');
+    return inspectable(await this.fetcher.get<Player>('/player'), inspectPlayer);
   }
 
   async authenticate(nick: string): Promise<void> {
@@ -121,7 +130,7 @@ const inspectable = <T>(obj: T, format: (obj: T) => string) => {
 };
 
 const dimId = (id: string) => {
-  return chalk.light(`(${id})`);
+  return chalk.black(`(${id})`);
 };
 
 const inspectGame = (game: Game): string => {
@@ -142,22 +151,23 @@ const inspectGame = (game: Game): string => {
 
     lines.push(`- question: ${inspectQuestion(game.question)}`);
 
-    lines.push('- answers:');
-    for (const answer of game.answers) {
-      const f = answer.id === game.selectedAnswerId ? chalk.bold : (s: string) => s;
-      const playerId = 'playerId' in answer && answer.playerId;
+    if (game.answers.length > 0) {
+      lines.push('- answers:');
 
-      const parts = [
-        inspectQuestion(game.question, answer.choices),
-        dimId(answer.id),
-        playerId && chalk.light(`${game.players.find(({ id }) => id === playerId)?.nick}`),
-      ].filter(Boolean);
+      lines.push(
+        ...list(game.answers, (answer) => {
+          const f = answer.id === game.selectedAnswerId ? chalk.green : (s: string) => s;
+          const playerId = 'playerId' in answer && answer.playerId;
 
-      lines.push(f(`  - ${parts.join(' ')}`));
-    }
+          const parts = [
+            inspectQuestion(game.question, answer.choices),
+            dimId(answer.id),
+            playerId && chalk.light(`${game.players.find(({ id }) => id === playerId)?.nick}`),
+          ].filter(Boolean);
 
-    if (game.selectedAnswerId) {
-      lines.push(`- selected answer: ${game.selectedAnswerId}`);
+          return f(parts.join(' '));
+        }),
+      );
     }
   }
 
@@ -183,12 +193,33 @@ const inspectQuestion = (question: Question, choices?: Choice[]): string => {
   };
 
   if (blanks === undefined) {
-    return [text, getBlankValue(0)].join(' ');
+    return [text, chalk.bold(getBlankValue(0))].join(' ');
   }
 
   for (const [i, place] of Object.entries(blanks.slice().reverse())) {
-    text = [text.slice(0, place), text.slice(place)].join(getBlankValue(blanks.length - Number(i) - 1));
+    text = [text.slice(0, place), text.slice(place)].join(
+      chalk.bold(getBlankValue(blanks.length - Number(i) - 1)),
+    );
   }
 
   return text;
+};
+
+const inspectPlayer = (player: Player): string => {
+  const lines = [`Player ${dimId(player.id)}`];
+
+  lines.push(`- id: ${player.id}`);
+  lines.push(`- nick: ${player.nick}`);
+  lines.push(`- gameId: ${player.gameId}`);
+
+  if (player.cards) {
+    lines.push('- cards:');
+    lines.push(...list(player.cards, (card) => card.text));
+  }
+
+  return lines.join('\n');
+};
+
+const list = <T>(items: T[], inspectItem: (item: T) => string): string[] => {
+  return items.map((item, index) => `  ${String(index + 1).padStart(2)}. ${inspectItem(item)}`);
 };

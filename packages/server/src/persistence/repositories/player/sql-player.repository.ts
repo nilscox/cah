@@ -36,7 +36,6 @@ export class SqlPlayerRepository implements PlayerRepository {
       gameId: result.gameId ?? undefined,
     };
 
-    console.log(result.cards.length);
     if (result.cards.length > 0) {
       player.cards = result.cards?.map((choice) => ({
         id: choice.id,

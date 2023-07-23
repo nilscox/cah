@@ -1,6 +1,13 @@
 {
   "extends": "../../tsconfig.base.json",
   "include": ["src/**/*"],
+  "references": [{ "path": "../shared" }],
+  "compilerOptions": {
+    "composite": true,
+    "declaration": true,
+    "rootDir": "src",
+    "outDir": "dist"
+  },
   "ts-node": {
     "esm": true,
     "transpileOnly": true,

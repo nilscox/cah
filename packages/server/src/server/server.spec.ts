@@ -70,7 +70,7 @@ describe('server', () => {
   it('triggers a events when the player connects and disconnects', async () => {
     await test.server.listen();
 
-    const client = new CahClient(defined(test.server.address));
+    const client = new CahClient(`http://${test.server.address}`);
 
     await client.authenticate('nick');
     const { id: playerId } = await client.getAuthenticatedPlayer();
