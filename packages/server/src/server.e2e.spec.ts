@@ -225,7 +225,6 @@ class Test {
   });
 
   logger = new StubLoggerAdapter();
-  random = new StubRandomAdapter();
   externalData = new StubExternalDataAdapter();
 
   constructor() {
@@ -233,7 +232,6 @@ class Test {
 
     container.bindValue(TOKENS.config, this.config);
     container.bindValue(TOKENS.logger, this.logger);
-    container.bindValue(TOKENS.random, this.random);
     container.bindValue(TOKENS.externalData, this.externalData);
   }
 

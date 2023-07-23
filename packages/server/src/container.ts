@@ -11,10 +11,10 @@ import {
   RealEventPublisherAdapter,
   StubConfigAdapter,
   StubExternalDataAdapter,
-  StubRandomAdapter,
 } from 'src/adapters';
 
-import { MathRandomGeneratorAdapter } from './adapters/generator/math-random-generator.adapter';
+import { RandomGeneratorAdapter } from './adapters/generator/random-generator.adapter';
+import { MathRandomAdapter } from './adapters/random/math-random.adapter';
 import { AuthenticateHandler } from './commands/authenticate/authenticate';
 import { CreateAnswerHandler } from './commands/create-answer/create-answer';
 import { CreateGameHandler } from './commands/create-game/create-game';
@@ -63,8 +63,8 @@ export const createContainer = () => {
 
   container.bindValue(TOKENS.config, new StubConfigAdapter());
   container.bindFactory(TOKENS.logger, injectableClass(ConsoleLoggerAdapter), { scope: 'transient' });
-  container.bindFactory(TOKENS.random, injectableClass(StubRandomAdapter));
-  container.bindFactory(TOKENS.generator, injectableClass(MathRandomGeneratorAdapter));
+  container.bindFactory(TOKENS.random, injectableClass(MathRandomAdapter));
+  container.bindFactory(TOKENS.generator, injectableClass(RandomGeneratorAdapter, TOKENS.random));
   container.bindFactory(TOKENS.externalData, injectableClass(StubExternalDataAdapter));
 
   container.bindFactory(TOKENS.publisher, RealEventPublisherAdapter.inject);

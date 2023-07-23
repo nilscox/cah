@@ -9,7 +9,7 @@ export * from './external-data/external-data.port';
 export * from './external-data/stub-external-data.adapter';
 
 export * from './generator/generator.port';
-export * from './generator/math-random-generator.adapter';
+export * from './generator/random-generator.adapter';
 export * from './generator/stub-generator.adapter';
 
 export * from './logger/console-logger.adapter';
