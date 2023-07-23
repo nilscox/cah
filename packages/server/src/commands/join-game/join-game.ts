@@ -1,3 +1,5 @@
+import assert from 'node:assert';
+
 import { injectableClass } from 'ditox';
 
 import { EventPublisherPort } from 'src/adapters';
@@ -36,15 +38,10 @@ export class JoinGameHandler implements CommandHandler<JoinGameCommand> {
 
   async execute(command: JoinGameCommand): Promise<void> {
     const player = await this.playerRepository.findById(command.playerId);
+    assert(player.gameId === undefined, 'player is already in a game');
+
     const game = await this.gameRepository.findByCode(command.code);
-
-    if (player.gameId !== undefined) {
-      throw new Error('player is already in a game');
-    }
-
-    if (game.state !== GameState.idle) {
-      throw new Error('game is not idle');
-    }
+    assert(game.state === GameState.idle, 'game is not idle');
 
     player.gameId = game.id;
 

@@ -108,7 +108,7 @@ export class Server {
     });
 
     publisher.register(TurnStartedEvent, async (event) => {
-      this.logger.info('turn started', { playerId: event.entityId });
+      this.logger.info('turn started', { gameId: event.entityId });
 
       const dealCards = this.container.resolve(TOKENS.commands.dealCards);
 

@@ -1,3 +1,5 @@
+import assert from 'node:assert';
+
 import { injectableClass } from 'ditox';
 
 import { EventPublisherPort, GeneratorPort } from 'src/adapters';
@@ -39,10 +41,7 @@ export class CreateGameHandler implements CommandHandler<CreateGameCommand> {
 
   async execute(command: CreateGameCommand): Promise<void> {
     const player = await this.playerRepository.findById(command.playerId);
-
-    if (player.gameId) {
-      throw new Error('player is already in a game');
-    }
+    assert(player.gameId === undefined, 'player is already in a game');
 
     const game: Game = {
       id: this.generator.generateId(),

@@ -1,3 +1,5 @@
+import assert from 'node:assert';
+
 import { injectableClass } from 'ditox';
 
 import { EventPublisherPort, GeneratorPort } from 'src/adapters';

@@ -1,3 +1,5 @@
+import assert from 'node:assert';
+
 import { injectableClass } from 'ditox';
 
 import { EventPublisherPort } from 'src/adapters';
@@ -38,11 +40,9 @@ export class DealCardsHandler implements CommandHandler<DealCardsCommand> {
 
   async execute(command: DealCardsCommand): Promise<void> {
     const game = await this.gameRepository.findById(command.gameId);
-    const players = await this.playerRepository.findAllByGameId(game.id);
+    assert(isStarted(game), 'the game is not started');
 
-    if (!isStarted(game)) {
-      throw new Error('the game is not started');
-    }
+    const players = await this.playerRepository.findAllByGameId(game.id);
 
     const cards = await this.choiceRepository.findPlayersCards(game.id);
     const getCards = (player: Player) => cards[player.id] ?? [];

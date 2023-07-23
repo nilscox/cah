@@ -30,16 +30,22 @@ export class SqlPlayerRepository implements PlayerRepository {
       throw new EntityNotFoundError('Player', { id: playerId });
     }
 
-    return {
+    const player: shared.Player = {
       id: result.id,
       nick: result.nick,
       gameId: result.gameId ?? undefined,
-      cards: result.cards?.map((choice) => ({
+    };
+
+    console.log(result.cards.length);
+    if (result.cards.length > 0) {
+      player.cards = result.cards?.map((choice) => ({
         id: choice.id,
         text: choice.text,
         caseSensitive: choice.caseSensitive,
-      })),
-    };
+      }));
+    }
+
+    return player;
   }
 
   async findById(playerId: string): Promise<Player> {
