@@ -1,5 +1,7 @@
+import { QuestionData, createQuestionData } from 'src/adapters';
 import { GameState, createGame, createPlayer, createQuestion } from 'src/entities';
 import { HandlerCommand } from 'src/interfaces';
+import { factory } from 'src/utils/factory';
 import { hasProperty } from 'src/utils/has-property';
 import { UnitTest } from 'src/utils/unit-test';
 
@@ -66,17 +68,15 @@ describe('StartGameCommand', () => {
 
       // 5 blanks
       test.externalData.questions = [
-        createQuestion(),
-        createQuestion({ blanks: [0] }),
-        createQuestion({ blanks: [1, 2] }),
+        createQuestionData(),
+        createQuestionData({ blanks: [0] }),
+        createQuestionData({ blanks: [1, 2] }),
       ];
 
       await test.handler.execute(test.command);
 
-      expect(test.questionRepository.filter(hasProperty('gameId', 'gameId'))).toHaveLength(3);
-      expect(test.choiceRepository.filter(hasProperty('gameId', 'gameId'))).toHaveLength(
-        4 * 11 + 3 * 1 + 3 * 1 + 3 * 2,
-      );
+      expect(test.questionRepository.all()).toHaveLength(3);
+      expect(test.choiceRepository.all()).toHaveLength(4 * 11 + 3 * 1 + 3 * 1 + 3 * 2);
     });
   });
 
