@@ -20,6 +20,9 @@ importers:
       '@cah/client':
         specifier: workspace:*
         version: link:../client
+      '@cah/shared':
+        specifier: workspace:*
+        version: link:../shared
       commander:
         specifier: ^11.0.0
         version: 11.0.0

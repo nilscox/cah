@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 
-import { CahClient } from '@cah/client';
+import { CahClient, ServerFetcher } from '@cah/client';
 import * as shared from '@cah/shared';
 
 import { StubConfigAdapter, StubExternalDataAdapter, StubLoggerAdapter } from 'src/adapters';
@@ -22,7 +22,7 @@ class Client {
   public debugEvents = false;
 
   constructor(nick: string, server: Server) {
-    this.cah = new CahClient(`http://${server.address}`);
+    this.cah = new CahClient(new ServerFetcher(`http://${server.address}`));
     this.nick = nick;
     this.registerEventsListeners();
   }

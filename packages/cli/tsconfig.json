@@ -1,7 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
   "include": ["src/**/*"],
-  "references": [{ "path": "../client" }],
+  "references": [{ "path": "../client" }, { "path": "../shared" }],
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "dist"

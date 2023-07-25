@@ -1,6 +1,6 @@
+import { CahClient, ServerFetcher } from '@cah/client';
 import { Command, Option } from 'commander';
-import { CahClient } from '@cah/client';
-import { inspect } from 'util';
+import { inspectGame, inspectPlayer, inspectTurn } from './inspect';
 
 const program = new Command();
 
@@ -18,14 +18,16 @@ program.addOption(
 program.addOption(new Option('-c --cookie <cookie>', 'authentication cookie').env('COOKIE'));
 
 let client: CahClient;
+let fetcher: ServerFetcher;
 
 program.hook('preAction', (program) => {
   const { baseUrl, cookie } = program.opts();
 
-  client = new CahClient(baseUrl);
+  fetcher = new ServerFetcher(baseUrl);
+  client = new CahClient(fetcher);
 
   if (cookie) {
-    client.cookie = cookie;
+    fetcher.cookie = cookie;
   }
 });
 
@@ -36,11 +38,11 @@ program
     const player = await client.getAuthenticatedPlayer();
     const game = player.gameId && (await client.getGame(player.gameId));
 
-    console.log(player);
+    console.log(inspectPlayer(player));
 
     if (game) {
       console.log();
-      console.log(game);
+      console.log(inspectGame(game));
     }
   });
 
@@ -51,11 +53,11 @@ program
     const game = await client.getGame(gameId);
     const turns = await client.getGameTurns(gameId);
 
-    console.log(game);
+    console.log(inspectGame(game));
 
     if (turns.length > 0) {
       console.log();
-      console.log(inspect(turns, { depth: null, colors: true }));
+      turns.map((turn) => console.log(inspectTurn(turn)));
     }
   });
 
@@ -63,7 +65,7 @@ program
   .command('get-player')
   .description('retrieves the player currently authenticated')
   .action(async () => {
-    console.log(await client.getAuthenticatedPlayer());
+    console.log(inspectPlayer(await client.getAuthenticatedPlayer()));
   });
 
 program
@@ -71,7 +73,7 @@ program
   .description('authenticate as a new or existing player')
   .action(async (nick: string) => {
     await client.authenticate(nick);
-    console.log(`export COOKIE=${client.cookie}`);
+    console.log(`export COOKIE=${fetcher.cookie}`);
   });
 
 program

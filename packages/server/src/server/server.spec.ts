@@ -1,4 +1,4 @@
-import { CahClient } from '@cah/client';
+import { CahClient, ServerFetcher } from '@cah/client';
 import { bindModule } from 'ditox';
 
 import { StubConfigAdapter, StubEventPublisherAdapter, StubLoggerAdapter } from 'src/adapters';
@@ -70,7 +70,7 @@ describe('server', () => {
   it('triggers a events when the player connects and disconnects', async () => {
     await test.server.listen();
 
-    const client = new CahClient(`http://${test.server.address}`);
+    const client = new CahClient(new ServerFetcher(`http://${test.server.address}`));
 
     await client.authenticate('nick');
     const { id: playerId } = await client.getAuthenticatedPlayer();

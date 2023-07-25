@@ -6,38 +6,24 @@ import {
   Game,
   GameEvent,
   Player,
-  Question,
   StartGameBody,
   StartedGame,
   Turn,
-  isStarted,
 } from '@cah/shared';
 import { Socket, io } from 'socket.io-client';
 
-import { chalk } from './chalk';
 import { Fetcher } from './fetcher';
+import { ServerFetcher } from './server-fetcher';
 
 type GameEventType = GameEvent['type'];
 type GameEventsMap = { [T in GameEventType]: Extract<GameEvent, { type: T }> };
 type GameEventListener<Type extends GameEventType> = (event: GameEventsMap[Type]) => void;
 
 export class CahClient {
-  private fetcher: Fetcher;
-  private listeners: Map<string, Set<GameEventListener<GameEventType>>>;
+  private listeners = new Map<string, Set<GameEventListener<GameEventType>>>();
   private socket?: Socket;
 
-  constructor(private readonly baseUrl: string) {
-    this.fetcher = new Fetcher(baseUrl);
-    this.listeners = new Map();
-  }
-
-  get cookie() {
-    return this.fetcher.cookie;
-  }
-
-  set cookie(value: string) {
-    this.fetcher.cookie = value;
-  }
+  constructor(private readonly fetcher: Fetcher) {}
 
   addEventListener<Type extends GameEventType>(type: Type, listener: GameEventListener<Type>) {
     if (!this.listeners.has(type)) {
@@ -52,8 +38,14 @@ export class CahClient {
   }
 
   async connect() {
-    this.socket = io(this.baseUrl.replace(/^http(s)?/, 'ws$1'), {
-      extraHeaders: { cookie: this.fetcher.cookie },
+    const extraHeaders: Record<string, string> = {};
+
+    if (this.fetcher instanceof ServerFetcher) {
+      extraHeaders.cookie = this.fetcher.cookie;
+    }
+
+    this.socket = io(this.fetcher.baseUrl.replace(/^http(s)?/, 'ws$1'), {
+      extraHeaders,
     });
 
     this.socket.on('message', (event: GameEvent) => {
@@ -77,7 +69,7 @@ export class CahClient {
   }
 
   async getGame(gameId: string): Promise<Game | StartedGame> {
-    return inspectable(await this.fetcher.get<Game>(`/game/${gameId}`), inspectGame);
+    return this.fetcher.get<Game>(`/game/${gameId}`);
   }
 
   async getGameTurns(gameId: string): Promise<Turn[]> {
@@ -85,7 +77,7 @@ export class CahClient {
   }
 
   async getAuthenticatedPlayer(): Promise<Player> {
-    return inspectable(await this.fetcher.get<Player>('/player'), inspectPlayer);
+    return this.fetcher.get<Player>('/player');
   }
 
   async authenticate(nick: string): Promise<void> {
@@ -120,104 +112,3 @@ export class CahClient {
     return this.fetcher.put('/game/end-turn');
   }
 }
-
-const inspectable = <T>(obj: T, format: (obj: T) => string) => {
-  Object.defineProperty(obj, Symbol.for('nodejs.util.inspect.custom'), {
-    value: () => format(obj),
-  });
-
-  return obj;
-};
-
-const dimId = (id: string) => {
-  return chalk.black(`(${id})`);
-};
-
-const inspectGame = (game: Game): string => {
-  const lines = [`Game ${dimId(game.id)}`];
-
-  lines.push(`- id: ${game.id}`);
-  lines.push(`- code: ${game.code}`);
-  lines.push(`- state: ${game.state}`);
-
-  lines.push('- players:');
-  for (const player of game.players) {
-    lines.push(`  - ${player.nick} ${dimId(player.id)}`);
-  }
-
-  if (isStarted(game)) {
-    const questionMaster = game.players.find((player) => player.id === game.questionMasterId);
-    lines.push(`- questionMaster: ${questionMaster?.nick}`);
-
-    lines.push(`- question: ${inspectQuestion(game.question)}`);
-
-    if (game.answers && game.answers.length > 0) {
-      lines.push('- answers:');
-
-      lines.push(
-        ...list(game.answers, (answer) => {
-          const f = answer.id === game.selectedAnswerId ? chalk.green : (s: string) => s;
-          const playerId = 'playerId' in answer && answer.playerId;
-
-          const parts = [
-            playerId && f(`${game.players.find(({ id }) => id === playerId)?.nick}:`),
-            inspectQuestion(game.question, answer.choices),
-            dimId(answer.id),
-          ].filter(Boolean);
-
-          return parts.join(' ');
-        }),
-      );
-    }
-  }
-
-  return lines.join('\n');
-};
-
-const inspectQuestion = (question: Question, choices?: Choice[]): string => {
-  const blanks = question.blanks;
-  let text = question.text;
-
-  const getBlankValue = (index: number) => {
-    const choice = choices?.[index];
-
-    if (!choice) {
-      return '__';
-    }
-
-    if (choice.caseSensitive || blanks === undefined) {
-      return chalk.underline(choice.text);
-    }
-
-    return chalk.underline(choice.text.toLowerCase());
-  };
-
-  if (blanks === undefined) {
-    return [text, getBlankValue(0)].join(' ');
-  }
-
-  for (const [i, place] of Object.entries(blanks.slice().reverse())) {
-    text = [text.slice(0, place), text.slice(place)].join(getBlankValue(blanks.length - Number(i) - 1));
-  }
-
-  return text;
-};
-
-const inspectPlayer = (player: Player): string => {
-  const lines = [`Player ${dimId(player.id)}`];
-
-  lines.push(`- id: ${player.id}`);
-  lines.push(`- nick: ${player.nick}`);
-  lines.push(`- gameId: ${player.gameId}`);
-
-  if (player.cards) {
-    lines.push('- cards:');
-    lines.push(...list(player.cards, (card) => card.text));
-  }
-
-  return lines.join('\n');
-};
-
-const list = <T>(items: T[], inspectItem: (item: T) => string): string[] => {
-  return items.map((item, index) => `  ${String(index + 1).padStart(2)}. ${inspectItem(item)}`);
-};
