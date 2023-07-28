@@ -64,12 +64,12 @@ export type Turn = {
 
 export type PlayerConnectedEvent = {
   type: 'player-connected';
-  nick: string;
+  playerId: string;
 };
 
 export type PlayerDisconnectedEvent = {
   type: 'player-disconnected';
-  nick: string;
+  playerId: string;
 };
 
 export type GameCreatedEvent = {
@@ -145,6 +145,9 @@ export type GameEvent =
   | WinningAnswerSelectedEvent
   | TurnEndedEvent
   | GameEndedEvent;
+
+export type GameEventType = GameEvent['type'];
+export type GameEventsMap = { [T in GameEventType]: Extract<GameEvent, { type: T }> };
 
 export const authenticateBodySchema = yup.object({
   nick: yup.string().min(2).max(24).required(),

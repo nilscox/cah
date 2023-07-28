@@ -22,7 +22,7 @@ type JoinGameCommand = {
   code: string;
 };
 
-export class JoinGameHandler implements CommandHandler<JoinGameCommand> {
+export class JoinGameHandler implements CommandHandler<JoinGameCommand, string> {
   static inject = injectableClass(
     this,
     TOKENS.publisher,
@@ -36,7 +36,7 @@ export class JoinGameHandler implements CommandHandler<JoinGameCommand> {
     private playerRepository: PlayerRepository,
   ) {}
 
-  async execute(command: JoinGameCommand): Promise<void> {
+  async execute(command: JoinGameCommand): Promise<string> {
     const player = await this.playerRepository.findById(command.playerId);
     assert(player.gameId === undefined, 'player is already in a game');
 
@@ -48,5 +48,7 @@ export class JoinGameHandler implements CommandHandler<JoinGameCommand> {
     await this.playerRepository.update(player);
 
     this.publisher.publish(new PlayerJoinedEvent(game.id, player.id));
+
+    return game.id;
   }
 }

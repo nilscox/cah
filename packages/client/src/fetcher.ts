@@ -16,7 +16,7 @@ export class Fetcher {
     const response = await this.fetch(this.baseUrl + path, init);
 
     if (!response.ok) {
-      throw new Error(`Error ${response.status}: ${await response.clone().text()}`);
+      throw new FetchError(response, await response.clone().text());
     }
 
     const contentType = response.headers.get('Content-Type');
@@ -29,7 +29,7 @@ export class Fetcher {
   }
 
   private mutate(method: string) {
-    return async <Body, Result = void>(path: string, body?: Body): Promise<Result> => {
+    return async <Body = never, Result = void>(path: string, body?: Body): Promise<Result> => {
       const headers = new Headers();
       const init: RequestInit = {
         method,
@@ -43,5 +43,18 @@ export class Fetcher {
 
       return this.request<Result>(path, init);
     };
+  }
+}
+
+export class FetchError extends Error {
+  constructor(
+    public readonly response: Response,
+    text: string,
+  ) {
+    super(`Error ${response.status}: ${text}`);
+  }
+
+  get status() {
+    return this.response.status;
   }
 }

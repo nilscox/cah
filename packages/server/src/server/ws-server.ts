@@ -8,6 +8,7 @@ import { Socket, Server as SocketIOServer } from 'socket.io';
 
 import { EventPublisherPort, LoggerPort, RtcPort } from 'src/adapters';
 import { DomainEvent } from 'src/interfaces';
+import { PlayerRepository } from 'src/persistence';
 
 export class PlayerConnectedEvent extends DomainEvent {
   constructor(playerId: string) {
@@ -28,6 +29,7 @@ export class WsServer implements RtcPort {
     private readonly logger: LoggerPort,
     private readonly server: Server,
     private readonly publisher: EventPublisherPort,
+    private readonly playerRepository: PlayerRepository,
   ) {
     this.io = new SocketIOServer(this.server);
 
@@ -39,18 +41,27 @@ export class WsServer implements RtcPort {
   }
 
   private onConnection = async (socket: Socket) => {
-    const request = socket.request as IncomingMessage & { session: session.SessionData };
-    const playerId = request.session.playerId;
-    assert(typeof playerId === 'string', 'invalid session');
+    try {
+      const request = socket.request as IncomingMessage & { session: session.SessionData };
+      const playerId = request.session.playerId;
+      assert(typeof playerId === 'string', 'invalid session');
 
-    (socket.data as session.SessionData).playerId = playerId;
-    void socket.join(playerId);
+      const player = await this.playerRepository.findById(playerId);
 
-    this.publisher.publish(new PlayerConnectedEvent(playerId));
+      void socket.join(playerId);
 
-    socket.on('disconnect', () => {
-      this.publisher.publish(new PlayerDisconnectedEvent(playerId));
-    });
+      if (player.gameId) {
+        void socket.join(player.gameId);
+      }
+
+      this.publisher.publish(new PlayerConnectedEvent(playerId));
+
+      socket.on('disconnect', () => {
+        this.publisher.publish(new PlayerDisconnectedEvent(playerId));
+      });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   async close() {

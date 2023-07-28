@@ -164,11 +164,11 @@ class Client {
   }
 
   async fetchGame() {
-    const { gameId } = await this.fetchPlayer();
-    assert(gameId);
+    const player = await this.fetchPlayer();
+    assert(player?.gameId);
 
     this.log('retrieves their game');
-    this.game = await this.cah.getGame(gameId);
+    this.game = await this.cah.getGame(player.gameId);
 
     return this.game;
   }

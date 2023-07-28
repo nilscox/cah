@@ -5,6 +5,8 @@ import {
   CreateAnswerBody,
   Game,
   GameEvent,
+  GameEventType,
+  GameEventsMap,
   Player,
   StartGameBody,
   StartedGame,
@@ -15,11 +17,30 @@ import { Socket, io } from 'socket.io-client';
 import { Fetcher } from './fetcher';
 import { ServerFetcher } from './server-fetcher';
 
-type GameEventType = GameEvent['type'];
-type GameEventsMap = { [T in GameEventType]: Extract<GameEvent, { type: T }> };
-type GameEventListener<Type extends GameEventType> = (event: GameEventsMap[Type]) => void;
+export type GameEventListener<Type extends GameEventType> = (event: GameEventsMap[Type]) => void;
 
-export class CahClient {
+export interface ICahClient {
+  addEventListener<Type extends GameEventType>(type: Type, listener: GameEventListener<Type>): void;
+  removeEventListener<Type extends GameEventType>(type: Type, listener: GameEventListener<Type>): void;
+
+  connect(): void;
+  disconnect(): void;
+
+  getGame(gameId: string): Promise<Game | StartedGame>;
+  getGameTurns(gameId: string): Promise<Turn[]>;
+  getAuthenticatedPlayer(): Promise<Player>;
+
+  authenticate(nick: string): Promise<void>;
+  createGame(): Promise<string>;
+  joinGame(code: string): Promise<string>;
+  leaveGame(): Promise<void>;
+  startGame(numberOfQuestions: number): Promise<void>;
+  createAnswer(choices: Choice[]): Promise<void>;
+  selectAnswer(answer: AnonymousAnswer): Promise<void>;
+  endTurn(): Promise<void>;
+}
+
+export class CahClient implements ICahClient {
   private listeners = new Map<string, Set<GameEventListener<GameEventType>>>();
   private socket?: Socket;
 
@@ -69,7 +90,7 @@ export class CahClient {
   }
 
   async getGame(gameId: string): Promise<Game | StartedGame> {
-    return this.fetcher.get<Game>(`/game/${gameId}`);
+    return this.fetcher.get<Game | StartedGame>(`/game/${gameId}`);
   }
 
   async getGameTurns(gameId: string): Promise<Turn[]> {
@@ -84,12 +105,12 @@ export class CahClient {
     return this.fetcher.post<AuthenticateBody>('/authenticate', { nick });
   }
 
-  async createGame(): Promise<void> {
-    return this.fetcher.post('/game');
+  async createGame(): Promise<string> {
+    return this.fetcher.post<never, string>('/game');
   }
 
-  async joinGame(code: string): Promise<void> {
-    return this.fetcher.put(`/game/${code}/join`);
+  async joinGame(code: string): Promise<string> {
+    return this.fetcher.put<never, string>(`/game/${code}/join`);
   }
 
   async leaveGame(): Promise<void> {

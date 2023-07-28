@@ -11,13 +11,21 @@ import { PlayerJoinedEvent } from 'src/commands/join-game/join-game';
 import { PlayerLeftEvent } from 'src/commands/leave-game/leave-game';
 import { GameStartedEvent } from 'src/commands/start-game/start-game';
 import { TurnStartedEvent } from 'src/commands/start-turn/start-turn';
+import { PlayerRepository } from 'src/persistence';
 import { TOKENS } from 'src/tokens';
 
 import { HttpServer } from './http-server';
 import { WsServer } from './ws-server';
 
 export class Server {
-  static inject = injectableClass(this, TOKENS.config, TOKENS.logger, TOKENS.publisher, TOKENS.container);
+  static inject = injectableClass(
+    this,
+    TOKENS.config,
+    TOKENS.logger,
+    TOKENS.publisher,
+    TOKENS.repositories.player,
+    TOKENS.container,
+  );
 
   private httpServer: HttpServer;
   private wsServer: WsServer;
@@ -26,12 +34,19 @@ export class Server {
     private readonly config: ConfigPort,
     private readonly logger: LoggerPort,
     private readonly publisher: EventPublisherPort,
+    private readonly playerRepository: PlayerRepository,
     private readonly container: Container,
   ) {
     this.logger.context = 'Server';
 
     this.httpServer = new HttpServer(this.config, this.logger, this.container);
-    this.wsServer = new WsServer(this.logger, this.httpServer.nodeServer, this.publisher);
+
+    this.wsServer = new WsServer(
+      this.logger,
+      this.httpServer.nodeServer,
+      this.publisher,
+      this.playerRepository,
+    );
 
     this.wsServer.use(this.httpServer.sessionMiddleware);
 

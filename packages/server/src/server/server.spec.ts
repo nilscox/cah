@@ -3,7 +3,7 @@ import { bindModule } from 'ditox';
 
 import { StubConfigAdapter, StubEventPublisherAdapter, StubLoggerAdapter } from 'src/adapters';
 import { createContainer } from 'src/container';
-import { inMemoryPersistenceModule } from 'src/persistence';
+import { InMemoryPlayerRepository, inMemoryPersistenceModule } from 'src/persistence';
 import { defined } from 'src/utils/defined';
 import { waitFor } from 'src/utils/wait-for';
 
@@ -16,8 +16,9 @@ class Test {
   config = new StubConfigAdapter({ server: { host: '0.0.0.0', port: 7357 } });
   logger = new StubLoggerAdapter();
   publisher = new StubEventPublisherAdapter();
+  playerRepository = new InMemoryPlayerRepository();
 
-  server = new Server(this.config, this.logger, this.publisher, this.container);
+  server = new Server(this.config, this.logger, this.publisher, this.playerRepository, this.container);
 
   constructor() {
     bindModule(this.container, inMemoryPersistenceModule);
@@ -73,12 +74,12 @@ describe('server', () => {
     const client = new CahClient(new ServerFetcher(`http://${test.server.address}`));
 
     await client.authenticate('nick');
-    const { id: playerId } = await client.getAuthenticatedPlayer();
+    const player = await client.getAuthenticatedPlayer();
 
     await client.connect();
-    await waitFor(() => expect(test.publisher).toContainEqual(new PlayerConnectedEvent(playerId)));
+    await waitFor(() => expect(test.publisher).toContainEqual(new PlayerConnectedEvent(player.id)));
 
     await client.disconnect();
-    await waitFor(() => expect(test.publisher).toContainEqual(new PlayerDisconnectedEvent(playerId)));
+    await waitFor(() => expect(test.publisher).toContainEqual(new PlayerDisconnectedEvent(player.id)));
   });
 });

@@ -23,7 +23,7 @@ import {
   PlayerRepository,
   QuestionRepository,
 } from 'src/persistence';
-import { PlayerConnectedEvent } from 'src/server/ws-server';
+import { PlayerConnectedEvent, PlayerDisconnectedEvent } from 'src/server/ws-server';
 import { TOKENS } from 'src/tokens';
 import { defined } from 'src/utils/defined';
 import { hasId } from 'src/utils/id';
@@ -66,11 +66,23 @@ export class Notifier {
         return;
       }
 
-      const game = await this.gameRepository.findById(player.gameId);
-
-      await this.send(game.id, {
+      await this.send(player.gameId, {
         type: 'player-connected',
-        nick: player.nick,
+        playerId: player.id,
+      });
+    });
+
+    publisher.register(PlayerDisconnectedEvent, async (event) => {
+      const playerId = event.entityId;
+      const player = await this.playerRepository.findById(playerId);
+
+      if (!player.gameId) {
+        return;
+      }
+
+      await this.send(player.gameId, {
+        type: 'player-disconnected',
+        playerId: player.id,
       });
     });
 

@@ -1,4 +1,5 @@
 import { CahClient, ServerFetcher } from '@cah/client';
+import { isStarted } from '@cah/shared';
 import { Command, Option } from 'commander';
 import { inspectGame, inspectPlayer, inspectTurn } from './inspect';
 
@@ -36,11 +37,12 @@ program
   .description('prints information about the current player and its game')
   .action(async () => {
     const player = await client.getAuthenticatedPlayer();
-    const game = player.gameId && (await client.getGame(player.gameId));
 
     console.log(inspectPlayer(player));
 
-    if (game) {
+    if (player.gameId) {
+      const game = await client.getGame(player.gameId);
+
       console.log();
       console.log(inspectGame(game));
     }
@@ -53,7 +55,9 @@ program
     const game = await client.getGame(gameId);
     const turns = await client.getGameTurns(gameId);
 
-    console.log(inspectGame(game));
+    if (game) {
+      console.log(inspectGame(game));
+    }
 
     if (turns.length > 0) {
       console.log();
@@ -65,7 +69,9 @@ program
   .command('get-player')
   .description('retrieves the player currently authenticated')
   .action(async () => {
-    console.log(inspectPlayer(await client.getAuthenticatedPlayer()));
+    const player = await client.getAuthenticatedPlayer();
+
+    console.log(inspectPlayer(player));
   });
 
 program
@@ -103,6 +109,7 @@ program
   .description('submit an answer to the current question')
   .action(async (args: string[]) => {
     const indexes = args.map((s) => parseInt(s)).map((n) => n - 1);
+
     const player = await client.getAuthenticatedPlayer();
     const choices = indexes.map((i) => player.cards?.[i]);
 
@@ -119,9 +126,10 @@ program
   .description('select an answer to be the winner of the current turn')
   .action(async (arg: string) => {
     const index = parseInt(arg) - 1;
+
     const player = await client.getAuthenticatedPlayer();
     const game = await client.getGame(player.gameId!);
-    const answer = 'answers' in game ? game.answers?.[index] : undefined;
+    const answer = isStarted(game) ? game.answers?.[index] : undefined;
 
     await client.selectAnswer(answer!);
   });

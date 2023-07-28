@@ -23,7 +23,7 @@ type CreateGameCommand = {
   code?: string;
 };
 
-export class CreateGameHandler implements CommandHandler<CreateGameCommand> {
+export class CreateGameHandler implements CommandHandler<CreateGameCommand, string> {
   static inject = injectableClass(
     this,
     TOKENS.generator,
@@ -39,7 +39,7 @@ export class CreateGameHandler implements CommandHandler<CreateGameCommand> {
     private gameRepository: GameRepository,
   ) {}
 
-  async execute(command: CreateGameCommand): Promise<void> {
+  async execute(command: CreateGameCommand): Promise<string> {
     const player = await this.playerRepository.findById(command.playerId);
     assert(player.gameId === undefined, 'player is already in a game');
 
@@ -52,5 +52,7 @@ export class CreateGameHandler implements CommandHandler<CreateGameCommand> {
     await this.gameRepository.insert(game);
 
     this.publisher.publish(new GameCreatedEvent(game.id, game.code, player.id));
+
+    return game.id;
   }
 }

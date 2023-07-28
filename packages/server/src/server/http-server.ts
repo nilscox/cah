@@ -164,9 +164,11 @@ export class HttpServer {
       const playerId = defined(req.session.playerId);
       const handler = this.container.resolve(TOKENS.commands.createGame);
 
-      await handler.execute({ playerId });
+      const gameId = await handler.execute({ playerId });
 
-      res.status(201).end();
+      res.status(201);
+      res.header('Content-Type', 'text/plain');
+      res.send(gameId);
     });
 
     router.put('/game/:code/join', this.authenticated, async (req, res) => {
@@ -174,9 +176,11 @@ export class HttpServer {
       const code = req.params.code;
       const handler = this.container.resolve(TOKENS.commands.joinGame);
 
-      await handler.execute({ code, playerId });
+      const gameId = await handler.execute({ code, playerId });
 
-      res.status(201).end();
+      res.status(200);
+      res.header('Content-Type', 'text/plain');
+      res.send(gameId);
     });
 
     router.put('/game/leave', this.authenticated, async (req, res) => {
@@ -249,6 +253,7 @@ export class HttpServer {
       console.debug(err);
 
       res.status(500);
+      res.header('Content-Type', 'text/plain');
       res.send(err instanceof Error ? err.message : 'Unknown error');
     }) satisfies ErrorRequestHandler);
 
