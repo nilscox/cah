@@ -5,6 +5,7 @@
     { "path": "packages/client/tsconfig.json" },
     { "path": "packages/server/tsconfig.json" },
     { "path": "packages/shared/tsconfig.json" },
+    { "path": "packages/store/tsconfig.json" },
     { "path": "packages/web/tsconfig.json" }
   ]
 }

@@ -16,7 +16,7 @@ export class Fetcher {
     const response = await this.fetch(this.baseUrl + path, init);
 
     if (!response.ok) {
-      throw new FetchError(response, await response.clone().text());
+      throw new FetchError(response.status, await response.clone().text());
     }
 
     const contentType = response.headers.get('Content-Type');
@@ -48,13 +48,9 @@ export class Fetcher {
 
 export class FetchError extends Error {
   constructor(
-    public readonly response: Response,
-    text: string,
+    public readonly status: number,
+    public readonly text: string,
   ) {
-    super(`Error ${response.status}: ${text}`);
-  }
-
-  get status() {
-    return this.response.status;
+    super(`Error ${status}: ${text}`);
   }
 }
