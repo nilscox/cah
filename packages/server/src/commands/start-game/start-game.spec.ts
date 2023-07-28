@@ -1,8 +1,6 @@
-import { QuestionData, createQuestionData } from 'src/adapters';
-import { GameState, createGame, createPlayer, createQuestion } from 'src/entities';
+import { createQuestionData } from 'src/adapters';
+import { GameState, createGame, createPlayer } from 'src/entities';
 import { HandlerCommand } from 'src/interfaces';
-import { factory } from 'src/utils/factory';
-import { hasProperty } from 'src/utils/has-property';
 import { UnitTest } from 'src/utils/unit-test';
 
 import { GameStartedEvent, StartGameHandler } from './start-game';

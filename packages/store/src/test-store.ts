@@ -20,6 +20,10 @@ export class TestStore {
     return selector(this.getState(), ...params);
   };
 
+  logState() {
+    console.dir(this.getState(), { depth: null });
+  }
+
   getPlayer() {
     return this.select(playerSelectors.player);
   }

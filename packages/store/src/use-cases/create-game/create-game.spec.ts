@@ -1,7 +1,7 @@
 import { GameState } from '@cah/shared';
 
 import { GameSlice, gameSelectors } from '../../slices/game.slice';
-import { playerActions, playerSelectors } from '../../slices/player.slice';
+import { playerSelectors } from '../../slices/player.slice';
 import { TestStore } from '../../test-store';
 
 import { createGame } from './create-game';
@@ -16,7 +16,7 @@ describe('createGame', () => {
   beforeEach(() => {
     store = new TestStore();
 
-    store.dispatch(playerActions.setPlayer({ id: 'playerId', nick: '' }));
+    store.setPlayer();
 
     store.client.createGame.mockResolvedValue('gameId');
 

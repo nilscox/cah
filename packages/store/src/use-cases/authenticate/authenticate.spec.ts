@@ -1,5 +1,5 @@
 import { FetchError } from '@cah/client/src';
-import { GameState, Player } from '@cah/shared';
+import { Player, createGame, createPlayer } from '@cah/shared';
 
 import { TestStore } from '../../test-store';
 
@@ -29,31 +29,18 @@ describe('authenticate', () => {
   });
 
   it("fetches the player's game", async () => {
-    store.client.getAuthenticatedPlayer.mockResolvedValue({
-      id: 'playerId',
-      nick: 'perry',
-      gameId: 'gameId',
-    });
+    store.client.getAuthenticatedPlayer.mockResolvedValue(createPlayer({ gameId: 'gameId' }));
+    store.client.getGame.mockResolvedValue(createGame({ id: 'gameId' }));
 
-    store.client.getGame.mockResolvedValue({
-      id: 'gameId',
-      code: '',
-      state: GameState.idle,
-      players: [],
-    });
-
-    await store.dispatch(authenticate('perry'));
+    await store.dispatch(authenticate(''));
 
     expect(store.getGame()).toHaveProperty('id', 'gameId');
   });
 
   it('connects to the events stream', async () => {
-    store.client.getAuthenticatedPlayer.mockResolvedValue({
-      id: 'playerId',
-      nick: 'perry',
-    });
+    store.client.getAuthenticatedPlayer.mockResolvedValue(createPlayer());
 
-    await store.dispatch(authenticate('perry'));
+    await store.dispatch(authenticate(''));
 
     expect(store.client.connect).toHaveBeenCalledWith();
   });
