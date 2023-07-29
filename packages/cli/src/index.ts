@@ -117,8 +117,7 @@ program
       throw new Error('invalid input');
     }
 
-    type Choice = Exclude<(typeof choices)[number], undefined>;
-    await client.createAnswer(choices as Choice[]);
+    await client.createAnswer(choices.map((choice) => choice!.id));
   });
 
 program
@@ -131,7 +130,7 @@ program
     const game = await client.getGame(player.gameId!);
     const answer = isStarted(game) ? game.answers?.[index] : undefined;
 
-    await client.selectAnswer(answer!);
+    await client.selectAnswer(answer!.id);
   });
 
 program

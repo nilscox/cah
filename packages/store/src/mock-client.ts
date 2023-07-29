@@ -1,4 +1,4 @@
-import { ICahClient } from '@cah/client/src';
+import { ICahClient } from '@cah/client';
 import { Mock } from 'vitest';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

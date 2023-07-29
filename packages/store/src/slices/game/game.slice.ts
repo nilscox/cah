@@ -1,4 +1,11 @@
-import { Game, GameState, PlayerJoinedEvent, PlayerLeftEvent, TurnStartedEvent } from '@cah/shared';
+import {
+  AllPlayerAnsweredEvent,
+  Game,
+  GameState,
+  PlayerJoinedEvent,
+  PlayerLeftEvent,
+  TurnStartedEvent,
+} from '@cah/shared';
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 import { assert } from '../../defined';
@@ -7,7 +14,7 @@ export type GameSlice = {
   id: string;
   code: string;
   state: GameState;
-  players: string[];
+  playersIds: string[];
 };
 
 export type StartedGameSlice = GameSlice & {
@@ -17,7 +24,7 @@ export type StartedGameSlice = GameSlice & {
   selectedAnswerId?: string;
 };
 
-const isStarted = (game: GameSlice | null): game is StartedGameSlice => {
+export const isStarted = (game: GameSlice | null): game is StartedGameSlice => {
   return game?.state === GameState.started;
 };
 
@@ -26,22 +33,24 @@ export const gameSlice = createSlice({
   initialState: null as GameSlice | null,
   reducers: {
     setGame(_, action: PayloadAction<Game>) {
+      const { players, ...game } = action.payload;
+
       return {
-        ...action.payload,
-        players: action.payload.players.map((player) => player.id),
+        ...game,
+        playersIds: players.map((player) => player.id),
       };
     },
   },
   extraReducers(builder) {
     builder.addCase('player-joined', (state, action: PlayerJoinedEvent) => {
       if (state) {
-        state.players.push(action.playerId);
+        state.playersIds.push(action.playerId);
       }
     });
 
     builder.addCase('player-left', (state, action: PlayerLeftEvent) => {
       assert(state);
-      state.players.splice(state.players.indexOf(action.playerId), 1);
+      state.playersIds.splice(state.playersIds.indexOf(action.playerId), 1);
     });
 
     builder.addCase('game-started', (state) => {
@@ -55,6 +64,12 @@ export const gameSlice = createSlice({
       state.questionMasterId = action.questionMasterId;
       state.questionId = action.question.id;
       state.answersIds = [];
+    });
+
+    builder.addCase('all-players-answered', (state, event: AllPlayerAnsweredEvent) => {
+      assert(isStarted(state));
+
+      state.answersIds = event.answers.map((answer) => answer.id);
     });
   },
 });

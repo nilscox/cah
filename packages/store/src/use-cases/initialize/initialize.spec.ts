@@ -1,5 +1,8 @@
-import { Player, createGame, createPlayer } from '@cah/shared';
+import { FetchError } from '@cah/client';
+import { createGame, createPlayer } from '@cah/shared';
 
+import { playerSelectors } from '../../slices/player/player.selectors';
+import { PlayerSlice } from '../../slices/player/player.slice';
 import { TestStore } from '../../test-store';
 
 import { initialize } from './initialize';
@@ -16,9 +19,10 @@ describe('initialize', () => {
 
     await store.dispatch(initialize());
 
-    expect(store.getPlayer()).toEqual<Player>({
+    expect(store.getPlayer()).toEqual<PlayerSlice>({
       id: 'playerId',
       nick: 'nick',
+      selectedChoicesIds: [],
     });
   });
 
@@ -37,5 +41,13 @@ describe('initialize', () => {
     await store.dispatch(initialize());
 
     expect(store.getGame()).toHaveProperty('id', 'gameId');
+  });
+
+  it('does not fail when the player is not authenticated', async () => {
+    store.client.getAuthenticatedPlayer.mockRejectedValue(new FetchError(401, ''));
+
+    await store.dispatch(initialize());
+
+    expect(store.select(playerSelectors.hasPlayer)).toBe(false);
   });
 });

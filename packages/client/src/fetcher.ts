@@ -52,5 +52,6 @@ export class FetchError extends Error {
     public readonly text: string,
   ) {
     super(`Error ${status}: ${text}`);
+    Object.setPrototypeOf(this, new.target.prototype);
   }
 }

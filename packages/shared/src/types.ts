@@ -27,7 +27,7 @@ export type StartedGame = Game & {
   selectedAnswerId?: string;
 };
 
-export const createStarted = factory<StartedGame>(() => ({
+export const createStartedGame = factory<StartedGame>(() => ({
   ...createGame({ state: GameState.started }),
   questionMasterId: '',
   question: createQuestion(),

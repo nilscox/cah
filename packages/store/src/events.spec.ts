@@ -1,4 +1,4 @@
-import { Choice, GameState, Question, createChoice, createQuestion } from '@cah/shared';
+import { GameState, Question, createChoice, createQuestion } from '@cah/shared';
 
 import { choicesSelectors } from './slices/choices/choices.selectors';
 import { playersSelectors } from './slices/players/players.selectors';
@@ -29,7 +29,7 @@ describe('events', () => {
       },
     ]);
 
-    expect(store.getGame()).toHaveProperty('players', ['playerId']);
+    expect(store.getGame()).toHaveProperty('playersIds', ['playerId']);
   });
 
   test('player-left', () => {
@@ -42,7 +42,7 @@ describe('events', () => {
     });
 
     expect(store.select(playersSelectors.all)).toEqual([]);
-    expect(store.getGame()).toHaveProperty('players', []);
+    expect(store.getGame()).toHaveProperty('playersIds', []);
   });
 
   test('game-started', () => {
@@ -93,6 +93,6 @@ describe('events', () => {
       cards: [choice],
     });
 
-    expect(store.select(choicesSelectors.all)).toEqual<Choice[]>([choice]);
+    expect(store.select(choicesSelectors.all)).toEqual([choice]);
   });
 });

@@ -4,11 +4,12 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { assert } from '../../defined';
 import { gameActions } from '../game/game.slice';
 
-type PlayerSlice = {
+export type PlayerSlice = {
   id: string;
   nick: string;
   gameId?: string;
-  cards?: string[];
+  cardsIds?: string[];
+  selectedChoicesIds: string[];
 };
 
 export const playerSlice = createSlice({
@@ -20,8 +21,30 @@ export const playerSlice = createSlice({
         id: action.payload.id,
         gameId: action.payload.gameId,
         nick: action.payload.nick,
-        cards: action.payload.cards?.map((card) => card.id),
+        cardsIds: action.payload.cards?.map((card) => card.id),
+        selectedChoicesIds: [],
       };
+    },
+    toggleChoice(state, action: PayloadAction<string>) {
+      assert(state);
+
+      const choiceId = action.payload;
+      const index = state.selectedChoicesIds.indexOf(choiceId);
+
+      if (index < 0) {
+        state.selectedChoicesIds.push(choiceId);
+      } else {
+        state.selectedChoicesIds.splice(index, 1);
+      }
+    },
+    removeCards(state, action: PayloadAction<string[]>) {
+      assert(state);
+      assert(state.cardsIds);
+
+      for (const choiceId of action.payload) {
+        removeArrayElement(state.cardsIds, choiceId);
+        removeArrayElement(state.selectedChoicesIds, choiceId);
+      }
     },
   },
   extraReducers(builder) {
@@ -32,10 +55,18 @@ export const playerSlice = createSlice({
 
     builder.addCase('cards-dealt', (state, event: CardsDealtEvent) => {
       assert(state);
-      state.cards ??= [];
-      state.cards.push(...event.cards.map((choice) => choice.id));
+      state.cardsIds ??= [];
+      state.cardsIds.push(...event.cards.map((choice) => choice.id));
     });
   },
 });
 
 export const playerActions = playerSlice.actions;
+
+const removeArrayElement = <T>(array: T[], item: T) => {
+  const index = array.indexOf(item);
+
+  if (index >= 0) {
+    array.splice(index, 1);
+  }
+};

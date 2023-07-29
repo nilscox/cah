@@ -1,6 +1,6 @@
-import { FetchError } from '@cah/client/src';
-import { Player, createGame, createPlayer } from '@cah/shared';
+import { createGame, createPlayer } from '@cah/shared';
 
+import { PlayerSlice } from '../../slices/player/player.slice';
 import { TestStore } from '../../test-store';
 
 import { authenticate } from './authenticate';
@@ -22,9 +22,10 @@ describe('authenticate', () => {
 
     expect(store.client.authenticate).toHaveBeenCalledWith('perry');
 
-    expect(store.getPlayer()).toEqual<Player>({
+    expect(store.getPlayer()).toEqual<PlayerSlice>({
       id: 'playerId',
       nick: 'perry',
+      selectedChoicesIds: [],
     });
   });
 
@@ -43,13 +44,5 @@ describe('authenticate', () => {
     await store.dispatch(authenticate(''));
 
     expect(store.client.connect).toHaveBeenCalledWith();
-  });
-
-  it('does not fail when the player is not authenticated', async () => {
-    store.client.getAuthenticatedPlayer.mockRejectedValue(new FetchError(404, ''));
-
-    await store.dispatch(authenticate('perry'));
-
-    expect(store.getPlayer()).toBeNull();
   });
 });

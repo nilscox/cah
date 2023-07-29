@@ -2,18 +2,26 @@ import { CahClient, ServerFetcher } from '@cah/client';
 import {
   AppSelector,
   authenticate,
+  choicesSelectors,
   createGame,
   createStore,
   gameSelectors,
   initialize,
   joinGame,
+  playerActions,
+  playerSelectors,
+  questionsSelectors,
   startGame,
+  submitAnswer,
 } from '@cah/store';
 
 import { StubConfigAdapter, StubExternalDataAdapter, StubLoggerAdapter } from 'src/adapters';
 import { createContainer } from 'src/container';
 import { Server } from 'src/server/server';
 import { TOKENS } from 'src/tokens';
+
+import { defined } from './utils/defined';
+import { waitFor } from './utils/wait-for';
 
 class Test {
   private container = createContainer();
@@ -76,6 +84,34 @@ class Player {
   select<Params extends unknown[], Result>(selector: AppSelector<Params, Result>, ...params: Params) {
     return selector(this.store.getState(), ...params);
   }
+
+  get id() {
+    return defined(this.select(playerSelectors.player)?.id);
+  }
+
+  get hasAllCards() {
+    return this.select(choicesSelectors.all).length === 11;
+  }
+
+  get isQuestionMaster() {
+    return this.select(gameSelectors.isQuestionMaster, this.id);
+  }
+
+  get hasAnswers() {
+    return this.select(gameSelectors.startedGame).answersIds.length > 0;
+  }
+
+  async submitRandomAnswer() {
+    const { questionId } = this.select(gameSelectors.startedGame);
+    const expectedNumberOfChoices = this.select(questionsSelectors.expectedNumberOfChoices, questionId);
+    const choices = this.select(choicesSelectors.all).sort(() => Math.random() - 0.5);
+
+    for (const choice of choices.slice(0, expectedNumberOfChoices)) {
+      this.dispatch(playerActions.toggleChoice(choice.id));
+    }
+
+    await this.dispatch(submitAnswer());
+  }
 }
 
 describe('Server E2E', () => {
@@ -122,16 +158,24 @@ describe('Server E2E', () => {
 
     await riri.dispatch(startGame(numberOfQuestions));
 
-    await new Promise((r) => setTimeout(r, 100));
+    await waitFor(() => forEachPlayer((player) => assert(player.hasAllCards)));
+
+    await forEachPlayer(async (player) => {
+      if (!player.isQuestionMaster) {
+        await player.submitRandomAnswer();
+      }
+    });
+
+    await waitFor(() => forEachPlayer((player) => assert(player.hasAnswers)));
 
     console.dir(
       riri.select((state) => state),
       { depth: null },
     );
 
-    /*
+    await new Promise((r) => setTimeout(r, 100));
 
-    await waitFor(() => forEachPlayer((player) => assert(player.cards?.length)));
+    /*
 
     const hasAllAnswers = (questionMaster: Client) => {
       return shared.isStarted(questionMaster.game) && questionMaster.game.answers?.length === 2;

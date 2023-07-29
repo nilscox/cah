@@ -1,4 +1,5 @@
-import { Player, Game, GameState, GameEvent } from '@cah/shared';
+import { Game, GameEvent, Player, StartedGame, createGame, createPlayer } from '@cah/shared';
+import { Action, Middleware } from 'redux';
 
 import { MockClient } from './mock-client';
 import { gameSelectors } from './slices/game/game.selectors';
@@ -9,8 +10,19 @@ import { createStore } from './store/create-store';
 import { AppSelector } from './types';
 
 export class TestStore {
+  private static throwOnRejectionMiddleware: Middleware = () => {
+    return (next) => (action: Action<string>) => {
+      if (action.type.endsWith('/rejected')) {
+        // eslint-disable-next-line
+        throw Object.assign(new Error(), (action as any).error);
+      }
+
+      return next(action);
+    };
+  };
+
   public readonly client = new MockClient();
-  public readonly store = createStore({ client: this.client });
+  public readonly store = createStore({ client: this.client }, [TestStore.throwOnRejectionMiddleware]);
 
   getState = this.store.getState.bind(this.store);
   dispatch = this.store.dispatch.bind(this.store);
@@ -35,28 +47,14 @@ export class TestStore {
   }
 
   setPlayer(player?: Partial<Player>) {
-    this.dispatch(
-      playerActions.setPlayer({
-        id: 'playerId',
-        nick: '',
-        ...player,
-      }),
-    );
+    this.dispatch(playerActions.setPlayer(createPlayer(player)));
   }
 
   getGame() {
     return this.select(gameSelectors.game);
   }
 
-  setGame(game?: Partial<Game>) {
-    this.dispatch(
-      gameActions.setGame({
-        id: 'gameId',
-        code: '',
-        state: GameState.idle,
-        players: [],
-        ...game,
-      }),
-    );
+  setGame(game?: Partial<Game | StartedGame>) {
+    this.dispatch(gameActions.setGame(createGame(game)));
   }
 }

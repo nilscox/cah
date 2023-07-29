@@ -1,7 +1,5 @@
 import {
-  AnonymousAnswer,
   AuthenticateBody,
-  Choice,
   CreateAnswerBody,
   Game,
   GameEvent,
@@ -35,8 +33,8 @@ export interface ICahClient {
   joinGame(code: string): Promise<string>;
   leaveGame(): Promise<void>;
   startGame(numberOfQuestions: number): Promise<void>;
-  createAnswer(choices: Choice[]): Promise<void>;
-  selectAnswer(answer: AnonymousAnswer): Promise<void>;
+  createAnswer(choicesIds: string[]): Promise<void>;
+  selectAnswer(answerId: string): Promise<void>;
   endTurn(): Promise<void>;
 }
 
@@ -121,12 +119,12 @@ export class CahClient implements ICahClient {
     return this.fetcher.put<StartGameBody>('/game/start', { numberOfQuestions });
   }
 
-  async createAnswer(choices: Choice[]): Promise<void> {
-    return this.fetcher.post<CreateAnswerBody>('/game/answer', { choicesIds: choices.map(({ id }) => id) });
+  async createAnswer(choicesIds: string[]): Promise<void> {
+    return this.fetcher.post<CreateAnswerBody>('/game/answer', { choicesIds });
   }
 
-  async selectAnswer(answer: AnonymousAnswer): Promise<void> {
-    return this.fetcher.put(`/game/answer/${answer.id}/select`);
+  async selectAnswer(answerId: string): Promise<void> {
+    return this.fetcher.put(`/game/answer/${answerId}/select`);
   }
 
   async endTurn(): Promise<void> {
