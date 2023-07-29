@@ -3,7 +3,8 @@ import { bindModule } from 'ditox';
 
 import { StubConfigAdapter, StubEventPublisherAdapter, StubLoggerAdapter } from 'src/adapters';
 import { createContainer } from 'src/container';
-import { InMemoryPlayerRepository, inMemoryPersistenceModule } from 'src/persistence';
+import { inMemoryPersistenceModule } from 'src/persistence';
+import { TOKENS } from 'src/tokens';
 import { defined } from 'src/utils/defined';
 import { waitFor } from 'src/utils/wait-for';
 
@@ -16,12 +17,19 @@ class Test {
   config = new StubConfigAdapter({ server: { host: '0.0.0.0', port: 7357 } });
   logger = new StubLoggerAdapter();
   publisher = new StubEventPublisherAdapter();
-  playerRepository = new InMemoryPlayerRepository();
 
-  server = new Server(this.config, this.logger, this.publisher, this.playerRepository, this.container);
+  server: Server;
 
   constructor() {
     bindModule(this.container, inMemoryPersistenceModule);
+
+    this.server = new Server(
+      this.config,
+      this.logger,
+      this.publisher,
+      this.container.resolve(TOKENS.repositories.player),
+      this.container,
+    );
   }
 
   async cleanup() {
@@ -41,9 +49,7 @@ describe('server', () => {
   });
 
   afterEach(async () => {
-    if (test.server.listening) {
-      await test.server.close();
-    }
+    await test.cleanup();
   });
 
   it('starts a HTTP server', async () => {

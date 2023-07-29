@@ -1,4 +1,5 @@
 import { createServer, IncomingMessage, Server as NodeServer } from 'node:http';
+import { Socket } from 'node:net';
 import { promisify } from 'node:util';
 
 import * as shared from '@cah/shared';
@@ -29,6 +30,8 @@ export class HttpServer {
   private app: express.Express;
   private server: NodeServer;
 
+  private sockets = new Set<Socket>();
+
   private sessionStore = new MemoryStore({});
 
   constructor(
@@ -38,6 +41,14 @@ export class HttpServer {
   ) {
     this.app = express();
     this.server = createServer(this.app);
+
+    this.server.on('connection', (socket) => {
+      this.sockets.add(socket);
+
+      socket.on('close', () => {
+        this.sockets.delete(socket);
+      });
+    });
 
     this.configure();
   }
@@ -57,6 +68,10 @@ export class HttpServer {
   }
 
   async close() {
+    for (const socket of this.sockets.values()) {
+      socket.destroy();
+    }
+
     if (this.server.listening) {
       await promisify<void>((cb) => this.server.close(cb))();
     }

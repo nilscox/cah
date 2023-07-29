@@ -77,10 +77,7 @@ export class Server {
 
   async close() {
     this.logger.verbose('closing server');
-
-    await this.wsServer.close();
     await this.httpServer.close();
-
     this.logger.info('server closed');
   }
 

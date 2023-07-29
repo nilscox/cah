@@ -9,6 +9,7 @@ import { Socket, Server as SocketIOServer } from 'socket.io';
 import { EventPublisherPort, LoggerPort, RtcPort } from 'src/adapters';
 import { DomainEvent } from 'src/interfaces';
 import { PlayerRepository } from 'src/persistence';
+import { MapSet } from 'src/utils/map-set';
 
 export class PlayerConnectedEvent extends DomainEvent {
   constructor(playerId: string) {
@@ -24,6 +25,7 @@ export class PlayerDisconnectedEvent extends DomainEvent {
 
 export class WsServer implements RtcPort {
   private io: SocketIOServer;
+  private sockets = new MapSet<string, Socket>();
 
   constructor(
     private readonly logger: LoggerPort,
@@ -54,9 +56,11 @@ export class WsServer implements RtcPort {
         void socket.join(player.gameId);
       }
 
+      this.sockets.add(playerId, socket);
       this.publisher.publish(new PlayerConnectedEvent(playerId));
 
       socket.on('disconnect', () => {
+        this.sockets.remove(playerId, socket);
         this.publisher.publish(new PlayerDisconnectedEvent(playerId));
       });
     } catch (error) {
@@ -68,32 +72,32 @@ export class WsServer implements RtcPort {
     await promisify<void>((cb) => this.io.close(cb))();
   }
 
-  get sockets() {
-    return this.io.sockets;
-  }
-
-  private async socket(playerId: string) {
-    const sockets = await this.io.fetchSockets();
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    return sockets.find((socket) => socket.data.playerId === playerId);
-  }
-
   async join(room: string, playerId: string): Promise<void> {
-    const socket = await this.socket(playerId);
+    const sockets = this.sockets.get(playerId);
 
-    assert(socket, `cannot find socket "${playerId}"`);
+    if (!sockets?.size) {
+      return;
+    }
 
     this.logger.verbose('join', room, playerId);
-    socket.join(room);
+
+    for (const socket of sockets.values()) {
+      await socket.join(room);
+    }
   }
 
   async leave(room: string, playerId: string): Promise<void> {
-    const socket = await this.socket(playerId);
+    const sockets = this.sockets.get(playerId);
 
-    assert(socket, `cannot find socket "${playerId}"`);
+    if (!sockets?.size) {
+      return;
+    }
 
     this.logger.verbose('leave', room, playerId);
-    socket.leave(room);
+
+    for (const socket of sockets.values()) {
+      await socket.leave(room);
+    }
   }
 
   async send(to: string, message: unknown): Promise<void> {
