@@ -1,9 +1,9 @@
-import { FetchError } from '@cah/client/src';
+import { FetchError } from '@cah/client';
 import { Game, GameEvent, Player } from '@cah/shared';
 
 import { Dependencies } from '../../dependencies';
-import { gameActions } from '../../slices/game.slice';
-import { playerActions } from '../../slices/player.slice';
+import { gameActions } from '../../slices/game/game.slice';
+import { playerActions } from '../../slices/player/player.slice';
 import { createThunk } from '../../store/create-thunk';
 import { AppThunk } from '../../types';
 
@@ -45,7 +45,7 @@ const fetchPlayer = (): AppThunk<Promise<Player | undefined>> => {
 
       return player;
     } catch (error) {
-      if (error instanceof FetchError && error.status === 404) {
+      if (error instanceof FetchError && error.status === 401) {
         return undefined;
       } else {
         throw error;

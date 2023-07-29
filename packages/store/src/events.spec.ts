@@ -3,11 +3,13 @@ import {
   GameState,
   PlayerJoinedEvent,
   PlayerLeftEvent,
+  Question,
   TurnStartedEvent,
+  createQuestion,
 } from '@cah/shared';
 
-import { gameSelectors } from './slices/game.slice';
-import { playersSelectors } from './slices/players.slice';
+import { playersSelectors } from './slices/players/players.selectors';
+import { questionsSelectors } from './slices/questions/questions.selectors';
 import { TestStore } from './test-store';
 
 describe('events', () => {
@@ -66,19 +68,23 @@ describe('events', () => {
     store.setPlayer();
     store.setGame({ state: GameState.started });
 
+    const question = createQuestion({
+      id: 'questionId',
+      text: '',
+      blanks: [],
+    });
+
     store.dispatch({
       type: 'turn-started',
       gameId: '',
       questionMasterId: 'questionMasterId',
-      question: {
-        id: 'questionId',
-        text: '',
-        blanks: [],
-      },
+      question,
     } satisfies TurnStartedEvent);
 
     expect(store.getGame()).toHaveProperty('questionMasterId', 'questionMasterId');
     expect(store.getGame()).toHaveProperty('questionId', 'questionId');
     expect(store.getGame()).toHaveProperty('answersIds', []);
+
+    expect(store.select(questionsSelectors.all)).toEqual<Question[]>([question]);
   });
 });

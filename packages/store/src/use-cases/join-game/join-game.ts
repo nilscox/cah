@@ -1,4 +1,4 @@
-import { gameActions } from '../../slices/game.slice';
+import { gameActions } from '../../slices/game/game.slice';
 import { createThunk } from '../../store/create-thunk';
 
 export const joinGame = createThunk('join-game', async ({ dispatch, client }, code: string) => {

@@ -1,7 +1,8 @@
 import { GameState } from '@cah/shared';
 
-import { GameSlice, gameSelectors } from '../../slices/game.slice';
-import { playerSelectors } from '../../slices/player.slice';
+import { GameSlice } from '../../slices/game/game.slice';
+import { gameSelectors } from '../../slices/game/game.selectors';
+import { playerSelectors } from '../../slices/player/player.selectors';
 import { TestStore } from '../../test-store';
 
 import { createGame } from './create-game';

@@ -1,5 +1,5 @@
-import { gameActions } from '../../slices/game.slice';
-import { playerActions } from '../../slices/player.slice';
+import { gameActions } from '../../slices/game/game.slice';
+import { playerActions } from '../../slices/player/player.slice';
 import { createThunk } from '../../store/create-thunk';
 
 export const authenticate = createThunk('authenticate', async ({ dispatch, client }, nick: string) => {

@@ -9,7 +9,8 @@
     "rootDir": "src",
     "types": ["vitest/globals"],
     "paths": {
-      "immer": ["./node_modules/immer"]
+      "immer": ["./node_modules/immer"],
+      "reselect": ["./node_modules/reselect"]
     }
   }
 }

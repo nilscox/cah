@@ -1,16 +1,14 @@
 import { PlayerJoinedEvent, PlayerLeftEvent } from '@cah/shared';
 import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 
-import { AppState } from '../types';
-
-import { gameActions } from './game.slice';
+import { gameActions } from '../game/game.slice';
 
 type PlayersSlice = {
   id: string;
   nick: string;
 };
 
-const playersAdapter = createEntityAdapter<PlayersSlice>();
+export const playersAdapter = createEntityAdapter<PlayersSlice>();
 
 const playersSlice = createSlice({
   name: 'players',
@@ -34,9 +32,3 @@ const playersSlice = createSlice({
 });
 
 export const { actions: playersActions, reducer: playersReducer } = playersSlice;
-
-const selectors = playersAdapter.getSelectors((state: AppState) => state.players);
-
-export const playersSelectors = {
-  all: selectors.selectAll,
-};

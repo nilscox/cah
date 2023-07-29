@@ -1,8 +1,10 @@
 import { Player, Game, GameState } from '@cah/shared';
 
 import { MockClient } from './mock-client';
-import { gameActions, gameSelectors } from './slices/game.slice';
-import { playerActions, playerSelectors } from './slices/player.slice';
+import { gameSelectors } from './slices/game/game.selectors';
+import { gameActions } from './slices/game/game.slice';
+import { playerSelectors } from './slices/player/player.selectors';
+import { playerActions } from './slices/player/player.slice';
 import { createStore } from './store/create-store';
 import { AppSelector } from './types';
 

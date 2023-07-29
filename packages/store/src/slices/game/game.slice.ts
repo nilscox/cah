@@ -1,8 +1,7 @@
 import { Game, GameState, PlayerJoinedEvent, PlayerLeftEvent, TurnStartedEvent } from '@cah/shared';
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
-import { assert, defined } from '../defined';
-import { AppState } from '../types';
+import { assert } from '../../defined';
 
 export type GameSlice = {
   id: string;
@@ -35,8 +34,9 @@ const gameSlice = createSlice({
   },
   extraReducers(builder) {
     builder.addCase('player-joined', (state, action: PlayerJoinedEvent) => {
-      assert(state);
-      state.players.push(action.playerId);
+      if (state) {
+        state.players.push(action.playerId);
+      }
     });
 
     builder.addCase('player-left', (state, action: PlayerLeftEvent) => {
@@ -60,7 +60,3 @@ const gameSlice = createSlice({
 });
 
 export const { actions: gameActions, reducer: gameReducer } = gameSlice;
-
-export const gameSelectors = {
-  game: (state: AppState) => defined(state.game),
-};

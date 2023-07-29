@@ -1,9 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit';
 
 import { Dependencies } from '../dependencies';
-import { gameReducer } from '../slices/game.slice';
-import { playerReducer } from '../slices/player.slice';
-import { playersReducer } from '../slices/players.slice';
+import { gameReducer } from '../slices/game/game.slice';
+import { playerReducer } from '../slices/player/player.slice';
+import { playersReducer } from '../slices/players/players.slice';
+import { questionsReducer } from '../slices/questions/questions.slice';
 
 export const createStore = (deps: Dependencies) => {
   return configureStore({
@@ -11,6 +12,7 @@ export const createStore = (deps: Dependencies) => {
       player: playerReducer,
       game: gameReducer,
       players: playersReducer,
+      questions: questionsReducer,
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({

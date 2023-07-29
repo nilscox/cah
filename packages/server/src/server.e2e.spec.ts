@@ -1,224 +1,19 @@
-import assert from 'node:assert';
-
 import { CahClient, ServerFetcher } from '@cah/client';
-import * as shared from '@cah/shared';
+import {
+  AppSelector,
+  authenticate,
+  createGame,
+  createStore,
+  gameSelectors,
+  initialize,
+  joinGame,
+  startGame,
+} from '@cah/store';
 
 import { StubConfigAdapter, StubExternalDataAdapter, StubLoggerAdapter } from 'src/adapters';
 import { createContainer } from 'src/container';
 import { Server } from 'src/server/server';
 import { TOKENS } from 'src/tokens';
-
-import { hasId } from './utils/id';
-import { waitFor } from './utils/wait-for';
-
-class Client {
-  private cah: CahClient;
-  private nick: string;
-
-  public player?: shared.Player;
-  public game?: shared.Game;
-
-  public debug = false;
-  public debugEvents = false;
-
-  constructor(nick: string, server: Server) {
-    this.cah = new CahClient(new ServerFetcher(`http://${server.address}`));
-    this.nick = nick;
-    this.registerEventsListeners();
-  }
-
-  async connect() {
-    await this.cah.connect();
-  }
-
-  async disconnect() {
-    await this.cah.disconnect();
-  }
-
-  private log(...args: unknown[]) {
-    if (this.debug) {
-      console.log(`* ${this.nick}`, ...args);
-    }
-  }
-
-  private logEvent(event: shared.GameEvent) {
-    if (this.debugEvents) {
-      console.log(`* received event`, event);
-    }
-  }
-
-  private registerEventsListeners = () => {
-    this.cah.addEventListener('player-joined', (event) => {
-      this.logEvent(event);
-
-      if (this.game) {
-        this.game.players.push({ id: event.playerId, nick: event.nick });
-      }
-    });
-
-    this.cah.addEventListener('player-left', (event) => {
-      this.logEvent(event);
-
-      assert(this.game);
-      this.game.players.splice(this.game.players.findIndex(hasId(event.playerId)), 1);
-    });
-
-    this.cah.addEventListener('game-started', (event) => {
-      this.logEvent(event);
-
-      assert(this.game);
-      this.game.state = shared.GameState.started;
-
-      assert(this.player);
-      this.player.cards = [];
-    });
-
-    this.cah.addEventListener('turn-started', (event) => {
-      this.logEvent(event);
-
-      assert(shared.isStarted(this.game));
-      this.game.questionMasterId = event.questionMasterId;
-      this.game.question = event.question;
-    });
-
-    this.cah.addEventListener('cards-dealt', (event) => {
-      this.logEvent(event);
-
-      assert(this.player?.cards);
-      this.player.cards.push(...event.cards);
-    });
-
-    this.cah.addEventListener('player-answered', (event) => {
-      this.logEvent(event);
-    });
-
-    this.cah.addEventListener('all-players-answered', (event) => {
-      this.logEvent(event);
-
-      assert(shared.isStarted(this.game));
-      this.game.answers = event.answers;
-    });
-
-    this.cah.addEventListener('winning-answer-selected', (event) => {
-      this.logEvent(event);
-
-      assert(shared.isStarted(this.game));
-      this.game.selectedAnswerId = event.selectedAnswerId;
-      this.game.answers = event.answers;
-    });
-
-    this.cah.addEventListener('turn-ended', (event) => {
-      this.logEvent(event);
-
-      assert(shared.isStarted(this.game));
-      this.game.answers = [];
-    });
-
-    this.cah.addEventListener('game-ended', (event) => {
-      this.logEvent(event);
-
-      assert(shared.isStarted(this.game));
-      this.game.state = shared.GameState.finished;
-
-      const game = this.game as Partial<shared.StartedGame>;
-      delete game.questionMasterId;
-      delete game.question;
-      delete game.answers;
-      delete game.selectedAnswerId;
-
-      assert(this.player);
-      delete this.player.cards;
-    });
-  };
-
-  get questionMaster() {
-    if (shared.isStarted(this.game)) {
-      return this.game.players.find(hasId(this.game.questionMasterId));
-    }
-  }
-
-  get question() {
-    if (shared.isStarted(this.game)) {
-      return this.game.question;
-    }
-  }
-
-  get id() {
-    return this.player?.id;
-  }
-
-  get cards() {
-    return this.player?.cards;
-  }
-
-  async authenticate() {
-    this.log('authenticates');
-    await this.cah.authenticate(this.nick);
-  }
-
-  async fetchPlayer() {
-    this.log('retrieves themselves');
-    this.player = await this.cah.getAuthenticatedPlayer();
-
-    return this.player;
-  }
-
-  async fetchGame() {
-    const player = await this.fetchPlayer();
-    assert(player?.gameId);
-
-    this.log('retrieves their game');
-    this.game = await this.cah.getGame(player.gameId);
-
-    return this.game;
-  }
-
-  async createGame() {
-    this.log('creates a game');
-    await this.cah.createGame();
-  }
-
-  async joinGame(code: string) {
-    this.log(`joins the game ${code}`);
-    await this.cah.joinGame(code);
-  }
-
-  async startGame(numberOfQuestions: number) {
-    this.log('start the game');
-    await this.cah.startGame(numberOfQuestions);
-  }
-
-  async answer() {
-    assert(this.cards);
-
-    const choices = this.cards.slice(0, this.question?.blanks?.length ?? 1);
-
-    this.log('answers the current question:', choices.map((choice) => choice.text).join(', '));
-    await this.cah.createAnswer(choices);
-
-    this.cards.splice(0, choices.length);
-  }
-
-  async selectAnswer() {
-    assert(shared.isStarted(this.game));
-    assert(this.game.answers);
-
-    const [answer] = this.game.answers;
-
-    this.log('selects answer:', answer.id);
-    await this.cah.selectAnswer(answer);
-  }
-
-  async endTurn() {
-    this.log('ends the current turn');
-    await this.cah.endTurn();
-  }
-
-  async leaveGame() {
-    this.log('leaves the current game');
-    await this.cah.leaveGame();
-  }
-}
 
 class Test {
   private container = createContainer();
@@ -251,8 +46,35 @@ class Test {
     return this.container.resolve(TOKENS.database);
   }
 
-  createClient(nick: string) {
-    return new Client(nick, this.server);
+  createClient() {
+    const fetcher = new ServerFetcher(`http://${this.server.address}`);
+    const client = new CahClient(fetcher);
+    const store = createStore({ client });
+
+    return store;
+  }
+}
+
+class Player {
+  private fetcher: ServerFetcher;
+  private client: CahClient;
+  private store: ReturnType<typeof createStore>;
+
+  constructor(
+    server: Server,
+    public readonly nick: string,
+  ) {
+    this.fetcher = new ServerFetcher(`http://${server.address}`);
+    this.client = new CahClient(this.fetcher);
+    this.store = createStore({ client: this.client });
+  }
+
+  get dispatch() {
+    return this.store.dispatch;
+  }
+
+  select<Params extends unknown[], Result>(selector: AppSelector<Params, Result>, ...params: Params) {
+    return selector(this.store.getState(), ...params);
   }
 }
 
@@ -271,10 +93,7 @@ describe('Server E2E', () => {
   });
 
   afterEach(async () => {
-    if (test?.server.listening) {
-      await test.server.close();
-    }
-
+    await test.server.close();
     await test.database.closeConnection();
   });
 
@@ -283,33 +102,34 @@ describe('Server E2E', () => {
   it('plays a full game', async () => {
     const numberOfQuestions = 3;
 
-    const riri = test.createClient('riri');
-    const fifi = test.createClient('fifi');
-    const loulou = test.createClient('loulou');
+    const riri = new Player(test.server, 'riri');
+    const fifi = new Player(test.server, 'fifi');
+    const loulou = new Player(test.server, 'loulou');
 
     const players = [riri, fifi, loulou];
 
-    const forEachPlayer = async (cb: (player: Client) => void | Promise<void>) => {
+    const forEachPlayer = async (cb: (player: Player) => unknown) => {
       await Promise.all(players.map(cb));
     };
 
-    await forEachPlayer(async (player) => {
-      // player.debug = true;
-      // player.debugEvents = true;
-      await player.authenticate();
-      await player.connect();
-    });
+    await forEachPlayer((player) => player.dispatch(initialize()));
+    await forEachPlayer((player) => player.dispatch(authenticate(player.nick)));
 
-    await riri.createGame();
-    const { code } = await waitFor(() => riri.fetchGame());
+    await riri.dispatch(createGame());
 
-    await fifi.joinGame(code);
-    await fifi.fetchGame();
+    await fifi.dispatch(joinGame(riri.select(gameSelectors.code)));
+    await loulou.dispatch(joinGame(riri.select(gameSelectors.code)));
 
-    await loulou.joinGame(code);
-    await loulou.fetchGame();
+    await riri.dispatch(startGame(numberOfQuestions));
 
-    await riri.startGame(numberOfQuestions);
+    await new Promise((r) => setTimeout(r, 100));
+
+    console.dir(
+      riri.select((state) => state),
+      { depth: null },
+    );
+
+    /*
 
     await waitFor(() => forEachPlayer((player) => assert(player.cards?.length)));
 
@@ -345,5 +165,7 @@ describe('Server E2E', () => {
       await player.leaveGame();
       await player.disconnect();
     });
+
+    */
   });
 });

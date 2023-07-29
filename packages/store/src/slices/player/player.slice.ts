@@ -1,10 +1,8 @@
 import { Player } from '@cah/shared';
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
-import { assert } from '../defined';
-import { AppState } from '../types';
-
-import { gameActions } from './game.slice';
+import { assert } from '../../defined';
+import { gameActions } from '../game/game.slice';
 
 type PlayerSlice = {
   id: string;
@@ -35,7 +33,3 @@ const playerSlice = createSlice({
 });
 
 export const { actions: playerActions, reducer: playerReducer } = playerSlice;
-
-export const playerSelectors = {
-  player: (state: AppState) => state.player,
-};
