@@ -1,5 +1,5 @@
-import { AllPlayerAnsweredEvent } from '@cah/shared';
-import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
+import { AllPlayerAnsweredEvent, AnonymousAnswer, Answer, WinningAnswerSelectedEvent } from '@cah/shared';
+import { PayloadAction, createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 
 type AnswerSlice = {
   id: string;
@@ -7,12 +7,21 @@ type AnswerSlice = {
   choicesIds: string[];
 };
 
-const answersAdapter = createEntityAdapter<AnswerSlice>();
+export const answersAdapter = createEntityAdapter<AnswerSlice>();
 
 export const answersSlice = createSlice({
   name: 'answers',
   initialState: answersAdapter.getInitialState(),
-  reducers: {},
+  reducers: {
+    add(state, action: PayloadAction<Answer | AnonymousAnswer>) {
+      const { choices, ...answer } = action.payload;
+
+      answersAdapter.addOne(state, {
+        ...answer,
+        choicesIds: choices.map((choice) => choice.id),
+      });
+    },
+  },
   extraReducers(builder) {
     builder.addCase('all-players-answered', (state, event: AllPlayerAnsweredEvent) => {
       answersAdapter.addMany(
@@ -23,5 +32,17 @@ export const answersSlice = createSlice({
         })),
       );
     });
+
+    builder.addCase('winning-answer-selected', (state, event: WinningAnswerSelectedEvent) => {
+      answersAdapter.updateMany(
+        state,
+        event.answers.map((answer) => ({
+          id: answer.id,
+          changes: { playerId: answer.playerId },
+        })),
+      );
+    });
   },
 });
+
+export const answersActions = answersSlice.actions;

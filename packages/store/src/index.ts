@@ -1,4 +1,5 @@
 export { gameSelectors } from './slices/game/game.selectors';
+export { gameActions } from './slices/game/game.slice';
 
 export { playerActions } from './slices/player/player.slice';
 export { playerSelectors } from './slices/player/player.selectors';
@@ -16,6 +17,7 @@ export { joinGame } from './use-cases/join-game/join-game';
 export { initialize } from './use-cases/initialize/initialize';
 export { startGame } from './use-cases/start-game/start-game';
 export { submitAnswer } from './use-cases/submit-answer/submit-answer';
+export { validateSelectedAnswer } from './use-cases/validate-selected-answer/validate-selected-answer';
 
 export { createStore } from './store/create-store';
 export * from './types';

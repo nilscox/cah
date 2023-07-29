@@ -5,6 +5,7 @@ import {
   PlayerJoinedEvent,
   PlayerLeftEvent,
   TurnStartedEvent,
+  WinningAnswerSelectedEvent,
 } from '@cah/shared';
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
@@ -21,6 +22,7 @@ export type StartedGameSlice = GameSlice & {
   questionMasterId: string;
   questionId: string;
   answersIds: string[];
+  isAnswerValidated: boolean;
   selectedAnswerId?: string;
 };
 
@@ -39,6 +41,10 @@ export const gameSlice = createSlice({
         ...game,
         playersIds: players.map((player) => player.id),
       };
+    },
+    setSelectedAnswer(state, action: PayloadAction<string>) {
+      assert(isStarted(state));
+      state.selectedAnswerId = action.payload;
     },
   },
   extraReducers(builder) {
@@ -64,12 +70,21 @@ export const gameSlice = createSlice({
       state.questionMasterId = action.questionMasterId;
       state.questionId = action.question.id;
       state.answersIds = [];
+      delete state.selectedAnswerId;
+      state.isAnswerValidated = false;
     });
 
     builder.addCase('all-players-answered', (state, event: AllPlayerAnsweredEvent) => {
       assert(isStarted(state));
 
       state.answersIds = event.answers.map((answer) => answer.id);
+    });
+
+    builder.addCase('winning-answer-selected', (state, event: WinningAnswerSelectedEvent) => {
+      assert(isStarted(state));
+
+      state.selectedAnswerId = event.selectedAnswerId;
+      state.isAnswerValidated = true;
     });
   },
 });

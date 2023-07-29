@@ -77,6 +77,8 @@ describe('events', () => {
     expect(store.getGame()).toHaveProperty('questionMasterId', 'questionMasterId');
     expect(store.getGame()).toHaveProperty('questionId', 'questionId');
     expect(store.getGame()).toHaveProperty('answersIds', []);
+    expect(store.getGame()).not.toHaveProperty('selectedAnswerId');
+    expect(store.getGame()).toHaveProperty('isAnswerValidated', false);
 
     expect(store.select(questionsSelectors.all)).toEqual<Question[]>([question]);
   });

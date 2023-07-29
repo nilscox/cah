@@ -5,6 +5,7 @@ import {
   choicesSelectors,
   createGame,
   createStore,
+  gameActions,
   gameSelectors,
   initialize,
   joinGame,
@@ -13,6 +14,7 @@ import {
   questionsSelectors,
   startGame,
   submitAnswer,
+  validateSelectedAnswer,
 } from '@cah/store';
 
 import { StubConfigAdapter, StubExternalDataAdapter, StubLoggerAdapter } from 'src/adapters';
@@ -52,14 +54,6 @@ class Test {
 
   get database() {
     return this.container.resolve(TOKENS.database);
-  }
-
-  createClient() {
-    const fetcher = new ServerFetcher(`http://${this.server.address}`);
-    const client = new CahClient(fetcher);
-    const store = createStore({ client });
-
-    return store;
   }
 }
 
@@ -111,6 +105,15 @@ class Player {
     }
 
     await this.dispatch(submitAnswer());
+  }
+
+  async selectRandomAnswer() {
+    const game = this.select(gameSelectors.startedGame);
+    const answersIds = [...game.answersIds];
+    const answerId = answersIds.sort(() => Math.random() - 0.5)[0];
+
+    this.dispatch(gameActions.setSelectedAnswer(answerId));
+    await this.dispatch(validateSelectedAnswer());
   }
 }
 
@@ -168,36 +171,21 @@ describe('Server E2E', () => {
 
     await waitFor(() => forEachPlayer((player) => assert(player.hasAnswers)));
 
+    await players.find((player) => player.isQuestionMaster)?.selectRandomAnswer();
+
+    await new Promise((r) => setTimeout(r, 100));
+
     console.dir(
       riri.select((state) => state),
       { depth: null },
     );
 
-    await new Promise((r) => setTimeout(r, 100));
-
     /*
-
-    const hasAllAnswers = (questionMaster: Client) => {
-      return shared.isStarted(questionMaster.game) && questionMaster.game.answers?.length === 2;
-    };
-
-    const getQuestionMaster = () => {
-      return players.find((player) => player.id === riri.questionMaster?.id);
-    };
 
     for (let turn = 1; turn <= numberOfQuestions; ++turn) {
       const questionMaster = getQuestionMaster();
       assert(questionMaster);
 
-      await forEachPlayer(async (player) => {
-        if (player !== questionMaster) {
-          await player.answer();
-        }
-      });
-
-      await waitFor(() => assert(hasAllAnswers(questionMaster)));
-
-      await questionMaster.selectAnswer();
       await questionMaster.endTurn();
 
       await waitFor(() => assert(getQuestionMaster() !== questionMaster));
