@@ -1,4 +1,4 @@
-import { Player, Game, GameState } from '@cah/shared';
+import { Player, Game, GameState, GameEvent } from '@cah/shared';
 
 import { MockClient } from './mock-client';
 import { gameSelectors } from './slices/game/game.selectors';
@@ -14,6 +14,10 @@ export class TestStore {
 
   getState = this.store.getState.bind(this.store);
   dispatch = this.store.dispatch.bind(this.store);
+
+  dispatchEvent(event: GameEvent) {
+    return this.dispatch(event);
+  }
 
   select = <Params extends unknown[], Result>(
     selector: AppSelector<Params, Result>,

@@ -21,7 +21,7 @@ const isStarted = (game: GameSlice | null): game is StartedGameSlice => {
   return game?.state === GameState.started;
 };
 
-const gameSlice = createSlice({
+export const gameSlice = createSlice({
   name: 'game',
   initialState: null as GameSlice | null,
   reducers: {
@@ -59,4 +59,4 @@ const gameSlice = createSlice({
   },
 });
 
-export const { actions: gameActions, reducer: gameReducer } = gameSlice;
+export const gameActions = gameSlice.actions;

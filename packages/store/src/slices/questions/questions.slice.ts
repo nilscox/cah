@@ -3,7 +3,7 @@ import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 
 export const questionsAdapter = createEntityAdapter<Question>();
 
-const questionsSlice = createSlice({
+export const questionsSlice = createSlice({
   name: 'questions',
   initialState: questionsAdapter.getInitialState(),
   reducers: {},
@@ -14,4 +14,4 @@ const questionsSlice = createSlice({
   },
 });
 
-export const { reducer: questionsReducer, actions: questionActions } = questionsSlice;
+export const questionActions = questionsSlice.actions;

@@ -1,4 +1,4 @@
-import { Player } from '@cah/shared';
+import { CardsDealtEvent, Player } from '@cah/shared';
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 import { assert } from '../../defined';
@@ -11,7 +11,7 @@ type PlayerSlice = {
   cards?: string[];
 };
 
-const playerSlice = createSlice({
+export const playerSlice = createSlice({
   name: 'player',
   initialState: null as PlayerSlice | null,
   reducers: {
@@ -29,7 +29,13 @@ const playerSlice = createSlice({
       assert(state);
       state.gameId = action.payload.id;
     });
+
+    builder.addCase('cards-dealt', (state, event: CardsDealtEvent) => {
+      assert(state);
+      state.cards ??= [];
+      state.cards.push(...event.cards.map((choice) => choice.id));
+    });
   },
 });
 
-export const { actions: playerActions, reducer: playerReducer } = playerSlice;
+export const playerActions = playerSlice.actions;

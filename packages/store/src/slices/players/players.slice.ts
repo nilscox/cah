@@ -10,7 +10,7 @@ type PlayersSlice = {
 
 export const playersAdapter = createEntityAdapter<PlayersSlice>();
 
-const playersSlice = createSlice({
+export const playersSlice = createSlice({
   name: 'players',
   initialState: playersAdapter.getInitialState(),
   reducers: {},
@@ -31,4 +31,4 @@ const playersSlice = createSlice({
   },
 });
 
-export const { actions: playersActions, reducer: playersReducer } = playersSlice;
+export const playersActions = playersSlice.actions;

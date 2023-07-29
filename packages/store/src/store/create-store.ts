@@ -1,18 +1,20 @@
 import { configureStore } from '@reduxjs/toolkit';
 
 import { Dependencies } from '../dependencies';
-import { gameReducer } from '../slices/game/game.slice';
-import { playerReducer } from '../slices/player/player.slice';
-import { playersReducer } from '../slices/players/players.slice';
-import { questionsReducer } from '../slices/questions/questions.slice';
+import { choicesSlice } from '../slices/choices/choices.slice';
+import { gameSlice } from '../slices/game/game.slice';
+import { playerSlice } from '../slices/player/player.slice';
+import { playersSlice } from '../slices/players/players.slice';
+import { questionsSlice } from '../slices/questions/questions.slice';
 
 export const createStore = (deps: Dependencies) => {
   return configureStore({
     reducer: {
-      player: playerReducer,
-      game: gameReducer,
-      players: playersReducer,
-      questions: questionsReducer,
+      [playerSlice.name]: playerSlice.reducer,
+      [gameSlice.name]: gameSlice.reducer,
+      [playersSlice.name]: playersSlice.reducer,
+      [questionsSlice.name]: questionsSlice.reducer,
+      [choicesSlice.name]: choicesSlice.reducer,
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({
