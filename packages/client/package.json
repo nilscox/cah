@@ -8,6 +8,7 @@
     "lint": "eslint src"
   },
   "dependencies": {
+    "@cah/eslint-config": "workspace:*",
     "@cah/shared": "workspace:*",
     "socket.io-client": "^4.7.1",
     "tough-cookie": "^4.1.3"

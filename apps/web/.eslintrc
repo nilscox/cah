@@ -1,26 +1,14 @@
 {
   "extends": [
-    "eslint:recommended",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:@typescript-eslint/recommended-requiring-type-checking",
-    "plugin:import/recommended",
-    "plugin:import/typescript",
+    "@cah/eslint-config",
     "plugin:react/recommended",
     "plugin:react-hooks/recommended",
     "plugin:jsx-a11y/recommended"
   ],
 
-  "parser": "@typescript-eslint/parser",
-  "parserOptions": {
-    "project": ["./tsconfig.json"]
-  },
-
-  "plugins": ["@typescript-eslint", "import", "react", "react-hooks", "jsx-a11y"],
+  "plugins": ["react", "react-hooks", "jsx-a11y"],
 
   "settings": {
-    "import/resolver": {
-      "typescript": true
-    },
     "react": {
       "version": "detect"
     }
@@ -29,14 +17,6 @@
   "rules": {
     "react/react-in-jsx-scope": "off",
     "react/prop-types": "off",
-    "react/no-unescaped-entities": "off",
-    "import/order": [
-      "warn",
-      {
-        "newlines-between": "always",
-        "alphabetize": { "order": "asc" },
-        "groups": ["builtin", "external", "internal", "parent", "sibling", "index"]
-      }
-    ]
+    "react/no-unescaped-entities": "off"
   }
 }

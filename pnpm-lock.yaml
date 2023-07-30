@@ -76,6 +76,9 @@ importers:
         specifier: ^1.2.0
         version: 1.2.0
     devDependencies:
+      '@cah/eslint-config':
+        specifier: workspace:*
+        version: link:../../packages/eslint-config
       '@cah/store':
         specifier: workspace:*
         version: link:../../packages/store
@@ -94,24 +97,12 @@ importers:
       '@types/node':
         specifier: ^20.3.1
         version: 20.3.1
-      '@typescript-eslint/eslint-plugin':
-        specifier: ^6.1.0
-        version: 6.1.0(@typescript-eslint/parser@6.1.0)(eslint@8.45.0)(typescript@5.1.6)
-      '@typescript-eslint/parser':
-        specifier: ^6.1.0
-        version: 6.1.0(eslint@8.45.0)(typescript@5.1.6)
       drizzle-kit:
         specifier: ^0.19.2
         version: 0.19.2
       eslint:
         specifier: ^8.45.0
         version: 8.45.0
-      eslint-import-resolver-typescript:
-        specifier: ^3.5.5
-        version: 3.5.5(@typescript-eslint/parser@6.1.0)(eslint-plugin-i@2.27.5-2)(eslint@8.45.0)
-      eslint-plugin-import:
-        specifier: npm:eslint-plugin-i@2.27.5-2
-        version: /eslint-plugin-i@2.27.5-2(@typescript-eslint/parser@6.1.0)(eslint-import-resolver-typescript@3.5.5)(eslint@8.45.0)
       nodemon:
         specifier: ^3.0.1
         version: 3.0.1
@@ -149,27 +140,18 @@ importers:
         specifier: ^2.11.0
         version: 2.11.0(react@18.2.0)
     devDependencies:
+      '@cah/eslint-config':
+        specifier: workspace:*
+        version: link:../../packages/eslint-config
       '@types/react':
         specifier: ^18.2.12
         version: 18.2.12
       '@types/react-dom':
         specifier: ^18.2.5
         version: 18.2.5
-      '@typescript-eslint/eslint-plugin':
-        specifier: ^6.1.0
-        version: 6.1.0(@typescript-eslint/parser@6.1.0)(eslint@8.45.0)(typescript@5.1.6)
-      '@typescript-eslint/parser':
-        specifier: ^6.1.0
-        version: 6.1.0(eslint@8.45.0)(typescript@5.1.6)
       eslint:
         specifier: ^8.45.0
         version: 8.45.0
-      eslint-import-resolver-typescript:
-        specifier: ^3.5.5
-        version: 3.5.5(@typescript-eslint/parser@6.1.0)(eslint-plugin-i@2.27.5-2)(eslint@8.45.0)
-      eslint-plugin-import:
-        specifier: npm:eslint-plugin-i@2.27.5-2
-        version: /eslint-plugin-i@2.27.5-2(@typescript-eslint/parser@6.1.0)(eslint-import-resolver-typescript@3.5.5)(eslint@8.45.0)
       eslint-plugin-jsx-a11y:
         specifier: ^6.7.1
         version: 6.7.1(eslint@8.45.0)
@@ -188,6 +170,9 @@ importers:
 
   packages/client:
     dependencies:
+      '@cah/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
       '@cah/shared':
         specifier: workspace:*
         version: link:../shared
@@ -205,11 +190,7 @@ importers:
         specifier: ^4.0.2
         version: 4.0.2
 
-  packages/shared:
-    dependencies:
-      yup:
-        specifier: ^1.2.0
-        version: 1.2.0
+  packages/eslint-config:
     devDependencies:
       '@typescript-eslint/eslint-plugin':
         specifier: ^6.1.0
@@ -217,15 +198,25 @@ importers:
       '@typescript-eslint/parser':
         specifier: ^6.1.0
         version: 6.1.0(eslint@8.45.0)(typescript@5.1.6)
-      eslint:
-        specifier: ^8.45.0
-        version: 8.45.0
       eslint-import-resolver-typescript:
         specifier: ^3.5.5
         version: 3.5.5(@typescript-eslint/parser@6.1.0)(eslint-plugin-i@2.27.5-2)(eslint@8.45.0)
       eslint-plugin-import:
         specifier: npm:eslint-plugin-i@2.27.5-2
         version: /eslint-plugin-i@2.27.5-2(@typescript-eslint/parser@6.1.0)(eslint-import-resolver-typescript@3.5.5)(eslint@8.45.0)
+
+  packages/shared:
+    dependencies:
+      yup:
+        specifier: ^1.2.0
+        version: 1.2.0
+    devDependencies:
+      '@cah/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      eslint:
+        specifier: ^8.45.0
+        version: 8.45.0
 
   packages/store:
     dependencies:
@@ -242,21 +233,12 @@ importers:
         specifier: ^4.2.1
         version: 4.2.1
     devDependencies:
-      '@typescript-eslint/eslint-plugin':
-        specifier: ^6.1.0
-        version: 6.1.0(@typescript-eslint/parser@6.1.0)(eslint@8.45.0)(typescript@5.1.6)
-      '@typescript-eslint/parser':
-        specifier: ^6.1.0
-        version: 6.1.0(eslint@8.45.0)(typescript@5.1.6)
+      '@cah/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
       eslint:
         specifier: ^8.45.0
         version: 8.45.0
-      eslint-import-resolver-typescript:
-        specifier: ^3.5.5
-        version: 3.5.5(@typescript-eslint/parser@6.1.0)(eslint-plugin-i@2.27.5-2)(eslint@8.45.0)
-      eslint-plugin-import:
-        specifier: npm:eslint-plugin-i@2.27.5-2
-        version: /eslint-plugin-i@2.27.5-2(@typescript-eslint/parser@6.1.0)(eslint-import-resolver-typescript@3.5.5)(eslint@8.45.0)
       immer:
         specifier: ^10.0.2
         version: 10.0.2
@@ -269,21 +251,12 @@ importers:
 
   packages/utils:
     devDependencies:
-      '@typescript-eslint/eslint-plugin':
-        specifier: ^6.1.0
-        version: 6.1.0(@typescript-eslint/parser@6.1.0)(eslint@8.45.0)(typescript@5.1.6)
-      '@typescript-eslint/parser':
-        specifier: ^6.1.0
-        version: 6.1.0(eslint@8.45.0)(typescript@5.1.6)
+      '@cah/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
       eslint:
         specifier: ^8.45.0
         version: 8.45.0
-      eslint-import-resolver-typescript:
-        specifier: ^3.5.5
-        version: 3.5.5(@typescript-eslint/parser@6.1.0)(eslint-plugin-i@2.27.5-2)(eslint@8.45.0)
-      eslint-plugin-import:
-        specifier: npm:eslint-plugin-i@2.27.5-2
-        version: /eslint-plugin-i@2.27.5-2(@typescript-eslint/parser@6.1.0)(eslint-import-resolver-typescript@3.5.5)(eslint@8.45.0)
       vitest:
         specifier: ^0.33.0
         version: 0.33.0
