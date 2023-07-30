@@ -1,6 +1,7 @@
+import { array } from '@cah/utils';
+
 import { createAnswer, createPlayer } from 'src/entities';
 import { HandlerCommand } from 'src/interfaces';
-import { array } from 'src/utils/array';
 import { UnitTest } from 'src/utils/unit-test';
 
 import { AllAnswersSubmittedEvent, HandleEndOfPlayersAnswerHandler } from './handle-end-of-players-answer';

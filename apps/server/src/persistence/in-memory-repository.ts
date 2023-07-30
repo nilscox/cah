@@ -1,4 +1,4 @@
-import { clone } from 'src/utils/clone';
+import { clone } from '@cah/utils';
 
 import { BaseEntity } from './base-entity';
 

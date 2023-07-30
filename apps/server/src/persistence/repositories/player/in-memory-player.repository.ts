@@ -1,7 +1,7 @@
 import * as shared from '@cah/shared';
+import { hasProperty } from '@cah/utils';
 
 import { Player } from 'src/entities';
-import { hasProperty } from 'src/utils/has-property';
 
 import { EntityNotFoundError } from '../../entity-not-found-error';
 import { InMemoryRepository } from '../../in-memory-repository';

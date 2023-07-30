@@ -3,6 +3,7 @@ import { Socket } from 'node:net';
 import { promisify } from 'node:util';
 
 import * as shared from '@cah/shared';
+import { defined } from '@cah/utils';
 import bodyParser from 'body-parser';
 import { Container } from 'ditox';
 import express, { ErrorRequestHandler, RequestHandler, Router } from 'express';
@@ -14,7 +15,6 @@ import * as yup from 'yup';
 import { ConfigPort, LoggerPort } from 'src/adapters';
 import { EntityNotFoundError } from 'src/persistence';
 import { TOKENS } from 'src/tokens';
-import { defined } from 'src/utils/defined';
 
 declare module 'express-session' {
   interface SessionData {

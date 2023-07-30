@@ -1,4 +1,4 @@
-import { factory, createId } from '@cah/shared';
+import { factory, createId } from '@cah/utils';
 
 export type Game = {
   id: string;

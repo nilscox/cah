@@ -1,6 +1,7 @@
 import assert from 'node:assert';
 
 import * as shared from '@cah/shared';
+import { defined, hasId } from '@cah/utils';
 import { injectableClass } from 'ditox';
 
 import { EventPublisherPort, LoggerPort, RealEventPublisherAdapter, RtcPort } from 'src/adapters';
@@ -25,8 +26,6 @@ import {
 } from 'src/persistence';
 import { PlayerConnectedEvent, PlayerDisconnectedEvent } from 'src/server/ws-server';
 import { TOKENS } from 'src/tokens';
-import { defined } from 'src/utils/defined';
-import { hasId } from 'src/utils/id';
 
 export class Notifier {
   static inject = injectableClass(

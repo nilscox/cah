@@ -1,4 +1,4 @@
-import { array } from 'src/utils/array';
+import { array } from '@cah/utils';
 
 import { RandomPort } from './random.port';
 

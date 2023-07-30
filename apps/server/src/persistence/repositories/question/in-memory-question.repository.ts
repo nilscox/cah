@@ -1,5 +1,6 @@
+import { hasProperty } from '@cah/utils';
+
 import { Question } from 'src/entities';
-import { hasProperty } from 'src/utils/has-property';
 
 import { InMemoryRepository } from '../../in-memory-repository';
 

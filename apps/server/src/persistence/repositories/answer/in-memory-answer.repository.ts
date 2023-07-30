@@ -1,6 +1,6 @@
+import { compareByProperty, hasProperty } from '@cah/utils';
+
 import { Answer } from 'src/entities';
-import { compareByProperty } from 'src/utils/compare-by-property';
-import { hasProperty } from 'src/utils/has-property';
 
 import { EntityNotFoundError } from '../../entity-not-found-error';
 import { InMemoryRepository } from '../../in-memory-repository';

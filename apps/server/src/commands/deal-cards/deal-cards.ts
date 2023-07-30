@@ -1,5 +1,6 @@
 import assert from 'node:assert';
 
+import { sum } from '@cah/utils';
 import { injectableClass } from 'ditox';
 
 import { EventPublisherPort } from 'src/adapters';
@@ -7,7 +8,6 @@ import { Player, isStarted } from 'src/entities';
 import { CommandHandler, DomainEvent } from 'src/interfaces';
 import { ChoiceRepository, GameRepository, PlayerRepository } from 'src/persistence';
 import { TOKENS } from 'src/tokens';
-import { sum } from 'src/utils/sum';
 
 export class CardsDealtEvent extends DomainEvent {
   constructor(

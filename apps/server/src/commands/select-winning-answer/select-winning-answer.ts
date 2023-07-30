@@ -1,5 +1,6 @@
 import assert from 'node:assert';
 
+import { hasId } from '@cah/utils';
 import { injectableClass } from 'ditox';
 
 import { EventPublisherPort } from 'src/adapters';
@@ -7,7 +8,6 @@ import { isStarted } from 'src/entities';
 import { CommandHandler, DomainEvent } from 'src/interfaces';
 import { AnswerRepository, GameRepository, PlayerRepository } from 'src/persistence';
 import { TOKENS } from 'src/tokens';
-import { hasId } from 'src/utils/id';
 
 export class AnswerSelectedEvent extends DomainEvent {
   constructor(gameId: string) {

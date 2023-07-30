@@ -31,6 +31,7 @@
     "@bleed-believer/path-alias": "^0.15.2",
     "@cah/client": "workspace:*",
     "@cah/shared": "workspace:*",
+    "@cah/utils": "workspace:*",
     "body-parser": "^1.20.2",
     "ditox": "^2.3.1",
     "drizzle-orm": "^0.27.2",

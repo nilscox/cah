@@ -4,7 +4,8 @@
   "references": [
     { "path": "../../packages/client" },
     { "path": "../../packages/store" },
-    { "path": "../../packages/shared" }
+    { "path": "../../packages/shared" },
+    { "path": "../../packages/utils" }
   ],
   "compilerOptions": {
     "noEmit": true,

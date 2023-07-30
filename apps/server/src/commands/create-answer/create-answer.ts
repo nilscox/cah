@@ -1,5 +1,6 @@
 import assert from 'node:assert';
 
+import { hasId } from '@cah/utils';
 import { injectableClass } from 'ditox';
 
 import { EventPublisherPort, GeneratorPort } from 'src/adapters';
@@ -13,7 +14,6 @@ import {
   QuestionRepository,
 } from 'src/persistence';
 import { TOKENS } from 'src/tokens';
-import { hasId } from 'src/utils/id';
 
 export class AnswerCreatedEvent extends DomainEvent {
   constructor(answerId: string) {

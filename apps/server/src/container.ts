@@ -1,3 +1,4 @@
+import { toObject } from '@cah/utils';
 import { bindModule, declareModule, createContainer as ditoxCreateContainer, injectable } from 'ditox';
 
 import { ConsoleLoggerAdapter, RealEventPublisherAdapter } from 'src/adapters';
@@ -23,7 +24,6 @@ import { sqlPersistenceModule } from './persistence';
 import { Database } from './persistence/database';
 import { Server } from './server/server';
 import { TOKENS } from './tokens';
-import { toObject } from './utils/to-object';
 
 export const appModule = declareModule({
   factory: (container) => ({

@@ -1,6 +1,7 @@
+import { defined } from '@cah/utils';
+
 import { GameState, createGame, createPlayer } from 'src/entities';
 import { HandlerCommand } from 'src/interfaces';
-import { defined } from 'src/utils/defined';
 import { UnitTest } from 'src/utils/unit-test';
 
 import { JoinGameHandler, PlayerJoinedEvent } from './join-game';

@@ -1,5 +1,6 @@
+import { array } from '@cah/utils';
+
 import { Choice, createChoice } from 'src/entities';
-import { array } from 'src/utils/array';
 
 import { SqlChoice, choices } from '../../drizzle-schema';
 import { TestRepository } from '../../test-repository';

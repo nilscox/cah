@@ -1,6 +1,7 @@
+import { array } from '@cah/utils';
+
 import { GameState, createChoice, createGame, createPlayer } from 'src/entities';
 import { HandlerCommand } from 'src/interfaces';
-import { array } from 'src/utils/array';
 import { UnitTest } from 'src/utils/unit-test';
 
 import { CardsDealtEvent, DealCardsHandler } from './deal-cards';

@@ -1,10 +1,10 @@
 import assert from 'node:assert';
 
 import * as shared from '@cah/shared';
+import { toEnum } from '@cah/utils';
 import { asc, eq, isNull } from 'drizzle-orm';
 
 import { Game, GameState, StartedGame, isStarted } from 'src/entities';
-import { toEnum } from 'src/utils/to-enum';
 
 import { Database } from '../../database';
 import { SqlGame, answers, choices, games } from '../../drizzle-schema';

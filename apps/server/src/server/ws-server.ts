@@ -2,6 +2,7 @@ import assert from 'node:assert';
 import { IncomingMessage, Server } from 'node:http';
 import { promisify } from 'node:util';
 
+import { MapSet } from '@cah/utils';
 import { RequestHandler } from 'express';
 import session from 'express-session';
 import { Socket, Server as SocketIOServer } from 'socket.io';
@@ -9,7 +10,6 @@ import { Socket, Server as SocketIOServer } from 'socket.io';
 import { EventPublisherPort, LoggerPort, RtcPort } from 'src/adapters';
 import { DomainEvent } from 'src/interfaces';
 import { PlayerRepository } from 'src/persistence';
-import { MapSet } from 'src/utils/map-set';
 
 export class PlayerConnectedEvent extends DomainEvent {
   constructor(playerId: string) {

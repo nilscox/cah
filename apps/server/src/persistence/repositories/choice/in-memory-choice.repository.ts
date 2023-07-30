@@ -1,7 +1,6 @@
+import { defined, hasProperty, toObject } from '@cah/utils';
+
 import { Choice } from 'src/entities';
-import { defined } from 'src/utils/defined';
-import { hasProperty } from 'src/utils/has-property';
-import { toObject } from 'src/utils/to-object';
 
 import { InMemoryRepository } from '../../in-memory-repository';
 

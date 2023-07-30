@@ -42,6 +42,9 @@ importers:
       '@cah/shared':
         specifier: workspace:*
         version: link:../../packages/shared
+      '@cah/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
       body-parser:
         specifier: ^1.20.2
         version: 1.20.2
@@ -260,6 +263,27 @@ importers:
       reselect:
         specifier: ^4.1.8
         version: 4.1.8
+      vitest:
+        specifier: ^0.33.0
+        version: 0.33.0
+
+  packages/utils:
+    devDependencies:
+      '@typescript-eslint/eslint-plugin':
+        specifier: ^6.1.0
+        version: 6.1.0(@typescript-eslint/parser@6.1.0)(eslint@8.45.0)(typescript@5.1.6)
+      '@typescript-eslint/parser':
+        specifier: ^6.1.0
+        version: 6.1.0(eslint@8.45.0)(typescript@5.1.6)
+      eslint:
+        specifier: ^8.45.0
+        version: 8.45.0
+      eslint-import-resolver-typescript:
+        specifier: ^3.5.5
+        version: 3.5.5(@typescript-eslint/parser@6.1.0)(eslint-plugin-i@2.27.5-2)(eslint@8.45.0)
+      eslint-plugin-import:
+        specifier: npm:eslint-plugin-i@2.27.5-2
+        version: /eslint-plugin-i@2.27.5-2(@typescript-eslint/parser@6.1.0)(eslint-import-resolver-typescript@3.5.5)(eslint@8.45.0)
       vitest:
         specifier: ^0.33.0
         version: 0.33.0
