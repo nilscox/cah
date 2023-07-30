@@ -2,9 +2,9 @@ import { CahClient, ServerFetcher } from '@cah/client';
 import {
   AppSelector,
   authenticate,
-  choicesSelectors,
   createGame,
   createStore,
+  endTurn,
   gameActions,
   gameSelectors,
   initialize,
@@ -16,12 +16,20 @@ import {
   submitAnswer,
   validateSelectedAnswer,
 } from '@cah/store';
-import { defined, waitFor } from '@cah/utils';
+import { defined, getIds, waitFor } from '@cah/utils';
 
 import { StubConfigAdapter, StubExternalDataAdapter, StubLoggerAdapter } from 'src/adapters';
 import { createContainer } from 'src/container';
 import { Server } from 'src/server/server';
 import { TOKENS } from 'src/tokens';
+
+const debug = false;
+
+const log = (...args: unknown[]) => {
+  if (debug) {
+    console.log(...args);
+  }
+};
 
 class Test {
   private container = createContainer();
@@ -82,7 +90,7 @@ class Player {
   }
 
   get hasAllCards() {
-    return this.select(choicesSelectors.all).length === 11;
+    return this.select(playerSelectors.cards).length === 11;
   }
 
   get isQuestionMaster() {
@@ -96,11 +104,14 @@ class Player {
   async submitRandomAnswer() {
     const { questionId } = this.select(gameSelectors.startedGame);
     const expectedNumberOfChoices = this.select(questionsSelectors.expectedNumberOfChoices, questionId);
-    const choices = this.select(choicesSelectors.all).sort(() => Math.random() - 0.5);
+    const choices = this.select(playerSelectors.cards).sort(() => Math.random() - 0.5);
 
     for (const choice of choices.slice(0, expectedNumberOfChoices)) {
       this.dispatch(playerActions.toggleChoice(choice.id));
     }
+
+    const selected = this.select(playerSelectors.selectedChoices);
+    log(`* ${this.nick} submits [${getIds(selected).join(', ')}]`);
 
     await this.dispatch(submitAnswer());
   }
@@ -110,8 +121,15 @@ class Player {
     const answersIds = [...game.answersIds];
     const answerId = answersIds.sort(() => Math.random() - 0.5)[0];
 
+    log(`* ${this.nick} selects ${answerId}`);
+
     this.dispatch(gameActions.setSelectedAnswer(answerId));
     await this.dispatch(validateSelectedAnswer());
+  }
+
+  async endTurn() {
+    log(`* ${this.nick} ends the current turn`);
+    this.dispatch(endTurn());
   }
 }
 
@@ -134,16 +152,17 @@ describe('Server E2E', () => {
     await test.database.closeConnection();
   });
 
-  // cspell:word riri fifi loulou
+  // cspell:word riri fifi loulou phooey
 
   it('plays a full game', async () => {
-    const numberOfQuestions = 3;
+    const numberOfQuestions = 5;
 
     const riri = new Player(test.server, 'riri');
     const fifi = new Player(test.server, 'fifi');
     const loulou = new Player(test.server, 'loulou');
+    const phooey = new Player(test.server, 'phooey');
 
-    const players = [riri, fifi, loulou];
+    const players = [riri, fifi, loulou, phooey];
 
     const forEachPlayer = async (cb: (player: Player) => unknown) => {
       await Promise.all(players.map(cb));
@@ -154,48 +173,52 @@ describe('Server E2E', () => {
 
     await riri.dispatch(createGame());
 
-    await fifi.dispatch(joinGame(riri.select(gameSelectors.code)));
-    await loulou.dispatch(joinGame(riri.select(gameSelectors.code)));
-
-    await riri.dispatch(startGame(numberOfQuestions));
-
-    await waitFor(() => forEachPlayer((player) => assert(player.hasAllCards)));
-
     await forEachPlayer(async (player) => {
-      if (!player.isQuestionMaster) {
-        await player.submitRandomAnswer();
+      if (player !== riri) {
+        await player.dispatch(joinGame(riri.select(gameSelectors.code)));
       }
     });
 
-    await waitFor(() => forEachPlayer((player) => assert(player.hasAnswers)));
-
-    await players.find((player) => player.isQuestionMaster)?.selectRandomAnswer();
-
-    await new Promise((r) => setTimeout(r, 100));
-
-    console.dir(
-      riri.select((state) => state),
-      { depth: null },
-    );
-
-    /*
+    await riri.dispatch(startGame(numberOfQuestions));
 
     for (let turn = 1; turn <= numberOfQuestions; ++turn) {
-      const questionMaster = getQuestionMaster();
-      assert(questionMaster);
+      await waitFor(() => forEachPlayer((player) => assert(player.hasAllCards)));
 
+      const questionMaster = defined(players.find((player) => player.isQuestionMaster));
+
+      log(`* turn ${turn} starts, questions master: ${questionMaster.nick}`);
+
+      await forEachPlayer(async (player) => {
+        if (player !== questionMaster) {
+          await player.submitRandomAnswer();
+        }
+      });
+
+      await waitFor(() => forEachPlayer((player) => assert(player.hasAnswers)));
+
+      log(`* all players answered:`);
+      for (const answer of questionMaster.select(gameSelectors.answers)) {
+        log(`* answer ${answer.id}: [${answer.choicesIds.join(', ')}]`);
+      }
+
+      await questionMaster.selectRandomAnswer();
       await questionMaster.endTurn();
-
-      await waitFor(() => assert(getQuestionMaster() !== questionMaster));
     }
 
-    expect(riri.game?.state).toBe(shared.GameState.finished);
-
-    await forEachPlayer(async (player) => {
-      await player.leaveGame();
-      await player.disconnect();
+    await waitFor(() => {
+      expect(riri.select(gameSelectors.game)).toHaveProperty('state', 'finished');
     });
 
-    */
+    // await forEachPlayer(async (player) => {
+    //   await player.leaveGame();
+    //   await player.disconnect();
+    // });
+
+    if (debug) {
+      console.dir(
+        riri.select((state) => state),
+        { depth: null },
+      );
+    }
   });
 });

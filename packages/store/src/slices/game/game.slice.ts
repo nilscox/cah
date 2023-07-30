@@ -4,6 +4,7 @@ import {
   GameState,
   PlayerJoinedEvent,
   PlayerLeftEvent,
+  TurnEndedEvent,
   TurnStartedEvent,
   WinningAnswerSelectedEvent,
 } from '@cah/shared';
@@ -42,9 +43,17 @@ export const gameSlice = createSlice({
         playersIds: players.map((player) => player.id),
       };
     },
+
     setSelectedAnswer(state, action: PayloadAction<string>) {
       assert(isStarted(state));
+
       state.selectedAnswerId = action.payload;
+    },
+
+    setAnswerValidated(state) {
+      assert(isStarted(state));
+
+      state.isAnswerValidated = true;
     },
   },
   extraReducers(builder) {
@@ -56,12 +65,19 @@ export const gameSlice = createSlice({
 
     builder.addCase('player-left', (state, action: PlayerLeftEvent) => {
       assert(state);
+
       state.playersIds.splice(state.playersIds.indexOf(action.playerId), 1);
     });
 
     builder.addCase('game-started', (state) => {
       assert(state);
+
       state.state = GameState.started;
+
+      assert(isStarted(state));
+
+      state.answersIds = [];
+      state.isAnswerValidated = false;
     });
 
     builder.addCase('turn-started', (state, action: TurnStartedEvent) => {
@@ -69,9 +85,6 @@ export const gameSlice = createSlice({
 
       state.questionMasterId = action.questionMasterId;
       state.questionId = action.question.id;
-      state.answersIds = [];
-      delete state.selectedAnswerId;
-      state.isAnswerValidated = false;
     });
 
     builder.addCase('all-players-answered', (state, event: AllPlayerAnsweredEvent) => {
@@ -85,6 +98,25 @@ export const gameSlice = createSlice({
 
       state.selectedAnswerId = event.selectedAnswerId;
       state.isAnswerValidated = true;
+    });
+
+    builder.addCase('turn-ended', (state) => {
+      assert(isStarted(state));
+
+      state.answersIds = [];
+      delete state.selectedAnswerId;
+      state.isAnswerValidated = false;
+    });
+
+    builder.addCase('game-ended', (state) => {
+      assert(state);
+
+      return {
+        id: state.id,
+        code: state.code,
+        state: GameState.finished,
+        playersIds: state.playersIds,
+      };
     });
   },
 });
