@@ -1,31 +1,25 @@
 {
-  "name": "@cah/web",
-  "version": "2.0.0",
+  "name": "web",
+  "private": true,
+  "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "tsc && vite build",
     "preview": "vite preview",
     "lint": "eslint src"
   },
+  "dependencies": {
+    "solid-js": "^1.7.8"
+  },
   "devDependencies": {
     "@cah/eslint-config": "workspace:*",
-    "@types/react": "^18.2.12",
-    "@types/react-dom": "^18.2.5",
-    "eslint": "^8.45.0",
-    "eslint-plugin-jsx-a11y": "^6.7.1",
-    "eslint-plugin-react": "^7.32.2",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "vite": "^4.4.6",
-    "vitest": "^0.33.0"
-  },
-  "dependencies": {
-    "@cah/client": "workspace:*",
-    "@cah/shared": "workspace:*",
-    "@cah/store": "workspace:*",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-redux": "^8.1.1",
-    "wouter": "^2.11.0"
+    "autoprefixer": "^10.4.14",
+    "eslint-plugin-solid": "^0.12.1",
+    "postcss": "^8.4.27",
+    "tailwindcss": "^3.3.3",
+    "typescript": "^5.0.2",
+    "vite": "^4.4.5",
+    "vite-plugin-solid": "^2.7.0"
   }
 }

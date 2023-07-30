@@ -1,4 +1,10 @@
-import { createRoot } from 'react-dom/client';
+/* @refresh reload */
+import { render } from 'solid-js/web';
 
-const root = createRoot(document.getElementById('app') as HTMLElement);
-root.render(<></>);
+import { App } from './app';
+
+import './index.css';
+
+const root = document.getElementById('root');
+
+render(() => <App />, root as HTMLElement);
