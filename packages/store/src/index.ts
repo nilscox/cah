@@ -16,6 +16,7 @@ export { createGame } from './use-cases/create-game/create-game';
 export { endTurn } from './use-cases/end-turn/end-turn';
 export { initialize } from './use-cases/initialize/initialize';
 export { joinGame } from './use-cases/join-game/join-game';
+export { leaveGame } from './use-cases/leave-game/leave-game';
 export { startGame } from './use-cases/start-game/start-game';
 export { submitAnswer } from './use-cases/submit-answer/submit-answer';
 export { validateSelectedAnswer } from './use-cases/validate-selected-answer/validate-selected-answer';

@@ -43,6 +43,10 @@ export const gameSlice = createSlice({
       };
     },
 
+    unsetGame() {
+      return null;
+    },
+
     setSelectedAnswer(state, action: PayloadAction<string>) {
       assert(isStarted(state));
 

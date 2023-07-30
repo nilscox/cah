@@ -7,6 +7,7 @@ import { answersSelectors } from '../answers/answers.selectors';
 import { isStarted } from './game.slice';
 
 const game = (state: AppState) => defined(state.game);
+const hasGame = (state: AppState) => state.game !== null;
 
 const code = createSelector(game, (game) => {
   return game.code;
@@ -28,6 +29,7 @@ const answers = createSelector([game, (state: AppState) => state], (game, state)
 
 export const gameSelectors = {
   game,
+  hasGame,
   code,
   startedGame,
   isQuestionMaster,

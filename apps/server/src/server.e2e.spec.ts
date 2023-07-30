@@ -9,6 +9,7 @@ import {
   gameSelectors,
   initialize,
   joinGame,
+  leaveGame,
   playerActions,
   playerSelectors,
   questionsSelectors,
@@ -131,6 +132,11 @@ class Player {
     log(`* ${this.nick} ends the current turn`);
     await this.dispatch(endTurn());
   }
+
+  async leaveGame() {
+    log(`* ${this.nick} leaves the game`);
+    await this.dispatch(leaveGame());
+  }
 }
 
 describe('Server E2E', () => {
@@ -209,10 +215,7 @@ describe('Server E2E', () => {
       expect(riri.select(gameSelectors.game)).toHaveProperty('state', 'finished');
     });
 
-    // await forEachPlayer(async (player) => {
-    //   await player.leaveGame();
-    //   await player.disconnect();
-    // });
+    await forEachPlayer(async (player) => player.leaveGame());
 
     if (debug) {
       console.dir(
