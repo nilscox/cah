@@ -26,13 +26,14 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/setup
-      - run: pnpm -r exec prettier --check src
+      - run: pnpm -r --filter='!eslint-config' exec prettier --check src
 
   linter:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/setup
+      - run: pnpm exec tsc -b
       - run: pnpm -r run lint
 
   tests:
@@ -54,6 +55,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/setup
+      - run: pnpm exec tsc -b
       - run: pnpm -r --workspace-concurrency=1 run test
         env:
           DATABASE_URL: postgres://postgres@postgres:5432/tests

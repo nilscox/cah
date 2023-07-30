@@ -4,7 +4,6 @@ import {
   GameState,
   PlayerJoinedEvent,
   PlayerLeftEvent,
-  TurnEndedEvent,
   TurnStartedEvent,
   WinningAnswerSelectedEvent,
 } from '@cah/shared';

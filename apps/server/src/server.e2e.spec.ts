@@ -129,7 +129,7 @@ class Player {
 
   async endTurn() {
     log(`* ${this.nick} ends the current turn`);
-    this.dispatch(endTurn());
+    await this.dispatch(endTurn());
   }
 }
 
