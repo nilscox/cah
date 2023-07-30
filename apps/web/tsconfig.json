@@ -1,6 +1,11 @@
 {
   "extends": "../../tsconfig.base.json",
   "include": ["src/**/*"],
+  "references": [
+    { "path": "../../packages/client" },
+    { "path": "../../packages/shared" },
+    { "path": "../../packages/store" }
+  ],
   "compilerOptions": {
     "noEmit": true,
     "lib": ["ESNext", "DOM"],

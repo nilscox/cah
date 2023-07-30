@@ -2,7 +2,6 @@
   "name": "@cah/web",
   "version": "2.0.0",
   "type": "module",
-  "main": "src/index.ts",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -24,11 +23,12 @@
     "vitest": "^0.33.0"
   },
   "dependencies": {
+    "@cah/client": "workspace:*",
     "@cah/shared": "workspace:*",
-    "@reduxjs/toolkit": "^1.9.5",
+    "@cah/store": "workspace:*",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "redux": "^4.2.1",
-    "reselect": "^4.1.8"
+    "react-redux": "^8.1.1",
+    "wouter": "^2.11.0"
   }
 }
