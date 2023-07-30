@@ -1,5 +1,0 @@
-{
-  "extension": ["ts"],
-  "spec": ["src/setup.spec.ts", "src/{store,domain}/**/*.spec.ts"],
-  "require": ["ts-node/register/transpile-only"]
-}

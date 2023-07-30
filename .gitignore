@@ -1,9 +1,4 @@
 tsconfig.tsbuildinfo
 node_modules
 dist
-db.sqlite3
-db
 data
-games
-logs
-.vscode
