@@ -29,6 +29,8 @@ export interface ICahClient {
   getAuthenticatedPlayer(): Promise<Player>;
 
   authenticate(nick: string): Promise<void>;
+  clearAuthentication(): Promise<void>;
+
   createGame(): Promise<string>;
   joinGame(code: string): Promise<string>;
   leaveGame(): Promise<void>;
@@ -101,6 +103,10 @@ export class CahClient implements ICahClient {
 
   async authenticate(nick: string): Promise<void> {
     return this.fetcher.post<AuthenticateBody>('/authenticate', { nick });
+  }
+
+  async clearAuthentication(): Promise<void> {
+    return this.fetcher.delete('/authentication');
   }
 
   async createGame(): Promise<string> {

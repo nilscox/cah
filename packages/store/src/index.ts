@@ -12,6 +12,7 @@ export { choicesActions } from './slices/choices/choices.slice';
 export { choicesSelectors } from './slices/choices/choices.selectors';
 
 export { authenticate } from './use-cases/authenticate/authenticate';
+export { clearAuthentication } from './use-cases/clear-authentication/clear-authentication';
 export { createGame } from './use-cases/create-game/create-game';
 export { endTurn } from './use-cases/end-turn/end-turn';
 export { initialize } from './use-cases/initialize/initialize';

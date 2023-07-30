@@ -25,6 +25,11 @@ export const playerSlice = createSlice({
         selectedChoicesIds: [],
       };
     },
+
+    unsetPlayer() {
+      return null;
+    },
+
     toggleChoice(state, action: PayloadAction<string>) {
       assert(state);
 
@@ -37,6 +42,7 @@ export const playerSlice = createSlice({
         state.selectedChoicesIds.splice(index, 1);
       }
     },
+
     removeCards(state, action: PayloadAction<string[]>) {
       assert(state);
       assert(state.cardsIds);

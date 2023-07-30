@@ -175,6 +175,11 @@ export class HttpServer {
       res.status(201).end();
     });
 
+    router.delete('/authentication', this.authenticated, async (req, res) => {
+      delete req.session.playerId;
+      res.status(204).end();
+    });
+
     router.post('/game', this.authenticated, async (req, res) => {
       const playerId = defined(req.session.playerId);
       const handler = this.container.resolve(TOKENS.commands.createGame);

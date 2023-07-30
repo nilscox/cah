@@ -10,6 +10,7 @@ import {
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 import { assert } from '../../defined';
+import { playerActions } from '../player/player.slice';
 
 export type GameSlice = {
   id: string;
@@ -60,6 +61,10 @@ export const gameSlice = createSlice({
     },
   },
   extraReducers(builder) {
+    builder.addCase(playerActions.unsetPlayer, () => {
+      return null;
+    });
+
     builder.addCase('player-joined', (state, action: PlayerJoinedEvent) => {
       if (state) {
         state.playersIds.push(action.playerId);

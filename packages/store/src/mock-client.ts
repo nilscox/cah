@@ -14,7 +14,10 @@ export class MockClient implements ICahClient {
   getGame: MockFn<ICahClient['getGame']> = vi.fn();
   getGameTurns: MockFn<ICahClient['getGameTurns']> = vi.fn();
   getAuthenticatedPlayer: MockFn<ICahClient['getAuthenticatedPlayer']> = vi.fn();
+
   authenticate: MockFn<ICahClient['authenticate']> = vi.fn();
+  clearAuthentication: MockFn<ICahClient['clearAuthentication']> = vi.fn();
+
   createGame: MockFn<ICahClient['createGame']> = vi.fn();
   joinGame: MockFn<ICahClient['joinGame']> = vi.fn();
   leaveGame: MockFn<ICahClient['leaveGame']> = vi.fn();
