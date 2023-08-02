@@ -4,9 +4,11 @@ import { AppState } from '../../types';
 
 import { questionsAdapter } from './questions.slice';
 
-const { selectAll: all, selectById: byId } = questionsAdapter.getSelectors(
-  (state: AppState) => state.questions,
-);
+const {
+  selectEntities: questions,
+  selectAll: all,
+  selectById: byId,
+} = questionsAdapter.getSelectors((state: AppState) => state.questions);
 
 const expectedNumberOfChoices = createSelector(byId, (question) => {
   assert(question);
@@ -14,6 +16,7 @@ const expectedNumberOfChoices = createSelector(byId, (question) => {
 });
 
 export const questionsSelectors = {
+  questions,
   all,
   byId,
   expectedNumberOfChoices,

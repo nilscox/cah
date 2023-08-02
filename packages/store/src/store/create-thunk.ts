@@ -16,13 +16,13 @@ type AsyncThunkConfig = {
 
 export function createThunk<Params extends unknown[] = [], Result = void>(
   typePrefix: string,
-  thunk: (api: ThunkApi & Dependencies, ...params: Params) => Result,
+  thunk: (api: ThunkApi & Dependencies, ...params: Params) => Promise<Result>,
 ) {
   const thunkAction = createAsyncThunk<Result, Params, AsyncThunkConfig>(typePrefix, (params, thunkApi) => {
     return thunk({ ...thunkApi, ...thunkApi.extra }, ...params);
   });
 
-  return (...params: Params) => {
+  return Object.assign((...params: Params) => {
     return thunkAction(params);
-  };
+  }, thunkAction);
 }

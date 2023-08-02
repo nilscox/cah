@@ -7,6 +7,7 @@ export { playerSelectors } from './slices/player/player.selectors';
 export { playersSelectors } from './slices/players/players.selectors';
 
 export { questionsSelectors } from './slices/questions/questions.selectors';
+export { type QuestionSlice } from './slices/questions/questions.slice';
 
 export { choicesActions } from './slices/choices/choices.slice';
 export { choicesSelectors } from './slices/choices/choices.selectors';

@@ -21,7 +21,7 @@ export const createGame = factory<Game>(() => ({
 }));
 
 export type StartedGame = Game & {
-  questionMasterId: string;
+  questionMaster: { id: string; nick: string };
   question: Question;
   answers?: Array<Answer | AnonymousAnswer>;
   selectedAnswerId?: string;
@@ -29,7 +29,7 @@ export type StartedGame = Game & {
 
 export const createStartedGame = factory<StartedGame>(() => ({
   ...createGame({ state: GameState.started }),
-  questionMasterId: '',
+  questionMaster: createPlayer(),
   question: createQuestion(),
 }));
 

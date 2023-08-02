@@ -35,6 +35,7 @@ describe('createGame', () => {
       code: '42SH',
       state: GameState.idle,
       playersIds: ['playerId'],
+      isAnswerValidated: false,
     });
   });
 

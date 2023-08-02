@@ -51,6 +51,7 @@ export class SqlGameRepository implements GameRepository {
       where: eq(games.id, gameId),
       with: {
         players: true,
+        questionMaster: true,
         question: true,
         answers: {
           orderBy: [asc(answers.place)],
@@ -82,10 +83,13 @@ export class SqlGameRepository implements GameRepository {
       const allPlayersAnswered = model.answers.length === model.players.length - 1;
       const selectedAnswerId = model.selectedAnswerId;
 
-      assert(model.questionMasterId);
+      assert(model.questionMaster);
       assert(model.question);
 
-      game.questionMasterId = model.questionMasterId;
+      game.questionMaster = {
+        id: model.questionMaster.id,
+        nick: model.questionMaster.nick,
+      };
 
       game.question = {
         id: model.question.id,

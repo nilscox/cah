@@ -25,8 +25,7 @@ export const inspectGame = (game: Game): string => {
   }
 
   if (isStarted(game)) {
-    const questionMaster = game.players.find((player) => player.id === game.questionMasterId);
-    lines.push(`- questionMaster: ${questionMaster?.nick}`);
+    lines.push(`- questionMaster: ${game.questionMaster?.nick}`);
 
     lines.push(`- question: ${inspectQuestion(game.question)}`);
 

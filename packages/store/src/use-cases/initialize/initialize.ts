@@ -1,11 +1,9 @@
-import { FetchError } from '@cah/client';
-import { Game, GameEvent, Player } from '@cah/shared';
+import { GameEvent } from '@cah/shared';
 
-import { Dependencies } from '../../dependencies';
-import { gameActions } from '../../slices/game/game.slice';
-import { playerActions } from '../../slices/player/player.slice';
+import { playerSelectors } from '../../slices/player/player.selectors';
 import { createThunk } from '../../store/create-thunk';
-import { AppThunk } from '../../types';
+import { fetchGame } from '../fetch-game/fetch-game';
+import { fetchPlayer } from '../fetch-player/fetch-player';
 
 const events: Array<GameEvent['type']> = [
   'player-connected',
@@ -23,43 +21,18 @@ const events: Array<GameEvent['type']> = [
   'game-ended',
 ];
 
-export const initialize = createThunk('initialize', async ({ client, dispatch }) => {
+export const initialize = createThunk('initialize', async ({ client, dispatch, getState }) => {
   for (const event of events) {
     client.addEventListener(event, dispatch);
   }
 
-  const player = await dispatch(fetchPlayer());
+  await dispatch(fetchPlayer()).unwrap();
 
-  if (player?.gameId) {
-    await dispatch(fetchGame(player.gameId));
+  if (playerSelectors.hasPlayer(getState())) {
+    const { gameId } = playerSelectors.player(getState());
+
+    if (gameId) {
+      await dispatch(fetchGame(gameId)).unwrap();
+    }
   }
 });
-
-const fetchPlayer = (): AppThunk<Promise<Player | undefined>> => {
-  return async (dispatch, getState, { client }: Dependencies) => {
-    try {
-      const player = await client.getAuthenticatedPlayer();
-
-      dispatch(playerActions.setPlayer(player));
-      client.connect();
-
-      return player;
-    } catch (error) {
-      if (error instanceof FetchError && error.status === 401) {
-        return undefined;
-      } else {
-        throw error;
-      }
-    }
-  };
-};
-
-const fetchGame = (gameId: string): AppThunk<Promise<Game | undefined>> => {
-  return async (dispatch, getState, { client }: Dependencies) => {
-    const game = await client.getGame(gameId);
-
-    dispatch(gameActions.setGame(game));
-
-    return game;
-  };
-};

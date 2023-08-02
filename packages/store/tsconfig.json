@@ -1,7 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
   "include": ["src/**/*"],
-  "references": [{ "path": "../client" }, { "path": "../shared" }],
+  "references": [{ "path": "../client" }, { "path": "../shared" }, { "path": "../utils" }],
   "compilerOptions": {
     "composite": true,
     "declaration": true,

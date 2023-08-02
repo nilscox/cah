@@ -1,11 +1,11 @@
-import { Game, GameEvent, Player, StartedGame, createGame, createPlayer } from '@cah/shared';
+import { GameEvent, GameState } from '@cah/shared';
 import { Action, Middleware } from 'redux';
 
 import { MockClient } from './mock-client';
 import { gameSelectors } from './slices/game/game.selectors';
-import { gameActions } from './slices/game/game.slice';
+import { GameSlice, gameActions } from './slices/game/game.slice';
 import { playerSelectors } from './slices/player/player.selectors';
-import { playerActions } from './slices/player/player.slice';
+import { PlayerSlice, playerActions } from './slices/player/player.slice';
 import { createStore } from './store/create-store';
 import { AppSelector } from './types';
 
@@ -46,15 +46,30 @@ export class TestStore {
     return this.select(playerSelectors.player);
   }
 
-  setPlayer(player?: Partial<Player>) {
-    this.dispatch(playerActions.setPlayer(createPlayer(player)));
+  setPlayer(player?: Partial<PlayerSlice>) {
+    this.dispatch(
+      playerActions.setPlayer({
+        id: '',
+        nick: '',
+        selectedChoicesIds: [],
+        ...player,
+      }),
+    );
   }
 
   getGame() {
     return this.select(gameSelectors.game);
   }
 
-  setGame(game?: Partial<Game | StartedGame>) {
-    this.dispatch(gameActions.setGame(createGame(game)));
+  setGame(game?: Partial<GameSlice>) {
+    this.dispatch(
+      gameActions.setGame({
+        id: '',
+        code: '',
+        playersIds: [],
+        state: GameState.idle,
+        ...game,
+      }),
+    );
   }
 }

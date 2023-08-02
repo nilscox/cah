@@ -1,7 +1,6 @@
-import { GameState, Question, createQuestion } from '@cah/shared';
+import { GameState, createQuestion } from '@cah/shared';
 
-import { isStarted } from '../../slices/game/game.slice';
-import { questionsSelectors } from '../../slices/questions/questions.selectors';
+import { gameSelectors } from '../../slices/game/game.selectors';
 import { TestStore } from '../../test-store';
 
 import { startGame } from './start-game';
@@ -54,11 +53,10 @@ describe('startGame', () => {
     });
 
     const game = store.getGame();
-    assert(isStarted(game));
 
     expect(game).toHaveProperty('questionMasterId', 'questionMasterId');
     expect(game).toHaveProperty('questionId', 'questionId');
 
-    expect(store.select(questionsSelectors.byId, game.questionId)).toEqual<Question>(question);
+    expect(store.select(gameSelectors.currentQuestion)).toEqual(question);
   });
 });

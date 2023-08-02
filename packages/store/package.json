@@ -19,7 +19,9 @@
   "dependencies": {
     "@cah/client": "workspace:*",
     "@cah/shared": "workspace:*",
+    "@cah/utils": "workspace:*",
     "@reduxjs/toolkit": "^1.9.5",
+    "normalizr": "^3.6.2",
     "redux": "^4.2.1"
   }
 }

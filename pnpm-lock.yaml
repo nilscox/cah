@@ -229,9 +229,15 @@ importers:
       '@cah/shared':
         specifier: workspace:*
         version: link:../shared
+      '@cah/utils':
+        specifier: workspace:*
+        version: link:../utils
       '@reduxjs/toolkit':
         specifier: ^1.9.5
         version: 1.9.5
+      normalizr:
+        specifier: ^3.6.2
+        version: 3.6.2
       redux:
         specifier: ^4.2.1
         version: 4.2.1
@@ -3910,6 +3916,10 @@ packages:
     resolution: {integrity: sha512-bdok/XvKII3nUpklnV6P2hxtMNrCboOjAcyBuQnWEhO665FwrSNRxU+AqpsyvO6LgGYPspN+lu5CLtw4jPRKNA==}
     engines: {node: '>=0.10.0'}
     dev: true
+
+  /normalizr@3.6.2:
+    resolution: {integrity: sha512-30qCybsBaCBciotorvuOZTCGEg2AXrJfADMT2Kk/lvpIAcipHdK0zc33nNtwKzyfQAqIJXAcqET6YgflYUgsoQ==}
+    dev: false
 
   /npm-run-path@4.0.1:
     resolution: {integrity: sha512-S48WzZW777zhNIrn7gxOlISNAqi9ZC/uQFnRdbeIHhZhCA6UqpkOT8T1G7BvfdgP4Er8gF4sUbaS0i7QvIfCWw==}

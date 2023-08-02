@@ -1,8 +1,11 @@
-import { CardsDealtEvent, Player } from '@cah/shared';
+import { CardsDealtEvent } from '@cah/shared';
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 import { assert } from '../../defined';
-import { gameActions } from '../game/game.slice';
+import { clearAuthentication } from '../../use-cases/clear-authentication/clear-authentication';
+import { createGame } from '../../use-cases/create-game/create-game';
+import { fetchPlayer } from '../../use-cases/fetch-player/fetch-player';
+import { joinGame } from '../../use-cases/join-game/join-game';
 
 export type PlayerSlice = {
   id: string;
@@ -16,18 +19,8 @@ export const playerSlice = createSlice({
   name: 'player',
   initialState: null as PlayerSlice | null,
   reducers: {
-    setPlayer(_, action: PayloadAction<Player>) {
-      return {
-        id: action.payload.id,
-        gameId: action.payload.gameId,
-        nick: action.payload.nick,
-        cardsIds: action.payload.cards?.map((card) => card.id),
-        selectedChoicesIds: [],
-      };
-    },
-
-    unsetPlayer() {
-      return null;
+    setPlayer(state, action: PayloadAction<PlayerSlice>) {
+      return action.payload;
     },
 
     toggleChoice(state, action: PayloadAction<string>) {
@@ -54,9 +47,40 @@ export const playerSlice = createSlice({
     },
   },
   extraReducers(builder) {
-    builder.addCase(gameActions.setGame, (state, action) => {
+    builder.addCase(fetchPlayer.fulfilled, (state, action) => {
+      if (!action.payload) {
+        return;
+      }
+
+      const { entities, result: playerId } = action.payload;
+      const player = entities.players![playerId];
+
+      return {
+        id: player.id,
+        nick: player.nick,
+        gameId: player.gameId,
+        cardsIds: player.cards,
+        selectedChoicesIds: [],
+      };
+    });
+
+    builder.addCase(clearAuthentication.fulfilled, () => {
+      return null;
+    });
+
+    builder.addCase(joinGame.fulfilled, (state, action) => {
       assert(state);
-      state.gameId = action.payload.id;
+
+      state.gameId = action.payload;
+    });
+
+    builder.addCase(createGame.fulfilled, (state, action) => {
+      assert(state);
+
+      const { entities, result: gameId } = action.payload;
+      const game = entities.games![gameId];
+
+      state.gameId = game.id;
     });
 
     builder.addCase('cards-dealt', (state, event: CardsDealtEvent) => {

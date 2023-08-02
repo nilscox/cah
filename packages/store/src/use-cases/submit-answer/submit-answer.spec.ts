@@ -1,4 +1,5 @@
 import { Choice, createChoice, createStartedGame } from '@cah/shared';
+import { getIds } from '@cah/utils';
 
 import { choicesActions } from '../../slices/choices/choices.slice';
 import { playerActions } from '../../slices/player/player.slice';
@@ -15,7 +16,7 @@ describe('submitAnswer', () => {
 
     choices = [createChoice({ id: 'choiceId1' }), createChoice({ id: 'choiceId2' })];
 
-    store.setPlayer({ cards: choices });
+    store.setPlayer({ cardsIds: getIds(choices) });
     store.setGame(createStartedGame());
 
     store.dispatch(choicesActions.add(choices[0]));

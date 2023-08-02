@@ -1,6 +1,5 @@
 import {
   AllPlayerAnsweredEvent,
-  Game,
   GameState,
   PlayerJoinedEvent,
   PlayerLeftEvent,
@@ -10,38 +9,28 @@ import {
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 import { assert } from '../../defined';
-import { playerActions } from '../player/player.slice';
+import { clearAuthentication } from '../../use-cases/clear-authentication/clear-authentication';
+import { createGame } from '../../use-cases/create-game/create-game';
+import { fetchGame } from '../../use-cases/fetch-game/fetch-game';
 
 export type GameSlice = {
   id: string;
   code: string;
   state: GameState;
   playersIds: string[];
-};
-
-export type StartedGameSlice = GameSlice & {
-  questionMasterId: string;
-  questionId: string;
-  answersIds: string[];
-  isAnswerValidated: boolean;
+  questionMasterId?: string;
+  questionId?: string;
+  answersIds?: string[];
+  isAnswerValidated?: boolean;
   selectedAnswerId?: string;
-};
-
-export const isStarted = (game: GameSlice | null): game is StartedGameSlice => {
-  return game?.state === GameState.started;
 };
 
 export const gameSlice = createSlice({
   name: 'game',
   initialState: null as GameSlice | null,
   reducers: {
-    setGame(_, action: PayloadAction<Game>) {
-      const { players, ...game } = action.payload;
-
-      return {
-        ...game,
-        playersIds: players.map((player) => player.id),
-      };
+    setGame(_, action: PayloadAction<GameSlice>) {
+      return action.payload;
     },
 
     unsetGame() {
@@ -49,19 +38,38 @@ export const gameSlice = createSlice({
     },
 
     setSelectedAnswer(state, action: PayloadAction<string>) {
-      assert(isStarted(state));
+      assert(state);
 
       state.selectedAnswerId = action.payload;
     },
 
     setAnswerValidated(state) {
-      assert(isStarted(state));
+      assert(state);
 
       state.isAnswerValidated = true;
     },
   },
   extraReducers(builder) {
-    builder.addCase(playerActions.unsetPlayer, () => {
+    for (const thunk of [fetchGame, createGame]) {
+      builder.addCase(thunk.fulfilled, (state, action) => {
+        const { entities, result: gameId } = action.payload;
+        const game = entities.games![gameId];
+
+        return {
+          id: game.id,
+          code: game.code,
+          playersIds: game.players,
+          state: game.state,
+          questionMasterId: game.questionMaster,
+          questionId: game.question,
+          answersIds: game.answers,
+          selectedAnswerId: game.selectedAnswerId,
+          isAnswerValidated: game.selectedAnswerId !== undefined,
+        };
+      });
+    }
+
+    builder.addCase(clearAuthentication.fulfilled, () => {
       return null;
     });
 
@@ -82,34 +90,32 @@ export const gameSlice = createSlice({
 
       state.state = GameState.started;
 
-      assert(isStarted(state));
-
       state.answersIds = [];
       state.isAnswerValidated = false;
     });
 
     builder.addCase('turn-started', (state, action: TurnStartedEvent) => {
-      assert(isStarted(state));
+      assert(state);
 
       state.questionMasterId = action.questionMasterId;
       state.questionId = action.question.id;
     });
 
     builder.addCase('all-players-answered', (state, event: AllPlayerAnsweredEvent) => {
-      assert(isStarted(state));
+      assert(state);
 
       state.answersIds = event.answers.map((answer) => answer.id);
     });
 
     builder.addCase('winning-answer-selected', (state, event: WinningAnswerSelectedEvent) => {
-      assert(isStarted(state));
+      assert(state);
 
       state.selectedAnswerId = event.selectedAnswerId;
       state.isAnswerValidated = true;
     });
 
     builder.addCase('turn-ended', (state) => {
-      assert(isStarted(state));
+      assert(state);
 
       state.answersIds = [];
       delete state.selectedAnswerId;
