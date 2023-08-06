@@ -1,9 +1,11 @@
-import { CardsDealtEvent } from '@cah/shared';
+import { CardsDealtEvent, Choice, GameState } from '@cah/shared';
+import { array, getIds } from '@cah/utils';
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 import { assert } from '../../defined';
 import { clearAuthentication } from '../../use-cases/clear-authentication/clear-authentication';
 import { createGame } from '../../use-cases/create-game/create-game';
+import { fetchGame } from '../../use-cases/fetch-game/fetch-game';
 import { fetchPlayer } from '../../use-cases/fetch-player/fetch-player';
 import { joinGame } from '../../use-cases/join-game/join-game';
 
@@ -12,7 +14,7 @@ export type PlayerSlice = {
   nick: string;
   gameId?: string;
   cardsIds?: string[];
-  selectedChoicesIds: string[];
+  selectedChoicesIds?: Array<string | null>;
 };
 
 export const playerSlice = createSlice({
@@ -23,17 +25,22 @@ export const playerSlice = createSlice({
       return action.payload;
     },
 
-    toggleChoice(state, action: PayloadAction<string>) {
+    setSelectedChoice(state, action: PayloadAction<[choiceId: string, index: number]>) {
       assert(state);
+      assert(state.selectedChoicesIds);
 
-      const choiceId = action.payload;
-      const index = state.selectedChoicesIds.indexOf(choiceId);
+      const [choiceId, index] = action.payload;
 
-      if (index < 0) {
-        state.selectedChoicesIds.push(choiceId);
-      } else {
-        state.selectedChoicesIds.splice(index, 1);
-      }
+      state.selectedChoicesIds[index] = choiceId;
+    },
+
+    clearSelectedChoice(state, action: PayloadAction<number>) {
+      assert(state);
+      assert(state.selectedChoicesIds);
+
+      const index = action.payload;
+
+      state.selectedChoicesIds[index] = null;
     },
 
     removeCards(state, action: PayloadAction<string[]>) {
@@ -42,8 +49,14 @@ export const playerSlice = createSlice({
 
       for (const choiceId of action.payload) {
         removeArrayElement(state.cardsIds, choiceId);
-        removeArrayElement(state.selectedChoicesIds, choiceId);
       }
+    },
+
+    addCards(state, action: PayloadAction<Choice[]>) {
+      assert(state);
+      assert(state.cardsIds);
+
+      state.cardsIds.push(...getIds(action.payload));
     },
   },
   extraReducers(builder) {
@@ -60,8 +73,20 @@ export const playerSlice = createSlice({
         nick: player.nick,
         gameId: player.gameId,
         cardsIds: player.cards,
-        selectedChoicesIds: [],
+        selectedChoicesIds: player.gameId ? [] : undefined,
       };
+    });
+
+    builder.addCase(fetchGame.fulfilled, (state, action) => {
+      assert(state);
+
+      const { entities, result: gameId } = action.payload;
+      const game = entities.games![gameId];
+      const question = entities.questions![game.question];
+
+      if (game.state === GameState.started) {
+        state.selectedChoicesIds = array(question.blanks?.length ?? 1, () => null);
+      }
     });
 
     builder.addCase(clearAuthentication.fulfilled, () => {

@@ -3,8 +3,12 @@ import { playerActions } from '../../slices/player/player.slice';
 import { createThunk } from '../../store/create-thunk';
 
 export const submitAnswer = createThunk('submit-answer', async ({ client, dispatch, getState }) => {
-  const choices = playerSelectors.selectedChoices(getState());
-  const choicesIds = choices.map((choice) => choice.id);
+  const selectedChoices = playerSelectors.selectedChoices(getState());
+
+  const choicesIds = selectedChoices.map((choice) => {
+    assert(choice);
+    return choice.id;
+  });
 
   await client.createAnswer(choicesIds);
 

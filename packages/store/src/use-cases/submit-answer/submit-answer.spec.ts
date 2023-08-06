@@ -24,14 +24,14 @@ describe('submitAnswer', () => {
   });
 
   it('submits the current selection of choices', async () => {
-    store.dispatch(playerActions.toggleChoice('choiceId1'));
+    store.dispatch(playerActions.setSelectedChoice(['choiceId1', 0]));
     await store.dispatch(submitAnswer());
 
     expect(store.client.createAnswer).toHaveBeenCalledWith(['choiceId1']);
   });
 
   it("removes the choices from the player's hand", async () => {
-    store.dispatch(playerActions.toggleChoice('choiceId1'));
+    store.dispatch(playerActions.setSelectedChoice(['choiceId1', 0]));
     await store.dispatch(submitAnswer());
 
     expect(store.getPlayer()).toHaveProperty('cardsIds', ['choiceId2']);

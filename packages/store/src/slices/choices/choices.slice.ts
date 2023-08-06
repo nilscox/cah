@@ -3,6 +3,7 @@ import { PayloadAction, createEntityAdapter, createSlice } from '@reduxjs/toolki
 
 import { fetchGame } from '../../use-cases/fetch-game/fetch-game';
 import { fetchPlayer } from '../../use-cases/fetch-player/fetch-player';
+import { playerActions } from '../player/player.slice';
 
 export type ChoiceSlice = {
   id: string;
@@ -41,6 +42,10 @@ export const choicesSlice = createSlice({
       const choices = Object.values(entities.choices ?? []);
 
       choicesAdapter.addMany(state, choices);
+    });
+
+    builder.addCase(playerActions.addCards, (state, action) => {
+      choicesAdapter.addMany(state, action.payload);
     });
 
     builder.addCase('cards-dealt', (state, event: CardsDealtEvent) => {

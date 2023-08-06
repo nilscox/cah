@@ -13,8 +13,13 @@ const cards = createSelector([player, (state: AppState) => state], (player, stat
   return choicesSelectors.byIds(state, player.cardsIds);
 });
 
-const selectedChoices = createSelector([player, (state: AppState) => state], (player, state) => {
-  return choicesSelectors.byIds(state, player.selectedChoicesIds);
+const selectedChoices = createSelector([player, choicesSelectors.choices], (player, choices) => {
+  assert(player.selectedChoicesIds);
+
+  return player.selectedChoicesIds.map((choiceId) => {
+    if (choiceId === null) return null;
+    else return defined(choices[choiceId]);
+  });
 });
 
 export const playerSelectors = {
