@@ -9,9 +9,7 @@ import {
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 import { assert } from '../../defined';
-import { clearAuthentication } from '../../use-cases/clear-authentication/clear-authentication';
-import { createGame } from '../../use-cases/create-game/create-game';
-import { fetchGame } from '../../use-cases/fetch-game/fetch-game';
+import { setEntities } from '../../store/set-entities';
 
 export type GameSlice = {
   id: string;
@@ -50,10 +48,11 @@ export const gameSlice = createSlice({
     },
   },
   extraReducers(builder) {
-    for (const thunk of [fetchGame, createGame]) {
-      builder.addCase(thunk.fulfilled, (state, action) => {
-        const { entities, result: gameId } = action.payload;
-        const game = entities.games![gameId];
+    builder.addCase(setEntities, (state, action) => {
+      const games = Object.values(action.payload.entities.games ?? {});
+
+      if (games.length === 1) {
+        const game = games[0];
 
         return {
           id: game.id,
@@ -66,11 +65,7 @@ export const gameSlice = createSlice({
           selectedAnswerId: game.selectedAnswerId,
           isAnswerValidated: game.selectedAnswerId !== undefined,
         };
-      });
-    }
-
-    builder.addCase(clearAuthentication.fulfilled, () => {
-      return null;
+      }
     });
 
     builder.addCase('player-joined', (state, action: PlayerJoinedEvent) => {

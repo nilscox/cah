@@ -25,7 +25,6 @@ describe('authenticate', () => {
     expect(store.getPlayer()).toEqual<PlayerSlice>({
       id: 'playerId',
       nick: 'perry',
-      selectedChoicesIds: [],
     });
   });
 

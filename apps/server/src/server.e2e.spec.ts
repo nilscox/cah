@@ -10,11 +10,11 @@ import {
   initialize,
   joinGame,
   leaveGame,
-  playerActions,
   playerSelectors,
   questionsSelectors,
   startGame,
   submitAnswer,
+  toggleChoice,
   validateSelectedAnswer,
 } from '@cah/store';
 import { defined, getIds, waitFor } from '@cah/utils';
@@ -108,11 +108,11 @@ class Player {
     const choices = this.select(playerSelectors.cards).sort(() => Math.random() - 0.5);
 
     for (const choice of choices.slice(0, expectedNumberOfChoices)) {
-      this.dispatch(playerActions.toggleChoice(choice.id));
+      this.dispatch(toggleChoice(choice));
     }
 
     const selected = this.select(playerSelectors.selectedChoices);
-    log(`* ${this.nick} submits [${getIds(selected).join(', ')}]`);
+    log(`* ${this.nick} submits [${getIds(selected as Array<{ id: string }>).join(', ')}]`);
 
     await this.dispatch(submitAnswer());
   }

@@ -1,7 +1,7 @@
 import { gameActions } from '../../slices/game/game.slice';
-import { createThunk } from '../../store/create-thunk';
+import { createThunk2 } from '../../store/create-thunk';
 
-export const leaveGame = createThunk('leave-game', async ({ client, dispatch }) => {
+export const leaveGame = createThunk2(async ({ client, dispatch }) => {
   await client.leaveGame();
   client.disconnect();
 

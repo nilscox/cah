@@ -1,7 +1,7 @@
 import { GameEvent } from '@cah/shared';
 
 import { playerSelectors } from '../../slices/player/player.selectors';
-import { createThunk } from '../../store/create-thunk';
+import { createThunk2 } from '../../store/create-thunk';
 import { fetchGame } from '../fetch-game/fetch-game';
 import { fetchPlayer } from '../fetch-player/fetch-player';
 
@@ -21,18 +21,18 @@ const events: Array<GameEvent['type']> = [
   'game-ended',
 ];
 
-export const initialize = createThunk('initialize', async ({ client, dispatch, getState }) => {
+export const initialize = createThunk2(async ({ client, dispatch, getState }) => {
   for (const event of events) {
     client.addEventListener(event, dispatch);
   }
 
-  await dispatch(fetchPlayer()).unwrap();
+  await dispatch(fetchPlayer());
 
   if (playerSelectors.hasPlayer(getState())) {
     const { gameId } = playerSelectors.player(getState());
 
     if (gameId) {
-      await dispatch(fetchGame(gameId)).unwrap();
+      await dispatch(fetchGame(gameId));
     }
   }
 });

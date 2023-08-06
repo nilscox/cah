@@ -1,8 +1,9 @@
 import { normalizeGame } from '../../normalization';
-import { createThunk } from '../../store/create-thunk';
+import { createThunk2 } from '../../store/create-thunk';
+import { setEntities } from '../../store/set-entities';
 
-export const fetchGame = createThunk('fetch-game', async ({ client }, gameId: string) => {
+export const fetchGame = createThunk2(async ({ dispatch, client }, gameId: string) => {
   const game = await client.getGame(gameId);
 
-  return normalizeGame(game);
+  dispatch(setEntities(normalizeGame(game)));
 });

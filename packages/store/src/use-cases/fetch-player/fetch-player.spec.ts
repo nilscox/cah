@@ -22,6 +22,7 @@ describe('fetchPlayer', () => {
     store.client.getAuthenticatedPlayer.mockResolvedValue({
       id: 'playerId',
       nick: 'nick',
+      gameId: 'gameId',
       cards: [card],
     });
 
@@ -30,6 +31,7 @@ describe('fetchPlayer', () => {
     expect(store.getPlayer()).toEqual<PlayerSlice>({
       id: 'playerId',
       nick: 'nick',
+      gameId: 'gameId',
       cardsIds: ['choiceId'],
       selectedChoicesIds: [],
     });

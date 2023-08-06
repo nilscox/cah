@@ -1,8 +1,8 @@
 import { playerSelectors } from '../../slices/player/player.selectors';
 import { playerActions } from '../../slices/player/player.slice';
-import { createThunk } from '../../store/create-thunk';
+import { createThunk2 } from '../../store/create-thunk';
 
-export const submitAnswer = createThunk('submit-answer', async ({ client, dispatch, getState }) => {
+export const submitAnswer = createThunk2(async ({ client, dispatch, getState }) => {
   const selectedChoices = playerSelectors.selectedChoices(getState());
 
   const choicesIds = selectedChoices.map((choice) => {

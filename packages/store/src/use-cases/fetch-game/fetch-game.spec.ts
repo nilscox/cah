@@ -25,12 +25,14 @@ describe('fetchGame', () => {
 
   beforeEach(() => {
     store = new TestStore();
+
+    store.setPlayer();
   });
 
   it('fetches a game from its id', async () => {
     const player = createPlayer({ id: 'playerId' });
     const questionMaster = createPlayer({ id: 'questionMasterId' });
-    const question = createQuestion({ id: 'questionId' });
+    const question = createQuestion({ id: 'questionId', blanks: [0, 1] });
     const choice = createChoice({ id: 'choiceId' });
     const answer = createAnswer({ id: 'answerId', playerId: 'playerId', choices: [choice] });
 
@@ -60,6 +62,8 @@ describe('fetchGame', () => {
       selectedAnswerId: 'selectedAnswerId',
       isAnswerValidated: true,
     });
+
+    expect(store.getPlayer()).toHaveProperty('selectedChoicesIds', [null, null]);
 
     expect(store.select(playersSelectors.all)).toEqual<PlayersSlice[]>([questionMaster, player]);
     expect(store.select(questionsSelectors.all)).toEqual<QuestionSlice[]>([question]);

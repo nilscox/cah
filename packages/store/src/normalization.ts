@@ -36,16 +36,16 @@ type Entities = {
   games?: EntitiesMap<StartedGame, 'players' | 'questionMaster' | 'question' | 'answers'>;
 };
 
-type NormalizeResult = NormalizedSchema<Entities, string>;
+export type NormalizedEntities = NormalizedSchema<Entities, string>;
 
-export function normalizeGame(data: Game): NormalizeResult {
+export function normalizeGame(data: Game): NormalizedEntities {
   return normalize(data, games);
 }
 
-export function normalizePlayer(data: Player): NormalizeResult {
+export function normalizePlayer(data: Player): NormalizedEntities {
   return normalize(data, players);
 }
 
-export function normalizeAnswer(data: Answer): NormalizeResult {
+export function normalizeAnswer(data: Answer): NormalizedEntities {
   return normalize(data, answers);
 }
