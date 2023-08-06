@@ -5,6 +5,8 @@ import { createSelector } from '@reduxjs/toolkit';
 import { defined } from '../../defined';
 import { AppState } from '../../types';
 import { answersSelectors } from '../answers/answers.selectors';
+import { playerSelectors } from '../player/player.selectors';
+import { getQuestionChunks } from '../questions/question-chunks';
 import { questionsSelectors } from '../questions/questions.selectors';
 
 import { GameSlice } from './game.slice';
@@ -38,6 +40,14 @@ const currentQuestion = createSelector(startedGame, questionsSelectors.questions
   return defined(questions[game.questionId]);
 });
 
+const currentQuestionChunks = createSelector(
+  [currentQuestion, playerSelectors.selectedChoices],
+  (question, choices) => {
+    assert(question);
+    return getQuestionChunks(question, choices);
+  },
+);
+
 const answers = createSelector(startedGame, answersSelectors.answers, (game, answers) => {
   return game.answersIds.map((answerId) => defined(answers[answerId]));
 });
@@ -49,5 +59,6 @@ export const gameSelectors = {
   startedGame,
   isQuestionMaster,
   currentQuestion,
+  currentQuestionChunks,
   answers,
 };

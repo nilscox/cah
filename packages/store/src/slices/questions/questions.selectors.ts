@@ -1,3 +1,4 @@
+import { assert } from '@cah/utils';
 import { createSelector } from 'reselect';
 
 import { AppState } from '../../types';

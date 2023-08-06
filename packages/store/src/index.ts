@@ -8,9 +8,11 @@ export { playersSelectors } from './slices/players/players.selectors';
 
 export { questionsSelectors } from './slices/questions/questions.selectors';
 export { type QuestionSlice } from './slices/questions/questions.slice';
+export { type QuestionChunk } from './slices/questions/question-chunks';
 
 export { choicesActions } from './slices/choices/choices.slice';
 export { choicesSelectors } from './slices/choices/choices.selectors';
+export { type ChoiceSlice } from './slices/choices/choices.slice';
 
 export { authenticate } from './use-cases/authenticate/authenticate';
 export { clearAuthentication } from './use-cases/clear-authentication/clear-authentication';
