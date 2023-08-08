@@ -9,7 +9,9 @@ import {
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 import { assert } from '../../defined';
-import { setEntities } from '../../store/set-entities';
+import { unauthenticated } from '../../use-cases/clear-authentication/clear-authentication';
+import { gameFetched } from '../../use-cases/fetch-game/fetch-game';
+import { gameLeft } from '../../use-cases/leave-game/leave-game';
 
 export type GameSlice = {
   id: string;
@@ -31,10 +33,6 @@ export const gameSlice = createSlice({
       return action.payload;
     },
 
-    unsetGame() {
-      return null;
-    },
-
     setSelectedAnswer(state, action: PayloadAction<string>) {
       assert(state);
 
@@ -48,24 +46,24 @@ export const gameSlice = createSlice({
     },
   },
   extraReducers(builder) {
-    builder.addCase(setEntities, (state, action) => {
-      const games = Object.values(action.payload.entities.games ?? {});
+    builder.addCase(gameFetched, (state, { game }) => ({
+      id: game.id,
+      code: game.code,
+      playersIds: game.players,
+      state: game.state,
+      questionMasterId: game.questionMaster,
+      questionId: game.question,
+      answersIds: game.answers,
+      selectedAnswerId: game.selectedAnswerId,
+      isAnswerValidated: game.selectedAnswerId !== undefined,
+    }));
 
-      if (games.length === 1) {
-        const game = games[0];
+    builder.addCase(gameLeft, () => {
+      return null;
+    });
 
-        return {
-          id: game.id,
-          code: game.code,
-          playersIds: game.players,
-          state: game.state,
-          questionMasterId: game.questionMaster,
-          questionId: game.question,
-          answersIds: game.answers,
-          selectedAnswerId: game.selectedAnswerId,
-          isAnswerValidated: game.selectedAnswerId !== undefined,
-        };
-      }
+    builder.addCase(unauthenticated, () => {
+      return null;
     });
 
     builder.addCase('player-joined', (state, action: PlayerJoinedEvent) => {

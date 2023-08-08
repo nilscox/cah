@@ -1,7 +1,7 @@
 import { Question, TurnStartedEvent } from '@cah/shared';
 import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 
-import { setEntities } from '../../store/set-entities';
+import { gameFetched } from '../../use-cases/fetch-game/fetch-game';
 
 export type QuestionSlice = Question;
 
@@ -12,9 +12,7 @@ export const questionsSlice = createSlice({
   initialState: questionsAdapter.getInitialState(),
   reducers: {},
   extraReducers(builder) {
-    builder.addCase(setEntities, (state, action) => {
-      const questions = Object.values(action.payload.entities.questions ?? {});
-
+    builder.addCase(gameFetched, (state, { questions }) => {
       questionsAdapter.addMany(state, questions);
     });
 

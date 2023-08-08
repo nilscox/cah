@@ -1,17 +1,31 @@
 import { Answer, Choice, Game, Player, Question, StartedGame } from '@cah/shared';
-import { NormalizedSchema, normalize, schema } from 'normalizr';
+import { NormalizedSchema, Schema, normalize as normalizr, schema } from 'normalizr';
+
+import { defined } from './defined';
+
+type Normalized<T, Relations extends keyof T = never> = Omit<T, Relations> & {
+  [K in Relations]: T[K] extends unknown[] | undefined ? string[] : string;
+};
 
 const question = new schema.Entity('questions');
 
+type NormalizedQuestion = Normalized<Question>;
+
 const choice = new schema.Entity('choices');
+
+type NormalizedChoice = Normalized<Choice>;
 
 const answers = new schema.Entity('answers', {
   choices: [choice],
 });
 
+type NormalizedAnswer = Normalized<Answer, 'choices'>;
+
 const players = new schema.Entity('players', {
   cards: [choice],
 });
+
+type NormalizedPlayer = Normalized<Player, 'cards'>;
 
 const games = new schema.Entity('games', {
   players: [players],
@@ -20,32 +34,41 @@ const games = new schema.Entity('games', {
   answers: [answers],
 });
 
-type Normalized<T, Relations extends keyof T = never> = Omit<T, Relations> & {
-  [K in Relations]: T[K] extends unknown[] | undefined ? string[] : string;
-};
+type NormalizedGame = Normalized<StartedGame, 'players' | 'questionMaster' | 'question' | 'answers'>;
 
-type EntitiesMap<T, Relations extends keyof T = never> = {
-  [id: string]: Normalized<T, Relations>;
+type EntitiesMap<Entity> = {
+  [id: string]: Entity;
 };
 
 type Entities = {
-  questions?: EntitiesMap<Question>;
-  choices?: EntitiesMap<Choice>;
-  answers?: EntitiesMap<Answer, 'choices'>;
-  players?: EntitiesMap<Player, 'cards'>;
-  games?: EntitiesMap<StartedGame, 'players' | 'questionMaster' | 'question' | 'answers'>;
+  questions?: EntitiesMap<NormalizedQuestion>;
+  choices?: EntitiesMap<NormalizedChoice>;
+  answers?: EntitiesMap<NormalizedAnswer>;
+  players?: EntitiesMap<NormalizedPlayer>;
+  games?: EntitiesMap<NormalizedGame>;
 };
 
 export type NormalizedEntities = NormalizedSchema<Entities, string>;
 
-export function normalizeGame(data: Game): NormalizedEntities {
-  return normalize(data, games);
+const normalize: (data: unknown, schema: Schema) => NormalizedEntities = normalizr;
+
+export function normalizeGame(data: Game) {
+  const { entities, result } = normalize(data, games);
+
+  return {
+    game: defined(entities.games)[result],
+    players: entities.players ?? {},
+    questions: entities.questions ?? {},
+    choices: entities.choices ?? {},
+    answers: entities.answers ?? {},
+  };
 }
 
-export function normalizePlayer(data: Player): NormalizedEntities {
-  return normalize(data, players);
-}
+export function normalizePlayer(data: Player) {
+  const { entities, result } = normalize(data, players);
 
-export function normalizeAnswer(data: Answer): NormalizedEntities {
-  return normalize(data, answers);
+  return {
+    player: defined(entities.players)[result],
+    choices: entities.choices ?? {},
+  };
 }

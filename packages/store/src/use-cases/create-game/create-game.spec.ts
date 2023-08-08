@@ -10,10 +10,6 @@ describe('createGame', () => {
 
   beforeEach(() => {
     store = new TestStore();
-  });
-
-  beforeEach(() => {
-    store = new TestStore();
 
     store.setPlayer();
 
@@ -37,11 +33,5 @@ describe('createGame', () => {
       playersIds: ['playerId'],
       isAnswerValidated: false,
     });
-  });
-
-  it("sets the player's gameId", async () => {
-    await store.dispatch(createGame());
-
-    expect(store.getPlayer()).toHaveProperty('gameId', 'gameId');
   });
 });

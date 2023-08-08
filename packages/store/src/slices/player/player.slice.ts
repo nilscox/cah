@@ -3,7 +3,10 @@ import { array, getIds } from '@cah/utils';
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 import { assert } from '../../defined';
-import { setEntities } from '../../store/set-entities';
+import { unauthenticated } from '../../use-cases/clear-authentication/clear-authentication';
+import { gameFetched } from '../../use-cases/fetch-game/fetch-game';
+import { playerFetched } from '../../use-cases/fetch-player/fetch-player';
+import { gameLeft } from '../../use-cases/leave-game/leave-game';
 
 export type PlayerSlice = {
   id: string;
@@ -19,15 +22,6 @@ export const playerSlice = createSlice({
   reducers: {
     setPlayer(state, action: PayloadAction<PlayerSlice>) {
       return action.payload;
-    },
-
-    unsetPlayer() {
-      return null;
-    },
-
-    setGameId(state, action: PayloadAction<string>) {
-      assert(state);
-      state.gameId = action.payload;
     },
 
     setSelectedChoice(state, action: PayloadAction<[choiceId: string, index: number]>) {
@@ -65,17 +59,33 @@ export const playerSlice = createSlice({
     },
   },
   extraReducers(builder) {
-    builder.addCase(setEntities, (state, action) => {
-      const [game] = Object.values(action.payload.entities.games ?? {});
-      const questions = action.payload.entities.questions ?? {};
+    builder.addCase(gameFetched, (state, { game, questions }) => {
+      assert(state);
+
+      state.gameId = game.id;
 
       if (game?.question) {
-        assert(state);
-
         const question = questions[game.question];
-
         state.selectedChoicesIds = array(question.blanks?.length ?? 1, () => null);
       }
+    });
+
+    builder.addCase(playerFetched, (state, { player }) => {
+      return {
+        id: player.id,
+        nick: player.nick,
+        gameId: player.gameId,
+        cardsIds: player.cards,
+        selectedChoicesIds: player.gameId ? [] : undefined,
+      };
+    });
+
+    builder.addCase(gameLeft, (state) => {
+      delete state?.gameId;
+    });
+
+    builder.addCase(unauthenticated, () => {
+      return null;
     });
 
     builder.addCase('turn-started', (state, event: TurnStartedEvent) => {

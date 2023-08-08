@@ -10,11 +10,12 @@ import { createStore } from './store/create-store';
 import { AppSelector } from './types';
 
 export class TestStore {
-  private static throwOnRejectionMiddleware: Middleware = () => {
+  public debug = false;
+
+  private logActionMiddleware: Middleware = () => {
     return (next) => (action: Action<string>) => {
-      if (action.type.endsWith('/rejected')) {
-        // eslint-disable-next-line
-        throw Object.assign(new Error(), (action as any).error);
+      if (this.debug) {
+        console.log(action);
       }
 
       return next(action);
@@ -22,7 +23,7 @@ export class TestStore {
   };
 
   public readonly client = new MockClient();
-  public readonly store = createStore({ client: this.client }, [TestStore.throwOnRejectionMiddleware]);
+  public readonly store = createStore({ client: this.client }, [this.logActionMiddleware]);
 
   getState = this.store.getState.bind(this.store);
   dispatch = this.store.dispatch.bind(this.store);

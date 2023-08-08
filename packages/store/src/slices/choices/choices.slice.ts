@@ -1,7 +1,8 @@
 import { AllPlayerAnsweredEvent, CardsDealtEvent } from '@cah/shared';
 import { PayloadAction, createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 
-import { setEntities } from '../../store/set-entities';
+import { gameFetched } from '../../use-cases/fetch-game/fetch-game';
+import { playerFetched } from '../../use-cases/fetch-player/fetch-player';
 import { playerActions } from '../player/player.slice';
 
 export type ChoiceSlice = {
@@ -19,15 +20,13 @@ export const choicesSlice = createSlice({
     add(state, action: PayloadAction<ChoiceSlice>) {
       choicesAdapter.addOne(state, action.payload);
     },
-
-    addMany(state, action: PayloadAction<ChoiceSlice[]>) {
-      choicesAdapter.addMany(state, action.payload);
-    },
   },
   extraReducers(builder) {
-    builder.addCase(setEntities, (state, action) => {
-      const choices = Object.values(action.payload.entities.choices ?? {});
+    builder.addCase(gameFetched, (state, { choices }) => {
+      choicesAdapter.addMany(state, choices);
+    });
 
+    builder.addCase(playerFetched, (state, { choices }) => {
       choicesAdapter.addMany(state, choices);
     });
 

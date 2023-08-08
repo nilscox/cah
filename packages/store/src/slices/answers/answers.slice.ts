@@ -1,7 +1,7 @@
 import { AllPlayerAnsweredEvent, AnonymousAnswer, Answer, WinningAnswerSelectedEvent } from '@cah/shared';
 import { PayloadAction, createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 
-import { setEntities } from '../../store/set-entities';
+import { gameFetched } from '../../use-cases/fetch-game/fetch-game';
 
 export type AnswerSlice = {
   id: string;
@@ -25,12 +25,10 @@ export const answersSlice = createSlice({
     },
   },
   extraReducers(builder) {
-    builder.addCase(setEntities, (state, action) => {
-      const answers = Object.values(action.payload.entities.answers ?? {});
-
+    builder.addCase(gameFetched, (state, { answers }) => {
       answersAdapter.addMany(
         state,
-        answers.map((answer) => ({
+        Object.values(answers).map((answer) => ({
           id: answer.id,
           playerId: answer.playerId,
           choicesIds: answer.choices,

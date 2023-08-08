@@ -77,4 +77,12 @@ describe('fetchGame', () => {
       },
     ]);
   });
+
+  it("sets the player's gameId", async () => {
+    store.client.getGame.mockResolvedValue(createStartedGame({ id: 'gameId' }));
+
+    await store.dispatch(fetchGame('gameId'));
+
+    expect(store.getPlayer()).toHaveProperty('gameId', 'gameId');
+  });
 });

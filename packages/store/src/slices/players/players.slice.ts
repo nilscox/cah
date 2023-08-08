@@ -1,7 +1,7 @@
 import { PlayerJoinedEvent, PlayerLeftEvent } from '@cah/shared';
 import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 
-import { setEntities } from '../../store/set-entities';
+import { gameFetched } from '../../use-cases/fetch-game/fetch-game';
 
 export type PlayersSlice = {
   id: string;
@@ -15,9 +15,7 @@ export const playersSlice = createSlice({
   initialState: playersAdapter.getInitialState(),
   reducers: {},
   extraReducers(builder) {
-    builder.addCase(setEntities, (state, action) => {
-      const players = Object.values(action.payload.entities.players ?? {});
-
+    builder.addCase(gameFetched, (state, { players }) => {
       playersAdapter.addMany(state, players);
     });
 
