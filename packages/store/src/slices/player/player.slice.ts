@@ -1,10 +1,9 @@
-import { CardsDealtEvent, Choice } from '@cah/shared';
+import { CardsDealtEvent, Choice, TurnStartedEvent } from '@cah/shared';
 import { array, getIds } from '@cah/utils';
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 import { assert } from '../../defined';
 import { setEntities } from '../../store/set-entities';
-import { gameActions } from '../game/game.slice';
 
 export type PlayerSlice = {
   id: string;
@@ -67,16 +66,21 @@ export const playerSlice = createSlice({
   },
   extraReducers(builder) {
     builder.addCase(setEntities, (state, action) => {
-      const games = Object.values(action.payload.entities.games ?? {});
+      const [game] = Object.values(action.payload.entities.games ?? {});
+      const questions = action.payload.entities.questions ?? {};
 
-      if (games.length === 1) {
+      if (game?.question) {
         assert(state);
 
-        const game = games[0];
-        const question = action.payload.entities.questions![game.question];
+        const question = questions[game.question];
 
         state.selectedChoicesIds = array(question.blanks?.length ?? 1, () => null);
       }
+    });
+
+    builder.addCase('turn-started', (state, event: TurnStartedEvent) => {
+      assert(state);
+      state.selectedChoicesIds = array(event.question.blanks?.length || 1, () => null);
     });
 
     builder.addCase('cards-dealt', (state, event: CardsDealtEvent) => {

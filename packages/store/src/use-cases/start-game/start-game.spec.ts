@@ -58,5 +58,7 @@ describe('startGame', () => {
     expect(game).toHaveProperty('questionId', 'questionId');
 
     expect(store.select(gameSelectors.currentQuestion)).toEqual(question);
+
+    expect(store.getPlayer()).toHaveProperty('selectedChoicesIds', [null]);
   });
 });
