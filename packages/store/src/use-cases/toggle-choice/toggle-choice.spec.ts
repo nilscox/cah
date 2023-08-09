@@ -16,7 +16,7 @@ describe('toggleChoice', () => {
 
     cards = array(3, () => createChoice());
 
-    store.setPlayer({ cardsIds: [], selectedChoicesIds: [null, null] });
+    store.setPlayer({ cards: [] });
     store.setGame(createStartedGame({ question: createQuestion({ blanks: [0, 1] }) }));
 
     store.dispatch(playerActions.addCards(cards));

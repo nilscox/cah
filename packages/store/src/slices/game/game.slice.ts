@@ -29,10 +29,6 @@ export const gameSlice = createSlice({
   name: 'game',
   initialState: null as GameSlice | null,
   reducers: {
-    setGame(_, action: PayloadAction<GameSlice>) {
-      return action.payload;
-    },
-
     setSelectedAnswer(state, action: PayloadAction<string>) {
       assert(state);
 

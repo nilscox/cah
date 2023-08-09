@@ -1,13 +1,13 @@
-import { GameEvent, GameState } from '@cah/shared';
+import { Game, GameEvent, GameState, Player } from '@cah/shared';
 import { Action, Middleware } from 'redux';
 
 import { MockClient } from './mock-client';
 import { gameSelectors } from './slices/game/game.selectors';
-import { GameSlice, gameActions } from './slices/game/game.slice';
 import { playerSelectors } from './slices/player/player.selectors';
-import { PlayerSlice, playerActions } from './slices/player/player.slice';
 import { createStore } from './store/create-store';
 import { AppSelector } from './types';
+import { gameFetched } from './use-cases/fetch-game/fetch-game';
+import { playerFetched } from './use-cases/fetch-player/fetch-player';
 
 export class TestStore {
   public debug = false;
@@ -47,12 +47,11 @@ export class TestStore {
     return this.select(playerSelectors.player);
   }
 
-  setPlayer(player?: Partial<PlayerSlice>) {
+  setPlayer(player?: Partial<Player>) {
     this.dispatch(
-      playerActions.setPlayer({
+      playerFetched({
         id: '',
         nick: '',
-        selectedChoicesIds: [],
         ...player,
       }),
     );
@@ -62,13 +61,13 @@ export class TestStore {
     return this.select(gameSelectors.game);
   }
 
-  setGame(game?: Partial<GameSlice>) {
+  setGame(game?: Partial<Game>) {
     this.dispatch(
-      gameActions.setGame({
+      gameFetched({
         id: '',
         code: '',
-        playersIds: [],
         state: GameState.idle,
+        players: [],
         ...game,
       }),
     );

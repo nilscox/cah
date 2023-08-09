@@ -20,10 +20,6 @@ export const playerSlice = createSlice({
   name: 'player',
   initialState: null as PlayerSlice | null,
   reducers: {
-    setPlayer(state, action: PayloadAction<PlayerSlice>) {
-      return action.payload;
-    },
-
     setSelectedChoice(state, action: PayloadAction<[choiceId: string, index: number]>) {
       assert(state);
       assert(state.selectedChoicesIds);

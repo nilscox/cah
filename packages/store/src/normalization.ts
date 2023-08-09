@@ -15,23 +15,23 @@ const choice = new schema.Entity('choices');
 
 type NormalizedChoice = Normalized<Choice>;
 
-const answers = new schema.Entity('answers', {
+const answer = new schema.Entity('answers', {
   choices: [choice],
 });
 
 type NormalizedAnswer = Normalized<Answer, 'choices'>;
 
-const players = new schema.Entity('players', {
+const player = new schema.Entity('players', {
   cards: [choice],
 });
 
 type NormalizedPlayer = Normalized<Player, 'cards'>;
 
-const games = new schema.Entity('games', {
-  players: [players],
-  questionMaster: players,
+const game = new schema.Entity('games', {
+  players: [player],
+  questionMaster: player,
   question: question,
-  answers: [answers],
+  answers: [answer],
 });
 
 type NormalizedGame = Normalized<StartedGame, 'players' | 'questionMaster' | 'question' | 'answers'>;
@@ -53,7 +53,7 @@ export type NormalizedEntities = NormalizedSchema<Entities, string>;
 const normalize: (data: unknown, schema: Schema) => NormalizedEntities = normalizr;
 
 export function normalizeGame(data: Game) {
-  const { entities, result } = normalize(data, games);
+  const { entities, result } = normalize(data, game);
 
   return {
     game: defined(entities.games)[result],
@@ -65,7 +65,7 @@ export function normalizeGame(data: Game) {
 }
 
 export function normalizePlayer(data: Player) {
-  const { entities, result } = normalize(data, players);
+  const { entities, result } = normalize(data, player);
 
   return {
     player: defined(entities.players)[result],
