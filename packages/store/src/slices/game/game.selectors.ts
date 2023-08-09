@@ -9,7 +9,7 @@ import { playerSelectors } from '../player/player.selectors';
 import { getQuestionChunks } from '../questions/question-chunks';
 import { questionsSelectors } from '../questions/questions.selectors';
 
-import { GameSlice } from './game.slice';
+import { GameSlice, PlayState } from './game.slice';
 
 const gameUnsafe = (state: AppState) => state.game;
 
@@ -54,6 +54,18 @@ const answers = createSelector(startedGame, answersSelectors.answers, (game, ans
   return game.answersIds.map((answerId) => defined(answers[answerId]));
 });
 
+const playState = createSelector(answers, (answers) => {
+  if (answers.length === 0) {
+    return PlayState.playersAnswer;
+  }
+
+  if (!answers[0].playerId) {
+    return PlayState.questionMasterSelection;
+  }
+
+  return PlayState.endOfTurn;
+});
+
 export const gameSelectors = {
   gameUnsafe,
   hasGame,
@@ -64,4 +76,5 @@ export const gameSelectors = {
   currentQuestion,
   currentQuestionChunks,
   answers,
+  playState,
 };

@@ -25,6 +25,12 @@ export type GameSlice = {
   selectedAnswerId?: string;
 };
 
+export enum PlayState {
+  playersAnswer = 'playersAnswer',
+  questionMasterSelection = 'questionMasterSelection',
+  endOfTurn = 'endOfTurn',
+}
+
 export const gameSlice = createSlice({
   name: 'game',
   initialState: null as GameSlice | null,
