@@ -11,8 +11,10 @@ import { questionsSelectors } from '../questions/questions.selectors';
 
 import { GameSlice } from './game.slice';
 
-const game = (state: AppState) => defined(state.game);
-const hasGame = (state: AppState) => state.game !== null;
+const gameUnsafe = (state: AppState) => state.game;
+
+const hasGame = createSelector(gameUnsafe, (game) => game !== null);
+const game = createSelector(gameUnsafe, (game) => defined(game));
 
 const code = createSelector(game, (game) => {
   return game.code;
@@ -53,8 +55,9 @@ const answers = createSelector(startedGame, answersSelectors.answers, (game, ans
 });
 
 export const gameSelectors = {
-  game,
+  gameUnsafe,
   hasGame,
+  game,
   code,
   startedGame,
   isQuestionMaster,

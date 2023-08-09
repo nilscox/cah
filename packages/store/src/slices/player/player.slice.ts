@@ -88,6 +88,11 @@ export const playerSlice = createSlice({
       return null;
     });
 
+    builder.addCase('game-started', (state) => {
+      assert(state);
+      state.cardsIds = [];
+    });
+
     builder.addCase('turn-started', (state, event: TurnStartedEvent) => {
       assert(state);
       state.selectedChoicesIds = array(event.question.blanks?.length || 1, () => null);

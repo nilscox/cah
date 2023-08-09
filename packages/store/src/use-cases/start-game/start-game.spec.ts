@@ -30,9 +30,13 @@ describe('startGame', () => {
       gameId: '',
     });
 
-    expect(store.getGame()).toHaveProperty('state', GameState.started);
-    expect(store.getGame()).toHaveProperty('answersIds', []);
-    expect(store.getGame()).toHaveProperty('isAnswerValidated', false);
+    const game = store.getGame();
+    expect(game).toHaveProperty('state', GameState.started);
+    expect(game).toHaveProperty('answersIds', []);
+    expect(game).toHaveProperty('isAnswerValidated', false);
+
+    const player = store.getPlayer();
+    expect(player).toHaveProperty('cardsIds', []);
   });
 
   it('handles a turn-started event', () => {
@@ -53,12 +57,12 @@ describe('startGame', () => {
     });
 
     const game = store.getGame();
-
     expect(game).toHaveProperty('questionMasterId', 'questionMasterId');
     expect(game).toHaveProperty('questionId', 'questionId');
 
     expect(store.select(gameSelectors.currentQuestion)).toEqual(question);
 
-    expect(store.getPlayer()).toHaveProperty('selectedChoicesIds', [null]);
+    const player = store.getPlayer();
+    expect(player).toHaveProperty('selectedChoicesIds', [null]);
   });
 });
