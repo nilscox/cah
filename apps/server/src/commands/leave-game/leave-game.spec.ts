@@ -48,10 +48,10 @@ describe('LeaveGameCommand', () => {
     await expect(test.handler.execute(test.command)).rejects.toThrow('player is not in a game');
   });
 
-  it('fails when he game is not finished', async () => {
+  it('fails when he game is started', async () => {
     test.game.state = GameState.started;
     test.gameRepository.set(test.game);
 
-    await expect(test.handler.execute(test.command)).rejects.toThrow('game is not finished');
+    await expect(test.handler.execute(test.command)).rejects.toThrow('game is started');
   });
 });

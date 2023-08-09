@@ -40,7 +40,7 @@ export class LeaveGameHandler implements CommandHandler<LeaveGameCommand> {
     assert(player.gameId, 'player is not in a game');
 
     const game = await this.gameRepository.findById(player.gameId);
-    assert(game.state === GameState.finished, 'game is not finished');
+    assert(game.state !== GameState.started, 'game is started');
 
     delete player.gameId;
 
