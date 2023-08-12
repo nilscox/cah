@@ -16,6 +16,6 @@ export class RandomGeneratorAdapter implements GeneratorPort {
   }
 
   generateGameCode() {
-    return this.random.randomString(4);
+    return this.random.randomString(4).toUpperCase();
   }
 }

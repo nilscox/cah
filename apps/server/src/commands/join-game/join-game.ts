@@ -40,7 +40,7 @@ export class JoinGameHandler implements CommandHandler<JoinGameCommand, string> 
     const player = await this.playerRepository.findById(command.playerId);
     assert(player.gameId === undefined, 'player is already in a game');
 
-    const game = await this.gameRepository.findByCode(command.code);
+    const game = await this.gameRepository.findByCode(command.code.toUpperCase());
     assert(game.state === GameState.idle, 'game is not idle');
 
     player.gameId = game.id;
