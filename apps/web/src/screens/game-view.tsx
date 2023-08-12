@@ -36,7 +36,7 @@ function Game() {
         <GameIdleView />
       </Match>
 
-      <Match when={game().state === GameState.started}>
+      <Match when={game().state === GameState.started && game().questionId}>
         <GameStartedView />
       </Match>
 

@@ -36,10 +36,12 @@ export function getQuestionChunks(question: QuestionSlice, choices: Array<Choice
   }
 
   let index = 0;
+  let last = 0;
 
   for (const blank of blanks) {
-    chunks.push({ text: text.slice(0, blank), isBlank: false });
+    chunks.push({ text: text.slice(last, blank), isBlank: false });
     chunks.push(getBlank(index++, blank > 0));
+    last = blank;
   }
 
   chunks.push({ text: text.slice(blanks[blanks.length - 1]), isBlank: false });

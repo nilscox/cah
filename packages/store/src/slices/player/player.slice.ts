@@ -109,11 +109,14 @@ export const playerSlice = createSlice({
 
     builder.addCase('game-started', (state) => {
       assert(state);
+
       state.cardsIds = [];
+      state.selectedChoicesIds = [];
     });
 
     builder.addCase('turn-started', (state, event: TurnStartedEvent) => {
       assert(state);
+
       state.selectedChoicesIds = array(event.question.blanks?.length || 1, () => null);
     });
 

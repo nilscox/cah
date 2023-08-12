@@ -41,7 +41,7 @@ export const selectPlayState = pipe(selectGameAnswers, (answers) => {
     return PlayState.playersAnswer;
   }
 
-  if (!answers[0].playerId) {
+  if (answers.some((answer) => !answer.playerId)) {
     return PlayState.questionMasterSelection;
   }
 

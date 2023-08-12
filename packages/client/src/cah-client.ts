@@ -65,7 +65,7 @@ export class CahClient implements ICahClient {
       extraHeaders.cookie = this.fetcher.cookie;
     }
 
-    this.socket = io(this.fetcher.baseUrl.replace(/^http(s)?/, 'ws$1'), {
+    this.socket = io(this.fetcher.baseUrl.replace(/\/api$/, ''), {
       transports: ['websocket', 'polling'],
       extraHeaders,
     });

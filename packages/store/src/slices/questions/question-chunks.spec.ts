@@ -91,4 +91,32 @@ describe('questionChunks', () => {
       ]);
     });
   });
+
+  describe('question with multiple blanks in the middle', () => {
+    const question: QuestionSlice = {
+      id: '',
+      text: 'I am , not .',
+      blanks: [5, 11],
+    };
+
+    test('no choice', () => {
+      expect(getQuestionChunks(question)).toEqual([
+        text('I am '),
+        blank(),
+        text(', not '),
+        blank(),
+        text('.'),
+      ]);
+    });
+
+    test('with a choice', () => {
+      expect(getQuestionChunks(question, [choice, null])).toEqual([
+        text('I am '),
+        blank('choice'),
+        text(', not '),
+        blank(),
+        text('.'),
+      ]);
+    });
+  });
 });
