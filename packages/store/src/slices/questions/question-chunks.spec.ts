@@ -33,16 +33,16 @@ describe('questionChunks', () => {
     };
 
     test('no choice', () => {
-      expect(getQuestionChunks(question)).toEqual([text('Question?'), blank()]);
+      expect(getQuestionChunks(question)).toEqual([text('Question? '), blank()]);
     });
 
     test('with choice', () => {
-      expect(getQuestionChunks(question, [choice])).toEqual([text('Question?'), blank('Choice')]);
+      expect(getQuestionChunks(question, [choice])).toEqual([text('Question? '), blank('Choice')]);
     });
 
     test('with case sensitive choice', () => {
       expect(getQuestionChunks(question, [choiceCaseSensitive])).toEqual([
-        text('Question?'),
+        text('Question? '),
         blank('Choice'),
       ]);
     });

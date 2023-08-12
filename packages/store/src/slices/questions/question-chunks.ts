@@ -32,7 +32,7 @@ export function getQuestionChunks(question: QuestionSlice, choices: Array<Choice
   };
 
   if (!blanks) {
-    return [{ text, isBlank: false }, getBlank(0)];
+    return [{ text: text + ' ', isBlank: false }, getBlank(0)];
   }
 
   let index = 0;
