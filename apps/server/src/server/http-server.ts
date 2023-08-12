@@ -5,10 +5,10 @@ import { promisify } from 'node:util';
 import * as shared from '@cah/shared';
 import { defined } from '@cah/utils';
 import bodyParser from 'body-parser';
+import connectPgSimple from 'connect-pg-simple';
 import { Container } from 'ditox';
 import express, { ErrorRequestHandler, RequestHandler, Router } from 'express';
 import session from 'express-session';
-import createMemoryStore from 'memorystore';
 import morgan from 'morgan';
 import * as yup from 'yup';
 
@@ -22,7 +22,7 @@ declare module 'express-session' {
   }
 }
 
-const MemoryStore = createMemoryStore(session);
+const SessionStore = connectPgSimple(session);
 
 /* eslint-disable @typescript-eslint/no-misused-promises */
 
@@ -32,7 +32,7 @@ export class HttpServer {
 
   private sockets = new Set<Socket>();
 
-  private sessionStore = new MemoryStore({});
+  private sessionStore: connectPgSimple.PGStore;
 
   constructor(
     private readonly config: ConfigPort,
@@ -41,6 +41,13 @@ export class HttpServer {
   ) {
     this.app = express();
     this.server = createServer(this.app);
+
+    this.sessionStore = new SessionStore({
+      conString: config.database.url,
+      schemaName: 'cah',
+      tableName: 'sessions',
+      createTableIfMissing: true,
+    });
 
     this.server.on('connection', (socket) => {
       this.sockets.add(socket);
