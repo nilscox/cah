@@ -46,7 +46,7 @@ export class SqlGameRepository implements GameRepository {
     return model;
   };
 
-  async query(gameId: string): Promise<shared.Game> {
+  async query(gameId: string): Promise<shared.Game | shared.StartedGame> {
     const model = await this.db.query.games.findFirst({
       where: eq(games.id, gameId),
       with: {
@@ -79,49 +79,53 @@ export class SqlGameRepository implements GameRepository {
       })),
     };
 
-    if (shared.isStarted(game)) {
-      const allPlayersAnswered = model.answers.length === model.players.length - 1;
-      const selectedAnswerId = model.selectedAnswerId;
+    if (!shared.isStarted(game)) {
+      return game;
+    }
 
-      assert(model.questionMaster);
-      assert(model.question);
+    const allPlayersAnswered = model.answers.length === model.players.length - 1;
+    const selectedAnswerId = model.selectedAnswerId;
 
-      game.questionMaster = {
-        id: model.questionMaster.id,
-        nick: model.questionMaster.nick,
-      };
+    assert(model.questionMaster);
+    assert(model.question);
 
-      game.question = {
-        id: model.question.id,
-        text: model.question.text,
-      };
+    game.questionMaster = {
+      id: model.questionMaster.id,
+      nick: model.questionMaster.nick,
+    };
 
-      if (model.question.blanks.length > 0) {
-        game.question.blanks = model.question.blanks;
-      }
+    game.question = {
+      id: model.question.id,
+      text: model.question.text,
+    };
 
-      if (allPlayersAnswered) {
-        game.answers = model.answers.map((model) => {
-          const answer: shared.AnonymousAnswer = {
-            id: model.id,
-            choices: model.choices.map((choice) => ({
-              id: choice.id,
-              text: choice.text,
-              caseSensitive: choice.caseSensitive,
-            })),
-          };
+    if (model.question.blanks.length > 0) {
+      game.question.blanks = model.question.blanks;
+    }
 
-          if (selectedAnswerId) {
-            (answer as shared.Answer).playerId = model.playerId;
-          }
+    game.answers = [];
 
-          return answer;
-        });
-      }
+    if (allPlayersAnswered) {
+      game.answers = model.answers.map((model) => {
+        const answer: shared.AnonymousAnswer = {
+          id: model.id,
+          choices: model.choices.map((choice) => ({
+            id: choice.id,
+            text: choice.text,
+            caseSensitive: choice.caseSensitive,
+          })),
+        };
 
-      if (selectedAnswerId) {
-        game.selectedAnswerId = selectedAnswerId;
-      }
+        if (selectedAnswerId) {
+          (answer as shared.Answer).playerId = model.playerId;
+        }
+
+        return answer;
+      });
+    }
+
+    if (selectedAnswerId) {
+      game.selectedAnswerId = selectedAnswerId;
     }
 
     return game;
