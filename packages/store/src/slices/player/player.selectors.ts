@@ -45,11 +45,18 @@ export const selectCurrentQuestionChunks = combine(
   },
 );
 
+export const selectHasSubmittedAnswer = pipe(selectPlayer, (player) => player.answerSubmitted);
+
 export const selectCanSelectChoice = combine(
-  selectIsQuestionMaster,
   selectPlayState,
-  (isQuestionMaster, playState) => {
+  selectHasSubmittedAnswer,
+  selectIsQuestionMaster,
+  (playState, selectHasSubmittedAnswer, isQuestionMaster) => {
     if (playState !== PlayState.playersAnswer) {
+      return false;
+    }
+
+    if (selectHasSubmittedAnswer) {
       return false;
     }
 
@@ -58,9 +65,14 @@ export const selectCanSelectChoice = combine(
 );
 
 export const selectCanSubmitAnswer = combine(
+  selectHasSubmittedAnswer,
   selectIsQuestionMaster,
   selectedSelectedChoices,
-  (isQuestionMaster, choices) => {
+  (hasSubmittedAnswer, isQuestionMaster, choices) => {
+    if (hasSubmittedAnswer) {
+      return false;
+    }
+
     if (isQuestionMaster) {
       return false;
     }

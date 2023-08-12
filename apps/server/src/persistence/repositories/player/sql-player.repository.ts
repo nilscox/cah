@@ -1,10 +1,10 @@
 import * as shared from '@cah/shared';
-import { InferModel, eq } from 'drizzle-orm';
+import { InferModel, and, eq, isNull } from 'drizzle-orm';
 
 import { Player } from 'src/entities';
 
 import { Database } from '../../database';
-import { players } from '../../drizzle-schema';
+import { answers, players } from '../../drizzle-schema';
 import { EntityNotFoundError } from '../../entity-not-found-error';
 
 import { PlayerRepository } from './player.repository';
@@ -42,6 +42,31 @@ export class SqlPlayerRepository implements PlayerRepository {
         text: choice.text,
         caseSensitive: choice.caseSensitive,
       }));
+    }
+
+    if (player.gameId) {
+      const answer = await this.db.query.answers.findFirst({
+        where: and(
+          eq(answers.gameId, player.gameId),
+          eq(answers.playerId, player.id),
+          isNull(answers.turnId),
+        ),
+        with: {
+          choices: true,
+        },
+      });
+
+      if (answer) {
+        player.submittedAnswer = {
+          id: answer.id,
+          choices: answer.choices.map((choice) => ({
+            id: choice.id,
+            text: choice.text,
+            caseSensitive: choice.caseSensitive,
+          })),
+          playerId: answer.playerId,
+        };
+      }
     }
 
     return player;

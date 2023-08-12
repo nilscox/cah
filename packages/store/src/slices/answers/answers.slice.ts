@@ -2,6 +2,7 @@ import { AllPlayerAnsweredEvent, AnonymousAnswer, Answer, WinningAnswerSelectedE
 import { PayloadAction, createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 
 import { gameFetched } from '../../use-cases/fetch-game/fetch-game';
+import { playerFetched } from '../../use-cases/fetch-player/fetch-player';
 
 export type AnswerSlice = {
   id: string;
@@ -26,6 +27,17 @@ export const answersSlice = createSlice({
   },
   extraReducers(builder) {
     builder.addCase(gameFetched, (state, { answers }) => {
+      answersAdapter.addMany(
+        state,
+        Object.values(answers).map((answer) => ({
+          id: answer.id,
+          playerId: answer.playerId,
+          choicesIds: answer.choices,
+        })),
+      );
+    });
+
+    builder.addCase(playerFetched, (state, { answers }) => {
       answersAdapter.addMany(
         state,
         Object.values(answers).map((answer) => ({

@@ -1,7 +1,20 @@
-import { GameState, createAnswer, createStartedGame } from '@cah/shared';
+import {
+  Answer,
+  Choice,
+  GameState,
+  createAnswer,
+  createChoice,
+  createPlayer,
+  createStartedGame,
+} from '@cah/shared';
 
 import { answersActions } from '../../slices/answers/answers.slice';
 import { gameActions } from '../../slices/game/game.slice';
+import {
+  selectHasSubmittedAnswer,
+  selectPlayerCards,
+  selectedSelectedChoices,
+} from '../../slices/player/player.selectors';
 import { TestStore } from '../../test-store';
 
 import { endTurn } from './end-turn';
@@ -9,10 +22,18 @@ import { endTurn } from './end-turn';
 describe('endTurn', () => {
   let store: TestStore;
 
+  let cards: Choice[];
+  let submittedChoices: Choice[];
+  let submittedAnswer: Answer;
+
   beforeEach(() => {
     store = new TestStore();
 
-    store.setPlayer();
+    cards = [createChoice()];
+    submittedChoices = [createChoice()];
+    submittedAnswer = createAnswer({ choices: submittedChoices });
+
+    store.setPlayer(createPlayer({ cards, submittedAnswer }));
     store.setGame(createStartedGame());
   });
 
@@ -36,6 +57,10 @@ describe('endTurn', () => {
     expect(game).toHaveProperty('answersIds', []);
     expect(game).not.toHaveProperty('selectedAnswerId');
     expect(game).toHaveProperty('isAnswerValidated', false);
+
+    expect(store.select(selectPlayerCards)).toEqual(cards);
+    expect(store.select(selectedSelectedChoices)).toEqual([]);
+    expect(store.select(selectHasSubmittedAnswer)).toEqual(false);
   });
 
   it('handles a game-ended event', () => {

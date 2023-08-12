@@ -1,6 +1,7 @@
 import { Choice, createChoice, createStartedGame } from '@cah/shared';
 
 import { choicesActions } from '../../slices/choices/choices.slice';
+import { selectPlayer } from '../../slices/player/player.selectors';
 import { playerActions } from '../../slices/player/player.slice';
 import { TestStore } from '../../test-store';
 
@@ -27,5 +28,12 @@ describe('submitAnswer', () => {
     await store.dispatch(submitAnswer());
 
     expect(store.client.createAnswer).toHaveBeenCalledWith(['choiceId1']);
+  });
+
+  it('marks the answer as submitted', async () => {
+    store.dispatch(playerActions.setSelectedChoice(['choiceId1', 0]));
+    await store.dispatch(submitAnswer());
+
+    expect(store.select(selectPlayer)).toHaveProperty('answerSubmitted', true);
   });
 });

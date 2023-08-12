@@ -49,6 +49,7 @@ export type Player = {
   nick: string;
   gameId?: string;
   cards?: Array<Choice>;
+  submittedAnswer?: Answer;
 };
 
 export const createPlayer = factory<Player>(() => ({

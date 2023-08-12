@@ -14,6 +14,7 @@ export type PlayerSlice = {
   gameId?: string;
   cardsIds?: string[];
   selectedChoicesIds?: Array<string | null>;
+  answerSubmitted?: boolean;
 };
 
 export const playerSlice = createSlice({
@@ -53,6 +54,12 @@ export const playerSlice = createSlice({
 
       state.cardsIds.push(...getIds(action.payload));
     },
+
+    answerSubmitted(state) {
+      assert(state);
+
+      state.answerSubmitted = true;
+    },
   },
   extraReducers(builder) {
     builder.addCase(gameFetched, (state, { game, questions }) => {
@@ -60,19 +67,35 @@ export const playerSlice = createSlice({
 
       state.gameId = game.id;
 
-      if (game?.question) {
+      if (game?.question && !state.selectedChoicesIds) {
         const question = questions[game.question];
         state.selectedChoicesIds = array(question.blanks?.length ?? 1, () => null);
       }
     });
 
-    builder.addCase(playerFetched, (state, { player }) => {
+    builder.addCase(playerFetched, (state, { player, choices, answers }) => {
+      let selectedChoicesIds: Array<string> | undefined = undefined;
+      let cardsIds = player.cards;
+
+      if (player.cards) {
+        cardsIds = player.cards;
+      }
+
+      if (player.submittedAnswer) {
+        const answer = answers[player.submittedAnswer];
+        const answerChoices = answer.choices.map((choice) => choices[choice]);
+
+        selectedChoicesIds = getIds(answerChoices);
+        cardsIds?.unshift(...selectedChoicesIds);
+      }
+
       return {
         id: player.id,
         nick: player.nick,
         gameId: player.gameId,
-        cardsIds: player.cards,
-        selectedChoicesIds: player.gameId ? [] : undefined,
+        cardsIds,
+        selectedChoicesIds,
+        answerSubmitted: player.gameId ? player.submittedAnswer !== undefined : undefined,
       };
     });
 
@@ -94,9 +117,23 @@ export const playerSlice = createSlice({
       state.selectedChoicesIds = array(event.question.blanks?.length || 1, () => null);
     });
 
+    builder.addCase('turn-ended', (state) => {
+      assert(state);
+      assert(state.cardsIds);
+      assert(state.selectedChoicesIds);
+
+      for (const choiceId of state.selectedChoicesIds) {
+        removeArrayElement(state.cardsIds, choiceId);
+      }
+
+      state.selectedChoicesIds = [];
+      state.answerSubmitted = false;
+    });
+
     builder.addCase('cards-dealt', (state, event: CardsDealtEvent) => {
       assert(state);
-      state.cardsIds ??= [];
+      assert(state.cardsIds);
+
       state.cardsIds.push(...event.cards.map((choice) => choice.id));
     });
   },

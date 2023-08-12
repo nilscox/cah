@@ -1,4 +1,4 @@
-import { GameState, createChoice } from '@cah/shared';
+import { GameState, createChoice, createPlayer } from '@cah/shared';
 
 import { selectAllChoices } from './slices/choices/choices.selectors';
 import { TestStore } from './test-store';
@@ -11,7 +11,7 @@ describe('events', () => {
   });
 
   test('cards-dealt', () => {
-    store.setPlayer();
+    store.setPlayer(createPlayer({ cards: [] }));
     store.setGame({ state: GameState.started });
 
     const choice = createChoice({ id: 'choiceId1', text: 'text', caseSensitive: false });

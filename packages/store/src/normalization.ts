@@ -23,9 +23,10 @@ type NormalizedAnswer = Normalized<Answer, 'choices'>;
 
 const player = new schema.Entity('players', {
   cards: [choice],
+  submittedAnswer: answer,
 });
 
-type NormalizedPlayer = Normalized<Player, 'cards'>;
+type NormalizedPlayer = Normalized<Player, 'cards' | 'submittedAnswer'>;
 
 const game = new schema.Entity('games', {
   players: [player],
@@ -70,5 +71,6 @@ export function normalizePlayer(data: Player) {
   return {
     player: defined(entities.players)[result],
     choices: entities.choices ?? {},
+    answers: entities.answers ?? {},
   };
 }

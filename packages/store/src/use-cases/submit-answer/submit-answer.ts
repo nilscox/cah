@@ -14,5 +14,5 @@ export const submitAnswer = createThunk2(async ({ client, dispatch, getState }) 
 
   await client.createAnswer(choicesIds);
 
-  dispatch(playerActions.removeCards(choicesIds));
+  dispatch(playerActions.answerSubmitted());
 });

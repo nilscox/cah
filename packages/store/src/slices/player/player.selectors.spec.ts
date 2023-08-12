@@ -1,4 +1,4 @@
-import { createAnswer, createStartedGame } from '@cah/shared';
+import { createAnswer, createPlayer, createStartedGame } from '@cah/shared';
 
 import { TestStore } from '../../test-store';
 
@@ -19,14 +19,20 @@ describe('player selectors', () => {
       expect(store.select(selectCanSelectChoice)).toBe(true);
     });
 
-    test('player is question master', () => {
-      store.setGame(createStartedGame({ questionMaster: store.getPlayer() }));
+    test('game play state is not playersAnswer', () => {
+      store.setGame(createStartedGame({ answers: [createAnswer()] }));
 
       expect(store.select(selectCanSelectChoice)).toBe(false);
     });
 
-    test('game play state is not playersAnswer', () => {
-      store.setGame(createStartedGame({ answers: [createAnswer()] }));
+    test('player has already submitted an answer', () => {
+      store.setPlayer(createPlayer({ gameId: 'gameId', submittedAnswer: createAnswer() }));
+
+      expect(store.select(selectCanSelectChoice)).toBe(false);
+    });
+
+    test('player is the question master', () => {
+      store.setGame(createStartedGame({ questionMaster: store.getPlayer() }));
 
       expect(store.select(selectCanSelectChoice)).toBe(false);
     });
