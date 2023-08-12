@@ -1,6 +1,6 @@
 import { GameState, createQuestion } from '@cah/shared';
 
-import { gameSelectors } from '../../slices/game/game.selectors';
+import { selectCurrentQuestion } from '../../slices/game/game.selectors';
 import { TestStore } from '../../test-store';
 
 import { startGame } from './start-game';
@@ -60,7 +60,7 @@ describe('startGame', () => {
     expect(game).toHaveProperty('questionMasterId', 'questionMasterId');
     expect(game).toHaveProperty('questionId', 'questionId');
 
-    expect(store.select(gameSelectors.currentQuestion)).toEqual(question);
+    expect(store.select(selectCurrentQuestion)).toEqual(question);
 
     const player = store.getPlayer();
     expect(player).toHaveProperty('selectedChoicesIds', [null]);

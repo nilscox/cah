@@ -11,5 +11,8 @@ export default defineConfig({
       '@cah/client': path.resolve(__dirname, '..', 'client', 'src'),
       '@cah/shared': path.resolve(__dirname, '..', 'shared', 'src'),
     },
+    deps: {
+      registerNodeLoader: true,
+    },
   },
 });

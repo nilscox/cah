@@ -1,9 +1,11 @@
-import { playerSelectors } from '../../slices/player/player.selectors';
+import { assert } from '@cah/utils';
+
+import { selectedSelectedChoices } from '../../slices/player/player.selectors';
 import { playerActions } from '../../slices/player/player.slice';
 import { createThunk2 } from '../../store/create-thunk';
 
 export const submitAnswer = createThunk2(async ({ client, dispatch, getState }) => {
-  const selectedChoices = playerSelectors.selectedChoices(getState());
+  const selectedChoices = selectedSelectedChoices(getState());
 
   const choicesIds = selectedChoices.map((choice) => {
     assert(choice);

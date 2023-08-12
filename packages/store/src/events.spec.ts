@@ -1,6 +1,6 @@
 import { GameState, createChoice } from '@cah/shared';
 
-import { choicesSelectors } from './slices/choices/choices.selectors';
+import { selectAllChoices } from './slices/choices/choices.selectors';
 import { TestStore } from './test-store';
 
 describe('events', () => {
@@ -22,6 +22,6 @@ describe('events', () => {
       cards: [choice],
     });
 
-    expect(store.select(choicesSelectors.all)).toEqual([choice]);
+    expect(store.select(selectAllChoices)).toEqual([choice]);
   });
 });

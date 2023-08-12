@@ -6,12 +6,17 @@ import {
   createStore,
   endTurn,
   gameActions,
-  gameSelectors,
   initialize,
   joinGame,
   leaveGame,
-  playerSelectors,
-  questionsSelectors,
+  selectExpectedNumberOfChoices,
+  selectGameAnswers,
+  selectGameCode,
+  selectIsQuestionMaster,
+  selectPlayer,
+  selectPlayerCards,
+  selectStartedGame,
+  selectedSelectedChoices,
   startGame,
   submitAnswer,
   toggleChoice,
@@ -87,39 +92,49 @@ class Player {
   }
 
   get id() {
-    return defined(this.select(playerSelectors.player)?.id);
+    return defined(this.select(selectPlayer)?.id);
+  }
+
+  get cards() {
+    return this.select(selectPlayerCards);
   }
 
   get hasAllCards() {
-    return this.select(playerSelectors.cards).length === 11;
+    return this.cards.length === 11;
+  }
+
+  get game() {
+    return this.select(selectStartedGame);
   }
 
   get isQuestionMaster() {
-    return this.select(gameSelectors.isQuestionMaster, this.id);
+    return this.select(selectIsQuestionMaster);
+  }
+
+  get answers() {
+    return this.select(selectGameAnswers);
   }
 
   get hasAnswers() {
-    return this.select(gameSelectors.startedGame).answersIds.length > 0;
+    return this.answers.length > 0;
   }
 
   async submitRandomAnswer() {
-    const { questionId } = this.select(gameSelectors.startedGame);
-    const expectedNumberOfChoices = this.select(questionsSelectors.expectedNumberOfChoices, questionId);
-    const choices = this.select(playerSelectors.cards).sort(() => Math.random() - 0.5);
+    const expectedNumberOfChoices = this.select(selectExpectedNumberOfChoices, this.game.questionId);
+    const choices = this.cards.sort(() => Math.random() - 0.5);
 
     for (const choice of choices.slice(0, expectedNumberOfChoices)) {
       this.dispatch(toggleChoice(choice));
     }
 
-    const selected = this.select(playerSelectors.selectedChoices);
+    const selected = this.select(selectedSelectedChoices);
     log(`* ${this.nick} submits [${getIds(selected as Array<{ id: string }>).join(', ')}]`);
 
     await this.dispatch(submitAnswer());
   }
 
   async selectRandomAnswer() {
-    const game = this.select(gameSelectors.startedGame);
-    const answersIds = [...game.answersIds];
+    const answersIds = [...this.game.answersIds];
     const answerId = answersIds.sort(() => Math.random() - 0.5)[0];
 
     log(`* ${this.nick} selects ${answerId}`);
@@ -181,7 +196,7 @@ describe('Server E2E', () => {
 
     await forEachPlayer(async (player) => {
       if (player !== riri) {
-        await player.dispatch(joinGame(riri.select(gameSelectors.code)));
+        await player.dispatch(joinGame(riri.select(selectGameCode)));
       }
     });
 
@@ -203,7 +218,7 @@ describe('Server E2E', () => {
       await waitFor(() => forEachPlayer((player) => assert(player.hasAnswers)));
 
       log(`* all players answered:`);
-      for (const answer of questionMaster.select(gameSelectors.answers)) {
+      for (const answer of questionMaster.answers) {
         log(`* answer ${answer.id}: [${answer.choicesIds.join(', ')}]`);
       }
 
@@ -212,7 +227,7 @@ describe('Server E2E', () => {
     }
 
     await waitFor(() => {
-      expect(riri.select(gameSelectors.game)).toHaveProperty('state', 'finished');
+      expect(riri.game).toHaveProperty('state', 'finished');
     });
 
     await forEachPlayer(async (player) => player.leaveGame());

@@ -1,7 +1,7 @@
 import { Choice, createChoice, createQuestion, createStartedGame } from '@cah/shared';
 import { array } from '@cah/utils';
 
-import { playerSelectors } from '../../slices/player/player.selectors';
+import { selectedSelectedChoices } from '../../slices/player/player.selectors';
 import { playerActions } from '../../slices/player/player.slice';
 import { TestStore } from '../../test-store';
 
@@ -25,7 +25,7 @@ describe('toggleChoice', () => {
   it('selects a card', () => {
     store.dispatch(toggleChoice(cards[0]));
 
-    expect(store.select(playerSelectors.selectedChoices)).toEqual([cards[0], null]);
+    expect(store.select(selectedSelectedChoices)).toEqual([cards[0], null]);
   });
 
   it('unselects a card', () => {
@@ -34,7 +34,7 @@ describe('toggleChoice', () => {
 
     store.dispatch(toggleChoice(cards[0]));
 
-    expect(store.select(playerSelectors.selectedChoices)).toEqual([null, cards[1]]);
+    expect(store.select(selectedSelectedChoices)).toEqual([null, cards[1]]);
   });
 
   it('replace the last choice', () => {
@@ -43,6 +43,6 @@ describe('toggleChoice', () => {
 
     store.dispatch(toggleChoice(cards[2]));
 
-    expect(store.select(playerSelectors.selectedChoices)).toEqual([cards[0], cards[2]]);
+    expect(store.select(selectedSelectedChoices)).toEqual([cards[0], cards[2]]);
   });
 });

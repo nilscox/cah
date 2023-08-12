@@ -2,8 +2,8 @@ import { Game, GameEvent, GameState, Player } from '@cah/shared';
 import { Action, Middleware } from 'redux';
 
 import { MockClient } from './mock-client';
-import { gameSelectors } from './slices/game/game.selectors';
-import { playerSelectors } from './slices/player/player.selectors';
+import { selectGame } from './slices/game/game.selectors';
+import { selectPlayer } from './slices/player/player.selectors';
 import { createStore } from './store/create-store';
 import { AppSelector } from './types';
 import { gameFetched } from './use-cases/fetch-game/fetch-game';
@@ -44,7 +44,7 @@ export class TestStore {
   }
 
   getPlayer() {
-    return this.select(playerSelectors.player);
+    return this.select(selectPlayer);
   }
 
   setPlayer(player?: Partial<Player>) {
@@ -58,7 +58,7 @@ export class TestStore {
   }
 
   getGame() {
-    return this.select(gameSelectors.game);
+    return this.select(selectGame);
   }
 
   setGame(game?: Partial<Game>) {

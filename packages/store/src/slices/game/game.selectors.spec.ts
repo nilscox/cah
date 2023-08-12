@@ -2,7 +2,7 @@ import { createAnonymousAnswer, createAnswer, createPlayer, createStartedGame } 
 
 import { TestStore } from '../../test-store';
 
-import { gameSelectors } from './game.selectors';
+import { selectPlayState } from './game.selectors';
 import { PlayState } from './game.slice';
 
 describe('game selectors', () => {
@@ -17,7 +17,7 @@ describe('game selectors', () => {
 
   describe('playState', () => {
     it('players answer', () => {
-      expect(store.select(gameSelectors.playState)).toEqual(PlayState.playersAnswer);
+      expect(store.select(selectPlayState)).toEqual(PlayState.playersAnswer);
     });
 
     it('question master selection', () => {
@@ -27,7 +27,7 @@ describe('game selectors', () => {
         }),
       );
 
-      expect(store.select(gameSelectors.playState)).toEqual(PlayState.questionMasterSelection);
+      expect(store.select(selectPlayState)).toEqual(PlayState.questionMasterSelection);
     });
 
     it('end of turn', () => {
@@ -37,7 +37,7 @@ describe('game selectors', () => {
         }),
       );
 
-      expect(store.select(gameSelectors.playState)).toEqual(PlayState.endOfTurn);
+      expect(store.select(selectPlayState)).toEqual(PlayState.endOfTurn);
     });
   });
 });

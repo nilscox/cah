@@ -20,6 +20,7 @@
     "@cah/client": "workspace:*",
     "@cah/shared": "workspace:*",
     "@cah/utils": "workspace:*",
+    "@nilscox/selektor": "^1.0.0",
     "@reduxjs/toolkit": "^1.9.5",
     "normalizr": "^3.6.2",
     "redux": "^4.2.1"

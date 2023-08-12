@@ -1,24 +1,20 @@
 import { GameState } from '@cah/shared';
 import { assert } from '@cah/utils';
-import { createSelector } from '@reduxjs/toolkit';
+import { combine, createSelector, pipe } from '@nilscox/selektor';
 
 import { defined } from '../../defined';
 import { AppState } from '../../types';
-import { answersSelectors } from '../answers/answers.selectors';
-import { playerSelectors } from '../player/player.selectors';
-import { getQuestionChunks } from '../questions/question-chunks';
-import { questionsSelectors } from '../questions/questions.selectors';
+import { selectAnswers } from '../answers/answers.selectors';
+import { selectQuestions } from '../questions/questions.selectors';
 
 import { GameSlice, PlayState } from './game.slice';
 
-const gameUnsafe = (state: AppState) => state.game;
+export const selectGameUnsafe = createSelector((state: AppState) => state.game);
 
-const hasGame = createSelector(gameUnsafe, (game) => game !== null);
-const game = createSelector(gameUnsafe, (game) => defined(game));
+export const selectHasGame = pipe(selectGameUnsafe, (game) => game !== null);
+export const selectGame = pipe(selectGameUnsafe, (game) => defined(game));
 
-const code = createSelector(game, (game) => {
-  return game.code;
-});
+export const selectGameCode = pipe(selectGame, (game) => game.code);
 
 type StartedGameSlice = GameSlice & {
   questionMasterId: string;
@@ -27,34 +23,20 @@ type StartedGameSlice = GameSlice & {
   isAnswerValidated: boolean;
 };
 
-const startedGame = createSelector(game, (game) => {
+export const selectStartedGame = pipe(selectGame, (game) => {
   assert(game.state !== GameState.started);
   return game as StartedGameSlice;
 });
 
-const isQuestionMaster = createSelector(
-  startedGame,
-  (state: AppState, playerId: string) => playerId,
-  (game, playerId) => playerId === game.questionMasterId,
-);
-
-const currentQuestion = createSelector(startedGame, questionsSelectors.questions, (game, questions) => {
+export const selectCurrentQuestion = combine(selectStartedGame, selectQuestions, (game, questions) => {
   return defined(questions[game.questionId]);
 });
 
-const currentQuestionChunks = createSelector(
-  [currentQuestion, playerSelectors.selectedChoices],
-  (question, choices) => {
-    assert(question);
-    return getQuestionChunks(question, choices);
-  },
-);
-
-const answers = createSelector(startedGame, answersSelectors.answers, (game, answers) => {
+export const selectGameAnswers = combine(selectStartedGame, selectAnswers, (game, answers) => {
   return game.answersIds.map((answerId) => defined(answers[answerId]));
 });
 
-const playState = createSelector(answers, (answers) => {
+export const selectPlayState = pipe(selectGameAnswers, (answers) => {
   if (answers.length === 0) {
     return PlayState.playersAnswer;
   }
@@ -65,16 +47,3 @@ const playState = createSelector(answers, (answers) => {
 
   return PlayState.endOfTurn;
 });
-
-export const gameSelectors = {
-  gameUnsafe,
-  hasGame,
-  game,
-  code,
-  startedGame,
-  isQuestionMaster,
-  currentQuestion,
-  currentQuestionChunks,
-  answers,
-  playState,
-};

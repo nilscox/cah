@@ -1,8 +1,8 @@
 import { FetchError } from '@cah/client';
 import { createGame, createPlayer } from '@cah/shared';
 
-import { gameSelectors } from '../../slices/game/game.selectors';
-import { playerSelectors } from '../../slices/player/player.selectors';
+import { selectHasGame } from '../../slices/game/game.selectors';
+import { selectHasPlayer } from '../../slices/player/player.selectors';
 import { TestStore } from '../../test-store';
 
 import { initialize } from './initialize';
@@ -22,7 +22,7 @@ describe('initialize', () => {
 
     await store.dispatch(initialize());
 
-    expect(store.select(playerSelectors.hasPlayer)).toBe(true);
+    expect(store.select(selectHasPlayer)).toBe(true);
   });
 
   it("fetches the player's game", async () => {
@@ -31,7 +31,7 @@ describe('initialize', () => {
 
     await store.dispatch(initialize());
 
-    expect(store.select(gameSelectors.hasGame)).toBe(true);
+    expect(store.select(selectHasGame)).toBe(true);
   });
 
   it('connects to the events stream', async () => {
@@ -47,6 +47,6 @@ describe('initialize', () => {
 
     await store.dispatch(initialize());
 
-    expect(store.select(playerSelectors.hasPlayer)).toBe(false);
+    expect(store.select(selectHasPlayer)).toBe(false);
   });
 });

@@ -15,5 +15,8 @@ export default defineConfig({
       '@cah/store': path.join(packages, 'store', 'src'),
       '@cah/client': path.join(packages, 'client', 'src'),
     },
+    deps: {
+      registerNodeLoader: true,
+    },
   },
 });

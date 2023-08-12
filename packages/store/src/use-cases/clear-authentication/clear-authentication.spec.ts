@@ -1,5 +1,4 @@
-import { gameSelectors } from '../../slices/game/game.selectors';
-import { playerSelectors } from '../../slices/player/player.selectors';
+import { selectHasGame } from '../../slices/game/game.selectors';
 import { TestStore } from '../../test-store';
 
 import { clearAuthentication } from './clear-authentication';
@@ -18,7 +17,7 @@ describe('clearAuthentication', () => {
     await store.dispatch(clearAuthentication());
 
     expect(store.client.clearAuthentication).toHaveBeenCalledWith();
-    expect(store.select(playerSelectors.hasPlayer)).toBe(false);
-    expect(store.select(gameSelectors.hasGame)).toBe(false);
+    expect(store.select(selectHasGame)).toBe(false);
+    expect(store.select(selectHasGame)).toBe(false);
   });
 });

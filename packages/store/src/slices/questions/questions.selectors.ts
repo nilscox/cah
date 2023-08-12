@@ -1,24 +1,17 @@
 import { assert } from '@cah/utils';
-import { createSelector } from 'reselect';
+import { pipe } from '@nilscox/selektor';
 
 import { AppState } from '../../types';
 
 import { questionsAdapter } from './questions.slice';
 
-const {
-  selectEntities: questions,
-  selectAll: all,
-  selectById: byId,
+export const {
+  selectEntities: selectQuestions,
+  selectAll: selectAllQuestions,
+  selectById: selectQuestionById,
 } = questionsAdapter.getSelectors((state: AppState) => state.questions);
 
-const expectedNumberOfChoices = createSelector(byId, (question) => {
+export const selectExpectedNumberOfChoices = pipe(selectQuestionById, (question) => {
   assert(question);
   return question.blanks?.length ?? 1;
 });
-
-export const questionsSelectors = {
-  questions,
-  all,
-  byId,
-  expectedNumberOfChoices,
-};

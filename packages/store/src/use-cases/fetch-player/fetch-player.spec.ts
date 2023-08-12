@@ -1,9 +1,9 @@
 import { FetchError } from '@cah/client';
 import { createChoice } from '@cah/shared';
 
-import { choicesSelectors } from '../../slices/choices/choices.selectors';
+import { selectAllChoices } from '../../slices/choices/choices.selectors';
 import { ChoiceSlice } from '../../slices/choices/choices.slice';
-import { playerSelectors } from '../../slices/player/player.selectors';
+import { selectHasPlayer } from '../../slices/player/player.selectors';
 import { PlayerSlice } from '../../slices/player/player.slice';
 import { TestStore } from '../../test-store';
 
@@ -36,7 +36,7 @@ describe('fetchPlayer', () => {
       selectedChoicesIds: [],
     });
 
-    expect(store.select(choicesSelectors.all)).toEqual<ChoiceSlice[]>([card]);
+    expect(store.select(selectAllChoices)).toEqual<ChoiceSlice[]>([card]);
   });
 
   it('does not fail when the player is not authenticated', async () => {
@@ -44,6 +44,6 @@ describe('fetchPlayer', () => {
 
     await store.dispatch(fetchPlayer());
 
-    expect(store.select(playerSelectors.hasPlayer)).toBe(false);
+    expect(store.select(selectHasPlayer)).toBe(false);
   });
 });

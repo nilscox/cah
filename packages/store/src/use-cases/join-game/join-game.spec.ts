@@ -1,6 +1,6 @@
 import { Game, createGame, createPlayer } from '@cah/shared';
 
-import { playersSelectors } from '../../slices/players/players.selectors';
+import { selectAllPlayers } from '../../slices/players/players.selectors';
 import { TestStore } from '../../test-store';
 
 import { joinGame } from './join-game';
@@ -42,7 +42,7 @@ describe('joinGame', () => {
       nick: 'nick',
     });
 
-    expect(store.select(playersSelectors.all)).toEqual([
+    expect(store.select(selectAllPlayers)).toEqual([
       {
         id: 'playerId',
         nick: 'nick',
@@ -61,7 +61,7 @@ describe('joinGame', () => {
       playerId: 'playerId',
     });
 
-    expect(store.select(playersSelectors.all)).toEqual([]);
+    expect(store.select(selectAllPlayers)).toEqual([]);
     expect(store.getGame()).toHaveProperty('playersIds', []);
   });
 });

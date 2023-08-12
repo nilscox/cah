@@ -1,23 +1,16 @@
-import { createSelector } from 'reselect';
+import { pipe } from '@nilscox/selektor';
 
 import { defined } from '../../defined';
 import { AppState } from '../../types';
 
 import { answersAdapter } from './answers.slice';
 
-const {
-  selectEntities: answers,
-  selectAll: all,
-  selectById: byId,
+export const {
+  selectEntities: selectAnswers,
+  selectAll: selectAllAnswers,
+  selectById: selectAnswerById,
 } = answersAdapter.getSelectors((state: AppState) => state.answers);
 
-const byIds = createSelector([(state: AppState) => state, (state, ids: string[]) => ids], (state, ids) => {
-  return ids.map((id) => defined(byId(state, id)));
+export const byIds = pipe(selectAnswers, (answers, ids: string[]) => {
+  return ids.map((id) => defined(answers[id]));
 });
-
-export const answersSelectors = {
-  answers,
-  byId,
-  all,
-  byIds,
-};

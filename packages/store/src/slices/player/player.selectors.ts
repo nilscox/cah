@@ -1,30 +1,57 @@
 import { assert } from '@cah/utils';
-import { createSelector } from 'reselect';
+import { combine, createSelector, pipe } from '@nilscox/selektor';
 
 import { defined } from '../../defined';
 import { AppState } from '../../types';
-import { choicesSelectors } from '../choices/choices.selectors';
+import { selectChoices } from '../choices/choices.selectors';
+import { selectCurrentQuestion, selectStartedGame } from '../game/game.selectors';
+import { getQuestionChunks } from '../questions/question-chunks';
 
-const hasPlayer = (state: AppState) => state.player !== null;
-const player = (state: AppState) => defined(state.player);
+const selectPlayerUnsafe = createSelector((state: AppState) => state.player);
 
-const cards = createSelector([player, (state: AppState) => state], (player, state) => {
+export const selectHasPlayer = pipe(selectPlayerUnsafe, (player) => player !== null);
+export const selectPlayer = pipe(selectPlayerUnsafe, (player) => defined(player));
+
+export const selectIsQuestionMaster = combine(
+  selectStartedGame,
+  selectPlayer,
+  (game, player) => player.id === game.questionMasterId,
+);
+
+export const selectPlayerCards = combine(selectPlayer, selectChoices, (player, choices) => {
   assert(player.cardsIds);
-  return choicesSelectors.byIds(state, player.cardsIds);
+  return player.cardsIds.map((choiceId) => defined(choices[choiceId]));
 });
 
-const selectedChoices = createSelector([player, choicesSelectors.choices], (player, choices) => {
+export const selectedSelectedChoices = combine(selectPlayer, selectChoices, (player, choices) => {
   assert(player.selectedChoicesIds);
 
   return player.selectedChoicesIds.map((choiceId) => {
-    if (choiceId === null) return null;
-    else return defined(choices[choiceId]);
+    if (choiceId === null) {
+      return null;
+    }
+
+    return defined(choices[choiceId]);
   });
 });
 
-export const playerSelectors = {
-  hasPlayer,
-  player,
-  cards,
-  selectedChoices,
-};
+export const selectCurrentQuestionChunks = combine(
+  selectCurrentQuestion,
+  selectedSelectedChoices,
+  (question, choices) => {
+    assert(question);
+    return getQuestionChunks(question, choices);
+  },
+);
+
+export const selectCanSubmitAnswer = combine(
+  selectIsQuestionMaster,
+  selectedSelectedChoices,
+  (isQuestionMaster, choices) => {
+    if (isQuestionMaster) {
+      return false;
+    }
+
+    return choices.every((choice) => choice !== null);
+  },
+);

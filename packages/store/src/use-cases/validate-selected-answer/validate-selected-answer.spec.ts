@@ -1,6 +1,6 @@
 import { createAnonymousAnswer, createStartedGame } from '@cah/shared';
 
-import { answersSelectors } from '../../slices/answers/answers.selectors';
+import { selectAnswerById } from '../../slices/answers/answers.selectors';
 import { answersActions } from '../../slices/answers/answers.slice';
 import { gameActions } from '../../slices/game/game.slice';
 import { TestStore } from '../../test-store';
@@ -41,6 +41,6 @@ describe('validateSelectedAnswer', () => {
     expect(store.getGame()).toHaveProperty('selectedAnswerId', 'answerId');
     expect(store.getGame()).toHaveProperty('isAnswerValidated', true);
 
-    expect(store.select(answersSelectors.byId, 'answerId')).toHaveProperty('playerId', 'playerId');
+    expect(store.select(selectAnswerById, 'answerId')).toHaveProperty('playerId', 'playerId');
   });
 });

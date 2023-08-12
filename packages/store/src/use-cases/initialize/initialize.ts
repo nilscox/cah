@@ -1,6 +1,6 @@
 import { GameEvent } from '@cah/shared';
 
-import { playerSelectors } from '../../slices/player/player.selectors';
+import { selectHasPlayer, selectPlayer } from '../../slices/player/player.selectors';
 import { createThunk2 } from '../../store/create-thunk';
 import { fetchGame } from '../fetch-game/fetch-game';
 import { fetchPlayer } from '../fetch-player/fetch-player';
@@ -28,8 +28,8 @@ export const initialize = createThunk2(async ({ client, dispatch, getState }) =>
 
   await dispatch(fetchPlayer());
 
-  if (playerSelectors.hasPlayer(getState())) {
-    const { gameId } = playerSelectors.player(getState());
+  if (selectHasPlayer(getState())) {
+    const { gameId } = selectPlayer(getState());
 
     if (gameId) {
       await dispatch(fetchGame(gameId));
