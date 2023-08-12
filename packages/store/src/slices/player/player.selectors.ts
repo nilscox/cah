@@ -4,7 +4,8 @@ import { combine, createSelector, pipe } from '@nilscox/selektor';
 import { defined } from '../../defined';
 import { AppState } from '../../types';
 import { selectChoices } from '../choices/choices.selectors';
-import { selectCurrentQuestion, selectStartedGame } from '../game/game.selectors';
+import { selectCurrentQuestion, selectPlayState, selectStartedGame } from '../game/game.selectors';
+import { PlayState } from '../game/game.slice';
 import { getQuestionChunks } from '../questions/question-chunks';
 
 const selectPlayerUnsafe = createSelector((state: AppState) => state.player);
@@ -41,6 +42,18 @@ export const selectCurrentQuestionChunks = combine(
   (question, choices) => {
     assert(question);
     return getQuestionChunks(question, choices);
+  },
+);
+
+export const selectCanSelectChoice = combine(
+  selectIsQuestionMaster,
+  selectPlayState,
+  (isQuestionMaster, playState) => {
+    if (playState !== PlayState.playersAnswer) {
+      return false;
+    }
+
+    return !isQuestionMaster;
   },
 );
 
