@@ -1,10 +1,20 @@
 /* @refresh reload */
+import { Router } from '@solidjs/router';
 import { render } from 'solid-js/web';
 
 import { App } from './app';
 
-import './index.css';
+import './styles.css';
+
+Error.stackTraceLimit = Infinity;
 
 const root = document.getElementById('root');
 
-render(() => <App />, root as HTMLElement);
+render(
+  () => (
+    <Router>
+      <App />
+    </Router>
+  ),
+  root as HTMLElement,
+);

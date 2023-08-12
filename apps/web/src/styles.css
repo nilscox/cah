@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-size: 14px;
+  }
+
+  body {
+    @apply bg-body text-body font-body;
+  }
+
+  p {
+    @apply my-2;
+  }
+
+  button {
+    @apply whitespace-nowrap px-3 py-2 uppercase font-semibold;
+  }
+
+  input {
+    @apply bg-transparent border-b-2 outline-none py-1;
+    @apply transition-colors;
+  }
+
+  input:focus {
+    @apply border-strong;
+  }
+
+  input::placeholder {
+    @apply text-body/50;
+  }
+}
+
+@layer utilities {
+  .flex-2 {
+    flex: 2;
+  }
+
+  .col {
+    @apply flex flex-col;
+  }
+
+  .row {
+    @apply flex flex-row;
+  }
+}

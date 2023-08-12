@@ -1,12 +1,17 @@
 {
   "include": ["src"],
-  "references": [{ "path": "./tsconfig.node.json" }],
+  "references": [
+    { "path": "../../packages/client" },
+    { "path": "../../packages/shared" },
+    { "path": "../../packages/store" }
+  ],
   "compilerOptions": {
     "target": "ES2020",
     "useDefineForClassFields": true,
     "module": "ESNext",
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "skipLibCheck": true,
+    "types": ["vitest/globals"],
 
     /* Bundler mode */
     "moduleResolution": "bundler",

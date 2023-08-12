@@ -1,11 +1,13 @@
 {
-  "extends": ["@cah/eslint-config", "plugin:solid/typescript"],
-  "plugins": ["solid"],
+  "extends": ["@cah/eslint-config", "plugin:solid/typescript", "plugin:tailwindcss/recommended"],
+  "plugins": ["solid", "tailwindcss"],
 
   "env": {
     "browser": true,
     "es2021": true
   },
 
-  "rules": {}
+  "rules": {
+    "solid/self-closing-comp": "off"
+  }
 }

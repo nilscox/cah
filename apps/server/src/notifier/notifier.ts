@@ -135,6 +135,7 @@ export class Notifier {
         question: {
           id: question.id,
           text: question.text,
+          blanks: question.blanks,
         },
       });
     });
