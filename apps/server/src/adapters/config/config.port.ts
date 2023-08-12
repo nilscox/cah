@@ -12,4 +12,9 @@ export interface ConfigPort {
     url: string;
     debug: boolean;
   };
+
+  session: {
+    secret: string;
+    store: 'memory' | 'database';
+  };
 }

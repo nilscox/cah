@@ -19,4 +19,9 @@ export class StubConfigAdapter implements ConfigPort {
     url: '',
     debug: false,
   };
+
+  session: ConfigPort['session'] = {
+    secret: '',
+    store: 'memory',
+  };
 }

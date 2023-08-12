@@ -66,6 +66,7 @@ export class CahClient implements ICahClient {
     }
 
     this.socket = io(this.fetcher.baseUrl.replace(/^http(s)?/, 'ws$1'), {
+      transports: ['websocket', 'polling'],
       extraHeaders,
     });
 

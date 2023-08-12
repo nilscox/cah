@@ -8,7 +8,7 @@ import bodyParser from 'body-parser';
 import connectPgSimple from 'connect-pg-simple';
 import { Container } from 'ditox';
 import express, { ErrorRequestHandler, RequestHandler, Router } from 'express';
-import session from 'express-session';
+import session, { MemoryStore } from 'express-session';
 import morgan from 'morgan';
 import * as yup from 'yup';
 
@@ -22,7 +22,7 @@ declare module 'express-session' {
   }
 }
 
-const SessionStore = connectPgSimple(session);
+const PgSessionStore = connectPgSimple(session);
 
 /* eslint-disable @typescript-eslint/no-misused-promises */
 
@@ -32,7 +32,7 @@ export class HttpServer {
 
   private sockets = new Set<Socket>();
 
-  private sessionStore: connectPgSimple.PGStore;
+  private sessionStore: session.Store;
 
   constructor(
     private readonly config: ConfigPort,
@@ -42,12 +42,16 @@ export class HttpServer {
     this.app = express();
     this.server = createServer(this.app);
 
-    this.sessionStore = new SessionStore({
-      conString: config.database.url,
-      schemaName: 'cah',
-      tableName: 'sessions',
-      createTableIfMissing: true,
-    });
+    if (config.session.store === 'database') {
+      this.sessionStore = new PgSessionStore({
+        conString: config.database.url,
+        schemaName: 'cah',
+        tableName: 'sessions',
+        createTableIfMissing: true,
+      });
+    } else {
+      this.sessionStore = new MemoryStore();
+    }
 
     this.server.on('connection', (socket) => {
       this.sockets.add(socket);

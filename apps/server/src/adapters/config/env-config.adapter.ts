@@ -8,6 +8,7 @@ export class EnvConfigAdapter implements ConfigPort {
   server: ConfigPort['server'];
   data: ConfigPort['data'];
   database: ConfigPort['database'];
+  session: ConfigPort['session'];
 
   constructor() {
     this.server = {
@@ -23,6 +24,11 @@ export class EnvConfigAdapter implements ConfigPort {
       url: this.getEnv('DATABASE_URL', String, 'postgres://postgres@localhost:5432/cah'),
       debug: this.getEnv('DATABASE_DEBUG', (value) => value === 'true', false),
     };
+
+    this.session = {
+      secret: this.getEnv('SESSION_SECRET', String, ''),
+      store: this.getEnv('SESSION_STORE', this.parseSessionStore, 'database'),
+    };
   }
 
   private getEnv<T>(key: string, parse: (value: string) => T, defaultValue?: T): T {
@@ -37,5 +43,10 @@ export class EnvConfigAdapter implements ConfigPort {
     }
 
     return parse(env);
+  }
+
+  private parseSessionStore(this: void, value: string) {
+    assert(value === 'memory' || value === 'database', 'SESSION_STORE must be either "memory" or "database"');
+    return value;
   }
 }
