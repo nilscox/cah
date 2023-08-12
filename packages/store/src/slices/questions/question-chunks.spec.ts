@@ -1,16 +1,16 @@
-import { ChoiceSlice } from '../choices/choices.slice';
+import { ChoicesSlice } from '../choices/choices.slice';
 
 import { QuestionChunk, getQuestionChunks } from './question-chunks';
 import { QuestionSlice } from './questions.slice';
 
 describe('questionChunks', () => {
-  const choice: ChoiceSlice = {
+  const choice: ChoicesSlice = {
     id: '',
     text: 'Choice',
     caseSensitive: false,
   };
 
-  const choiceCaseSensitive: ChoiceSlice = {
+  const choiceCaseSensitive: ChoicesSlice = {
     id: '',
     text: 'Choice',
     caseSensitive: true,

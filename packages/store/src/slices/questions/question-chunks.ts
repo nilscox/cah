@@ -1,4 +1,4 @@
-import { ChoiceSlice } from '../choices/choices.slice';
+import { ChoicesSlice } from '../choices/choices.slice';
 
 import { QuestionSlice } from './questions.slice';
 
@@ -7,7 +7,7 @@ export type QuestionChunk = {
   isBlank: boolean;
 };
 
-export function getQuestionChunks(question: QuestionSlice, choices: Array<ChoiceSlice | null> = []) {
+export function getQuestionChunks(question: QuestionSlice, choices: Array<ChoicesSlice | null> = []) {
   const { blanks, text } = question;
   const chunks: Array<QuestionChunk> = [];
 

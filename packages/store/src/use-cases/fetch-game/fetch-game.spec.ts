@@ -10,7 +10,7 @@ import {
 import { selectAllAnswers } from '../../slices/answers/answers.selectors';
 import { AnswerSlice } from '../../slices/answers/answers.slice';
 import { selectAllChoices } from '../../slices/choices/choices.selectors';
-import { ChoiceSlice } from '../../slices/choices/choices.slice';
+import { ChoicesSlice } from '../../slices/choices/choices.slice';
 import { GameSlice } from '../../slices/game/game.slice';
 import { selectAllPlayers } from '../../slices/players/players.selectors';
 import { PlayersSlice } from '../../slices/players/players.slice';
@@ -67,7 +67,7 @@ describe('fetchGame', () => {
 
     expect(store.select(selectAllPlayers)).toEqual<PlayersSlice[]>([questionMaster, player]);
     expect(store.select(selectAllQuestions)).toEqual<QuestionSlice[]>([question]);
-    expect(store.select(selectAllChoices)).toEqual<ChoiceSlice[]>([choice]);
+    expect(store.select(selectAllChoices)).toEqual<ChoicesSlice[]>([choice]);
 
     expect(store.select(selectAllAnswers)).toEqual<AnswerSlice[]>([
       {

@@ -1,20 +1,21 @@
 export * from './slices/answers/answers.selectors';
+export * from './slices/answers/answers.slice';
 
 export * from './slices/game/game.selectors';
-export { gameActions } from './slices/game/game.slice';
+export * from './slices/game/game.slice';
 
-export { playerActions } from './slices/player/player.slice';
+export * from './slices/player/player.slice';
 export * from './slices/player/player.selectors';
 
 export * from './slices/players/players.selectors';
+export * from './slices/players/players.slice';
 
 export * from './slices/questions/questions.selectors';
-export { type QuestionSlice } from './slices/questions/questions.slice';
-export { type QuestionChunk } from './slices/questions/question-chunks';
+export * from './slices/questions/questions.slice';
+export * from './slices/questions/question-chunks';
 
-export { choicesActions } from './slices/choices/choices.slice';
 export * from './slices/choices/choices.selectors';
-export { type ChoiceSlice } from './slices/choices/choices.slice';
+export * from './slices/choices/choices.slice';
 
 export { authenticate } from './use-cases/authenticate/authenticate';
 export { clearAuthentication } from './use-cases/clear-authentication/clear-authentication';
@@ -29,4 +30,5 @@ export { toggleChoice } from './use-cases/toggle-choice/toggle-choice';
 export { validateSelectedAnswer } from './use-cases/validate-selected-answer/validate-selected-answer';
 
 export { createStore } from './store/create-store';
+
 export * from './types';

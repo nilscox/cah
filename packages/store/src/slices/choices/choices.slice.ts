@@ -5,19 +5,19 @@ import { gameFetched } from '../../use-cases/fetch-game/fetch-game';
 import { playerFetched } from '../../use-cases/fetch-player/fetch-player';
 import { playerActions } from '../player/player.slice';
 
-export type ChoiceSlice = {
+export type ChoicesSlice = {
   id: string;
   text: string;
   caseSensitive: boolean;
 };
 
-export const choicesAdapter = createEntityAdapter<ChoiceSlice>();
+export const choicesAdapter = createEntityAdapter<ChoicesSlice>();
 
 export const choicesSlice = createSlice({
   name: 'choices',
   initialState: choicesAdapter.getInitialState(),
   reducers: {
-    add(state, action: PayloadAction<ChoiceSlice>) {
+    add(state, action: PayloadAction<ChoicesSlice>) {
       choicesAdapter.addOne(state, action.payload);
     },
   },
