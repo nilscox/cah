@@ -1,5 +1,4 @@
 import {
-  AnswerSlice,
   endTurn,
   gameActions,
   selectCanEndTurn,
@@ -22,9 +21,9 @@ export function AnswersList() {
   const canSelectAnswer = selector(selectCanSelectAnswer);
   const canEndTurn = selector(selectCanEndTurn);
 
-  const handleSubmitAnswer = (answer: AnswerSlice) => {
+  const handleSubmitAnswer = (answerId: string) => {
     if (canSelectAnswer()) {
-      store.dispatch(gameActions.setSelectedAnswer(answer.id));
+      store.dispatch(gameActions.setSelectedAnswer(answerId));
       void store.dispatch(validateSelectedAnswer());
     }
   };
@@ -36,7 +35,7 @@ export function AnswersList() {
   return (
     <div class="col gap-6 p-4">
       <For each={answers()}>
-        {(answer) => <Answer answer={answer} onClick={() => handleSubmitAnswer(answer)} />}
+        {(answer) => <Answer answer={answer} onClick={() => handleSubmitAnswer(answer.id)} />}
       </For>
 
       <Show when={canEndTurn()}>
@@ -47,12 +46,12 @@ export function AnswersList() {
 }
 
 type AnswerProps = {
-  answer: AnswerSlice;
+  answer: { choices: string[]; playerId?: string };
   onClick: () => void;
 };
 
 function Answer(props: AnswerProps) {
-  const choices = selector((state) => selectChoicesByIds(state, props.answer.choicesIds));
+  const choices = selector((state) => selectChoicesByIds(state, props.answer.choices));
 
   const player = selector((state) =>
     props.answer.playerId ? selectPlayerById(state, props.answer.playerId) : undefined,

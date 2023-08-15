@@ -10,7 +10,6 @@ import {
 } from '@cah/shared';
 
 import { selectAllAnswers } from '../../slices/answers/answers.selectors';
-import { AnswerSlice } from '../../slices/answers/answers.slice';
 import { selectAllChoices } from '../../slices/choices/choices.selectors';
 import { GameSlice } from '../../slices/game/game.slice';
 import { selectAllPlayers } from '../../slices/players/players.selectors';
@@ -69,11 +68,11 @@ describe('fetchGame', () => {
     expect(store.select(selectAllQuestions)).toEqual<Question[]>([question]);
     expect(store.select(selectAllChoices)).toEqual<Choice[]>([choice]);
 
-    expect(store.select(selectAllAnswers)).toEqual<AnswerSlice[]>([
+    expect(store.select(selectAllAnswers)).toEqual([
       {
         id: answer.id,
         playerId: 'playerId',
-        choicesIds: ['choiceId'],
+        choices: ['choiceId'],
       },
     ]);
   });

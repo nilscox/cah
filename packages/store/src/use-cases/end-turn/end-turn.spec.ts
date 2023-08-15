@@ -44,7 +44,7 @@ describe('endTurn', () => {
   });
 
   it('handles a turn-ended event', () => {
-    store.dispatch(answersActions.add(createAnswer()));
+    store.dispatch(answersActions.add({ id: 'answerId', choices: [] }));
     store.dispatch(gameActions.setSelectedAnswer('answerId'));
     store.dispatch(gameActions.setAnswerValidated());
 

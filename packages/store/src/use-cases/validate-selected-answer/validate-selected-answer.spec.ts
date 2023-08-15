@@ -30,7 +30,7 @@ describe('validateSelectedAnswer', () => {
       id: 'answerId',
     });
 
-    store.dispatch(answersActions.add(answer));
+    store.dispatch(answersActions.add({ id: 'answerId', choices: [] }));
 
     store.dispatchEvent({
       type: 'winning-answer-selected',
