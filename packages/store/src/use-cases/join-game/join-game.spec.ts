@@ -1,4 +1,4 @@
-import { Game, createGame, createPlayer } from '@cah/shared';
+import { Game, createGame, createCurrentPlayer, createGamePlayer } from '@cah/shared';
 
 import { selectAllPlayers } from '../../slices/players/players.selectors';
 import { TestStore } from '../../test-store';
@@ -53,8 +53,8 @@ describe('joinGame', () => {
   });
 
   it('handles a player-left event', () => {
-    store.setPlayer();
-    store.setGame({ players: [createPlayer({ id: 'playerId' })] });
+    store.setPlayer({ id: 'playerId' });
+    store.setGame({ players: [createGamePlayer({ id: 'playerId' })] });
 
     store.dispatchEvent({
       type: 'player-left',

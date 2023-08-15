@@ -1,4 +1,4 @@
-import { createAnswer, createPlayer, createStartedGame } from '@cah/shared';
+import { createAnswer, createCurrentPlayer, createStartedGame } from '@cah/shared';
 
 import { TestStore } from '../../test-store';
 
@@ -26,7 +26,7 @@ describe('player selectors', () => {
     });
 
     test('player has already submitted an answer', () => {
-      store.setPlayer(createPlayer({ gameId: 'gameId', submittedAnswer: createAnswer() }));
+      store.setPlayer(createCurrentPlayer({ gameId: 'gameId', submittedAnswer: createAnswer() }));
 
       expect(store.select(selectCanSelectChoice)).toBe(false);
     });

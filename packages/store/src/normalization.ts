@@ -1,4 +1,13 @@
-import { AnonymousAnswer, Answer, Choice, Game, Player, Question, StartedGame } from '@cah/shared';
+import {
+  AnonymousAnswer,
+  Answer,
+  Choice,
+  Game,
+  CurrentPlayer,
+  Question,
+  StartedGame,
+  GamePlayer,
+} from '@cah/shared';
 import { NormalizedSchema, Schema, denormalize, normalize as normalizr, schema } from 'normalizr';
 
 import { defined } from './defined';
@@ -22,16 +31,20 @@ const answer = new schema.Entity('answers', {
 
 export type NormalizedAnswer = Normalized<Answer | AnonymousAnswer, 'choices'>;
 
-const player = new schema.Entity('players', {
+const gamePlayer = new schema.Entity('gamePlayers');
+
+export type NormalizedGamePlayer = Normalized<GamePlayer>;
+
+const currentPlayer = new schema.Entity('currentPlayers', {
   cards: [choice],
   submittedAnswer: answer,
 });
 
-export type NormalizedPlayer = Normalized<Player, 'cards' | 'submittedAnswer'>;
+export type NormalizedCurrentPlayer = Normalized<CurrentPlayer, 'cards' | 'submittedAnswer'>;
 
 const game = new schema.Entity('games', {
-  players: [player],
-  questionMaster: player,
+  players: [gamePlayer],
+  questionMaster: gamePlayer,
   question: question,
   answers: [answer],
 });
@@ -43,11 +56,12 @@ type EntitiesMap<Entity> = {
 };
 
 type CahNormalizedState = {
-  questions: EntitiesMap<NormalizedQuestion>;
-  choices: EntitiesMap<NormalizedChoice>;
-  answers: EntitiesMap<NormalizedAnswer>;
-  players: EntitiesMap<NormalizedPlayer>;
-  games: EntitiesMap<NormalizedGame>;
+  questions?: EntitiesMap<NormalizedQuestion>;
+  choices?: EntitiesMap<NormalizedChoice>;
+  answers?: EntitiesMap<NormalizedAnswer>;
+  games?: EntitiesMap<NormalizedGame>;
+  gamePlayers?: EntitiesMap<NormalizedGamePlayer>;
+  currentPlayers?: EntitiesMap<NormalizedCurrentPlayer>;
 };
 
 type CahNormalizedSchema = NormalizedSchema<CahNormalizedState, string>;
@@ -59,18 +73,18 @@ export function normalizeGame(data: Game) {
 
   return {
     game: defined(entities.games)[result],
-    players: entities.players ?? {},
+    players: entities.gamePlayers ?? {},
     questions: entities.questions ?? {},
     choices: entities.choices ?? {},
     answers: entities.answers ?? {},
   };
 }
 
-export function normalizePlayer(data: Player) {
-  const { entities, result } = normalize(data, player);
+export function normalizeCurrentPlayer(data: CurrentPlayer) {
+  const { entities, result } = normalize(data, currentPlayer);
 
   return {
-    player: defined(entities.players)[result],
+    player: defined(entities.currentPlayers)[result],
     choices: entities.choices ?? {},
     answers: entities.answers ?? {},
   };
@@ -81,8 +95,7 @@ export function selectNormalizedState(state: AppState): CahNormalizedState {
     questions: state.questions.entities as EntitiesMap<NormalizedQuestion>,
     choices: state.choices.entities as EntitiesMap<NormalizedChoice>,
     answers: state.answers.entities as EntitiesMap<NormalizedAnswer>,
-    players: state.players.entities as EntitiesMap<NormalizedPlayer>,
-    games: state.game ? { [state.game.id]: state.game as NormalizedGame } : {},
+    gamePlayers: state.players.entities as EntitiesMap<NormalizedGamePlayer>,
   };
 }
 

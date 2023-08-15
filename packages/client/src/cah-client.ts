@@ -5,7 +5,7 @@ import {
   GameEvent,
   GameEventType,
   GameEventsMap,
-  Player,
+  CurrentPlayer,
   StartGameBody,
   StartedGame,
   Turn,
@@ -26,7 +26,7 @@ export interface ICahClient {
 
   getGame(gameId: string): Promise<Game | StartedGame>;
   getGameTurns(gameId: string): Promise<Turn[]>;
-  getAuthenticatedPlayer(): Promise<Player>;
+  getAuthenticatedPlayer(): Promise<CurrentPlayer>;
 
   authenticate(nick: string): Promise<void>;
   clearAuthentication(): Promise<void>;
@@ -98,8 +98,8 @@ export class CahClient implements ICahClient {
     return this.fetcher.get<Turn[]>(`/game/${gameId}/turns`);
   }
 
-  async getAuthenticatedPlayer(): Promise<Player> {
-    return this.fetcher.get<Player>('/player');
+  async getAuthenticatedPlayer(): Promise<CurrentPlayer> {
+    return this.fetcher.get<CurrentPlayer>('/player');
   }
 
   async authenticate(nick: string): Promise<void> {

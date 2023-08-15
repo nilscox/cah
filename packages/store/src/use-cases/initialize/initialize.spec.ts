@@ -1,5 +1,5 @@
 import { FetchError } from '@cah/client';
-import { createGame, createPlayer } from '@cah/shared';
+import { createGame, createCurrentPlayer } from '@cah/shared';
 
 import { selectHasGame } from '../../slices/game/game.selectors';
 import { selectHasPlayer } from '../../slices/player/player.selectors';
@@ -26,7 +26,7 @@ describe('initialize', () => {
   });
 
   it("fetches the player's game", async () => {
-    store.client.getAuthenticatedPlayer.mockResolvedValue(createPlayer({ gameId: 'gameId' }));
+    store.client.getAuthenticatedPlayer.mockResolvedValue(createCurrentPlayer({ gameId: 'gameId' }));
     store.client.getGame.mockResolvedValue(createGame());
 
     await store.dispatch(initialize());
@@ -35,7 +35,7 @@ describe('initialize', () => {
   });
 
   it('connects to the events stream', async () => {
-    store.client.getAuthenticatedPlayer.mockResolvedValue(createPlayer());
+    store.client.getAuthenticatedPlayer.mockResolvedValue(createCurrentPlayer());
 
     await store.dispatch(initialize());
 

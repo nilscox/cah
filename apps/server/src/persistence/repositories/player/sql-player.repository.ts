@@ -18,7 +18,7 @@ export class SqlPlayerRepository implements PlayerRepository {
     gameId: model.gameId ?? undefined,
   });
 
-  async query(playerId: string): Promise<shared.Player> {
+  async query(playerId: string): Promise<shared.CurrentPlayer> {
     const result = await this.db.query.players.findFirst({
       where: eq(players.id, playerId),
       with: {
@@ -30,7 +30,7 @@ export class SqlPlayerRepository implements PlayerRepository {
       throw new EntityNotFoundError('Player', { id: playerId });
     }
 
-    const player: shared.Player = {
+    const player: shared.CurrentPlayer = {
       id: result.id,
       nick: result.nick,
       gameId: result.gameId ?? undefined,

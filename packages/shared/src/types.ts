@@ -7,10 +7,7 @@ export type Game = {
   id: string;
   code: string;
   state: GameState;
-  players: Array<{
-    id: string;
-    nick: string;
-  }>;
+  players: GamePlayer[];
 };
 
 export const createGame = factory<Game>(() => ({
@@ -29,7 +26,7 @@ export type StartedGame = Game & {
 
 export const createStartedGame = factory<StartedGame>(() => ({
   ...createGame({ state: GameState.started }),
-  questionMaster: createPlayer(),
+  questionMaster: createGamePlayer(),
   question: createQuestion(),
   answers: [],
 }));
@@ -44,15 +41,23 @@ export enum GameState {
   finished = 'finished',
 }
 
-export type Player = {
+export type GamePlayer = {
   id: string;
   nick: string;
+};
+
+export const createGamePlayer = factory<GamePlayer>(() => ({
+  id: createId(),
+  nick: '',
+}));
+
+export type CurrentPlayer = GamePlayer & {
   gameId?: string;
   cards?: Array<Choice>;
   submittedAnswer?: Answer;
 };
 
-export const createPlayer = factory<Player>(() => ({
+export const createCurrentPlayer = factory<CurrentPlayer>(() => ({
   id: createId(),
   nick: '',
 }));

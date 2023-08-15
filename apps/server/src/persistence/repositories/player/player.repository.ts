@@ -3,7 +3,7 @@ import * as shared from '@cah/shared';
 import { Player } from 'src/entities';
 
 export interface PlayerRepository {
-  query(playerId: string): Promise<shared.Player>;
+  query(playerId: string): Promise<shared.CurrentPlayer>;
 
   findById(id: string): Promise<Player>;
   findByNick(nick: string): Promise<Player | undefined>;

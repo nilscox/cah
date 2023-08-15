@@ -1,6 +1,6 @@
 import { FetchError } from '@cah/client';
 
-import { normalizePlayer } from '../../normalization';
+import { normalizeCurrentPlayer } from '../../normalization';
 import { createAction } from '../../store/create-action';
 import { createThunk2 } from '../../store/create-thunk';
 
@@ -20,4 +20,4 @@ export const fetchPlayer = createThunk2(async ({ dispatch, client }) => {
   }
 });
 
-export const playerFetched = createAction('player-fetched', normalizePlayer);
+export const playerFetched = createAction('player-fetched', normalizeCurrentPlayer);

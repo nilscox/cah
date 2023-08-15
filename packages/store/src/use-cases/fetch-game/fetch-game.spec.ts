@@ -4,7 +4,8 @@ import {
   Question,
   createAnswer,
   createChoice,
-  createPlayer,
+  createCurrentPlayer,
+  createGamePlayer,
   createQuestion,
   createStartedGame,
 } from '@cah/shared';
@@ -29,8 +30,8 @@ describe('fetchGame', () => {
   });
 
   it('fetches a game from its id', async () => {
-    const player = createPlayer({ id: 'playerId' });
-    const questionMaster = createPlayer({ id: 'questionMasterId' });
+    const player = createCurrentPlayer({ id: 'playerId' });
+    const questionMaster = createGamePlayer({ id: 'questionMasterId' });
     const question = createQuestion({ id: 'questionId', blanks: [0, 1] });
     const choice = createChoice({ id: 'choiceId' });
     const answer = createAnswer({ id: 'answerId', playerId: 'playerId', choices: [choice] });
@@ -40,7 +41,7 @@ describe('fetchGame', () => {
         id: 'gameId',
         code: 'CODE',
         state: GameState.started,
-        players: [questionMaster, player],
+        players: [createGamePlayer(player), questionMaster],
         questionMaster,
         question,
         answers: [answer],
@@ -54,7 +55,7 @@ describe('fetchGame', () => {
       id: 'gameId',
       code: 'CODE',
       state: GameState.started,
-      playersIds: ['questionMasterId', 'playerId'],
+      playersIds: ['playerId', 'questionMasterId'],
       questionMasterId: 'questionMasterId',
       questionId: 'questionId',
       answersIds: ['answerId'],
@@ -63,7 +64,7 @@ describe('fetchGame', () => {
 
     expect(store.getPlayer()).toHaveProperty('selectedChoicesIds', [null, null]);
 
-    expect(store.select(selectAllPlayers)).toEqual<PlayersSlice[]>([questionMaster, player]);
+    expect(store.select(selectAllPlayers)).toEqual<PlayersSlice[]>([player, questionMaster]);
     expect(store.select(selectAllQuestions)).toEqual<Question[]>([question]);
     expect(store.select(selectAllChoices)).toEqual<Choice[]>([choice]);
     expect(store.select(selectAllAnswers)).toEqual<AnswerViewModel[]>([answer]);

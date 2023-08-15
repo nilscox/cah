@@ -1,6 +1,6 @@
 import { inspect } from 'node:util';
 
-import { Game, isStarted, Question, Choice, Player, Turn } from '@cah/shared';
+import { Game, isStarted, Question, Choice, CurrentPlayer, Turn } from '@cah/shared';
 
 import { chalk } from './chalk';
 
@@ -81,7 +81,7 @@ const inspectQuestion = (question: Question, choices?: Choice[]): string => {
   return text;
 };
 
-export const inspectPlayer = (player: Player): string => {
+export const inspectPlayer = (player: CurrentPlayer): string => {
   const lines = [`Player ${dimId(player.id)}`];
 
   lines.push(`- id: ${player.id}`);

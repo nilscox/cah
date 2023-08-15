@@ -1,4 +1,4 @@
-import { createAnonymousAnswer, createAnswer, createPlayer, createStartedGame } from '@cah/shared';
+import { createAnonymousAnswer, createAnswer, createStartedGame } from '@cah/shared';
 
 import { TestStore } from '../../test-store';
 
@@ -11,7 +11,7 @@ describe('game selectors', () => {
   beforeEach(() => {
     store = new TestStore();
 
-    store.setPlayer(createPlayer());
+    store.setPlayer();
     store.setGame(createStartedGame());
   });
 

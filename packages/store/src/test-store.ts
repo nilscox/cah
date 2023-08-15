@@ -1,4 +1,4 @@
-import { Game, GameEvent, GameState, Player } from '@cah/shared';
+import { Game, GameEvent, GameState, CurrentPlayer } from '@cah/shared';
 import { Action, Middleware } from 'redux';
 
 import { MockClient } from './mock-client';
@@ -47,7 +47,7 @@ export class TestStore {
     return this.select(selectPlayer);
   }
 
-  setPlayer(player?: Partial<Player>) {
+  setPlayer(player?: Partial<CurrentPlayer>) {
     this.dispatch(
       playerFetched({
         id: '',

@@ -9,7 +9,7 @@ import { InMemoryRepository } from '../../in-memory-repository';
 import { PlayerRepository } from './player.repository';
 
 export class InMemoryPlayerRepository extends InMemoryRepository<Player> implements PlayerRepository {
-  async query(playerId: string): Promise<shared.Player> {
+  async query(playerId: string): Promise<shared.CurrentPlayer> {
     const player = this.get(playerId);
 
     if (!player) {

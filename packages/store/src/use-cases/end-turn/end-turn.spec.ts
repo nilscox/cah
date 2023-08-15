@@ -4,7 +4,7 @@ import {
   GameState,
   createAnswer,
   createChoice,
-  createPlayer,
+  createCurrentPlayer,
   createStartedGame,
 } from '@cah/shared';
 
@@ -33,7 +33,7 @@ describe('endTurn', () => {
     submittedChoices = [createChoice()];
     submittedAnswer = createAnswer({ choices: submittedChoices });
 
-    store.setPlayer(createPlayer({ cards, submittedAnswer }));
+    store.setPlayer(createCurrentPlayer({ cards, submittedAnswer }));
     store.setGame(createStartedGame());
   });
 

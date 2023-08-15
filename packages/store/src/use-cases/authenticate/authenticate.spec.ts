@@ -1,4 +1,4 @@
-import { createGame, createPlayer } from '@cah/shared';
+import { createGame, createCurrentPlayer } from '@cah/shared';
 
 import { PlayerSlice } from '../../slices/player/player.slice';
 import { TestStore } from '../../test-store';
@@ -29,7 +29,7 @@ describe('authenticate', () => {
   });
 
   it("fetches the player's game", async () => {
-    store.client.getAuthenticatedPlayer.mockResolvedValue(createPlayer({ gameId: 'gameId' }));
+    store.client.getAuthenticatedPlayer.mockResolvedValue(createCurrentPlayer({ gameId: 'gameId' }));
     store.client.getGame.mockResolvedValue(createGame({ id: 'gameId' }));
 
     await store.dispatch(authenticate(''));
@@ -38,7 +38,7 @@ describe('authenticate', () => {
   });
 
   it('connects to the events stream', async () => {
-    store.client.getAuthenticatedPlayer.mockResolvedValue(createPlayer());
+    store.client.getAuthenticatedPlayer.mockResolvedValue(createCurrentPlayer());
 
     await store.dispatch(authenticate(''));
 
