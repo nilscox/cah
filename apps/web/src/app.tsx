@@ -5,9 +5,9 @@ import { Show, createEffect, createSignal, lazy, onMount } from 'solid-js';
 import { View } from './layout/view';
 import { store } from './store';
 
-const AuthenticationView = lazy(() => import('./screens/authentication-view'));
-const LobbyView = lazy(() => import('./screens/lobby-view'));
-const GameView = lazy(() => import('./screens/game-view'));
+const AuthenticationView = lazy(() => import('./views/authentication-view'));
+const LobbyView = lazy(() => import('./views/lobby-view'));
+const GameView = lazy(() => import('./views/game-view'));
 
 export function App() {
   const [initialized, setInitialized] = createSignal(false);

@@ -13,8 +13,9 @@ import {
 } from '@cah/store';
 import { For, Show } from 'solid-js';
 
-import { QuestionCard } from '../components/question-card';
 import { selector } from '../selector';
+
+import { QuestionCard } from './question-card';
 
 export function AnswersList() {
   const answers = selector(selectGameAnswers);

@@ -1,11 +1,11 @@
 import { PlayState, selectCanSelectChoice, selectIsQuestionMaster, selectPlayState } from '@cah/store';
 import { Show, createEffect, createSignal } from 'solid-js';
 
+import { AnswersList } from '../components/answers-list';
 import { Header } from '../layout/header';
 import { View } from '../layout/view';
 import { selector } from '../selector';
 
-import { AnswersList } from './answers-list';
 import { PlayersAnswer } from './players-answer';
 
 export function GameStartedView() {
