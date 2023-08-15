@@ -3,7 +3,7 @@ import { selectGame, selectGameUnsafe } from '@cah/store';
 import { useNavigate } from '@solidjs/router';
 import { Match, Show, Switch, createEffect } from 'solid-js';
 
-import { selector } from '../selector';
+import { selector } from '../utils/selector';
 
 import { GameFinishedView } from './game-finished-view';
 import { GameIdleView } from './game-idle-view';

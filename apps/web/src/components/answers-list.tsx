@@ -13,7 +13,7 @@ import {
 } from '@cah/store';
 import { For, Show } from 'solid-js';
 
-import { selector } from '../selector';
+import { selector } from '../utils/selector';
 
 import { QuestionCard } from './question-card';
 

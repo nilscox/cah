@@ -4,7 +4,7 @@ import { Show, createEffect, createSignal } from 'solid-js';
 import { AnswersList } from '../components/answers-list';
 import { Header } from '../layout/header';
 import { View } from '../layout/view';
-import { selector } from '../selector';
+import { selector } from '../utils/selector';
 
 import { PlayersAnswer } from './players-answer';
 

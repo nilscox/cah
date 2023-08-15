@@ -2,7 +2,7 @@ import { ChoicesSlice, selectCanSelectChoice } from '@cah/store';
 import clsx from 'clsx';
 import { For } from 'solid-js';
 
-import { selector } from '../selector';
+import { selector } from '../utils/selector';
 
 type ChoicesListProps = {
   choices: Array<ChoicesSlice>;

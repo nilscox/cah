@@ -9,7 +9,7 @@ import {
 
 import { ChoicesList } from '../components/choices-list';
 import { QuestionCard } from '../components/question-card';
-import { selector } from '../selector';
+import { selector } from '../utils/selector';
 
 export function PlayersAnswer() {
   const cards = selector(selectPlayerCards);

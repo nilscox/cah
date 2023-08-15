@@ -1,7 +1,7 @@
 import { AppState } from '@cah/store';
 import { createMemo, createSignal, onCleanup } from 'solid-js';
 
-import { store } from './store';
+import { store } from '../store';
 
 const getState = () => {
   const [state, setState] = createSignal(store.getState());

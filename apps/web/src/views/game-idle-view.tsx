@@ -4,9 +4,9 @@ import { For } from 'solid-js';
 
 import { Header } from '../layout/header';
 import { View } from '../layout/view';
-import { selector } from '../selector';
+import { selector } from '../utils/selector';
 import { store } from '../store';
-import { submitHandler } from '../submit-handler';
+import { submitHandler } from '../utils/submit-handler';
 
 export function GameIdleView() {
   const navigate = useNavigate();

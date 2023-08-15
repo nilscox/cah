@@ -4,9 +4,9 @@ import { createEffect } from 'solid-js';
 
 import { Header } from '../layout/header';
 import { View } from '../layout/view';
-import { selector } from '../selector';
 import { store } from '../store';
-import { submitHandler } from '../submit-handler';
+import { selector } from '../utils/selector';
+import { submitHandler } from '../utils/submit-handler';
 
 export default function LobbyView() {
   const navigate = useNavigate();
