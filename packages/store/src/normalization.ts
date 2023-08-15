@@ -1,7 +1,8 @@
-import { Answer, Choice, Game, Player, Question, StartedGame } from '@cah/shared';
-import { NormalizedSchema, Schema, normalize as normalizr, schema } from 'normalizr';
+import { AnonymousAnswer, Answer, Choice, Game, Player, Question, StartedGame } from '@cah/shared';
+import { NormalizedSchema, Schema, denormalize, normalize as normalizr, schema } from 'normalizr';
 
 import { defined } from './defined';
+import { AppState } from './types';
 
 type Normalized<T, Relations extends keyof T = never> = Omit<T, Relations> & {
   [K in Relations]: T[K] extends unknown[] | undefined ? string[] : string;
@@ -19,7 +20,7 @@ const answer = new schema.Entity('answers', {
   choices: [choice],
 });
 
-export type NormalizedAnswer = Normalized<Answer, 'choices'>;
+export type NormalizedAnswer = Normalized<Answer | AnonymousAnswer, 'choices'>;
 
 const player = new schema.Entity('players', {
   cards: [choice],
@@ -41,16 +42,15 @@ type EntitiesMap<Entity> = {
   [id: string]: Entity;
 };
 
-type CahNormalizedSchema = NormalizedSchema<
-  {
-    questions?: EntitiesMap<NormalizedQuestion>;
-    choices?: EntitiesMap<NormalizedChoice>;
-    answers?: EntitiesMap<NormalizedAnswer>;
-    players?: EntitiesMap<NormalizedPlayer>;
-    games?: EntitiesMap<NormalizedGame>;
-  },
-  string
->;
+type CahNormalizedState = {
+  questions: EntitiesMap<NormalizedQuestion>;
+  choices: EntitiesMap<NormalizedChoice>;
+  answers: EntitiesMap<NormalizedAnswer>;
+  players: EntitiesMap<NormalizedPlayer>;
+  games: EntitiesMap<NormalizedGame>;
+};
+
+type CahNormalizedSchema = NormalizedSchema<CahNormalizedState, string>;
 
 const normalize: (data: unknown, schema: Schema) => CahNormalizedSchema = normalizr;
 
@@ -74,4 +74,18 @@ export function normalizePlayer(data: Player) {
     choices: entities.choices ?? {},
     answers: entities.answers ?? {},
   };
+}
+
+export function selectNormalizedState(state: AppState): CahNormalizedState {
+  return {
+    questions: state.questions.entities as EntitiesMap<NormalizedQuestion>,
+    choices: state.choices.entities as EntitiesMap<NormalizedChoice>,
+    answers: state.answers.entities as EntitiesMap<NormalizedAnswer>,
+    players: state.players.entities as EntitiesMap<NormalizedPlayer>,
+    games: state.game ? { [state.game.id]: state.game as NormalizedGame } : {},
+  };
+}
+
+export function denormalizeAnswer(state: CahNormalizedState, answerId: string): Answer {
+  return denormalize(answerId, answer, state);
 }

@@ -1,16 +1,37 @@
-import { pipe } from '@nilscox/selektor';
+import { Choice } from '@cah/shared';
+import { combine, pipe } from '@nilscox/selektor';
 
-import { defined } from '../../defined';
+import { denormalizeAnswer, selectNormalizedState } from '../../normalization';
 import { AppState } from '../../types';
 
 import { answersAdapter } from './answers.slice';
 
-export const {
-  selectEntities: selectAnswers,
-  selectAll: selectAllAnswers,
-  selectById: selectAnswerById,
-} = answersAdapter.getSelectors((state: AppState) => state.answers);
+export type AnswerViewModel = {
+  id: string;
+  choices: Choice[];
+  playerId?: string;
+};
 
-export const byIds = pipe(selectAnswers, (answers, ids: string[]) => {
-  return ids.map((id) => defined(answers[id]));
+const selectors = answersAdapter.getSelectors((state: AppState) => state.answers);
+
+export const selectAnswers = combine(
+  selectNormalizedState,
+  selectors.selectIds,
+  (state, answersIds): Record<string, AnswerViewModel> => {
+    return answersIds.reduce(
+      (obj, answerId) => ({
+        ...obj,
+        [answerId]: denormalizeAnswer(state, answerId as string),
+      }),
+      {},
+    );
+  },
+);
+
+export const selectAllAnswers = pipe(selectAnswers, (answers) => {
+  return Object.values(answers);
+});
+
+export const selectAnswerById = pipe(selectNormalizedState, (state, answerId: string) => {
+  return denormalizeAnswer(state, answerId);
 });

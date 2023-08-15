@@ -4,8 +4,8 @@ import { For } from 'solid-js';
 
 import { Header } from '../layout/header';
 import { View } from '../layout/view';
-import { selector } from '../utils/selector';
 import { store } from '../store';
+import { selector } from '../utils/selector';
 import { submitHandler } from '../utils/submit-handler';
 
 export function GameIdleView() {
@@ -45,14 +45,14 @@ export function GameIdleView() {
         onSubmit={submitHandler(() => void store.dispatch(startGame(10)))}
         class="mt-6 self-center text-large"
       >
-        <button class="rounded border">Start</button>
+        <button class="rounded border px-3 py-2">Start</button>
       </form>
 
       <form
         onSubmit={submitHandler(() => void store.dispatch(leaveGame()).then(() => navigate('/')))}
         class="mt-6 self-center text-large"
       >
-        <button>Leave</button>
+        <button class="px-3 py-2">Leave</button>
       </form>
     </View>
   );

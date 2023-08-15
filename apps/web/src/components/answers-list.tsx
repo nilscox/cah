@@ -1,9 +1,9 @@
 import {
+  AnswerViewModel,
   endTurn,
   selectAnswer,
   selectCanEndTurn,
   selectCanSelectAnswer,
-  selectChoicesByIds,
   selectCurrentQuestionChunks,
   selectGameAnswers,
   selectIsWinner,
@@ -44,18 +44,16 @@ export function AnswersList() {
 }
 
 type AnswerProps = {
-  answer: { choices: string[]; playerId?: string };
+  answer: AnswerViewModel;
   onClick: () => void;
 };
 
 function Answer(props: AnswerProps) {
-  const choices = selector((state) => selectChoicesByIds(state, props.answer.choices));
-
   const player = selector((state) =>
     props.answer.playerId ? selectPlayerById(state, props.answer.playerId) : undefined,
   );
 
-  const chunks = selector((state) => selectCurrentQuestionChunks(state, choices()));
+  const chunks = selector((state) => selectCurrentQuestionChunks(state, props.answer.choices));
   const isWinner = selector((state) => player()?.id && selectIsWinner(state, player()!.id));
 
   return (
