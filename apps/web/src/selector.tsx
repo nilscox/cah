@@ -1,31 +1,25 @@
-import { AppSelector } from '@cah/store';
-import { createSignal, onCleanup } from 'solid-js';
+import { AppState } from '@cah/store';
+import { createMemo, createSignal, onCleanup } from 'solid-js';
 
 import { store } from './store';
 
-export function selector<Params extends unknown[], Result>(
-  selector: AppSelector<Params, Result>,
-  ...params: Params
-) {
-  const [value, setValue] = createSignal(selector(store.getState(), ...params));
-  const timeouts: number[] = [];
+const getState = () => {
+  const [state, setState] = createSignal(store.getState());
 
   const unsubscribe = store.subscribe(() => {
-    const timeout = window.setTimeout(() => {
-      // eslint-disable-next-line @typescript-eslint/ban-types
-      setValue(selector(store.getState(), ...params) as Exclude<Result, Function>);
-    }, 0);
-
-    timeouts.push(timeout);
+    setState(store.getState());
   });
 
   onCleanup(() => {
     unsubscribe();
-
-    for (const timeout of timeouts) {
-      window.clearTimeout(timeout);
-    }
   });
 
-  return value;
+  return state;
+};
+
+export function selector<Result>(selector: (state: AppState) => Result) {
+  const state = getState();
+  const result = createMemo(() => selector(state()));
+
+  return result;
 }

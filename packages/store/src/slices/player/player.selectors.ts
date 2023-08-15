@@ -4,7 +4,13 @@ import { combine, createSelector, pipe } from '@nilscox/selektor';
 import { defined } from '../../defined';
 import { AppState } from '../../types';
 import { selectChoices } from '../choices/choices.selectors';
-import { selectCurrentQuestion, selectPlayState, selectStartedGame } from '../game/game.selectors';
+import { ChoicesSlice } from '../choices/choices.slice';
+import {
+  selectCurrentQuestion,
+  selectPlayState,
+  selectStartedGame,
+  selectedIsAnswerSelected,
+} from '../game/game.selectors';
 import { PlayState } from '../game/game.slice';
 import { getQuestionChunks } from '../questions/question-chunks';
 
@@ -36,10 +42,9 @@ export const selectedSelectedChoices = combine(selectPlayer, selectChoices, (pla
   });
 });
 
-export const selectCurrentQuestionChunks = combine(
+export const selectCurrentQuestionChunks = pipe(
   selectCurrentQuestion,
-  selectedSelectedChoices,
-  (question, choices) => {
+  (question, choices: Array<ChoicesSlice | null>) => {
     assert(question);
     return getQuestionChunks(question, choices);
   },
@@ -78,5 +83,34 @@ export const selectCanSubmitAnswer = combine(
     }
 
     return choices.every((choice) => choice !== null);
+  },
+);
+
+export const selectCanSelectAnswer = combine(
+  selectPlayState,
+  selectIsQuestionMaster,
+  selectedIsAnswerSelected,
+  (playState, isQuestionMaster, isAnswerSelected) => {
+    if (playState !== PlayState.questionMasterSelection) {
+      return false;
+    }
+
+    if (!isQuestionMaster) {
+      return false;
+    }
+
+    return !isAnswerSelected;
+  },
+);
+
+export const selectCanEndTurn = combine(
+  selectPlayState,
+  selectIsQuestionMaster,
+  (playState, isQuestionMaster) => {
+    if (playState !== PlayState.endOfTurn) {
+      return false;
+    }
+
+    return isQuestionMaster;
   },
 );

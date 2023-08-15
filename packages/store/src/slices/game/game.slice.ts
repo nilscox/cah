@@ -22,6 +22,7 @@ export type GameSlice = {
   questionId?: string;
   answersIds?: string[];
   isAnswerValidated?: boolean;
+  // todo: remove
   selectedAnswerId?: string;
 };
 

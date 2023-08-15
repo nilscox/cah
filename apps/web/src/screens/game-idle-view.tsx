@@ -42,7 +42,7 @@ export function GameIdleView() {
       </div>
 
       <form
-        onSubmit={submitHandler(() => void store.dispatch(startGame(3)))}
+        onSubmit={submitHandler(() => void store.dispatch(startGame(10)))}
         class="mt-6 self-center text-large"
       >
         <button class="rounded border">Start</button>

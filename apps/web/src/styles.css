@@ -15,10 +15,6 @@
     @apply my-2;
   }
 
-  button {
-    @apply whitespace-nowrap px-3 py-2 uppercase font-semibold;
-  }
-
   input {
     @apply bg-transparent border-b-2 outline-none py-1;
     @apply transition-colors;

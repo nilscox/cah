@@ -40,6 +40,9 @@ export default {
       large: ['1.25rem', 1.5],
       xl: ['2rem', 1.5],
     },
+    lineHeight: {
+      1: 1,
+    },
   },
   plugins: [],
 };

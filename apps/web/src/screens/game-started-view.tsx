@@ -1,50 +1,22 @@
-import {
-  PlayState,
-  selectCanSelectChoice,
-  selectCanSubmitAnswer,
-  selectCurrentQuestionChunks,
-  selectIsQuestionMaster,
-  selectPlayState,
-  selectPlayerCards,
-  selectedSelectedChoices,
-  submitAnswer,
-  toggleChoice,
-} from '@cah/store';
-import { createEffect, createSignal } from 'solid-js';
+import { PlayState, selectCanSelectChoice, selectIsQuestionMaster, selectPlayState } from '@cah/store';
+import { Show, createEffect, createSignal } from 'solid-js';
 
-import { ChoicesList } from '../components/choices-list';
-import { QuestionCard } from '../components/question-card';
 import { Header } from '../layout/header';
 import { View } from '../layout/view';
 import { selector } from '../selector';
-import { store } from '../store';
+
+import { AnswersList } from './answers-list';
+import { PlayersAnswer } from './players-answer';
 
 export function GameStartedView() {
-  const cards = selector(selectPlayerCards);
-  const selectedChoices = selector(selectedSelectedChoices);
-  const chunks = selector(selectCurrentQuestionChunks);
-
-  const canSubmitAnswer = selector(selectCanSubmitAnswer);
-
-  const handleSubmitAnswer = () => {
-    if (canSubmitAnswer()) {
-      void store.dispatch(submitAnswer());
-    }
-  };
-
   const info = getInfo();
+  const playState = selector(selectPlayState);
 
   return (
     <View class="overflow-hidden !p-0" header={<Header>{info()}</Header>}>
-      <div class="p-4">
-        <QuestionCard chunks={chunks()} onClick={handleSubmitAnswer} />
-      </div>
-
-      <ChoicesList
-        choices={cards()}
-        selectedChoices={selectedChoices()}
-        onSelected={(choice) => store.dispatch(toggleChoice(choice))}
-      />
+      <Show when={playState() === PlayState.playersAnswer} fallback={<AnswersList />}>
+        <PlayersAnswer />
+      </Show>
     </View>
   );
 }
@@ -70,7 +42,7 @@ const getInfo = () => {
         if (isQuestionMaster()) {
           setInfo('Select an answer');
         } else {
-          setInfo('Wait for the winner to be selected');
+          setInfo('Wait for an answer to be selected');
         }
         break;
 
