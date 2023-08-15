@@ -1,11 +1,10 @@
-import { Question, TurnStartedEvent } from '@cah/shared';
+import { TurnStartedEvent } from '@cah/shared';
 import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 
+import { NormalizedQuestion } from '../../normalization';
 import { gameFetched } from '../../use-cases/fetch-game/fetch-game';
 
-export type QuestionSlice = Question;
-
-export const questionsAdapter = createEntityAdapter<QuestionSlice>();
+export const questionsAdapter = createEntityAdapter<NormalizedQuestion>();
 
 export const questionsSlice = createSlice({
   name: 'questions',

@@ -1,23 +1,18 @@
 import { AllPlayerAnsweredEvent, CardsDealtEvent } from '@cah/shared';
 import { PayloadAction, createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 
+import { NormalizedChoice } from '../../normalization';
 import { gameFetched } from '../../use-cases/fetch-game/fetch-game';
 import { playerFetched } from '../../use-cases/fetch-player/fetch-player';
 import { playerActions } from '../player/player.slice';
 
-export type ChoicesSlice = {
-  id: string;
-  text: string;
-  caseSensitive: boolean;
-};
-
-export const choicesAdapter = createEntityAdapter<ChoicesSlice>();
+export const choicesAdapter = createEntityAdapter<NormalizedChoice>();
 
 export const choicesSlice = createSlice({
   name: 'choices',
   initialState: choicesAdapter.getInitialState(),
   reducers: {
-    add(state, action: PayloadAction<ChoicesSlice>) {
+    add(state, action: PayloadAction<NormalizedChoice>) {
       choicesAdapter.addOne(state, action.payload);
     },
   },

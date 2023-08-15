@@ -1,10 +1,8 @@
 import { FetchError } from '@cah/client';
-import { createAnswer, createChoice } from '@cah/shared';
+import { Choice, createAnswer, createChoice } from '@cah/shared';
 
 import { selectAllAnswers } from '../../slices/answers/answers.selectors';
-import { AnswerSlice } from '../../slices/answers/answers.slice';
 import { selectAllChoices } from '../../slices/choices/choices.selectors';
-import { ChoicesSlice } from '../../slices/choices/choices.slice';
 import { selectHasPlayer } from '../../slices/player/player.selectors';
 import { PlayerSlice } from '../../slices/player/player.slice';
 import { TestStore } from '../../test-store';
@@ -39,7 +37,7 @@ describe('fetchPlayer', () => {
       answerSubmitted: false,
     });
 
-    expect(store.select(selectAllChoices)).toEqual<ChoicesSlice[]>([card]);
+    expect(store.select(selectAllChoices)).toEqual<Choice[]>([card]);
   });
 
   it('with a submitted answer', async () => {
@@ -69,7 +67,7 @@ describe('fetchPlayer', () => {
       answerSubmitted: true,
     });
 
-    expect(store.select(selectAllChoices)).toEqual<ChoicesSlice[]>([card, submittedChoice]);
+    expect(store.select(selectAllChoices)).toEqual<Choice[]>([card, submittedChoice]);
     expect(store.select(selectAllAnswers)).toHaveLength(1);
   });
 

@@ -1,13 +1,14 @@
-import { ChoicesSlice, selectCanSelectChoice } from '@cah/store';
+import { Choice } from '@cah/shared';
+import { selectCanSelectChoice } from '@cah/store';
 import clsx from 'clsx';
 import { For } from 'solid-js';
 
 import { selector } from '../utils/selector';
 
 type ChoicesListProps = {
-  choices: Array<ChoicesSlice>;
-  selectedChoices: Array<ChoicesSlice | null>;
-  onSelected: (choices: ChoicesSlice) => void;
+  choices: Array<Choice>;
+  selectedChoices: Array<Choice | null>;
+  onSelected: (choices: Choice) => void;
 };
 
 export function ChoicesList(props: ChoicesListProps) {
@@ -34,7 +35,7 @@ export function ChoicesList(props: ChoicesListProps) {
 }
 
 type CardProps = {
-  choice: ChoicesSlice;
+  choice: Choice;
   isSelected: boolean;
   onClick?: () => void;
 };

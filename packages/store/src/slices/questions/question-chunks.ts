@@ -1,13 +1,11 @@
-import { ChoicesSlice } from '../choices/choices.slice';
-
-import { QuestionSlice } from './questions.slice';
+import { Choice, Question } from '@cah/shared';
 
 export type QuestionChunk = {
   text?: string;
   isBlank: boolean;
 };
 
-export function getQuestionChunks(question: QuestionSlice, choices: Array<ChoicesSlice | null> = []) {
+export function getQuestionChunks(question: Question, choices: Array<Choice | null> = []) {
   const { blanks, text } = question;
   const chunks: Array<QuestionChunk> = [];
 

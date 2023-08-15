@@ -1,10 +1,10 @@
+import { Choice } from '@cah/shared';
 import { assert } from '@cah/utils';
 import { combine, createSelector, pipe } from '@nilscox/selektor';
 
 import { defined } from '../../defined';
 import { AppState } from '../../types';
 import { selectChoices } from '../choices/choices.selectors';
-import { ChoicesSlice } from '../choices/choices.slice';
 import {
   selectCurrentQuestion,
   selectPlayState,
@@ -44,7 +44,7 @@ export const selectedSelectedChoices = combine(selectPlayer, selectChoices, (pla
 
 export const selectCurrentQuestionChunks = pipe(
   selectCurrentQuestion,
-  (question, choices: Array<ChoicesSlice | null>) => {
+  (question, choices: Array<Choice | null>) => {
     assert(question);
     return getQuestionChunks(question, choices);
   },

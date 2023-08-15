@@ -1,5 +1,7 @@
 import {
+  Choice,
   GameState,
+  Question,
   createAnswer,
   createChoice,
   createPlayer,
@@ -10,12 +12,10 @@ import {
 import { selectAllAnswers } from '../../slices/answers/answers.selectors';
 import { AnswerSlice } from '../../slices/answers/answers.slice';
 import { selectAllChoices } from '../../slices/choices/choices.selectors';
-import { ChoicesSlice } from '../../slices/choices/choices.slice';
 import { GameSlice } from '../../slices/game/game.slice';
 import { selectAllPlayers } from '../../slices/players/players.selectors';
 import { PlayersSlice } from '../../slices/players/players.slice';
 import { selectAllQuestions } from '../../slices/questions/questions.selectors';
-import { QuestionSlice } from '../../slices/questions/questions.slice';
 import { TestStore } from '../../test-store';
 
 import { fetchGame } from './fetch-game';
@@ -66,8 +66,8 @@ describe('fetchGame', () => {
     expect(store.getPlayer()).toHaveProperty('selectedChoicesIds', [null, null]);
 
     expect(store.select(selectAllPlayers)).toEqual<PlayersSlice[]>([questionMaster, player]);
-    expect(store.select(selectAllQuestions)).toEqual<QuestionSlice[]>([question]);
-    expect(store.select(selectAllChoices)).toEqual<ChoicesSlice[]>([choice]);
+    expect(store.select(selectAllQuestions)).toEqual<Question[]>([question]);
+    expect(store.select(selectAllChoices)).toEqual<Choice[]>([choice]);
 
     expect(store.select(selectAllAnswers)).toEqual<AnswerSlice[]>([
       {

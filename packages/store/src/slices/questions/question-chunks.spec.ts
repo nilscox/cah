@@ -1,16 +1,15 @@
-import { ChoicesSlice } from '../choices/choices.slice';
+import { Choice, Question } from '@cah/shared';
 
 import { QuestionChunk, getQuestionChunks } from './question-chunks';
-import { QuestionSlice } from './questions.slice';
 
 describe('questionChunks', () => {
-  const choice: ChoicesSlice = {
+  const choice: Choice = {
     id: '',
     text: 'Choice',
     caseSensitive: false,
   };
 
-  const choiceCaseSensitive: ChoicesSlice = {
+  const choiceCaseSensitive: Choice = {
     id: '',
     text: 'Choice',
     caseSensitive: true,
@@ -27,7 +26,7 @@ describe('questionChunks', () => {
   });
 
   describe('question with no blanks', () => {
-    const question: QuestionSlice = {
+    const question: Question = {
       id: '',
       text: 'Question?',
     };
@@ -49,7 +48,7 @@ describe('questionChunks', () => {
   });
 
   describe('question starting with a blank', () => {
-    const question: QuestionSlice = {
+    const question: Question = {
       id: '',
       text: ', yes!',
       blanks: [0],
@@ -69,7 +68,7 @@ describe('questionChunks', () => {
   });
 
   describe('question with a blank in the middle', () => {
-    const question: QuestionSlice = {
+    const question: Question = {
       id: '',
       text: 'I am .',
       blanks: [5],
@@ -93,7 +92,7 @@ describe('questionChunks', () => {
   });
 
   describe('question with multiple blanks in the middle', () => {
-    const question: QuestionSlice = {
+    const question: Question = {
       id: '',
       text: 'I am , not .',
       blanks: [5, 11],
