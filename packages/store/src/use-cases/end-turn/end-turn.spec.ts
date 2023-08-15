@@ -45,8 +45,7 @@ describe('endTurn', () => {
 
   it('handles a turn-ended event', () => {
     store.dispatch(answersActions.add({ id: 'answerId', choices: [] }));
-    store.dispatch(gameActions.setSelectedAnswer('answerId'));
-    store.dispatch(gameActions.setAnswerValidated());
+    store.dispatch(gameActions.setSelectedAnswerId('answerId'));
 
     store.dispatchEvent({
       type: 'turn-ended',
@@ -56,7 +55,6 @@ describe('endTurn', () => {
 
     expect(game).toHaveProperty('answersIds', []);
     expect(game).not.toHaveProperty('selectedAnswerId');
-    expect(game).toHaveProperty('isAnswerValidated', false);
 
     expect(store.select(selectPlayerCards)).toEqual(cards);
     expect(store.select(selectedSelectedChoices)).toEqual([]);
@@ -74,7 +72,6 @@ describe('endTurn', () => {
     expect(game).not.toHaveProperty('questionMasterId');
     expect(game).not.toHaveProperty('questionId');
     expect(game).not.toHaveProperty('answersIds');
-    expect(game).not.toHaveProperty('isAnswerValidated');
     expect(game).not.toHaveProperty('selectedAnswerId');
   });
 });

@@ -1,6 +1,6 @@
 import {
   endTurn,
-  gameActions,
+  selectAnswer,
   selectCanEndTurn,
   selectCanSelectAnswer,
   selectChoicesByIds,
@@ -8,7 +8,6 @@ import {
   selectGameAnswers,
   selectIsWinner,
   selectPlayerById,
-  validateSelectedAnswer,
 } from '@cah/store';
 import { For, Show } from 'solid-js';
 
@@ -22,10 +21,7 @@ export function AnswersList() {
   const canEndTurn = selector(selectCanEndTurn);
 
   const handleSubmitAnswer = (answerId: string) => {
-    if (canSelectAnswer()) {
-      store.dispatch(gameActions.setSelectedAnswer(answerId));
-      void store.dispatch(validateSelectedAnswer());
-    }
+    void store.dispatch(selectAnswer(answerId));
   };
 
   const handleNextTurn = () => {
@@ -35,7 +31,9 @@ export function AnswersList() {
   return (
     <div class="col gap-6 p-4">
       <For each={answers()}>
-        {(answer) => <Answer answer={answer} onClick={() => handleSubmitAnswer(answer.id)} />}
+        {(answer) => (
+          <Answer answer={answer} onClick={() => canSelectAnswer() && handleSubmitAnswer(answer.id)} />
+        )}
       </For>
 
       <Show when={canEndTurn()}>

@@ -1,11 +1,11 @@
-import { createAnonymousAnswer, createStartedGame } from '@cah/shared';
+import { createAnswer, createStartedGame } from '@cah/shared';
 
 import { selectAnswerById } from '../../slices/answers/answers.selectors';
 import { answersActions } from '../../slices/answers/answers.slice';
 import { gameActions } from '../../slices/game/game.slice';
 import { TestStore } from '../../test-store';
 
-import { validateSelectedAnswer } from './validate-selected-answer';
+import { selectAnswer } from './select-answer';
 
 describe('validateSelectedAnswer', () => {
   let store: TestStore;
@@ -18,16 +18,17 @@ describe('validateSelectedAnswer', () => {
   });
 
   it('selects an answer', async () => {
-    store.dispatch(gameActions.setSelectedAnswer('answerId'));
+    store.dispatch(gameActions.setSelectedAnswerId('answerId'));
 
-    await store.dispatch(validateSelectedAnswer());
+    await store.dispatch(selectAnswer('answerId'));
 
     expect(store.client.selectAnswer).toHaveBeenCalledWith('answerId');
   });
 
   it('handles a winning-answer-selected event', () => {
-    const answer = createAnonymousAnswer({
+    const answer = createAnswer({
       id: 'answerId',
+      playerId: 'playerId',
     });
 
     store.dispatch(answersActions.add({ id: 'answerId', choices: [] }));
@@ -35,11 +36,10 @@ describe('validateSelectedAnswer', () => {
     store.dispatchEvent({
       type: 'winning-answer-selected',
       selectedAnswerId: 'answerId',
-      answers: [{ ...answer, playerId: 'playerId' }],
+      answers: [answer],
     });
 
     expect(store.getGame()).toHaveProperty('selectedAnswerId', 'answerId');
-    expect(store.getGame()).toHaveProperty('isAnswerValidated', true);
 
     expect(store.select(selectAnswerById, 'answerId')).toHaveProperty('playerId', 'playerId');
   });

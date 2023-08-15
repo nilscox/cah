@@ -9,7 +9,7 @@ import {
   selectCurrentQuestion,
   selectPlayState,
   selectStartedGame,
-  selectedIsAnswerSelected,
+  selectedSelectedAnswer,
 } from '../game/game.selectors';
 import { PlayState } from '../game/game.slice';
 import { getQuestionChunks } from '../questions/question-chunks';
@@ -89,8 +89,8 @@ export const selectCanSubmitAnswer = combine(
 export const selectCanSelectAnswer = combine(
   selectPlayState,
   selectIsQuestionMaster,
-  selectedIsAnswerSelected,
-  (playState, isQuestionMaster, isAnswerSelected) => {
+  selectedSelectedAnswer,
+  (playState, isQuestionMaster, selectedAnswer) => {
     if (playState !== PlayState.questionMasterSelection) {
       return false;
     }
@@ -99,7 +99,7 @@ export const selectCanSelectAnswer = combine(
       return false;
     }
 
-    return !isAnswerSelected;
+    return !selectedAnswer;
   },
 );
 

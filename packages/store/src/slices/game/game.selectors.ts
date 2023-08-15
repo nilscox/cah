@@ -20,8 +20,6 @@ type StartedGameSlice = GameSlice & {
   questionMasterId: string;
   questionId: string;
   answersIds: string[];
-  // todo: rename to isAnswerSelected
-  isAnswerValidated: boolean;
 };
 
 export const selectStartedGame = pipe(selectGame, (game) => {
@@ -37,8 +35,12 @@ export const selectGameAnswers = combine(selectStartedGame, selectAnswers, (game
   return game.answersIds.map((answerId) => defined(answers[answerId]));
 });
 
-export const selectedIsAnswerSelected = combine(selectStartedGame, (game) => {
-  return game.isAnswerValidated;
+export const selectedSelectedAnswer = combine(selectStartedGame, selectAnswers, (game, answers) => {
+  if (!game.selectedAnswerId) {
+    return undefined;
+  }
+
+  return answers[game.selectedAnswerId];
 });
 
 export const selectedWinnerId = combine(selectStartedGame, selectAnswers, (game, answers) => {

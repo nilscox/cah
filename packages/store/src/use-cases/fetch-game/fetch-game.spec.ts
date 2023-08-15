@@ -59,7 +59,6 @@ describe('fetchGame', () => {
       questionId: 'questionId',
       answersIds: ['answerId'],
       selectedAnswerId: 'selectedAnswerId',
-      isAnswerValidated: true,
     });
 
     expect(store.getPlayer()).toHaveProperty('selectedChoicesIds', [null, null]);

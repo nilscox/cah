@@ -21,8 +21,6 @@ export type GameSlice = {
   questionMasterId?: string;
   questionId?: string;
   answersIds?: string[];
-  isAnswerValidated?: boolean;
-  // todo: remove
   selectedAnswerId?: string;
 };
 
@@ -36,16 +34,10 @@ export const gameSlice = createSlice({
   name: 'game',
   initialState: null as GameSlice | null,
   reducers: {
-    setSelectedAnswer(state, action: PayloadAction<string>) {
+    setSelectedAnswerId(state, action: PayloadAction<string>) {
       assert(state);
 
       state.selectedAnswerId = action.payload;
-    },
-
-    setAnswerValidated(state) {
-      assert(state);
-
-      state.isAnswerValidated = true;
     },
   },
   extraReducers(builder) {
@@ -58,7 +50,6 @@ export const gameSlice = createSlice({
       questionId: game.question,
       answersIds: game.answers,
       selectedAnswerId: game.selectedAnswerId,
-      isAnswerValidated: game.selectedAnswerId !== undefined,
     }));
 
     builder.addCase(gameLeft, () => {
@@ -85,9 +76,7 @@ export const gameSlice = createSlice({
       assert(state);
 
       state.state = GameState.started;
-
       state.answersIds = [];
-      state.isAnswerValidated = false;
     });
 
     builder.addCase('turn-started', (state, action: TurnStartedEvent) => {
@@ -107,7 +96,6 @@ export const gameSlice = createSlice({
       assert(state);
 
       state.selectedAnswerId = event.selectedAnswerId;
-      state.isAnswerValidated = true;
     });
 
     builder.addCase('turn-ended', (state) => {
@@ -115,7 +103,6 @@ export const gameSlice = createSlice({
 
       state.answersIds = [];
       delete state.selectedAnswerId;
-      state.isAnswerValidated = false;
     });
 
     builder.addCase('game-ended', (state) => {

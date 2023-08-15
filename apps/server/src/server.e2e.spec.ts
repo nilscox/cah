@@ -5,10 +5,10 @@ import {
   createGame,
   createStore,
   endTurn,
-  gameActions,
   initialize,
   joinGame,
   leaveGame,
+  selectAnswer,
   selectExpectedNumberOfChoices,
   selectGameAnswers,
   selectGameCode,
@@ -20,7 +20,6 @@ import {
   startGame,
   submitAnswer,
   toggleChoice,
-  validateSelectedAnswer,
 } from '@cah/store';
 import { defined, getIds, waitFor } from '@cah/utils';
 
@@ -139,8 +138,7 @@ class Player {
 
     log(`* ${this.nick} selects ${answerId}`);
 
-    this.dispatch(gameActions.setSelectedAnswer(answerId));
-    await this.dispatch(validateSelectedAnswer());
+    await this.dispatch(selectAnswer(answerId));
   }
 
   async endTurn() {

@@ -27,7 +27,7 @@ export { leaveGame } from './use-cases/leave-game/leave-game';
 export { startGame } from './use-cases/start-game/start-game';
 export { submitAnswer } from './use-cases/submit-answer/submit-answer';
 export { toggleChoice } from './use-cases/toggle-choice/toggle-choice';
-export { validateSelectedAnswer } from './use-cases/validate-selected-answer/validate-selected-answer';
+export { selectAnswer } from './use-cases/select-answer/select-answer';
 
 export { createStore } from './store/create-store';
 

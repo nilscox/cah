@@ -33,7 +33,6 @@ describe('startGame', () => {
     const game = store.getGame();
     expect(game).toHaveProperty('state', GameState.started);
     expect(game).toHaveProperty('answersIds', []);
-    expect(game).toHaveProperty('isAnswerValidated', false);
 
     const player = store.getPlayer();
     expect(player).toHaveProperty('cardsIds', []);
