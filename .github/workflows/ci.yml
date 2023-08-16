@@ -20,7 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/setup
-      - run: pnpm add -g cspell @cspell/dict-fr-fr
+      - run: pnpm add -g cspell@6 @cspell/dict-fr-fr
       - run: pnpm exec cspell link add @cspell/dict-fr-fr
       - run: pnpm exec cspell --locale en 'packages/*/src/**/*.{ts,tsx}'
 

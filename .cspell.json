@@ -5,9 +5,12 @@
     "ditox",
     "inspectable",
     "memorystore",
+    "nilscox",
+    "normalizr",
     "reduxjs",
     "resave",
     "schemaname",
+    "selektor",
     "tablename",
     "varchar"
   ]
