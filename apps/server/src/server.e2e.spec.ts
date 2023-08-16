@@ -222,6 +222,8 @@ describe('Server E2E', () => {
 
       await questionMaster.selectRandomAnswer();
       await questionMaster.endTurn();
+
+      await new Promise((r) => setTimeout(r, 100));
     }
 
     await waitFor(() => {

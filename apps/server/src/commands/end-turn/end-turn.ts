@@ -18,6 +18,7 @@ import { TOKENS } from 'src/tokens';
 export class TurnEndedEvent extends DomainEvent {
   constructor(
     gameId: string,
+    public readonly turnId: string,
     public readonly winnerId: string,
     public readonly hasMoreQuestions: boolean,
   ) {
@@ -79,6 +80,8 @@ export class EndTurnHandler implements CommandHandler<EndTurnCommand> {
     const winningAnswer = await this.answerRepository.findById(turn.selectedAnswerId);
     const nextQuestion = await this.questionRepository.findNextAvailableQuestion(game.id);
 
-    this.publisher.publish(new TurnEndedEvent(game.id, winningAnswer.playerId, nextQuestion !== undefined));
+    this.publisher.publish(
+      new TurnEndedEvent(game.id, turn.id, winningAnswer.playerId, nextQuestion !== undefined),
+    );
   }
 }

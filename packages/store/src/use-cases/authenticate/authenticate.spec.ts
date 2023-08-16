@@ -31,6 +31,7 @@ describe('authenticate', () => {
   it("fetches the player's game", async () => {
     store.client.getAuthenticatedPlayer.mockResolvedValue(createCurrentPlayer({ gameId: 'gameId' }));
     store.client.getGame.mockResolvedValue(createGame({ id: 'gameId' }));
+    store.client.getGameTurns.mockResolvedValue([]);
 
     await store.dispatch(authenticate(''));
 

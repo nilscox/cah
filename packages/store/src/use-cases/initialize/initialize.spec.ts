@@ -28,6 +28,7 @@ describe('initialize', () => {
   it("fetches the player's game", async () => {
     store.client.getAuthenticatedPlayer.mockResolvedValue(createCurrentPlayer({ gameId: 'gameId' }));
     store.client.getGame.mockResolvedValue(createGame());
+    store.client.getGameTurns.mockResolvedValue([]);
 
     await store.dispatch(initialize());
 

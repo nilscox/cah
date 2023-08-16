@@ -197,7 +197,7 @@ export class Notifier {
     });
 
     publisher.register(TurnEndedEvent, async (event) => {
-      const turn = await this.turnRepository.query(event.entityId);
+      const turn = await this.turnRepository.query(event.turnId);
 
       await this.send(event.entityId, {
         type: 'turn-ended',

@@ -65,7 +65,7 @@ describe('EndTurnCommand', () => {
   it('publishes a TurnEndedEvent', async () => {
     await expect(test.handler.execute(test.command)).resolves.toBeUndefined();
 
-    expect(test.publisher).toContainEqual(new TurnEndedEvent('gameId', 'winnerId', false));
+    expect(test.publisher).toContainEqual(new TurnEndedEvent('gameId', 'turnId', 'winnerId', false));
   });
 
   it('fails when the player is not in a game', async () => {

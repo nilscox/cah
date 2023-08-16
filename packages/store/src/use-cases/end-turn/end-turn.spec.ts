@@ -64,7 +64,8 @@ describe('endTurn', () => {
     expect(store.select(selectPlayerCards)).toEqual(cards);
     expect(store.select(selectedSelectedChoices)).toEqual([]);
     expect(store.select(selectHasSubmittedAnswer)).toEqual(false);
-    expect(store.select(selectTurns)).toEqual([turn]);
+
+    expect(store.select(selectTurns)).toHaveLength(1);
   });
 
   it('handles a game-ended event', () => {

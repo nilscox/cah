@@ -94,7 +94,7 @@ export function normalizeTurns(data: Turn[]) {
   const { entities } = normalize(data, [turn]);
 
   return {
-    turns: defined(entities.turns),
+    turns: entities.turns ?? {},
     players: entities.gamePlayers ?? {},
     questions: entities.questions ?? {},
     choices: entities.choices ?? {},

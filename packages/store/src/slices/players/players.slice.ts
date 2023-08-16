@@ -2,7 +2,6 @@ import { PlayerJoinedEvent, PlayerLeftEvent } from '@cah/shared';
 import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 
 import { gameFetched } from '../../use-cases/fetch-game/fetch-game';
-import { turnsFetched } from '../../use-cases/fetch-turns/fetch-turns';
 
 export type PlayersSlice = {
   id: string;
@@ -17,10 +16,6 @@ export const playersSlice = createSlice({
   reducers: {},
   extraReducers(builder) {
     builder.addCase(gameFetched, (state, { players }) => {
-      playersAdapter.addMany(state, players);
-    });
-
-    builder.addCase(turnsFetched, (state, { players }) => {
       playersAdapter.addMany(state, players);
     });
 
