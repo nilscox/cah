@@ -42,3 +42,9 @@
     @apply flex flex-row;
   }
 }
+
+@layer components {
+  .btn {
+    @apply rounded border px-4 py-2;
+  }
+}

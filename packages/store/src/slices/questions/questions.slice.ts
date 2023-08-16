@@ -3,6 +3,7 @@ import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 
 import { NormalizedQuestion } from '../../normalization';
 import { gameFetched } from '../../use-cases/fetch-game/fetch-game';
+import { turnsFetched } from '../../use-cases/fetch-turns/fetch-turns';
 
 export const questionsAdapter = createEntityAdapter<NormalizedQuestion>();
 
@@ -12,6 +13,10 @@ export const questionsSlice = createSlice({
   reducers: {},
   extraReducers(builder) {
     builder.addCase(gameFetched, (state, { questions }) => {
+      questionsAdapter.addMany(state, questions);
+    });
+
+    builder.addCase(turnsFetched, (state, { questions }) => {
       questionsAdapter.addMany(state, questions);
     });
 

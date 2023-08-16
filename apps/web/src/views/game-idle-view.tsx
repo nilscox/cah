@@ -14,6 +14,22 @@ export function GameIdleView() {
   const code = selector(selectGameCode);
   const players = selector(selectAllPlayers);
 
+  const handleStartGame = () => {
+    const result = window.prompt('Number of questions', '40');
+    const numberOfQuestions = parseInt(result ?? '');
+
+    if (!Number.isFinite(numberOfQuestions) || numberOfQuestions <= 0) {
+      window.alert('Invalid input, please enter a positive integer.');
+      handleStartGame();
+    } else {
+      void store.dispatch(startGame(numberOfQuestions));
+    }
+  };
+
+  const handleLeaveGame = () => {
+    void store.dispatch(leaveGame()).then(() => navigate('/'));
+  };
+
   return (
     <View header={<Header>Get ready</Header>}>
       <p>
@@ -27,6 +43,7 @@ export function GameIdleView() {
         <p>Your game code is:</p>
 
         <div
+          role="button"
           class="self-center rounded border bg-muted px-6 py-2 text-xl"
           onClick={() => void navigator.clipboard.writeText(code())}
         >
@@ -41,17 +58,11 @@ export function GameIdleView() {
         </ul>
       </div>
 
-      <form
-        onSubmit={submitHandler(() => void store.dispatch(startGame(10)))}
-        class="mt-6 self-center text-large"
-      >
-        <button class="rounded border px-3 py-2">Start</button>
+      <form onSubmit={submitHandler(handleStartGame)} class="mt-6 self-center text-large">
+        <button class="btn">Start</button>
       </form>
 
-      <form
-        onSubmit={submitHandler(() => void store.dispatch(leaveGame()).then(() => navigate('/')))}
-        class="mt-6 self-center text-large"
-      >
+      <form onSubmit={submitHandler(handleLeaveGame)} class="mt-6 self-center text-large">
         <button class="px-3 py-2">Leave</button>
       </form>
     </View>

@@ -29,7 +29,7 @@ export class SqlTurnRepository implements TurnRepository {
       text: turn.question.text,
       blanks: turn.question.blanks,
     },
-    winningAnswerId: turn.selectedAnswerId,
+    selectedAnswerId: turn.selectedAnswerId,
     answers: turn.answers.map((answer) => ({
       id: answer.id,
       playerId: answer.playerId,

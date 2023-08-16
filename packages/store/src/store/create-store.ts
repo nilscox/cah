@@ -7,6 +7,7 @@ import { gameSlice } from '../slices/game/game.slice';
 import { playerSlice } from '../slices/player/player.slice';
 import { playersSlice } from '../slices/players/players.slice';
 import { questionsSlice } from '../slices/questions/questions.slice';
+import { turnsSlice } from '../slices/turns/turns.slice';
 
 export const createStore = (deps: Dependencies, middlewares: Middleware[] = []) => {
   return configureStore({
@@ -17,6 +18,7 @@ export const createStore = (deps: Dependencies, middlewares: Middleware[] = []) 
       [questionsSlice.name]: questionsSlice.reducer,
       [choicesSlice.name]: choicesSlice.reducer,
       [answersSlice.name]: answersSlice.reducer,
+      [turnsSlice.name]: turnsSlice.reducer,
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({

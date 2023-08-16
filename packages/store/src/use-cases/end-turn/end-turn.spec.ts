@@ -6,6 +6,7 @@ import {
   createChoice,
   createCurrentPlayer,
   createStartedGame,
+  createTurn,
 } from '@cah/shared';
 
 import { answersActions } from '../../slices/answers/answers.slice';
@@ -15,6 +16,7 @@ import {
   selectPlayerCards,
   selectedSelectedChoices,
 } from '../../slices/player/player.selectors';
+import { selectTurns } from '../../slices/turns/turns.selectors';
 import { TestStore } from '../../test-store';
 
 import { endTurn } from './end-turn';
@@ -44,11 +46,14 @@ describe('endTurn', () => {
   });
 
   it('handles a turn-ended event', () => {
+    const turn = createTurn();
+
     store.dispatch(answersActions.add({ id: 'answerId', choices: [] }));
     store.dispatch(gameActions.setSelectedAnswerId('answerId'));
 
     store.dispatchEvent({
       type: 'turn-ended',
+      turn,
     });
 
     const game = store.getGame();
@@ -59,6 +64,7 @@ describe('endTurn', () => {
     expect(store.select(selectPlayerCards)).toEqual(cards);
     expect(store.select(selectedSelectedChoices)).toEqual([]);
     expect(store.select(selectHasSubmittedAnswer)).toEqual(false);
+    expect(store.select(selectTurns)).toEqual([turn]);
   });
 
   it('handles a game-ended event', () => {

@@ -7,6 +7,7 @@ import {
   Question,
   StartedGame,
   GamePlayer,
+  Turn,
 } from '@cah/shared';
 import { NormalizedSchema, Schema, denormalize, normalize as normalizr, schema } from 'normalizr';
 
@@ -51,6 +52,14 @@ const game = new schema.Entity('games', {
 
 export type NormalizedGame = Normalized<StartedGame, 'players' | 'questionMaster' | 'question' | 'answers'>;
 
+const turn = new schema.Entity('turns', {
+  questionMaster: gamePlayer,
+  question: question,
+  answers: [answer],
+});
+
+export type NormalizedTurn = Normalized<Turn, 'question' | 'answers'>;
+
 type EntitiesMap<Entity> = {
   [id: string]: Entity;
 };
@@ -62,6 +71,7 @@ type CahNormalizedState = {
   games?: EntitiesMap<NormalizedGame>;
   gamePlayers?: EntitiesMap<NormalizedGamePlayer>;
   currentPlayers?: EntitiesMap<NormalizedCurrentPlayer>;
+  turns?: EntitiesMap<NormalizedTurn>;
 };
 
 type CahNormalizedSchema = NormalizedSchema<CahNormalizedState, string>;
@@ -73,6 +83,18 @@ export function normalizeGame(data: Game) {
 
   return {
     game: defined(entities.games)[result],
+    players: entities.gamePlayers ?? {},
+    questions: entities.questions ?? {},
+    choices: entities.choices ?? {},
+    answers: entities.answers ?? {},
+  };
+}
+
+export function normalizeTurns(data: Turn[]) {
+  const { entities } = normalize(data, [turn]);
+
+  return {
+    turns: defined(entities.turns),
     players: entities.gamePlayers ?? {},
     questions: entities.questions ?? {},
     choices: entities.choices ?? {},

@@ -109,7 +109,7 @@ export type Turn = {
   number: number;
   question: Question;
   answers: Answer[];
-  winningAnswerId: string;
+  selectedAnswerId: string;
 };
 
 export const createTurn = factory<Turn>(() => ({
@@ -117,7 +117,7 @@ export const createTurn = factory<Turn>(() => ({
   number: 0,
   question: createQuestion(),
   answers: [],
-  winningAnswerId: '',
+  selectedAnswerId: '',
 }));
 
 export type PlayerConnectedEvent = {
@@ -183,6 +183,7 @@ export type WinningAnswerSelectedEvent = {
 
 export type TurnEndedEvent = {
   type: 'turn-ended';
+  turn: Turn;
 };
 
 export type GameEndedEvent = {

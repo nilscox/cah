@@ -4,6 +4,7 @@ import { PayloadAction, createEntityAdapter, createSlice } from '@reduxjs/toolki
 import { NormalizedChoice } from '../../normalization';
 import { gameFetched } from '../../use-cases/fetch-game/fetch-game';
 import { playerFetched } from '../../use-cases/fetch-player/fetch-player';
+import { turnsFetched } from '../../use-cases/fetch-turns/fetch-turns';
 import { playerActions } from '../player/player.slice';
 
 export const choicesAdapter = createEntityAdapter<NormalizedChoice>();
@@ -18,6 +19,10 @@ export const choicesSlice = createSlice({
   },
   extraReducers(builder) {
     builder.addCase(gameFetched, (state, { choices }) => {
+      choicesAdapter.addMany(state, choices);
+    });
+
+    builder.addCase(turnsFetched, (state, { choices }) => {
       choicesAdapter.addMany(state, choices);
     });
 

@@ -4,6 +4,7 @@ import { selectHasPlayer, selectPlayer } from '../../slices/player/player.select
 import { createThunk } from '../../store/create-thunk';
 import { fetchGame } from '../fetch-game/fetch-game';
 import { fetchPlayer } from '../fetch-player/fetch-player';
+import { fetchTurns } from '../fetch-turns/fetch-turns';
 
 const events: Array<GameEvent['type']> = [
   'player-connected',
@@ -33,6 +34,7 @@ export const initialize = createThunk(async ({ client, dispatch, getState }) => 
 
     if (gameId) {
       await dispatch(fetchGame(gameId));
+      await dispatch(fetchTurns(gameId));
     }
   }
 });

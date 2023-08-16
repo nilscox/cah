@@ -17,6 +17,9 @@ export * from './slices/questions/question-chunks';
 export * from './slices/choices/choices.selectors';
 export * from './slices/choices/choices.slice';
 
+export * from './slices/turns/turns.selectors';
+export * from './slices/turns/turns.slice';
+
 export { authenticate } from './use-cases/authenticate/authenticate';
 export { clearAuthentication } from './use-cases/clear-authentication/clear-authentication';
 export { createGame } from './use-cases/create-game/create-game';

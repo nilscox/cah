@@ -4,6 +4,7 @@ import { PayloadAction, createEntityAdapter, createSlice } from '@reduxjs/toolki
 import { NormalizedAnswer } from '../../normalization';
 import { gameFetched } from '../../use-cases/fetch-game/fetch-game';
 import { playerFetched } from '../../use-cases/fetch-player/fetch-player';
+import { turnsFetched } from '../../use-cases/fetch-turns/fetch-turns';
 
 type AnswerSlice = Omit<NormalizedAnswer, 'playerId'> & {
   playerId?: string;
@@ -21,6 +22,10 @@ export const answersSlice = createSlice({
   },
   extraReducers(builder) {
     builder.addCase(gameFetched, (state, { answers }) => {
+      answersAdapter.addMany(state, answers);
+    });
+
+    builder.addCase(turnsFetched, (state, { answers }) => {
       answersAdapter.addMany(state, answers);
     });
 

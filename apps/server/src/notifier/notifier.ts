@@ -23,6 +23,7 @@ import {
   GameRepository,
   PlayerRepository,
   QuestionRepository,
+  TurnRepository,
 } from 'src/persistence';
 import { PlayerConnectedEvent, PlayerDisconnectedEvent } from 'src/server/ws-server';
 import { TOKENS } from 'src/tokens';
@@ -34,6 +35,7 @@ export class Notifier {
     TOKENS.rtc,
     TOKENS.publisher,
     TOKENS.repositories.game,
+    TOKENS.repositories.turn,
     TOKENS.repositories.player,
     TOKENS.repositories.choice,
     TOKENS.repositories.question,
@@ -45,6 +47,7 @@ export class Notifier {
     private readonly rtc: RtcPort,
     private readonly publisher: EventPublisherPort,
     private readonly gameRepository: GameRepository,
+    private readonly turnRepository: TurnRepository,
     private readonly playerRepository: PlayerRepository,
     private readonly choiceRepository: ChoiceRepository,
     private readonly questionRepository: QuestionRepository,
@@ -194,8 +197,11 @@ export class Notifier {
     });
 
     publisher.register(TurnEndedEvent, async (event) => {
+      const turn = await this.turnRepository.query(event.entityId);
+
       await this.send(event.entityId, {
         type: 'turn-ended',
+        turn,
       });
     });
 
