@@ -1,5 +1,5 @@
-import { createThunk2 } from '../../store/create-thunk';
+import { createThunk } from '../../store/create-thunk';
 
-export const startGame = createThunk2(async ({ client }, numberOfQuestions: number) => {
+export const startGame = createThunk(async ({ client }, numberOfQuestions: number) => {
   await client.startGame(numberOfQuestions);
 });

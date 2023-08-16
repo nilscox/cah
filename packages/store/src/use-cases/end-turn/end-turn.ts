@@ -1,5 +1,5 @@
-import { createThunk2 } from '../../store/create-thunk';
+import { createThunk } from '../../store/create-thunk';
 
-export const endTurn = createThunk2(async ({ client }) => {
+export const endTurn = createThunk(async ({ client }) => {
   await client.endTurn();
 });

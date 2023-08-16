@@ -2,9 +2,9 @@ import { FetchError } from '@cah/client';
 
 import { normalizeCurrentPlayer } from '../../normalization';
 import { createAction } from '../../store/create-action';
-import { createThunk2 } from '../../store/create-thunk';
+import { createThunk } from '../../store/create-thunk';
 
-export const fetchPlayer = createThunk2(async ({ dispatch, client }) => {
+export const fetchPlayer = createThunk(async ({ dispatch, client }) => {
   try {
     const player = await client.getAuthenticatedPlayer();
 

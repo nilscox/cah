@@ -1,8 +1,8 @@
 import { createAction } from '@reduxjs/toolkit';
 
-import { createThunk2 } from '../../store/create-thunk';
+import { createThunk } from '../../store/create-thunk';
 
-export const leaveGame = createThunk2(async ({ client, dispatch }) => {
+export const leaveGame = createThunk(async ({ client, dispatch }) => {
   await client.leaveGame();
   client.disconnect();
 

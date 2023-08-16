@@ -11,7 +11,7 @@ type ThunkFunction<Params extends unknown[], Result> = (
   ...params: Params
 ) => Result;
 
-export function createThunk2<Params extends unknown[] = [], Result = void>(
+export function createThunk<Params extends unknown[] = [], Result = void>(
   thunk: ThunkFunction<Params, Result>,
 ) {
   return (...params: Params): AppThunk<Result> => {
