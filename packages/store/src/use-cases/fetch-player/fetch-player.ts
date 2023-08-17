@@ -10,7 +10,7 @@ export const fetchPlayer = createThunk(async ({ dispatch, client }) => {
 
     dispatch(playerFetched(player));
 
-    client.connect();
+    client.connect('/api/socket.io');
   } catch (error) {
     if (error instanceof FetchError && error.status === 401) {
       return;

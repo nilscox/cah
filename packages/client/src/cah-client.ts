@@ -21,7 +21,7 @@ export interface ICahClient {
   addEventListener<Type extends GameEventType>(type: Type, listener: GameEventListener<Type>): void;
   removeEventListener<Type extends GameEventType>(type: Type, listener: GameEventListener<Type>): void;
 
-  connect(): void;
+  connect(path?: string): void;
   disconnect(): void;
 
   getGame(gameId: string): Promise<Game | StartedGame>;
@@ -58,14 +58,15 @@ export class CahClient implements ICahClient {
     this.listeners.get(type)?.delete(listener as GameEventListener<GameEventType>);
   }
 
-  async connect() {
+  async connect(path?: string) {
     const extraHeaders: Record<string, string> = {};
 
     if (this.fetcher instanceof ServerFetcher) {
       extraHeaders.cookie = this.fetcher.cookie;
     }
 
-    this.socket = io(this.fetcher.baseUrl.replace(/\/api$/, ''), {
+    this.socket = io({
+      path,
       transports: ['websocket', 'polling'],
       extraHeaders,
     });
