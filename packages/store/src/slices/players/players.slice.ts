@@ -2,6 +2,7 @@ import { PlayerJoinedEvent, PlayerLeftEvent } from '@cah/shared';
 import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 
 import { gameFetched } from '../../use-cases/fetch-game/fetch-game';
+import { gameLeft } from '../../use-cases/leave-game/leave-game';
 
 export type PlayersSlice = {
   id: string;
@@ -27,6 +28,10 @@ export const playersSlice = createSlice({
     builder.addCase('player-left', (state, action: PlayerLeftEvent) => {
       const { playerId } = action;
       playersAdapter.removeOne(state, playerId);
+    });
+
+    builder.addCase(gameLeft, (state) => {
+      playersAdapter.removeAll(state);
     });
   },
 });

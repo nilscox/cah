@@ -1,4 +1,5 @@
 import { selectHasGame } from '../../slices/game/game.selectors';
+import { selectAllPlayers } from '../../slices/players/players.selectors';
 import { TestStore } from '../../test-store';
 
 import { leaveGame } from './leave-game';
@@ -25,9 +26,10 @@ describe('leaveGame', () => {
     expect(store.client.disconnect).toHaveBeenCalled();
   });
 
-  it('removes the current game', async () => {
+  it('removes the current game and players', async () => {
     await store.dispatch(leaveGame());
 
     expect(store.select(selectHasGame)).toBe(false);
+    expect(store.select(selectAllPlayers)).toEqual([]);
   });
 });
