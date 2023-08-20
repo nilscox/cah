@@ -77,9 +77,11 @@ class Player {
     server: Server,
     public readonly nick: string,
   ) {
-    this.fetcher = new ServerFetcher(`http://${server.address}`);
+    const apiUrl = `http://${server.address}`;
+
+    this.fetcher = new ServerFetcher(apiUrl);
     this.client = new CahClient(this.fetcher);
-    this.store = createStore({ client: this.client });
+    this.store = createStore({ client: this.client, config: { apiUrl } });
   }
 
   get dispatch() {

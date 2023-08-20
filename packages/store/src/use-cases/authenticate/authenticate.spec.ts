@@ -43,6 +43,6 @@ describe('authenticate', () => {
 
     await store.dispatch(authenticate(''));
 
-    expect(store.client.connect).toHaveBeenCalledWith('/api/socket.io');
+    expect(store.client.connect).toHaveBeenCalledWith('https://api.url', '/socket-path');
   });
 });

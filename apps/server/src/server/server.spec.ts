@@ -76,12 +76,13 @@ describe('server', () => {
   it('triggers a events when the player connects and disconnects', async () => {
     await test.server.listen();
 
-    const client = new CahClient(new ServerFetcher(`http://${test.server.address}`));
+    const apiUrl = `http://${test.server.address}`;
+    const client = new CahClient(new ServerFetcher(apiUrl));
 
     await client.authenticate('nick');
     const player = await client.getAuthenticatedPlayer();
 
-    await client.connect();
+    await client.connect(apiUrl);
     await waitFor(() => expect(test.publisher).toContainEqual(new PlayerConnectedEvent(player.id)));
 
     await client.disconnect();

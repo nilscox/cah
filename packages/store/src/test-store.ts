@@ -23,7 +23,15 @@ export class TestStore {
   };
 
   public readonly client = new MockClient();
-  public readonly store = createStore({ client: this.client }, [this.logActionMiddleware]);
+
+  public readonly config = {
+    apiUrl: 'https://api.url',
+    websocketPath: '/socket-path',
+  };
+
+  public readonly store = createStore({ client: this.client, config: this.config }, [
+    this.logActionMiddleware,
+  ]);
 
   getState = this.store.getState.bind(this.store);
   dispatch = this.store.dispatch.bind(this.store);

@@ -6,7 +6,11 @@ const fetch = window.fetch.bind(window);
 const fetcher = new Fetcher('/api', fetch);
 const client = new CahClient(fetcher);
 
-export const store = createReduxStore({ client });
+const config = {
+  websocketPath: '/api/socket.io',
+};
+
+export const store = createReduxStore({ client, config });
 
 declare global {
   // eslint-disable-next-line no-var

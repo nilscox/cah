@@ -1,16 +1,16 @@
 import {
   AuthenticateBody,
   CreateAnswerBody,
+  CurrentPlayer,
   Game,
   GameEvent,
   GameEventType,
   GameEventsMap,
-  CurrentPlayer,
   StartGameBody,
   StartedGame,
   Turn,
 } from '@cah/shared';
-import { Socket, io } from 'socket.io-client';
+import { ManagerOptions, Socket, io } from 'socket.io-client';
 
 import { Fetcher } from './fetcher';
 import { ServerFetcher } from './server-fetcher';
@@ -21,7 +21,7 @@ export interface ICahClient {
   addEventListener<Type extends GameEventType>(type: Type, listener: GameEventListener<Type>): void;
   removeEventListener<Type extends GameEventType>(type: Type, listener: GameEventListener<Type>): void;
 
-  connect(path?: string): void;
+  connect(baseUrl?: string, path?: string): void;
   disconnect(): void;
 
   getGame(gameId: string): Promise<Game | StartedGame>;
@@ -58,18 +58,24 @@ export class CahClient implements ICahClient {
     this.listeners.get(type)?.delete(listener as GameEventListener<GameEventType>);
   }
 
-  async connect(path?: string) {
+  async connect(baseUrl?: string, path?: string) {
     const extraHeaders: Record<string, string> = {};
 
     if (this.fetcher instanceof ServerFetcher) {
       extraHeaders.cookie = this.fetcher.cookie;
     }
 
-    this.socket = io({
+    const options: Partial<ManagerOptions> = {
       path,
       transports: ['websocket', 'polling'],
       extraHeaders,
-    });
+    };
+
+    if (baseUrl) {
+      this.socket = io(baseUrl, options);
+    } else {
+      this.socket = io(options);
+    }
 
     this.socket.on('message', (event: GameEvent) => {
       this.listeners.get(event.type)?.forEach((listener) => listener(event));
