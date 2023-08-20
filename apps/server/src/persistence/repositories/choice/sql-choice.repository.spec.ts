@@ -56,15 +56,21 @@ describe('SqlChoiceRepository', () => {
   });
 
   it('finds all available choices in a given game', async () => {
-    await test.create.choice({ id: 'choiceId1', gameId: 'gameId', playerId: null });
-    await test.create.choice({ id: 'choiceId2', gameId: 'gameId', playerId: null });
-    await test.create.choice({ id: 'choiceId3', gameId: 'gameId', playerId: 'playerId' });
+    await test.create.choice({ id: 'choiceId1', gameId: 'gameId', playerId: 'playerId' });
+
+    await test.create.question({ id: 'questionId', gameId: 'gameId' });
+    // prettier-ignore
+    await test.create.answer({ id: 'answerId', gameId: 'gameId', playerId: 'playerId', questionId: 'questionId' });
+    await test.create.choice({ id: 'choiceId2', gameId: 'gameId', playerId: null, answerId: 'answerId' });
+
+    await test.create.choice({ id: 'choiceId3', gameId: 'gameId', playerId: null });
+    await test.create.choice({ id: 'choiceId4', gameId: 'gameId', playerId: null });
 
     const cards = await repository.findAvailable('gameId', 1);
 
     expect(cards).toEqual<Choice[]>([
       {
-        id: 'choiceId1',
+        id: 'choiceId3',
         gameId: 'gameId',
         text: '',
         caseSensitive: false,

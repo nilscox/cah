@@ -57,7 +57,7 @@ export class SqlChoiceRepository implements ChoiceRepository {
     const results = await this.db
       .select()
       .from(choices)
-      .where(and(eq(choices.gameId, gameId), isNull(choices.playerId)))
+      .where(and(eq(choices.gameId, gameId), isNull(choices.playerId), isNull(choices.answerId)))
       .limit(limit);
 
     return results.map(this.toChoice);
