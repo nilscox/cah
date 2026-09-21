@@ -1,10 +1,10 @@
 import * as shared from '@cah/shared';
-import { InferModel, and, eq, isNull } from 'drizzle-orm';
+import { InferModel, eq } from 'drizzle-orm';
 
 import { Player } from 'src/entities';
 
 import { Database } from '../../database';
-import { answers, players } from '../../drizzle-schema';
+import { players } from '../../drizzle-schema';
 import { EntityNotFoundError } from '../../entity-not-found-error';
 
 import { PlayerRepository } from './player.repository';
@@ -20,7 +20,7 @@ export class SqlPlayerRepository implements PlayerRepository {
 
   async query(playerId: string): Promise<shared.CurrentPlayer> {
     const result = await this.db.query.players.findFirst({
-      where: eq(players.id, playerId),
+      where: { id: playerId },
       with: {
         cards: true,
       },
@@ -46,11 +46,11 @@ export class SqlPlayerRepository implements PlayerRepository {
 
     if (player.gameId) {
       const answer = await this.db.query.answers.findFirst({
-        where: and(
-          eq(answers.gameId, player.gameId),
-          eq(answers.playerId, player.id),
-          isNull(answers.turnId),
-        ),
+        where: {
+          gameId: player.gameId,
+          playerId: player.id,
+          turnId: { isNull: true },
+        },
         with: {
           choices: true,
         },

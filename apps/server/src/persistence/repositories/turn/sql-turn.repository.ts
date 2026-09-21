@@ -1,5 +1,5 @@
 import * as shared from '@cah/shared';
-import { eq, sql } from 'drizzle-orm';
+import { sql } from 'drizzle-orm';
 
 import { Turn } from 'src/entities';
 
@@ -43,7 +43,7 @@ export class SqlTurnRepository implements TurnRepository {
 
   async query(turnId: string): Promise<shared.Turn> {
     const result = await this.db.query.turns.findFirst({
-      where: eq(turns.id, turnId),
+      where: { id: turnId },
       with: {
         question: true,
         answers: {
@@ -63,7 +63,7 @@ export class SqlTurnRepository implements TurnRepository {
 
   async queryForGame(gameId: string): Promise<shared.Turn[]> {
     const results = await this.db.query.turns.findMany({
-      where: eq(turns.gameId, gameId),
+      where: { gameId },
       with: {
         question: true,
         answers: {

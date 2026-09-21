@@ -10,9 +10,9 @@ import postgres from 'postgres';
 import { ConfigPort } from 'src/adapters';
 import { TOKENS } from 'src/tokens';
 
-import * as schema from './drizzle-schema';
+import { relations } from './relations';
 
-type DrizzleDb = PostgresJsDatabase<typeof schema>;
+type DrizzleDb = PostgresJsDatabase<typeof relations>;
 
 export class Database {
   static inject = injectableClass(this, TOKENS.config);
@@ -24,7 +24,7 @@ export class Database {
     const { url, debug } = config.database;
 
     this.client = postgres(url, { debug });
-    this.db = drizzle(this.client, { schema });
+    this.db = drizzle({ client: this.client, relations });
 
     this.query = this.db.query;
     this.execute = this.db.execute.bind(this.db);

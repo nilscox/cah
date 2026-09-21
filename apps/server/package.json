@@ -4,7 +4,7 @@
   "type": "module",
   "main": "src/index.ts",
   "scripts": {
-    "start": "node --loader @bleed-believer/path-alias src/index.ts",
+    "start": "node --env-file .env --loader @bleed-believer/path-alias src/index.ts",
     "dev": "nodemon -w src -e ts -x 'pnpm start'",
     "lint": "eslint src",
     "test": "NODE_ENV=test vitest"
@@ -18,7 +18,8 @@
     "@types/express-session": "^1.17.7",
     "@types/morgan": "^1.9.4",
     "@types/node": "^20.3.1",
-    "drizzle-kit": "^0.19.2",
+    "dotenv": "^18.0.1",
+    "drizzle-kit": "1.0.0-rc.4",
     "eslint": "^8.45.0",
     "nodemon": "^3.0.1",
     "ts-node": "^10.9.1",
@@ -33,7 +34,7 @@
     "body-parser": "^1.20.2",
     "connect-pg-simple": "^9.0.0",
     "ditox": "^2.3.1",
-    "drizzle-orm": "^0.27.2",
+    "drizzle-orm": "1.0.0-rc.4",
     "express": "5.0.0-beta.1",
     "express-session": "^1.17.3",
     "morgan": "^1.10.0",

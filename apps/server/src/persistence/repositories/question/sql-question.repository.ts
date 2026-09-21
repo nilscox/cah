@@ -1,4 +1,4 @@
-import { eq, isNull } from 'drizzle-orm';
+import { and, eq, isNull } from 'drizzle-orm';
 
 import { Question } from 'src/entities';
 
@@ -39,8 +39,7 @@ export class SqlQuestionRepository implements QuestionRepository {
       .select()
       .from(questions)
       .leftJoin(turns, eq(questions.id, turns.questionId))
-      .where(eq(questions.gameId, gameId))
-      .where(isNull(turns.id))
+      .where(and(eq(questions.gameId, gameId), isNull(turns.id)))
       .limit(1);
 
     if (!result) {

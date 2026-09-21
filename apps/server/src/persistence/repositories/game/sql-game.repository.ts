@@ -2,12 +2,12 @@ import assert from 'node:assert';
 
 import * as shared from '@cah/shared';
 import { toEnum } from '@cah/utils';
-import { asc, eq, isNull } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 
 import { Game, GameState, StartedGame, isStarted } from 'src/entities';
 
 import { Database } from '../../database';
-import { SqlGame, answers, choices, games } from '../../drizzle-schema';
+import { SqlGame, games } from '../../drizzle-schema';
 import { EntityNotFoundError } from '../../entity-not-found-error';
 
 import { GameRepository } from './game.repository';
@@ -48,17 +48,17 @@ export class SqlGameRepository implements GameRepository {
 
   async query(gameId: string): Promise<shared.Game | shared.StartedGame> {
     const model = await this.db.query.games.findFirst({
-      where: eq(games.id, gameId),
+      where: { id: gameId },
       with: {
         players: true,
         questionMaster: true,
         question: true,
         answers: {
-          orderBy: [asc(answers.place)],
-          where: isNull(answers.turnId),
+          orderBy: { place: 'asc' },
+          where: { turnId: { isNull: true } },
           with: {
             choices: {
-              orderBy: [asc(choices.place)],
+              orderBy: { place: 'asc' },
             },
           },
         },

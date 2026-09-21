@@ -1,6 +1,12 @@
 import { GameState } from '@cah/shared';
-import { InferModel, relations } from 'drizzle-orm';
 import { AnyPgColumn, boolean, integer, pgEnum, pgSchema, text, varchar } from 'drizzle-orm/pg-core';
+
+export type SqlGame = typeof games.$inferSelect;
+export type SqlPlayer = typeof players.$inferSelect;
+export type SqlQuestion = typeof questions.$inferSelect;
+export type SqlChoice = typeof choices.$inferSelect;
+export type SqlAnswer = typeof answers.$inferSelect;
+export type SqlTurn = typeof turns.$inferSelect;
 
 const typedPgEnum = <Enum extends object>(name: string, e: Enum) => {
   type T = keyof Enum extends string ? keyof Enum : never;
@@ -24,28 +30,11 @@ export const games = cah.table('games', {
   selectedAnswerId: id('selectedAnswerId').references((): AnyPgColumn => answers.id),
 });
 
-export const gamesRelations = relations(games, ({ one, many }) => ({
-  players: many(players),
-  questionMaster: one(players, { fields: [games.questionMasterId], references: [players.id] }),
-  question: one(questions, { fields: [games.questionId], references: [questions.id] }),
-  answers: many(answers),
-  selectedAnswer: one(answers, { fields: [games.selectedAnswerId], references: [answers.id] }),
-}));
-
-export type SqlGame = InferModel<typeof games>;
-
 export const players = cah.table('players', {
   id: primaryKey(),
   nick: text('nick').notNull(),
   gameId: id('gameId').references(() => games.id),
 });
-
-export const playersRelations = relations(players, ({ one, many }) => ({
-  game: one(games, { fields: [players.gameId], references: [games.id] }),
-  cards: many(choices),
-}));
-
-export type SqlPlayer = InferModel<typeof players>;
 
 export const questions = cah.table('questions', {
   id: primaryKey(),
@@ -55,12 +44,6 @@ export const questions = cah.table('questions', {
   text: text('text').notNull(),
   blanks: integer('blanks').array().notNull(),
 });
-
-export const questionsRelations = relations(questions, ({ one }) => ({
-  turn: one(turns),
-}));
-
-export type SqlQuestion = InferModel<typeof questions>;
 
 export const choices = cah.table('choices', {
   id: primaryKey(),
@@ -73,13 +56,6 @@ export const choices = cah.table('choices', {
   caseSensitive: boolean('caseSensitive').notNull(),
   place: integer('place'),
 });
-
-export const choicesRelations = relations(choices, ({ one }) => ({
-  player: one(players, { fields: [choices.playerId], references: [players.id] }),
-  answer: one(answers, { fields: [choices.answerId], references: [answers.id] }),
-}));
-
-export type SqlChoice = InferModel<typeof choices>;
 
 export const answers = cah.table('answers', {
   id: primaryKey(),
@@ -95,14 +71,6 @@ export const answers = cah.table('answers', {
   turnId: id('turnId').references((): AnyPgColumn => turns.id),
   place: integer('place'),
 });
-
-export const answersRelations = relations(answers, ({ one, many }) => ({
-  game: one(games, { fields: [answers.gameId], references: [games.id] }),
-  choices: many(choices),
-  turn: one(turns, { fields: [answers.turnId], references: [turns.id] }),
-}));
-
-export type SqlAnswer = InferModel<typeof answers>;
 
 export const turns = cah.table('turns', {
   id: primaryKey(),
@@ -121,13 +89,3 @@ export const turns = cah.table('turns', {
     .notNull()
     .references(() => answers.id),
 });
-
-export type SqlTurn = InferModel<typeof turns>;
-
-export const turnsRelations = relations(turns, ({ one, many }) => ({
-  game: one(games, { fields: [turns.gameId], references: [games.id] }),
-  questionMaster: one(players, { fields: [turns.questionMasterId], references: [players.id] }),
-  question: one(questions, { fields: [turns.questionId], references: [questions.id] }),
-  selectedAnswer: one(answers, { fields: [turns.selectedAnswerId], references: [answers.id] }),
-  answers: many(answers),
-}));

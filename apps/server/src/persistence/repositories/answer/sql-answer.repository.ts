@@ -1,4 +1,4 @@
-import { and, eq, isNull } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 
 import { Answer } from 'src/entities';
 
@@ -32,7 +32,7 @@ export class SqlAnswerRepository implements AnswerRepository {
 
   async findById(answerId: string): Promise<Answer> {
     const result = await this.db.query.answers.findFirst({
-      where: eq(answers.id, answerId),
+      where: { id: answerId },
       with: { choices: true },
     });
 
@@ -45,7 +45,7 @@ export class SqlAnswerRepository implements AnswerRepository {
 
   async findForCurrentTurn(gameId: string): Promise<Answer[]> {
     const models = await this.db.query.answers.findMany({
-      where: and(eq(answers.gameId, gameId), isNull(answers.turnId)),
+      where: { gameId, turnId: { isNull: true } },
       with: { choices: true },
     });
 
