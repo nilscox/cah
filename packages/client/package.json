@@ -2,8 +2,10 @@
   "name": "@cah/client",
   "version": "2.0.0",
   "type": "module",
-  "main": "dist/index.js",
-  "types": "dist/index.d.js",
+  "exports": {
+    "default": "./src/index.ts",
+    "types": "./src/index.ts"
+  },
   "scripts": {
     "lint": "eslint src"
   },

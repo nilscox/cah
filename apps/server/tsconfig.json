@@ -8,16 +8,10 @@
     { "path": "../../packages/utils" }
   ],
   "compilerOptions": {
-    "noEmit": true,
-    "allowSyntheticDefaultImports": true,
+    "outDir": "dist",
     "types": ["vitest/globals"],
     "paths": {
       "src/*": ["./src/*"]
     }
-  },
-  "ts-node": {
-    "esm": true,
-    "transpileOnly": true,
-    "experimentalSpecifierResolution": "node"
   }
 }

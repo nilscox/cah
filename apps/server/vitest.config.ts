@@ -1,6 +1,6 @@
 import path from 'node:path';
-import { defineConfig } from 'vitest/config';
 import tsconfigPaths from 'vite-tsconfig-paths';
+import { defineConfig } from 'vitest/config';
 
 const packages = path.resolve(__dirname, '..', '..', 'packages');
 
@@ -11,10 +11,6 @@ export default defineConfig({
     threads: false,
     watch: false,
     reporters: ['verbose'],
-    alias: {
-      '@cah/store': path.join(packages, 'store', 'src'),
-      '@cah/client': path.join(packages, 'client', 'src'),
-    },
     deps: {
       registerNodeLoader: true,
     },

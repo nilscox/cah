@@ -6,7 +6,7 @@
     "cah": "./cah.sh"
   },
   "scripts": {
-    "start": "ts-node src/index.ts",
+    "start": "node src/index.ts",
     "build": "tsc -b"
   },
   "dependencies": {

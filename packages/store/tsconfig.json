@@ -3,14 +3,11 @@
   "include": ["src/**/*"],
   "references": [{ "path": "../client" }, { "path": "../shared" }, { "path": "../utils" }],
   "compilerOptions": {
-    "composite": true,
-    "declaration": true,
     "outDir": "dist",
-    "rootDir": "src",
     "types": ["vitest/globals"],
     "paths": {
-      "immer": ["./node_modules/immer"],
-      "reselect": ["./node_modules/reselect"]
+      "immer": ["./node_modules/immer"]
+      // "reselect": ["./node_modules/reselect"]
     }
   }
 }

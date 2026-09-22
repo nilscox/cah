@@ -3,12 +3,6 @@
   "include": ["src/**/*"],
   "references": [{ "path": "../../packages/client" }, { "path": "../../packages/shared" }],
   "compilerOptions": {
-    "rootDir": "src",
     "outDir": "dist"
-  },
-  "ts-node": {
-    "esm": true,
-    "transpileOnly": true,
-    "experimentalSpecifierResolution": "node"
   }
 }
