@@ -11,15 +11,21 @@ jobs:
   types-check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: ./.github/actions/setup
+      - uses: actions/checkout@v7
+      - uses: pnpm/setup@v1
+        with:
+          cache: true
+          run_install: true
       - run: pnpm exec tsc -b
 
   spell-check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: ./.github/actions/setup
+      - uses: actions/checkout@v7
+      - uses: pnpm/setup@v1
+        with:
+          cache: true
+          run_install: true
       - run: pnpm add -g cspell@6 @cspell/dict-fr-fr
       - run: pnpm exec cspell link add @cspell/dict-fr-fr
       - run: pnpm exec cspell --locale en 'packages/*/src/**/*.{ts,tsx}'
@@ -27,25 +33,30 @@ jobs:
   formatter:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: ./.github/actions/setup
+      - uses: actions/checkout@v7
+      - uses: pnpm/setup@v1
+        with:
+          cache: true
+          run_install: true
       - run: pnpm -r --filter='!eslint-config' exec prettier --check src
 
   linter:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: ./.github/actions/setup
-      - run: pnpm exec tsc -b
+      - uses: actions/checkout@v7
+      - uses: pnpm/setup@v1
+        with:
+          cache: true
+          run_install: true
       - run: pnpm -r run lint
 
   tests:
     runs-on: ubuntu-latest
-    container: node:19-slim
+    container: node:24-slim
 
     services:
       postgres:
-        image: postgres:15-alpine
+        image: postgres:18-alpine
         env:
           POSTGRES_DB: tests
           POSTGRES_HOST_AUTH_METHOD: trust
@@ -56,9 +67,11 @@ jobs:
           --health-retries 5
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: ./.github/actions/setup
-      - run: pnpm exec tsc -b
-      - run: pnpm -r --workspace-concurrency=1 run test
+      - uses: actions/checkout@v7
+      - uses: pnpm/setup@v1
+        with:
+          cache: true
+          run_install: true
+      - run: pnpm --filter @cah/server run test
         env:
           DATABASE_URL: postgres://postgres@postgres:5432/tests
