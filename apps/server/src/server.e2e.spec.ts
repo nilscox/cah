@@ -40,7 +40,7 @@ class Test {
   private container = createContainer();
 
   config = new StubConfigAdapter({
-    server: { host: 'localhost', port: 0 },
+    server: { host: '0.0.0.0', port: 0 },
     database: { url: process.env.DATABASE_URL ?? 'postgres://postgres@localhost:5432/cah', debug: true },
   });
 

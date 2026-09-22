@@ -1,18 +1,13 @@
-import path from 'node:path';
-import tsconfigPaths from 'vite-tsconfig-paths';
 import { defineConfig } from 'vitest/config';
 
-const packages = path.resolve(__dirname, '..', '..', 'packages');
-
 export default defineConfig({
-  plugins: [tsconfigPaths()],
+  resolve: {
+    tsconfigPaths: true,
+  },
   test: {
     globals: true,
-    threads: false,
+    maxWorkers: 1,
     watch: false,
     reporters: ['verbose'],
-    deps: {
-      registerNodeLoader: true,
-    },
   },
 });
