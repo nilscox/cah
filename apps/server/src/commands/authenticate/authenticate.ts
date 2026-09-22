@@ -1,9 +1,9 @@
 import { injectableClass } from 'ditox';
 
-import { EventPublisherPort, GeneratorPort } from 'src/adapters';
-import { Player } from 'src/entities';
-import { CommandHandler, DomainEvent } from 'src/interfaces';
-import { PlayerRepository } from 'src/persistence';
+import { type EventPublisherPort, type GeneratorPort } from 'src/adapters';
+import { type Player } from 'src/entities';
+import { type CommandHandler, DomainEvent } from 'src/interfaces';
+import { type PlayerRepository } from 'src/persistence';
 import { TOKENS } from 'src/tokens';
 
 export class PlayerAuthenticatedEvent extends DomainEvent {

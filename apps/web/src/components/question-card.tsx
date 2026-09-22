@@ -1,4 +1,4 @@
-import { QuestionChunk } from '@cah/store';
+import { type QuestionChunk } from '@cah/store';
 import clsx from 'clsx';
 import { For } from 'solid-js';
 

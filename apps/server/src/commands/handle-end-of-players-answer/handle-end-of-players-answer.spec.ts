@@ -1,10 +1,10 @@
 import { array } from '@cah/utils';
 
 import { createAnswer, createPlayer } from 'src/entities';
-import { HandlerCommand } from 'src/interfaces';
+import { type HandlerCommand } from 'src/interfaces';
 import { UnitTest } from 'src/utils/unit-test';
 
-import { AllAnswersSubmittedEvent, HandleEndOfPlayersAnswerHandler } from './handle-end-of-players-answer';
+import { AllAnswersSubmittedEvent, HandleEndOfPlayersAnswerHandler } from './handle-end-of-players-answer.ts';
 
 class Test extends UnitTest {
   handler = new HandleEndOfPlayersAnswerHandler(

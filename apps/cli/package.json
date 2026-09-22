@@ -2,17 +2,15 @@
   "name": "@cah/cli",
   "version": "2.0.0",
   "type": "module",
-  "bin": {
-    "cah": "./cah.sh"
-  },
   "scripts": {
-    "start": "node src/index.ts",
+    "start": "tsx src/index.ts",
     "build": "tsc -b"
   },
   "dependencies": {
     "@cah/client": "workspace:*",
     "@cah/shared": "workspace:*",
-    "commander": "^11.0.0"
+    "commander": "^11.0.0",
+    "tsx": "^4.23.15"
   },
   "devDependencies": {
     "@types/node": "^20.3.1"

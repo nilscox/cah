@@ -1,4 +1,4 @@
-import { GeneratorPort } from './generator.port';
+import { type GeneratorPort } from './generator.port.ts';
 
 export class StubGeneratorAdapter implements GeneratorPort {
   nextId = '';

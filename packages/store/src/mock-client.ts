@@ -1,5 +1,5 @@
-import { ICahClient } from '@cah/client';
-import { Mock } from 'vitest';
+import { type ICahClient } from '@cah/client';
+import { type Mock } from 'vitest';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type MockFn<F extends (...args: any[]) => any> = Mock<Parameters<F>, ReturnType<F>>;

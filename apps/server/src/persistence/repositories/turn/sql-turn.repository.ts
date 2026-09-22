@@ -1,13 +1,19 @@
 import * as shared from '@cah/shared';
 import { sql } from 'drizzle-orm';
 
-import { Turn } from 'src/entities';
+import { type Turn } from 'src/entities';
 
-import { Database } from '../../database';
-import { SqlAnswer, SqlChoice, SqlQuestion, SqlTurn, turns } from '../../drizzle-schema';
-import { EntityNotFoundError } from '../../entity-not-found-error';
+import { Database } from '../../database.ts';
+import {
+  type SqlAnswer,
+  type SqlChoice,
+  type SqlQuestion,
+  type SqlTurn,
+  turns,
+} from '../../drizzle-schema.ts';
+import { EntityNotFoundError } from '../../entity-not-found-error.ts';
 
-import { TurnRepository } from './turn.repository';
+import { type TurnRepository } from './turn.repository.ts';
 
 type TurnQueryResult = SqlTurn & {
   question: SqlQuestion;

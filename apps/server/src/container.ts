@@ -3,27 +3,27 @@ import { bindModule, declareModule, createContainer as ditoxCreateContainer, inj
 
 import { ConsoleLoggerAdapter, RealEventPublisherAdapter } from 'src/adapters';
 
-import { EnvConfigAdapter } from './adapters/config/env-config.adapter';
-import { FilesystemExternalDataAdapter } from './adapters/external-data/filesystem-external-data.adapter';
-import { RandomGeneratorAdapter } from './adapters/generator/random-generator.adapter';
-import { MathRandomAdapter } from './adapters/random/math-random.adapter';
-import { AuthenticateHandler } from './commands/authenticate/authenticate';
-import { CreateAnswerHandler } from './commands/create-answer/create-answer';
-import { CreateGameHandler } from './commands/create-game/create-game';
-import { DealCardsHandler } from './commands/deal-cards/deal-cards';
-import { EndGameHandler } from './commands/end-game/end-game';
-import { EndTurnHandler } from './commands/end-turn/end-turn';
-import { HandleEndOfPlayersAnswerHandler } from './commands/handle-end-of-players-answer/handle-end-of-players-answer';
-import { JoinGameHandler } from './commands/join-game/join-game';
-import { LeaveGameHandler } from './commands/leave-game/leave-game';
-import { SelectWinningAnswerHandler } from './commands/select-winning-answer/select-winning-answer';
-import { StartGameHandler } from './commands/start-game/start-game';
-import { StartTurnHandler } from './commands/start-turn/start-turn';
-import { Notifier } from './notifier/notifier';
-import { sqlPersistenceModule } from './persistence';
-import { Database } from './persistence/database';
-import { Server } from './server/server';
-import { TOKENS } from './tokens';
+import { EnvConfigAdapter } from './adapters/config/env-config.adapter.ts';
+import { FilesystemExternalDataAdapter } from './adapters/external-data/filesystem-external-data.adapter.ts';
+import { RandomGeneratorAdapter } from './adapters/generator/random-generator.adapter.ts';
+import { MathRandomAdapter } from './adapters/random/math-random.adapter.ts';
+import { AuthenticateHandler } from './commands/authenticate/authenticate.ts';
+import { CreateAnswerHandler } from './commands/create-answer/create-answer.ts';
+import { CreateGameHandler } from './commands/create-game/create-game.ts';
+import { DealCardsHandler } from './commands/deal-cards/deal-cards.ts';
+import { EndGameHandler } from './commands/end-game/end-game.ts';
+import { EndTurnHandler } from './commands/end-turn/end-turn.ts';
+import { HandleEndOfPlayersAnswerHandler } from './commands/handle-end-of-players-answer/handle-end-of-players-answer.ts';
+import { JoinGameHandler } from './commands/join-game/join-game.ts';
+import { LeaveGameHandler } from './commands/leave-game/leave-game.ts';
+import { SelectWinningAnswerHandler } from './commands/select-winning-answer/select-winning-answer.ts';
+import { StartGameHandler } from './commands/start-game/start-game.ts';
+import { StartTurnHandler } from './commands/start-turn/start-turn.ts';
+import { Notifier } from './notifier/notifier.ts';
+import { Database } from './persistence/database.ts';
+import { sqlPersistenceModule } from './persistence/index.ts';
+import { Server } from './server/server.ts';
+import { TOKENS } from './tokens.ts';
 
 export const appModule = declareModule({
   factory: (container) => ({

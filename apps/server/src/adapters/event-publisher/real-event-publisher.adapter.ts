@@ -1,12 +1,12 @@
-import { ClassType, defined } from '@cah/utils';
+import { type ClassType, defined } from '@cah/utils';
 import { injectableClass } from 'ditox';
 
 import { DomainEvent } from 'src/interfaces';
 import { TOKENS } from 'src/tokens';
 
-import { LoggerPort } from '../logger/logger.port';
+import { type LoggerPort } from '../logger/logger.port.ts';
 
-import { EventPublisherPort } from './event-publisher.port';
+import { type EventPublisherPort } from './event-publisher.port.ts';
 
 type EventHandler<Event extends DomainEvent> = (event: Event) => Promise<void>;
 

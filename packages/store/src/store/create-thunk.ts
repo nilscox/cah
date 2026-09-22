@@ -1,5 +1,5 @@
-import { Dependencies } from '../dependencies';
-import { AppDispatch, AppGetState, AppThunk } from '../types';
+import { type Dependencies } from '../dependencies.ts';
+import { type AppDispatch, type AppGetState, type AppThunk } from '../types.ts';
 
 type ThunkApi = {
   getState: AppGetState;

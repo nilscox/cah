@@ -2,12 +2,12 @@ import { initialize } from '@cah/store';
 import { Route, Routes } from '@solidjs/router';
 import { Show, createEffect, createSignal, lazy, onMount } from 'solid-js';
 
-import { View } from './layout/view';
-import { store } from './store';
+import { View } from './layout/view.tsx';
+import { store } from './store.ts';
 
-const AuthenticationView = lazy(() => import('./views/authentication-view'));
-const LobbyView = lazy(() => import('./views/lobby-view'));
-const GameView = lazy(() => import('./views/game-view'));
+const AuthenticationView = lazy(() => import('./views/authentication-view.tsx'));
+const LobbyView = lazy(() => import('./views/lobby-view.tsx'));
+const GameView = lazy(() => import('./views/game-view.tsx'));
 
 export function App() {
   const [initialized, setInitialized] = createSignal(false);

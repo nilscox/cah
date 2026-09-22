@@ -1,10 +1,10 @@
-import { GameEvent } from '@cah/shared';
+import { type GameEvent } from '@cah/shared';
 
-import { selectHasPlayer, selectPlayer } from '../../slices/player/player.selectors';
-import { createThunk } from '../../store/create-thunk';
-import { fetchGame } from '../fetch-game/fetch-game';
-import { fetchPlayer } from '../fetch-player/fetch-player';
-import { fetchTurns } from '../fetch-turns/fetch-turns';
+import { selectHasPlayer, selectPlayer } from '../../slices/player/player.selectors.ts';
+import { createThunk } from '../../store/create-thunk.ts';
+import { fetchGame } from '../fetch-game/fetch-game.ts';
+import { fetchPlayer } from '../fetch-player/fetch-player.ts';
+import { fetchTurns } from '../fetch-turns/fetch-turns.ts';
 
 const events: Array<GameEvent['type']> = [
   'player-connected',

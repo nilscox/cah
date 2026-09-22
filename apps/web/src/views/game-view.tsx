@@ -3,11 +3,11 @@ import { selectGame, selectGameUnsafe } from '@cah/store';
 import { useNavigate } from '@solidjs/router';
 import { Match, Show, Switch, createEffect } from 'solid-js';
 
-import { selector } from '../utils/selector';
+import { selector } from '../utils/selector.ts';
 
-import { GameFinishedView } from './game-finished-view';
-import { GameIdleView } from './game-idle-view';
-import { GameStartedView } from './game-started-view';
+import { GameFinishedView } from './game-finished-view.tsx';
+import { GameIdleView } from './game-idle-view.tsx';
+import { GameStartedView } from './game-started-view.tsx';
 
 export default function GameView() {
   const navigate = useNavigate();

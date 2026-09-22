@@ -4,7 +4,7 @@
   "type": "module",
   "main": "src/index.ts",
   "scripts": {
-    "start": "node --env-file .env --loader @bleed-believer/path-alias src/index.ts",
+    "start": "tsx --env-file .env src/index.ts",
     "dev": "nodemon -w src -e ts -x 'pnpm start'",
     "lint": "eslint src",
     "test": "NODE_ENV=test vitest"
@@ -26,7 +26,6 @@
     "vitest": "^0.33.0"
   },
   "dependencies": {
-    "@bleed-believer/path-alias": "^0.15.2",
     "@cah/client": "workspace:*",
     "@cah/shared": "workspace:*",
     "@cah/utils": "workspace:*",
@@ -39,6 +38,7 @@
     "morgan": "^1.10.0",
     "postgres": "^3.3.5",
     "socket.io": "^4.7.1",
+    "tsx": "^4.23.15",
     "yup": "^1.2.0"
   }
 }

@@ -1,11 +1,11 @@
 import { FetchError } from '@cah/client';
-import { createGame, createCurrentPlayer } from '@cah/shared';
+import { createCurrentPlayer, createGame } from '@cah/shared';
 
-import { selectHasGame } from '../../slices/game/game.selectors';
-import { selectHasPlayer } from '../../slices/player/player.selectors';
-import { TestStore } from '../../test-store';
+import { selectHasGame } from '../../slices/game/game.selectors.ts';
+import { selectHasPlayer } from '../../slices/player/player.selectors.ts';
+import { TestStore } from '../../test-store.ts';
 
-import { initialize } from './initialize';
+import { initialize } from './initialize.ts';
 
 describe('initialize', () => {
   let store: TestStore;

@@ -2,9 +2,9 @@ import { injectableClass } from 'ditox';
 
 import { TOKENS } from 'src/tokens';
 
-import { RandomPort } from '../random/random.port';
+import { type RandomPort } from '../random/random.port.ts';
 
-import { GeneratorPort } from './generator.port';
+import { type GeneratorPort } from './generator.port.ts';
 
 export class RandomGeneratorAdapter implements GeneratorPort {
   static inject = injectableClass(this, TOKENS.random);

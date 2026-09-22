@@ -1,9 +1,9 @@
-import { Choice } from '@cah/shared';
+import { type Choice } from '@cah/shared';
 import { selectCanSelectChoice } from '@cah/store';
 import clsx from 'clsx';
 import { For } from 'solid-js';
 
-import { selector } from '../utils/selector';
+import { selector } from '../utils/selector.ts';
 
 type ChoicesListProps = {
   choices: Array<Choice>;

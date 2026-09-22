@@ -3,13 +3,13 @@ import { IncomingMessage, Server } from 'node:http';
 import { promisify } from 'node:util';
 
 import { MapSet } from '@cah/utils';
-import { RequestHandler } from 'express';
+import { type RequestHandler } from 'express';
 import session from 'express-session';
 import { Socket, Server as SocketIOServer } from 'socket.io';
 
-import { EventPublisherPort, LoggerPort, RtcPort } from 'src/adapters';
+import { type EventPublisherPort, type LoggerPort, type RtcPort } from 'src/adapters';
 import { DomainEvent } from 'src/interfaces';
-import { PlayerRepository } from 'src/persistence';
+import { type PlayerRepository } from 'src/persistence';
 
 export class PlayerConnectedEvent extends DomainEvent {
   constructor(playerId: string) {

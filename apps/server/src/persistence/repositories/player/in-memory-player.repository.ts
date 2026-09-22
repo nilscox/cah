@@ -1,12 +1,12 @@
 import * as shared from '@cah/shared';
 import { hasProperty } from '@cah/utils';
 
-import { Player } from 'src/entities';
+import { type Player } from 'src/entities';
 
-import { EntityNotFoundError } from '../../entity-not-found-error';
-import { InMemoryRepository } from '../../in-memory-repository';
+import { EntityNotFoundError } from '../../entity-not-found-error.ts';
+import { InMemoryRepository } from '../../in-memory-repository.ts';
 
-import { PlayerRepository } from './player.repository';
+import { type PlayerRepository } from './player.repository.ts';
 
 export class InMemoryPlayerRepository extends InMemoryRepository<Player> implements PlayerRepository {
   async query(playerId: string): Promise<shared.CurrentPlayer> {

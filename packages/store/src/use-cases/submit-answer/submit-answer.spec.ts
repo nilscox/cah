@@ -1,10 +1,10 @@
-import { Choice, createChoice, createStartedGame } from '@cah/shared';
+import { type Choice, createChoice, createStartedGame } from '@cah/shared';
 
-import { choicesActions } from '../../slices/choices/choices.slice';
-import { playerActions } from '../../slices/player/player.slice';
-import { TestStore } from '../../test-store';
+import { choicesActions } from '../../slices/choices/choices.slice.ts';
+import { playerActions } from '../../slices/player/player.slice.ts';
+import { TestStore } from '../../test-store.ts';
 
-import { submitAnswer } from './submit-answer';
+import { submitAnswer } from './submit-answer.ts';
 
 describe('submitAnswer', () => {
   let store: TestStore;

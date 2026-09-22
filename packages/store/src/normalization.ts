@@ -1,18 +1,18 @@
 import {
-  AnonymousAnswer,
-  Answer,
-  Choice,
-  Game,
-  CurrentPlayer,
-  Question,
-  StartedGame,
-  GamePlayer,
-  Turn,
+  type AnonymousAnswer,
+  type Answer,
+  type Choice,
+  type CurrentPlayer,
+  type Game,
+  type GamePlayer,
+  type Question,
+  type StartedGame,
+  type Turn,
 } from '@cah/shared';
-import { NormalizedSchema, Schema, denormalize, normalize as normalizr, schema } from 'normalizr';
+import { type NormalizedSchema, type Schema, denormalize, normalize as normalizr, schema } from 'normalizr';
 
-import { defined } from './defined';
-import { AppState } from './types';
+import { defined } from './defined.ts';
+import { type AppState } from './types.ts';
 
 type Normalized<T, Relations extends keyof T = never> = Omit<T, Relations> & {
   [K in Relations]: T[K] extends unknown[] | undefined ? string[] : string;

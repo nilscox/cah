@@ -1,7 +1,7 @@
 import { assert } from '@cah/utils';
 import { injectableClass } from 'ditox';
 
-import { ConfigPort } from './config.port';
+import { type ConfigPort } from './config.port.ts';
 
 export class EnvConfigAdapter implements ConfigPort {
   static inject = injectableClass(this);

@@ -4,13 +4,13 @@ import * as shared from '@cah/shared';
 import { toEnum } from '@cah/utils';
 import { eq } from 'drizzle-orm';
 
-import { Game, GameState, StartedGame, isStarted } from 'src/entities';
+import { type Game, GameState, type StartedGame, isStarted } from 'src/entities';
 
-import { Database } from '../../database';
-import { SqlGame, games } from '../../drizzle-schema';
-import { EntityNotFoundError } from '../../entity-not-found-error';
+import { Database } from '../../database.ts';
+import { type SqlGame, games } from '../../drizzle-schema.ts';
+import { EntityNotFoundError } from '../../entity-not-found-error.ts';
 
-import { GameRepository } from './game.repository';
+import { type GameRepository } from './game.repository.ts';
 
 export class SqlGameRepository implements GameRepository {
   constructor(private readonly db: Database) {}

@@ -1,12 +1,12 @@
 import { eq } from 'drizzle-orm';
 
-import { Answer } from 'src/entities';
+import { type Answer } from 'src/entities';
 
-import { Database } from '../../database';
-import { SqlAnswer, answers } from '../../drizzle-schema';
-import { EntityNotFoundError } from '../../entity-not-found-error';
+import { Database } from '../../database.ts';
+import { type SqlAnswer, answers } from '../../drizzle-schema.ts';
+import { EntityNotFoundError } from '../../entity-not-found-error.ts';
 
-import { AnswerRepository } from './answer.repository';
+import { type AnswerRepository } from './answer.repository.ts';
 
 export class SqlAnswerRepository implements AnswerRepository {
   private table = answers;

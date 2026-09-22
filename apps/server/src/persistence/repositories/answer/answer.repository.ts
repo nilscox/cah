@@ -1,4 +1,4 @@
-import { Answer } from 'src/entities';
+import { type Answer } from 'src/entities';
 
 export interface AnswerRepository {
   findById(answerId: string): Promise<Answer>;

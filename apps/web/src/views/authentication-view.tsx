@@ -5,10 +5,10 @@ import { Icon } from 'solid-heroicons';
 import { check } from 'solid-heroicons/solid';
 import { createEffect, createSignal } from 'solid-js';
 
-import { View } from '../layout/view';
-import { store } from '../store';
-import { selector } from '../utils/selector';
-import { submitHandler } from '../utils/submit-handler';
+import { View } from '../layout/view.tsx';
+import { store } from '../store.ts';
+import { selector } from '../utils/selector.ts';
+import { submitHandler } from '../utils/submit-handler.ts';
 
 export default function AuthenticationView() {
   const navigate = useNavigate();

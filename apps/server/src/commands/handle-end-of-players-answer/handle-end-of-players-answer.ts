@@ -1,8 +1,8 @@
 import { injectableClass } from 'ditox';
 
-import { EventPublisherPort, RandomPort } from 'src/adapters';
-import { CommandHandler, DomainEvent } from 'src/interfaces';
-import { AnswerRepository, PlayerRepository } from 'src/persistence';
+import { type EventPublisherPort, type RandomPort } from 'src/adapters';
+import { type CommandHandler, DomainEvent } from 'src/interfaces';
+import { type AnswerRepository, type PlayerRepository } from 'src/persistence';
 import { TOKENS } from 'src/tokens';
 
 export class AllAnswersSubmittedEvent extends DomainEvent {

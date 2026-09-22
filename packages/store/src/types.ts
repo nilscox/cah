@@ -1,7 +1,7 @@
-import { AnyAction, Selector, ThunkAction } from '@reduxjs/toolkit';
+import { type AnyAction, type Selector, type ThunkAction } from '@reduxjs/toolkit';
 
-import { Dependencies } from './dependencies';
-import { createStore } from './store/create-store';
+import { type Dependencies } from './dependencies.ts';
+import { createStore } from './store/create-store.ts';
 
 export type AppStore = ReturnType<typeof createStore>;
 export type AppGetState = AppStore['getState'];

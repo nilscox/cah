@@ -1,10 +1,10 @@
 import { array } from '@cah/utils';
 
 import { GameState, createChoice, createGame, createPlayer } from 'src/entities';
-import { HandlerCommand } from 'src/interfaces';
+import { type HandlerCommand } from 'src/interfaces';
 import { UnitTest } from 'src/utils/unit-test';
 
-import { CardsDealtEvent, DealCardsHandler } from './deal-cards';
+import { CardsDealtEvent, DealCardsHandler } from './deal-cards.ts';
 
 class Test extends UnitTest {
   handler = new DealCardsHandler(

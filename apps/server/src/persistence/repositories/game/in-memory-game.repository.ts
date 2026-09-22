@@ -1,10 +1,10 @@
 import * as shared from '@cah/shared';
 
-import { Game } from 'src/entities';
+import { type Game } from 'src/entities';
 
-import { InMemoryRepository } from '../../in-memory-repository';
+import { InMemoryRepository } from '../../in-memory-repository.ts';
 
-import { GameRepository } from './game.repository';
+import { type GameRepository } from './game.repository.ts';
 
 export class InMemoryGameRepository extends InMemoryRepository<Game> implements GameRepository {
   query(): Promise<shared.Game> {

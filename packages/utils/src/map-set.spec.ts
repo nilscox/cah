@@ -1,4 +1,4 @@
-import { MapSet } from './map-set';
+import { MapSet } from './map-set.ts';
 
 describe('MapSet', () => {
   it('creates an empty map of sets', () => {

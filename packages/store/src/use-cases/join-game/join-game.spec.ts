@@ -1,9 +1,9 @@
-import { Game, createGame, createCurrentPlayer, createGamePlayer } from '@cah/shared';
+import { type Game, createGame, createGamePlayer } from '@cah/shared';
 
-import { selectAllPlayers } from '../../slices/players/players.selectors';
-import { TestStore } from '../../test-store';
+import { selectAllPlayers } from '../../slices/players/players.selectors.ts';
+import { TestStore } from '../../test-store.ts';
 
-import { joinGame } from './join-game';
+import { joinGame } from './join-game.ts';
 
 describe('joinGame', () => {
   let store: TestStore;

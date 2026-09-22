@@ -1,6 +1,6 @@
-import { Game as GameDto } from '@cah/shared';
+import { type Game as GameDto } from '@cah/shared';
 
-import { Game } from 'src/entities';
+import { type Game } from 'src/entities';
 
 export interface GameRepository {
   query(id: string): Promise<GameDto>;

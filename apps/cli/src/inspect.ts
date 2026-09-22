@@ -1,8 +1,8 @@
 import { inspect } from 'node:util';
 
-import { Game, isStarted, Question, Choice, CurrentPlayer, Turn } from '@cah/shared';
+import { type Choice, type CurrentPlayer, type Game, isStarted, type Question, type Turn } from '@cah/shared';
 
-import { chalk } from './chalk';
+import { chalk } from './chalk.ts';
 
 const dimId = (id: string) => {
   return chalk.light(`(${id})`);

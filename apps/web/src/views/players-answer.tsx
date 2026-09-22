@@ -7,9 +7,9 @@ import {
   toggleChoice,
 } from '@cah/store';
 
-import { ChoicesList } from '../components/choices-list';
-import { QuestionCard } from '../components/question-card';
-import { selector } from '../utils/selector';
+import { ChoicesList } from '../components/choices-list.tsx';
+import { QuestionCard } from '../components/question-card.tsx';
+import { selector } from '../utils/selector.ts';
 
 export function PlayersAnswer() {
   const cards = selector(selectPlayerCards);

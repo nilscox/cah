@@ -1,9 +1,9 @@
-import { TurnEndedEvent } from '@cah/shared';
+import { type TurnEndedEvent } from '@cah/shared';
 import { getId, getIds } from '@cah/utils';
 import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 
-import { NormalizedTurn } from '../../normalization';
-import { turnsFetched } from '../../use-cases/fetch-turns/fetch-turns';
+import { type NormalizedTurn } from '../../normalization.ts';
+import { turnsFetched } from '../../use-cases/fetch-turns/fetch-turns.ts';
 
 export const turnsAdapter = createEntityAdapter<NormalizedTurn>();
 

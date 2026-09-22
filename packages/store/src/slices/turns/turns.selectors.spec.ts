@@ -1,9 +1,9 @@
 import { createAnswer, createGamePlayer, createStartedGame, createTurn } from '@cah/shared';
 
-import { TestStore } from '../../test-store';
-import { turnsFetched } from '../../use-cases/fetch-turns/fetch-turns';
+import { TestStore } from '../../test-store.ts';
+import { turnsFetched } from '../../use-cases/fetch-turns/fetch-turns.ts';
 
-import { selectWinners } from './turns.selectors';
+import { selectWinners } from './turns.selectors.ts';
 
 describe('turns selectors', () => {
   let store: TestStore;

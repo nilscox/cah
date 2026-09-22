@@ -2,16 +2,16 @@ import assert from 'node:assert';
 
 import { injectableClass } from 'ditox';
 
-import { EventPublisherPort, GeneratorPort } from 'src/adapters';
+import { type EventPublisherPort, type GeneratorPort } from 'src/adapters';
 import { isStarted } from 'src/entities';
-import { Turn } from 'src/entities/turn';
-import { CommandHandler, DomainEvent } from 'src/interfaces';
+import { type Turn } from 'src/entities/turn';
+import { type CommandHandler, DomainEvent } from 'src/interfaces';
 import {
-  AnswerRepository,
-  GameRepository,
-  PlayerRepository,
-  QuestionRepository,
-  TurnRepository,
+  type AnswerRepository,
+  type GameRepository,
+  type PlayerRepository,
+  type QuestionRepository,
+  type TurnRepository,
 } from 'src/persistence';
 import { TOKENS } from 'src/tokens';
 

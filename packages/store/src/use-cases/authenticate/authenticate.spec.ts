@@ -1,9 +1,9 @@
-import { createGame, createCurrentPlayer } from '@cah/shared';
+import { createCurrentPlayer, createGame } from '@cah/shared';
 
-import { PlayerSlice } from '../../slices/player/player.slice';
-import { TestStore } from '../../test-store';
+import { type PlayerSlice } from '../../slices/player/player.slice.ts';
+import { TestStore } from '../../test-store.ts';
 
-import { authenticate } from './authenticate';
+import { authenticate } from './authenticate.ts';
 
 describe('authenticate', () => {
   let store: TestStore;

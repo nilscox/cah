@@ -1,11 +1,11 @@
 import { defined } from '@cah/utils';
 import { combine } from '@nilscox/selektor';
 
-import { AppState } from '../../types';
-import { selectAnswers } from '../answers/answers.selectors';
-import { selectAllPlayers, selectPlayers } from '../players/players.selectors';
+import { type AppState } from '../../types.ts';
+import { selectAnswers } from '../answers/answers.selectors.ts';
+import { selectAllPlayers, selectPlayers } from '../players/players.selectors.ts';
 
-import { turnsAdapter } from './turns.slice';
+import { turnsAdapter } from './turns.slice.ts';
 
 export const { selectAll: selectTurns } = turnsAdapter.getSelectors((state: AppState) => state.turns);
 

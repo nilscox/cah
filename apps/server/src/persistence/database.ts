@@ -7,10 +7,10 @@ import { PostgresJsDatabase, drizzle } from 'drizzle-orm/postgres-js';
 import { migrate } from 'drizzle-orm/postgres-js/migrator';
 import postgres from 'postgres';
 
-import { ConfigPort } from 'src/adapters';
+import { type ConfigPort } from 'src/adapters';
 import { TOKENS } from 'src/tokens';
 
-import { relations } from './relations';
+import { relations } from './relations.ts';
 
 type DrizzleDb = PostgresJsDatabase<typeof relations>;
 

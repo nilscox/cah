@@ -1,6 +1,6 @@
 import { array } from '@cah/utils';
 
-import { ChoiceData, ExternalDataPort, QuestionData } from './external-data.port';
+import { type ChoiceData, type ExternalDataPort, type QuestionData } from './external-data.port.ts';
 
 export class StubExternalDataAdapter implements ExternalDataPort {
   questions?: QuestionData[];

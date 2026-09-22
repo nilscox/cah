@@ -1,8 +1,8 @@
-import { Choice } from '@cah/shared';
+import { type Choice } from '@cah/shared';
 
-import { selectedSelectedChoices } from '../../slices/player/player.selectors';
-import { playerActions } from '../../slices/player/player.slice';
-import { AppThunk } from '../../types';
+import { selectedSelectedChoices } from '../../slices/player/player.selectors.ts';
+import { playerActions } from '../../slices/player/player.slice.ts';
+import { type AppThunk } from '../../types.ts';
 
 export const toggleChoice = (choice: Choice): AppThunk<void> => {
   return (dispatch, getState) => {

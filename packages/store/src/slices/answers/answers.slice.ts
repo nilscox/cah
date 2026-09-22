@@ -1,10 +1,10 @@
-import { AllPlayerAnsweredEvent, WinningAnswerSelectedEvent } from '@cah/shared';
-import { PayloadAction, createEntityAdapter, createSlice } from '@reduxjs/toolkit';
+import { type AllPlayerAnsweredEvent, type WinningAnswerSelectedEvent } from '@cah/shared';
+import { type PayloadAction, createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 
-import { NormalizedAnswer } from '../../normalization';
-import { gameFetched } from '../../use-cases/fetch-game/fetch-game';
-import { playerFetched } from '../../use-cases/fetch-player/fetch-player';
-import { turnsFetched } from '../../use-cases/fetch-turns/fetch-turns';
+import { type NormalizedAnswer } from '../../normalization.ts';
+import { gameFetched } from '../../use-cases/fetch-game/fetch-game.ts';
+import { playerFetched } from '../../use-cases/fetch-player/fetch-player.ts';
+import { turnsFetched } from '../../use-cases/fetch-turns/fetch-turns.ts';
 
 type AnswerSlice = Omit<NormalizedAnswer, 'playerId'> & {
   playerId?: string;

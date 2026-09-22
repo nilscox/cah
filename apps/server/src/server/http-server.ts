@@ -6,13 +6,13 @@ import * as shared from '@cah/shared';
 import { defined } from '@cah/utils';
 import bodyParser from 'body-parser';
 import connectPgSimple from 'connect-pg-simple';
-import { Container } from 'ditox';
-import express, { ErrorRequestHandler, RequestHandler, Router } from 'express';
+import { type Container } from 'ditox';
+import express, { type ErrorRequestHandler, type RequestHandler, Router } from 'express';
 import session, { MemoryStore } from 'express-session';
 import morgan from 'morgan';
 import * as yup from 'yup';
 
-import { ConfigPort, LoggerPort } from 'src/adapters';
+import { type ConfigPort, type LoggerPort } from 'src/adapters';
 import { EntityNotFoundError } from 'src/persistence';
 import { TOKENS } from 'src/tokens';
 
@@ -123,7 +123,7 @@ export class HttpServer {
     });
   }
 
-  get sessionMiddleware() {
+  get sessionMiddleware(): ReturnType<typeof session> {
     return session({
       secret: 'secret',
       resave: false,

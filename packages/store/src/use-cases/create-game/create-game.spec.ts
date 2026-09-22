@@ -1,9 +1,9 @@
 import { GameState } from '@cah/shared';
 
-import { GameSlice } from '../../slices/game/game.slice';
-import { TestStore } from '../../test-store';
+import { type GameSlice } from '../../slices/game/game.slice.ts';
+import { TestStore } from '../../test-store.ts';
 
-import { createGame } from './create-game';
+import { createGame } from './create-game.ts';
 
 describe('createGame', () => {
   let store: TestStore;

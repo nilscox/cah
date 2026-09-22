@@ -1,6 +1,6 @@
-import { Container, token } from 'ditox';
+import { type Container, token } from 'ditox';
 
-import {
+import type {
   ConfigPort,
   EventPublisherPort,
   ExternalDataPort,
@@ -8,30 +8,30 @@ import {
   LoggerPort,
   RandomPort,
   RtcPort,
-} from './adapters';
-import { AuthenticateHandler } from './commands/authenticate/authenticate';
-import { CreateAnswerHandler } from './commands/create-answer/create-answer';
-import { CreateGameHandler } from './commands/create-game/create-game';
-import { DealCardsHandler } from './commands/deal-cards/deal-cards';
-import { EndGameHandler } from './commands/end-game/end-game';
-import { EndTurnHandler } from './commands/end-turn/end-turn';
-import { HandleEndOfPlayersAnswerHandler } from './commands/handle-end-of-players-answer/handle-end-of-players-answer';
-import { JoinGameHandler } from './commands/join-game/join-game';
-import { LeaveGameHandler } from './commands/leave-game/leave-game';
-import { SelectWinningAnswerHandler } from './commands/select-winning-answer/select-winning-answer';
-import { StartGameHandler } from './commands/start-game/start-game';
-import { StartTurnHandler } from './commands/start-turn/start-turn';
-import { Notifier } from './notifier/notifier';
-import {
+} from './adapters/index.ts';
+import type { AuthenticateHandler } from './commands/authenticate/authenticate.ts';
+import type { CreateAnswerHandler } from './commands/create-answer/create-answer.ts';
+import type { CreateGameHandler } from './commands/create-game/create-game.ts';
+import type { DealCardsHandler } from './commands/deal-cards/deal-cards.ts';
+import type { EndGameHandler } from './commands/end-game/end-game.ts';
+import type { EndTurnHandler } from './commands/end-turn/end-turn.ts';
+import type { HandleEndOfPlayersAnswerHandler } from './commands/handle-end-of-players-answer/handle-end-of-players-answer.ts';
+import type { JoinGameHandler } from './commands/join-game/join-game.ts';
+import type { LeaveGameHandler } from './commands/leave-game/leave-game.ts';
+import type { SelectWinningAnswerHandler } from './commands/select-winning-answer/select-winning-answer.ts';
+import type { StartGameHandler } from './commands/start-game/start-game.ts';
+import type { StartTurnHandler } from './commands/start-turn/start-turn.ts';
+import type { Notifier } from './notifier/notifier.ts';
+import type { Database } from './persistence/database.ts';
+import type {
   AnswerRepository,
   ChoiceRepository,
   GameRepository,
   PlayerRepository,
   QuestionRepository,
   TurnRepository,
-} from './persistence';
-import { Database } from './persistence/database';
-import { Server } from './server/server';
+} from './persistence/index.ts';
+import type { Server } from './server/server.ts';
 
 export const TOKENS = {
   container: token<Container>('container'),

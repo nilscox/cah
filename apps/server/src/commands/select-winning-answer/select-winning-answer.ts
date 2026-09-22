@@ -3,10 +3,10 @@ import assert from 'node:assert';
 import { hasId } from '@cah/utils';
 import { injectableClass } from 'ditox';
 
-import { EventPublisherPort } from 'src/adapters';
+import { type EventPublisherPort } from 'src/adapters';
 import { isStarted } from 'src/entities';
-import { CommandHandler, DomainEvent } from 'src/interfaces';
-import { AnswerRepository, GameRepository, PlayerRepository } from 'src/persistence';
+import { type CommandHandler, DomainEvent } from 'src/interfaces';
+import { type AnswerRepository, type GameRepository, type PlayerRepository } from 'src/persistence';
 import { TOKENS } from 'src/tokens';
 
 export class AnswerSelectedEvent extends DomainEvent {

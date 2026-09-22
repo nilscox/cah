@@ -1,6 +1,6 @@
 import { injectableClass } from 'ditox';
 
-import { RandomPort } from './random.port';
+import { type RandomPort } from './random.port.ts';
 
 export class MathRandomAdapter implements RandomPort {
   static inject = injectableClass(this);

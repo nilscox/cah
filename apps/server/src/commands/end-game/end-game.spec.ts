@@ -1,8 +1,8 @@
 import { GameState, createStartedGame } from 'src/entities';
-import { HandlerCommand } from 'src/interfaces';
+import { type HandlerCommand } from 'src/interfaces';
 import { UnitTest } from 'src/utils/unit-test';
 
-import { EndGameHandler, GameEndedEvent } from './end-game';
+import { EndGameHandler, GameEndedEvent } from './end-game.ts';
 
 class Test extends UnitTest {
   handler = new EndGameHandler(this.publisher, this.gameRepository, this.playerRepository);

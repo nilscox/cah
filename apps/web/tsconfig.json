@@ -10,7 +10,7 @@
     "outDir": "dist",
     "target": "es2022",
     "lib": ["ES2023", "DOM"],
-    "types": ["vitest/globals"],
+    "types": ["vite/client", "vitest/globals"],
     "jsx": "preserve",
     "jsxImportSource": "solid-js"
   }

@@ -1,4 +1,4 @@
-import { Action } from 'redux';
+import { type Action } from 'redux';
 
 export interface ActionCreator<Type, Args extends unknown[], Payload> {
   (...args: Args): Action<Type> & Payload;

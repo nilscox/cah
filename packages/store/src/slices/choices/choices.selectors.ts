@@ -1,6 +1,6 @@
-import { AppState } from '../../types';
+import { type AppState } from '../../types.ts';
 
-import { choicesAdapter } from './choices.slice';
+import { choicesAdapter } from './choices.slice.ts';
 
 export const {
   selectAll: selectAllChoices,

@@ -1,8 +1,13 @@
 import assert from 'node:assert';
 
-import { Container, injectableClass } from 'ditox';
+import { type Container, injectableClass } from 'ditox';
 
-import { ConfigPort, EventPublisherPort, LoggerPort, RealEventPublisherAdapter } from 'src/adapters';
+import {
+  type ConfigPort,
+  type EventPublisherPort,
+  type LoggerPort,
+  RealEventPublisherAdapter,
+} from 'src/adapters';
 import { AnswerCreatedEvent } from 'src/commands/create-answer/create-answer';
 import { GameCreatedEvent } from 'src/commands/create-game/create-game';
 import { GameEndedEvent } from 'src/commands/end-game/end-game';
@@ -11,11 +16,11 @@ import { PlayerJoinedEvent } from 'src/commands/join-game/join-game';
 import { PlayerLeftEvent } from 'src/commands/leave-game/leave-game';
 import { GameStartedEvent } from 'src/commands/start-game/start-game';
 import { TurnStartedEvent } from 'src/commands/start-turn/start-turn';
-import { PlayerRepository } from 'src/persistence';
+import { type PlayerRepository } from 'src/persistence';
 import { TOKENS } from 'src/tokens';
 
-import { HttpServer } from './http-server';
-import { WsServer } from './ws-server';
+import { HttpServer } from './http-server.ts';
+import { WsServer } from './ws-server.ts';
 
 export class Server {
   static inject = injectableClass(

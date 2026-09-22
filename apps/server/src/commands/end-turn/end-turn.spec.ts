@@ -1,8 +1,8 @@
-import { GameState, Turn, createAnswer, createPlayer, createStartedGame } from 'src/entities';
-import { HandlerCommand } from 'src/interfaces';
+import { GameState, type Turn, createAnswer, createPlayer, createStartedGame } from 'src/entities';
+import { type HandlerCommand } from 'src/interfaces';
 import { UnitTest } from 'src/utils/unit-test';
 
-import { EndTurnHandler, TurnEndedEvent } from './end-turn';
+import { EndTurnHandler, TurnEndedEvent } from './end-turn.ts';
 
 class Test extends UnitTest {
   handler = new EndTurnHandler(

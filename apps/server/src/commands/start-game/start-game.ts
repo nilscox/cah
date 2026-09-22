@@ -3,10 +3,20 @@ import assert from 'node:assert';
 import { sum } from '@cah/utils';
 import { injectableClass } from 'ditox';
 
-import { EventPublisherPort, ExternalDataPort, GeneratorPort, RandomPort } from 'src/adapters';
-import { Choice, GameState, Question, isStarted } from 'src/entities';
-import { CommandHandler, DomainEvent } from 'src/interfaces';
-import { ChoiceRepository, GameRepository, PlayerRepository, QuestionRepository } from 'src/persistence';
+import {
+  type EventPublisherPort,
+  type ExternalDataPort,
+  type GeneratorPort,
+  type RandomPort,
+} from 'src/adapters';
+import { type Choice, GameState, type Question, isStarted } from 'src/entities';
+import { type CommandHandler, DomainEvent } from 'src/interfaces';
+import {
+  type ChoiceRepository,
+  type GameRepository,
+  type PlayerRepository,
+  type QuestionRepository,
+} from 'src/persistence';
 import { TOKENS } from 'src/tokens';
 
 export class GameStartedEvent extends DomainEvent {

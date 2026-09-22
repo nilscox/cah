@@ -1,4 +1,4 @@
-import { ConfigPort } from './config.port';
+import { type ConfigPort } from './config.port.ts';
 
 export class StubConfigAdapter implements ConfigPort {
   constructor(overrides?: Partial<ConfigPort>) {

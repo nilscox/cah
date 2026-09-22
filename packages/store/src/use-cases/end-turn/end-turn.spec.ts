@@ -1,6 +1,6 @@
 import {
-  Answer,
-  Choice,
+  type Answer,
+  type Choice,
   GameState,
   createAnswer,
   createChoice,
@@ -9,17 +9,17 @@ import {
   createTurn,
 } from '@cah/shared';
 
-import { answersActions } from '../../slices/answers/answers.slice';
-import { gameActions } from '../../slices/game/game.slice';
+import { answersActions } from '../../slices/answers/answers.slice.ts';
+import { gameActions } from '../../slices/game/game.slice.ts';
 import {
   selectHasSubmittedAnswer,
   selectPlayerCards,
   selectedSelectedChoices,
-} from '../../slices/player/player.selectors';
-import { selectTurns } from '../../slices/turns/turns.selectors';
-import { TestStore } from '../../test-store';
+} from '../../slices/player/player.selectors.ts';
+import { selectTurns } from '../../slices/turns/turns.selectors.ts';
+import { TestStore } from '../../test-store.ts';
 
-import { endTurn } from './end-turn';
+import { endTurn } from './end-turn.ts';
 
 describe('endTurn', () => {
   let store: TestStore;

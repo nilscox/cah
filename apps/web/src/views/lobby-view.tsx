@@ -2,11 +2,11 @@ import { clearAuthentication, createGame, joinGame, selectHasGame, selectHasPlay
 import { useNavigate } from '@solidjs/router';
 import { createEffect } from 'solid-js';
 
-import { Header } from '../layout/header';
-import { View } from '../layout/view';
-import { store } from '../store';
-import { selector } from '../utils/selector';
-import { submitHandler } from '../utils/submit-handler';
+import { Header } from '../layout/header.tsx';
+import { View } from '../layout/view.tsx';
+import { store } from '../store.ts';
+import { selector } from '../utils/selector.ts';
+import { submitHandler } from '../utils/submit-handler.ts';
 
 export default function LobbyView() {
   const navigate = useNavigate();

@@ -1,18 +1,18 @@
-import { Choice } from '@cah/shared';
+import { type Choice } from '@cah/shared';
 import { assert } from '@cah/utils';
 import { combine, createSelector, pipe } from '@nilscox/selektor';
 
-import { defined } from '../../defined';
-import { AppState } from '../../types';
-import { selectChoices } from '../choices/choices.selectors';
+import { defined } from '../../defined.ts';
+import { type AppState } from '../../types.ts';
+import { selectChoices } from '../choices/choices.selectors.ts';
 import {
   selectCurrentQuestion,
   selectPlayState,
   selectStartedGame,
   selectedSelectedAnswer,
-} from '../game/game.selectors';
-import { PlayState } from '../game/game.slice';
-import { getQuestionChunks } from '../questions/question-chunks';
+} from '../game/game.selectors.ts';
+import { PlayState } from '../game/game.slice.ts';
+import { getQuestionChunks } from '../questions/question-chunks.ts';
 
 const selectPlayerUnsafe = createSelector((state: AppState) => state.player);
 

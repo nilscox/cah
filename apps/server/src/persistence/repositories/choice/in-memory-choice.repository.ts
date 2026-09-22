@@ -1,10 +1,10 @@
 import { defined, hasProperty, toObject } from '@cah/utils';
 
-import { Choice } from 'src/entities';
+import { type Choice } from 'src/entities';
 
-import { InMemoryRepository } from '../../in-memory-repository';
+import { InMemoryRepository } from '../../in-memory-repository.ts';
 
-import { ChoiceRepository } from './choice.repository';
+import { type ChoiceRepository } from './choice.repository.ts';
 
 export class InMemoryChoiceRepository extends InMemoryRepository<Choice> implements ChoiceRepository {
   async findPlayersCards(gameId: string): Promise<Record<string, Choice[]>> {

@@ -1,12 +1,12 @@
 import { PlayState, selectCanSelectChoice, selectIsQuestionMaster, selectPlayState } from '@cah/store';
 import { Show, createEffect, createSignal } from 'solid-js';
 
-import { AnswersList } from '../components/answers-list';
-import { Header } from '../layout/header';
-import { View } from '../layout/view';
-import { selector } from '../utils/selector';
+import { AnswersList } from '../components/answers-list.tsx';
+import { Header } from '../layout/header.tsx';
+import { View } from '../layout/view.tsx';
+import { selector } from '../utils/selector.ts';
 
-import { PlayersAnswer } from './players-answer';
+import { PlayersAnswer } from './players-answer.tsx';
 
 export function GameStartedView() {
   const info = getInfo();

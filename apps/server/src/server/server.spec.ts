@@ -7,8 +7,8 @@ import { createContainer } from 'src/container';
 import { inMemoryPersistenceModule } from 'src/persistence';
 import { TOKENS } from 'src/tokens';
 
-import { Server } from './server';
-import { PlayerConnectedEvent, PlayerDisconnectedEvent } from './ws-server';
+import { Server } from './server.ts';
+import { PlayerConnectedEvent, PlayerDisconnectedEvent } from './ws-server.ts';
 
 class Test {
   container = createContainer();

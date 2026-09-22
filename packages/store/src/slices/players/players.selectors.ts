@@ -1,6 +1,6 @@
-import { AppState } from '../../types';
+import { type AppState } from '../../types.ts';
 
-import { playersAdapter } from './players.slice';
+import { playersAdapter } from './players.slice.ts';
 
 export const {
   selectAll: selectAllPlayers,

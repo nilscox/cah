@@ -1,13 +1,13 @@
-import { Middleware, configureStore } from '@reduxjs/toolkit';
+import { type Middleware, configureStore } from '@reduxjs/toolkit';
 
-import { Dependencies } from '../dependencies';
-import { answersSlice } from '../slices/answers/answers.slice';
-import { choicesSlice } from '../slices/choices/choices.slice';
-import { gameSlice } from '../slices/game/game.slice';
-import { playerSlice } from '../slices/player/player.slice';
-import { playersSlice } from '../slices/players/players.slice';
-import { questionsSlice } from '../slices/questions/questions.slice';
-import { turnsSlice } from '../slices/turns/turns.slice';
+import { type Dependencies } from '../dependencies.ts';
+import { answersSlice } from '../slices/answers/answers.slice.ts';
+import { choicesSlice } from '../slices/choices/choices.slice.ts';
+import { gameSlice } from '../slices/game/game.slice.ts';
+import { playerSlice } from '../slices/player/player.slice.ts';
+import { playersSlice } from '../slices/players/players.slice.ts';
+import { questionsSlice } from '../slices/questions/questions.slice.ts';
+import { turnsSlice } from '../slices/turns/turns.slice.ts';
 
 export const createStore = (deps: Dependencies, middlewares: Middleware[] = []) => {
   return configureStore({

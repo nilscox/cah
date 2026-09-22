@@ -1,4 +1,4 @@
-import { Question } from 'src/entities';
+import { type Question } from 'src/entities';
 
 export interface QuestionRepository {
   findById(questionId: string): Promise<Question>;

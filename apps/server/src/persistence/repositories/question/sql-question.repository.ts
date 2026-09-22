@@ -1,12 +1,12 @@
 import { and, eq, isNull } from 'drizzle-orm';
 
-import { Question } from 'src/entities';
+import { type Question } from 'src/entities';
 
-import { Database } from '../../database';
-import { SqlQuestion, questions, turns } from '../../drizzle-schema';
-import { EntityNotFoundError } from '../../entity-not-found-error';
+import { Database } from '../../database.ts';
+import { type SqlQuestion, questions, turns } from '../../drizzle-schema.ts';
+import { EntityNotFoundError } from '../../entity-not-found-error.ts';
 
-import { QuestionRepository } from './question.repository';
+import { type QuestionRepository } from './question.repository.ts';
 
 export class SqlQuestionRepository implements QuestionRepository {
   constructor(private readonly db: Database) {}

@@ -1,8 +1,8 @@
 import { createAnswer, createCurrentPlayer, createStartedGame } from '@cah/shared';
 
-import { TestStore } from '../../test-store';
+import { TestStore } from '../../test-store.ts';
 
-import { selectCanSelectChoice } from './player.selectors';
+import { selectCanSelectChoice } from './player.selectors.ts';
 
 describe('player selectors', () => {
   let store: TestStore;

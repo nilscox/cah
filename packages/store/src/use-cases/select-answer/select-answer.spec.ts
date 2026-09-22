@@ -1,11 +1,11 @@
 import { createAnswer, createStartedGame } from '@cah/shared';
 
-import { selectAnswerById } from '../../slices/answers/answers.selectors';
-import { answersActions } from '../../slices/answers/answers.slice';
-import { gameActions } from '../../slices/game/game.slice';
-import { TestStore } from '../../test-store';
+import { selectAnswerById } from '../../slices/answers/answers.selectors.ts';
+import { answersActions } from '../../slices/answers/answers.slice.ts';
+import { gameActions } from '../../slices/game/game.slice.ts';
+import { TestStore } from '../../test-store.ts';
 
-import { selectAnswer } from './select-answer';
+import { selectAnswer } from './select-answer.ts';
 
 describe('validateSelectedAnswer', () => {
   let store: TestStore;

@@ -1,9 +1,9 @@
 import { createQuestionData } from 'src/adapters';
 import { GameState, createGame, createPlayer } from 'src/entities';
-import { HandlerCommand } from 'src/interfaces';
+import { type HandlerCommand } from 'src/interfaces';
 import { UnitTest } from 'src/utils/unit-test';
 
-import { GameStartedEvent, StartGameHandler } from './start-game';
+import { GameStartedEvent, StartGameHandler } from './start-game.ts';
 
 class Test extends UnitTest {
   handler = new StartGameHandler(

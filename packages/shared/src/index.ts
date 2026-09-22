@@ -1,3 +1,3 @@
-export * from './create-id';
-export * from './factory';
-export * from './types';
+export * from './create-id.ts';
+export * from './factory.ts';
+export * from './types.ts';

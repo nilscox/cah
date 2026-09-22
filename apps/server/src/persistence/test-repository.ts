@@ -1,25 +1,25 @@
-import { AsyncFactory, Factory, GameState } from '@cah/shared';
+import { type AsyncFactory, type Factory, GameState } from '@cah/shared';
 import { createId, factory } from '@cah/utils';
-import { InferModel } from 'drizzle-orm';
-import { AnyPgTable, PgInsertValue } from 'drizzle-orm/pg-core';
+import { type InferModel } from 'drizzle-orm';
+import { type AnyPgTable, type PgInsertValue } from 'drizzle-orm/pg-core';
 
 import { StubConfigAdapter } from 'src/adapters';
 
-import { Database } from './database';
+import { Database } from './database.ts';
 import {
   answers,
   choices,
   games,
   players,
   questions,
-  SqlAnswer,
-  SqlChoice,
-  SqlGame,
-  SqlPlayer,
-  SqlQuestion,
-  SqlTurn,
+  type SqlAnswer,
+  type SqlChoice,
+  type SqlGame,
+  type SqlPlayer,
+  type SqlQuestion,
+  type SqlTurn,
   turns,
-} from './drizzle-schema';
+} from './drizzle-schema.ts';
 
 export class TestRepository {
   config = new StubConfigAdapter({

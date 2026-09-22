@@ -1,4 +1,4 @@
-import { Log, LogLevel, LoggerPort } from './logger.port';
+import { type Log, type LogLevel, type LoggerPort } from './logger.port.ts';
 
 export class StubLoggerAdapter implements LoggerPort {
   context?: string;

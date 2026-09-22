@@ -1,11 +1,11 @@
-import { Choice, createChoice, createQuestion, createStartedGame } from '@cah/shared';
+import { type Choice, createChoice, createQuestion, createStartedGame } from '@cah/shared';
 import { array } from '@cah/utils';
 
-import { selectedSelectedChoices } from '../../slices/player/player.selectors';
-import { playerActions } from '../../slices/player/player.slice';
-import { TestStore } from '../../test-store';
+import { selectedSelectedChoices } from '../../slices/player/player.selectors.ts';
+import { playerActions } from '../../slices/player/player.slice.ts';
+import { TestStore } from '../../test-store.ts';
 
-import { toggleChoice } from './toggle-choice';
+import { toggleChoice } from './toggle-choice.ts';
 
 describe('toggleChoice', () => {
   let store: TestStore;

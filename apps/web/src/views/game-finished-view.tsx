@@ -1,9 +1,9 @@
 import { leaveGame, selectPlayers, selectScores, selectWinners } from '@cah/store';
 import { For, Show } from 'solid-js';
 
-import { Header } from '../layout/header';
-import { View } from '../layout/view';
-import { selector } from '../utils/selector';
+import { Header } from '../layout/header.tsx';
+import { View } from '../layout/view.tsx';
+import { selector } from '../utils/selector.ts';
 
 export function GameFinishedView() {
   const winners = selector(selectWinners);

@@ -1,6 +1,6 @@
-import { Choice, Question } from '@cah/shared';
+import { type Choice, type Question } from '@cah/shared';
 
-import { QuestionChunk, getQuestionChunks } from './question-chunks';
+import { type QuestionChunk, getQuestionChunks } from './question-chunks.ts';
 
 describe('questionChunks', () => {
   const choice: Choice = {

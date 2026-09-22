@@ -1,6 +1,6 @@
-import { TestRepository } from '../../test-repository';
+import { TestRepository } from '../../test-repository.ts';
 
-import { SqlQuestionRepository } from './sql-question.repository';
+import { SqlQuestionRepository } from './sql-question.repository.ts';
 
 describe('SqlQuestionRepository', () => {
   let test: TestRepository;

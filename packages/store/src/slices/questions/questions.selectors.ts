@@ -1,9 +1,9 @@
 import { assert } from '@cah/utils';
 import { pipe } from '@nilscox/selektor';
 
-import { AppState } from '../../types';
+import { type AppState } from '../../types.ts';
 
-import { questionsAdapter } from './questions.slice';
+import { questionsAdapter } from './questions.slice.ts';
 
 export const {
   selectEntities: selectQuestions,

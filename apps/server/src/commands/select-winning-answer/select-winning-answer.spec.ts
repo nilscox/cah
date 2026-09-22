@@ -1,8 +1,8 @@
 import { GameState, createAnswer, createPlayer, createStartedGame } from 'src/entities';
-import { HandlerCommand } from 'src/interfaces';
+import { type HandlerCommand } from 'src/interfaces';
 import { UnitTest } from 'src/utils/unit-test';
 
-import { AnswerSelectedEvent, SelectWinningAnswerHandler } from './select-winning-answer';
+import { AnswerSelectedEvent, SelectWinningAnswerHandler } from './select-winning-answer.ts';
 
 class Test extends UnitTest {
   handler = new SelectWinningAnswerHandler(

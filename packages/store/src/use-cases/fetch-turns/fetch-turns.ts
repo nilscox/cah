@@ -1,6 +1,6 @@
-import { normalizeTurns } from '../../normalization';
-import { createAction } from '../../store/create-action';
-import { createThunk } from '../../store/create-thunk';
+import { normalizeTurns } from '../../normalization.ts';
+import { createAction } from '../../store/create-action.ts';
+import { createThunk } from '../../store/create-thunk.ts';
 
 export const fetchTurns = createThunk(async ({ dispatch, client }, gameId: string) => {
   const turns = await client.getGameTurns(gameId);

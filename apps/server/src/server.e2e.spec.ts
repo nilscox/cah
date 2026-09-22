@@ -1,6 +1,6 @@
 import { CahClient, ServerFetcher } from '@cah/client';
 import {
-  AppSelector,
+  type AppSelector,
   authenticate,
   createGame,
   createStore,

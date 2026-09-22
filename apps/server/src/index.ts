@@ -1,5 +1,5 @@
-import { createContainer } from './container';
-import { TOKENS } from './tokens';
+import { createContainer } from './container.ts';
+import { TOKENS } from './tokens.ts';
 
 main().catch(console.error);
 

@@ -5,10 +5,10 @@ import { injectableClass } from 'ditox';
 
 import { TOKENS } from 'src/tokens';
 
-import { ConfigPort } from '../config/config.port';
-import { RandomPort } from '../random/random.port';
+import { type ConfigPort } from '../config/config.port.ts';
+import { type RandomPort } from '../random/random.port.ts';
 
-import { ChoiceData, ExternalDataPort, QuestionData } from './external-data.port';
+import { type ChoiceData, type ExternalDataPort, type QuestionData } from './external-data.port.ts';
 
 export class FilesystemExternalDataAdapter implements ExternalDataPort {
   static inject = injectableClass(this, TOKENS.config, TOKENS.random);

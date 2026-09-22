@@ -1,7 +1,7 @@
-import { selectHasGame } from '../../slices/game/game.selectors';
-import { TestStore } from '../../test-store';
+import { selectHasGame } from '../../slices/game/game.selectors.ts';
+import { TestStore } from '../../test-store.ts';
 
-import { clearAuthentication } from './clear-authentication';
+import { clearAuthentication } from './clear-authentication.ts';
 
 describe('clearAuthentication', () => {
   let store: TestStore;

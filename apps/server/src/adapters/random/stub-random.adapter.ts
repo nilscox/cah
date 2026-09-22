@@ -1,6 +1,6 @@
 import { array } from '@cah/utils';
 
-import { RandomPort } from './random.port';
+import { type RandomPort } from './random.port.ts';
 
 export class StubRandomAdapter implements RandomPort {
   randomize<T>(array: T[]): T[] {

@@ -1,8 +1,8 @@
 import { assert } from '@cah/utils';
 
-import { selectedSelectedChoices } from '../../slices/player/player.selectors';
-import { playerActions } from '../../slices/player/player.slice';
-import { createThunk } from '../../store/create-thunk';
+import { selectedSelectedChoices } from '../../slices/player/player.selectors.ts';
+import { playerActions } from '../../slices/player/player.slice.ts';
+import { createThunk } from '../../store/create-thunk.ts';
 
 export const submitAnswer = createThunk(async ({ client, dispatch, getState }) => {
   const selectedChoices = selectedSelectedChoices(getState());

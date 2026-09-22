@@ -1,12 +1,12 @@
-import { CardsDealtEvent, Choice, TurnStartedEvent } from '@cah/shared';
+import { type CardsDealtEvent, type Choice, type TurnStartedEvent } from '@cah/shared';
 import { array, getIds } from '@cah/utils';
-import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { type PayloadAction, createSlice } from '@reduxjs/toolkit';
 
-import { assert } from '../../defined';
-import { unauthenticated } from '../../use-cases/clear-authentication/clear-authentication';
-import { gameFetched } from '../../use-cases/fetch-game/fetch-game';
-import { playerFetched } from '../../use-cases/fetch-player/fetch-player';
-import { gameLeft } from '../../use-cases/leave-game/leave-game';
+import { assert } from '../../defined.ts';
+import { unauthenticated } from '../../use-cases/clear-authentication/clear-authentication.ts';
+import { gameFetched } from '../../use-cases/fetch-game/fetch-game.ts';
+import { playerFetched } from '../../use-cases/fetch-player/fetch-player.ts';
+import { gameLeft } from '../../use-cases/leave-game/leave-game.ts';
 
 export type PlayerSlice = {
   id: string;

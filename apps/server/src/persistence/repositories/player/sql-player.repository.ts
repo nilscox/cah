@@ -1,13 +1,13 @@
 import * as shared from '@cah/shared';
-import { InferModel, eq } from 'drizzle-orm';
+import { type InferModel, eq } from 'drizzle-orm';
 
-import { Player } from 'src/entities';
+import { type Player } from 'src/entities';
 
-import { Database } from '../../database';
-import { players } from '../../drizzle-schema';
-import { EntityNotFoundError } from '../../entity-not-found-error';
+import { Database } from '../../database.ts';
+import { players } from '../../drizzle-schema.ts';
+import { EntityNotFoundError } from '../../entity-not-found-error.ts';
 
-import { PlayerRepository } from './player.repository';
+import { type PlayerRepository } from './player.repository.ts';
 
 export class SqlPlayerRepository implements PlayerRepository {
   constructor(private readonly db: Database) {}

@@ -1,6 +1,6 @@
 import { CookieJar } from 'tough-cookie';
 
-import { Fetcher } from './fetcher';
+import { Fetcher } from './fetcher.ts';
 
 export class ServerFetcher extends Fetcher {
   private jar = new CookieJar();

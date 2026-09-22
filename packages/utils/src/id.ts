@@ -1,4 +1,4 @@
-import { hasProperty } from './has-property';
+import { hasProperty } from './has-property.ts';
 
 export const hasId = <T extends { id: string }>(id: string) => {
   return hasProperty<T, 'id'>('id', id);

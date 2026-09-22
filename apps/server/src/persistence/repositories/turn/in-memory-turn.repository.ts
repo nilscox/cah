@@ -1,10 +1,10 @@
 import * as shared from '@cah/shared';
 
-import { Turn } from 'src/entities';
+import { type Turn } from 'src/entities';
 
-import { InMemoryRepository } from '../../in-memory-repository';
+import { InMemoryRepository } from '../../in-memory-repository.ts';
 
-import { TurnRepository } from './turn.repository';
+import { type TurnRepository } from './turn.repository.ts';
 
 export class InMemoryTurnRepository extends InMemoryRepository<Turn> implements TurnRepository {
   query(): Promise<shared.Turn> {

@@ -1,12 +1,12 @@
 import { hasProperty, toObject, unique } from '@cah/utils';
 import { and, eq, isNotNull, isNull } from 'drizzle-orm';
 
-import { Choice } from 'src/entities';
+import { type Choice } from 'src/entities';
 
-import { Database } from '../../database';
-import { SqlChoice, choices } from '../../drizzle-schema';
+import { Database } from '../../database.ts';
+import { type SqlChoice, choices } from '../../drizzle-schema.ts';
 
-import { ChoiceRepository } from './choice.repository';
+import { type ChoiceRepository } from './choice.repository.ts';
 
 export class SqlChoiceRepository implements ChoiceRepository {
   constructor(private readonly db: Database) {}

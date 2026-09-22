@@ -1,10 +1,10 @@
 import { defined } from '@cah/utils';
 
 import { createPlayer } from 'src/entities';
-import { HandlerCommand } from 'src/interfaces';
+import { type HandlerCommand } from 'src/interfaces';
 import { UnitTest } from 'src/utils/unit-test';
 
-import { AuthenticateHandler, PlayerAuthenticatedEvent } from './authenticate';
+import { AuthenticateHandler, PlayerAuthenticatedEvent } from './authenticate.ts';
 
 class Test extends UnitTest {
   handler = new AuthenticateHandler(this.generator, this.publisher, this.playerRepository);

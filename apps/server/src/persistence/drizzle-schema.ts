@@ -1,5 +1,5 @@
 import { GameState } from '@cah/shared';
-import { AnyPgColumn, boolean, integer, pgEnum, pgSchema, text, varchar } from 'drizzle-orm/pg-core';
+import { type AnyPgColumn, boolean, integer, pgEnum, pgSchema, text, varchar } from 'drizzle-orm/pg-core';
 
 export type SqlGame = typeof games.$inferSelect;
 export type SqlPlayer = typeof players.$inferSelect;

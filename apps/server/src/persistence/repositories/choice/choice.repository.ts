@@ -1,4 +1,4 @@
-import { Choice } from 'src/entities';
+import { type Choice } from 'src/entities';
 
 export interface ChoiceRepository {
   findPlayersCards(gameId: string): Promise<Record<string, Choice[]>>;

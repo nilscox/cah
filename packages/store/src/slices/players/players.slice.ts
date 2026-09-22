@@ -1,8 +1,8 @@
-import { PlayerJoinedEvent, PlayerLeftEvent } from '@cah/shared';
+import { type PlayerJoinedEvent, type PlayerLeftEvent } from '@cah/shared';
 import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 
-import { gameFetched } from '../../use-cases/fetch-game/fetch-game';
-import { gameLeft } from '../../use-cases/leave-game/leave-game';
+import { gameFetched } from '../../use-cases/fetch-game/fetch-game.ts';
+import { gameLeft } from '../../use-cases/leave-game/leave-game.ts';
 
 export type PlayersSlice = {
   id: string;

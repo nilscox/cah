@@ -1,7 +1,7 @@
 import { GameState, createChoice, createCurrentPlayer } from '@cah/shared';
 
-import { selectAllChoices } from './slices/choices/choices.selectors';
-import { TestStore } from './test-store';
+import { selectAllChoices } from './slices/choices/choices.selectors.ts';
+import { TestStore } from './test-store.ts';
 
 describe('events', () => {
   let store: TestStore;

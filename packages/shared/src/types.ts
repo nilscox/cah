@@ -1,7 +1,7 @@
 import * as yup from 'yup';
 
-import { createId } from './create-id';
-import { factory } from './factory';
+import { createId } from './create-id.ts';
+import { factory } from './factory.ts';
 
 export type Game = {
   id: string;

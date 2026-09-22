@@ -1,5 +1,5 @@
 import {
-  Answer,
+  type Answer,
   GameState,
   createAnswer,
   createChoice,
@@ -7,10 +7,10 @@ import {
   createQuestion,
   createStartedGame,
 } from 'src/entities';
-import { HandlerCommand } from 'src/interfaces';
+import { type HandlerCommand } from 'src/interfaces';
 import { UnitTest } from 'src/utils/unit-test';
 
-import { AnswerCreatedEvent, CreateAnswerHandler } from './create-answer';
+import { AnswerCreatedEvent, CreateAnswerHandler } from './create-answer.ts';
 
 class Test extends UnitTest {
   handler = new CreateAnswerHandler(

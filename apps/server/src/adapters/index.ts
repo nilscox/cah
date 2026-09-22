@@ -1,22 +1,22 @@
-export * from './config/config.port';
-export * from './config/stub-config.adapter';
+export * from './config/config.port.ts';
+export * from './config/stub-config.adapter.ts';
 
-export * from './event-publisher/event-publisher.port';
-export * from './event-publisher/real-event-publisher.adapter';
-export * from './event-publisher/stub-event-publisher.adapter';
+export * from './event-publisher/event-publisher.port.ts';
+export * from './event-publisher/real-event-publisher.adapter.ts';
+export * from './event-publisher/stub-event-publisher.adapter.ts';
 
-export * from './external-data/external-data.port';
-export * from './external-data/stub-external-data.adapter';
+export * from './external-data/external-data.port.ts';
+export * from './external-data/stub-external-data.adapter.ts';
 
-export * from './generator/generator.port';
-export * from './generator/random-generator.adapter';
-export * from './generator/stub-generator.adapter';
+export * from './generator/generator.port.ts';
+export * from './generator/random-generator.adapter.ts';
+export * from './generator/stub-generator.adapter.ts';
 
-export * from './logger/console-logger.adapter';
-export * from './logger/logger.port';
-export * from './logger/stub-logger.adapter';
+export * from './logger/console-logger.adapter.ts';
+export * from './logger/logger.port.ts';
+export * from './logger/stub-logger.adapter.ts';
 
-export * from './random/random.port';
-export * from './random/stub-random.adapter';
+export * from './random/random.port.ts';
+export * from './random/stub-random.adapter.ts';
 
-export * from './rtc/rtc.port';
+export * from './rtc/rtc.port.ts';

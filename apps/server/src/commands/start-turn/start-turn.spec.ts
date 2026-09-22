@@ -1,8 +1,8 @@
 import { GameState, createQuestion, createStartedGame } from 'src/entities';
-import { HandlerCommand } from 'src/interfaces';
+import { type HandlerCommand } from 'src/interfaces';
 import { UnitTest } from 'src/utils/unit-test';
 
-import { StartTurnHandler, TurnStartedEvent } from './start-turn';
+import { StartTurnHandler, TurnStartedEvent } from './start-turn.ts';
 
 class Test extends UnitTest {
   handler = new StartTurnHandler(this.publisher, this.gameRepository, this.questionRepository);

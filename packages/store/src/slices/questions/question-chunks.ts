@@ -1,4 +1,4 @@
-import { Choice, Question } from '@cah/shared';
+import { type Choice, type Question } from '@cah/shared';
 
 export type QuestionChunk = {
   text?: string;

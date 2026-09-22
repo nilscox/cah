@@ -1,6 +1,6 @@
 import { clone } from '@cah/utils';
 
-import { BaseEntity } from './base-entity';
+import { type BaseEntity } from './base-entity.ts';
 
 export class InMemoryRepository<Entity extends BaseEntity> {
   private items = new Map<string, Entity>();

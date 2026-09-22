@@ -3,10 +3,10 @@ import assert from 'node:assert';
 import { sum } from '@cah/utils';
 import { injectableClass } from 'ditox';
 
-import { EventPublisherPort } from 'src/adapters';
-import { Player, isStarted } from 'src/entities';
-import { CommandHandler, DomainEvent } from 'src/interfaces';
-import { ChoiceRepository, GameRepository, PlayerRepository } from 'src/persistence';
+import { type EventPublisherPort } from 'src/adapters';
+import { type Player, isStarted } from 'src/entities';
+import { type CommandHandler, DomainEvent } from 'src/interfaces';
+import { type ChoiceRepository, type GameRepository, type PlayerRepository } from 'src/persistence';
 import { TOKENS } from 'src/tokens';
 
 export class CardsDealtEvent extends DomainEvent {

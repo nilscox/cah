@@ -1,10 +1,10 @@
 import { hasProperty } from '@cah/utils';
 
-import { Question } from 'src/entities';
+import { type Question } from 'src/entities';
 
-import { InMemoryRepository } from '../../in-memory-repository';
+import { InMemoryRepository } from '../../in-memory-repository.ts';
 
-import { QuestionRepository } from './question.repository';
+import { type QuestionRepository } from './question.repository.ts';
 
 export class InMemoryQuestionRepository extends InMemoryRepository<Question> implements QuestionRepository {
   async findById(id: string): Promise<Question> {

@@ -1,10 +1,10 @@
 import { defined } from '@cah/utils';
 
 import { GameState, createGame, createPlayer } from 'src/entities';
-import { HandlerCommand } from 'src/interfaces';
+import { type HandlerCommand } from 'src/interfaces';
 import { UnitTest } from 'src/utils/unit-test';
 
-import { JoinGameHandler, PlayerJoinedEvent } from './join-game';
+import { JoinGameHandler, PlayerJoinedEvent } from './join-game.ts';
 
 class Test extends UnitTest {
   handler = new JoinGameHandler(this.publisher, this.gameRepository, this.playerRepository);

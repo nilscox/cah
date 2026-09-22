@@ -1,13 +1,13 @@
-import { Game, GameEvent, GameState, CurrentPlayer } from '@cah/shared';
-import { Action, Middleware } from 'redux';
+import { type CurrentPlayer, type Game, type GameEvent, GameState } from '@cah/shared';
+import { type Action, type Middleware } from 'redux';
 
-import { MockClient } from './mock-client';
-import { selectGame } from './slices/game/game.selectors';
-import { selectPlayer } from './slices/player/player.selectors';
-import { createStore } from './store/create-store';
-import { AppSelector } from './types';
-import { gameFetched } from './use-cases/fetch-game/fetch-game';
-import { playerFetched } from './use-cases/fetch-player/fetch-player';
+import { MockClient } from './mock-client.ts';
+import { selectGame } from './slices/game/game.selectors.ts';
+import { selectPlayer } from './slices/player/player.selectors.ts';
+import { createStore } from './store/create-store.ts';
+import { type AppSelector } from './types.ts';
+import { gameFetched } from './use-cases/fetch-game/fetch-game.ts';
+import { playerFetched } from './use-cases/fetch-player/fetch-player.ts';
 
 export class TestStore {
   public debug = false;

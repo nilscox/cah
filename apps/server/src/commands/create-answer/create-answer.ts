@@ -3,15 +3,15 @@ import assert from 'node:assert';
 import { hasId } from '@cah/utils';
 import { injectableClass } from 'ditox';
 
-import { EventPublisherPort, GeneratorPort } from 'src/adapters';
-import { Answer, Choice, isStarted } from 'src/entities';
-import { CommandHandler, DomainEvent } from 'src/interfaces';
+import { type EventPublisherPort, type GeneratorPort } from 'src/adapters';
+import { type Answer, type Choice, isStarted } from 'src/entities';
+import { type CommandHandler, DomainEvent } from 'src/interfaces';
 import {
-  AnswerRepository,
-  ChoiceRepository,
-  GameRepository,
-  PlayerRepository,
-  QuestionRepository,
+  type AnswerRepository,
+  type ChoiceRepository,
+  type GameRepository,
+  type PlayerRepository,
+  type QuestionRepository,
 } from 'src/persistence';
 import { TOKENS } from 'src/tokens';
 

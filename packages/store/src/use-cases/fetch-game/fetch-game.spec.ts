@@ -1,7 +1,7 @@
 import {
-  Choice,
+  type Choice,
   GameState,
-  Question,
+  type Question,
   createAnswer,
   createChoice,
   createCurrentPlayer,
@@ -10,15 +10,15 @@ import {
   createStartedGame,
 } from '@cah/shared';
 
-import { AnswerViewModel, selectAllAnswers } from '../../slices/answers/answers.selectors';
-import { selectAllChoices } from '../../slices/choices/choices.selectors';
-import { GameSlice } from '../../slices/game/game.slice';
-import { selectAllPlayers } from '../../slices/players/players.selectors';
-import { PlayersSlice } from '../../slices/players/players.slice';
-import { selectAllQuestions } from '../../slices/questions/questions.selectors';
-import { TestStore } from '../../test-store';
+import { type AnswerViewModel, selectAllAnswers } from '../../slices/answers/answers.selectors.ts';
+import { selectAllChoices } from '../../slices/choices/choices.selectors.ts';
+import { type GameSlice } from '../../slices/game/game.slice.ts';
+import { selectAllPlayers } from '../../slices/players/players.selectors.ts';
+import { type PlayersSlice } from '../../slices/players/players.slice.ts';
+import { selectAllQuestions } from '../../slices/questions/questions.selectors.ts';
+import { TestStore } from '../../test-store.ts';
 
-import { fetchGame } from './fetch-game';
+import { fetchGame } from './fetch-game.ts';
 
 describe('fetchGame', () => {
   let store: TestStore;

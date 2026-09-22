@@ -1,5 +1,5 @@
 import {
-  AnswerViewModel,
+  type AnswerViewModel,
   endTurn,
   selectAnswer,
   selectCanEndTurn,
@@ -11,9 +11,9 @@ import {
 } from '@cah/store';
 import { For, Show } from 'solid-js';
 
-import { selector } from '../utils/selector';
+import { selector } from '../utils/selector.ts';
 
-import { QuestionCard } from './question-card';
+import { QuestionCard } from './question-card.tsx';
 
 export function AnswersList() {
   const answers = selector(selectGameAnswers);

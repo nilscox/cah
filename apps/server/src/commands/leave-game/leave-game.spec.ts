@@ -1,8 +1,8 @@
 import { GameState, createGame, createPlayer } from 'src/entities';
-import { HandlerCommand } from 'src/interfaces';
+import { type HandlerCommand } from 'src/interfaces';
 import { UnitTest } from 'src/utils/unit-test';
 
-import { LeaveGameHandler, PlayerLeftEvent } from './leave-game';
+import { LeaveGameHandler, PlayerLeftEvent } from './leave-game.ts';
 
 class Test extends UnitTest {
   handler = new LeaveGameHandler(this.publisher, this.gameRepository, this.playerRepository);

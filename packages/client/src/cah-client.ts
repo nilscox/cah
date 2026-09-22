@@ -1,4 +1,4 @@
-import {
+import type {
   AuthenticateBody,
   CreateAnswerBody,
   CurrentPlayer,
@@ -10,10 +10,10 @@ import {
   StartedGame,
   Turn,
 } from '@cah/shared';
-import { ManagerOptions, Socket, io } from 'socket.io-client';
+import { type ManagerOptions, Socket, io } from 'socket.io-client';
 
-import { Fetcher } from './fetcher';
-import { ServerFetcher } from './server-fetcher';
+import { Fetcher } from './fetcher.ts';
+import { ServerFetcher } from './server-fetcher.ts';
 
 export type GameEventListener<Type extends GameEventType> = (event: GameEventsMap[Type]) => void;
 

@@ -1,7 +1,7 @@
 import { CahClient, ServerFetcher } from '@cah/client';
 import { isStarted } from '@cah/shared';
 import { Command, Option } from 'commander';
-import { inspectGame, inspectPlayer, inspectTurn } from './inspect';
+import { inspectGame, inspectPlayer, inspectTurn } from './inspect.ts';
 
 const program = new Command();
 

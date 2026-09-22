@@ -1,6 +1,3 @@
-/// <reference types="vitest" />
-/// <reference types="vite/client" />
-
 import solid from 'vite-plugin-solid';
 import { defineConfig } from 'vitest/config';
 

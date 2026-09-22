@@ -2,12 +2,12 @@ import { GameState } from '@cah/shared';
 import { assert } from '@cah/utils';
 import { combine, createSelector, pipe } from '@nilscox/selektor';
 
-import { defined } from '../../defined';
-import { AppState } from '../../types';
-import { selectAnswers } from '../answers/answers.selectors';
-import { selectQuestions } from '../questions/questions.selectors';
+import { defined } from '../../defined.ts';
+import { type AppState } from '../../types.ts';
+import { selectAnswers } from '../answers/answers.selectors.ts';
+import { selectQuestions } from '../questions/questions.selectors.ts';
 
-import { GameSlice, PlayState } from './game.slice';
+import { type GameSlice, PlayState } from './game.slice.ts';
 
 export const selectGameUnsafe = createSelector((state: AppState) => state.game);
 

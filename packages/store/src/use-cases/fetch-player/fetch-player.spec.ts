@@ -1,13 +1,13 @@
 import { FetchError } from '@cah/client';
-import { Choice, createAnswer, createChoice } from '@cah/shared';
+import { type Choice, createAnswer, createChoice } from '@cah/shared';
 
-import { selectAllAnswers } from '../../slices/answers/answers.selectors';
-import { selectAllChoices } from '../../slices/choices/choices.selectors';
-import { selectHasPlayer } from '../../slices/player/player.selectors';
-import { PlayerSlice } from '../../slices/player/player.slice';
-import { TestStore } from '../../test-store';
+import { selectAllAnswers } from '../../slices/answers/answers.selectors.ts';
+import { selectAllChoices } from '../../slices/choices/choices.selectors.ts';
+import { selectHasPlayer } from '../../slices/player/player.selectors.ts';
+import { type PlayerSlice } from '../../slices/player/player.slice.ts';
+import { TestStore } from '../../test-store.ts';
 
-import { fetchPlayer } from './fetch-player';
+import { fetchPlayer } from './fetch-player.ts';
 
 describe('fetchPlayer', () => {
   let store: TestStore;

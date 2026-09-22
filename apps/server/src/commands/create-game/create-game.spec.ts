@@ -1,8 +1,8 @@
-import { Game, GameState, createPlayer } from 'src/entities';
-import { HandlerCommand } from 'src/interfaces';
+import { type Game, GameState, createPlayer } from 'src/entities';
+import { type HandlerCommand } from 'src/interfaces';
 import { UnitTest } from 'src/utils/unit-test';
 
-import { CreateGameHandler, GameCreatedEvent } from './create-game';
+import { CreateGameHandler, GameCreatedEvent } from './create-game.ts';
 
 class Test extends UnitTest {
   handler = new CreateGameHandler(this.generator, this.publisher, this.playerRepository, this.gameRepository);

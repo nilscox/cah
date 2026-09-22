@@ -1,11 +1,11 @@
 import { array } from '@cah/utils';
 
-import { Choice, createChoice } from 'src/entities';
+import { type Choice, createChoice } from 'src/entities';
 
-import { SqlChoice, choices } from '../../drizzle-schema';
-import { TestRepository } from '../../test-repository';
+import { type SqlChoice, choices } from '../../drizzle-schema.ts';
+import { TestRepository } from '../../test-repository.ts';
 
-import { SqlChoiceRepository } from './sql-choice.repository';
+import { SqlChoiceRepository } from './sql-choice.repository.ts';
 
 describe('SqlChoiceRepository', () => {
   let test: TestRepository;

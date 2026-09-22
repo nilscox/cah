@@ -1,8 +1,8 @@
-import { selectHasGame } from '../../slices/game/game.selectors';
-import { selectAllPlayers } from '../../slices/players/players.selectors';
-import { TestStore } from '../../test-store';
+import { selectHasGame } from '../../slices/game/game.selectors.ts';
+import { selectAllPlayers } from '../../slices/players/players.selectors.ts';
+import { TestStore } from '../../test-store.ts';
 
-import { leaveGame } from './leave-game';
+import { leaveGame } from './leave-game.ts';
 
 describe('leaveGame', () => {
   let store: TestStore;

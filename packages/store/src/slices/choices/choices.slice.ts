@@ -1,11 +1,11 @@
-import { AllPlayerAnsweredEvent, CardsDealtEvent } from '@cah/shared';
-import { PayloadAction, createEntityAdapter, createSlice } from '@reduxjs/toolkit';
+import { type AllPlayerAnsweredEvent, type CardsDealtEvent } from '@cah/shared';
+import { type PayloadAction, createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 
-import { NormalizedChoice } from '../../normalization';
-import { gameFetched } from '../../use-cases/fetch-game/fetch-game';
-import { playerFetched } from '../../use-cases/fetch-player/fetch-player';
-import { turnsFetched } from '../../use-cases/fetch-turns/fetch-turns';
-import { playerActions } from '../player/player.slice';
+import { type NormalizedChoice } from '../../normalization.ts';
+import { gameFetched } from '../../use-cases/fetch-game/fetch-game.ts';
+import { playerFetched } from '../../use-cases/fetch-player/fetch-player.ts';
+import { turnsFetched } from '../../use-cases/fetch-turns/fetch-turns.ts';
+import { playerActions } from '../player/player.slice.ts';
 
 export const choicesAdapter = createEntityAdapter<NormalizedChoice>();
 

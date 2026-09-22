@@ -2,10 +2,10 @@ import assert from 'node:assert';
 
 import { injectableClass } from 'ditox';
 
-import { EventPublisherPort } from 'src/adapters';
-import { Game, GameState, isStarted } from 'src/entities';
-import { CommandHandler, DomainEvent } from 'src/interfaces';
-import { GameRepository, PlayerRepository } from 'src/persistence';
+import { type EventPublisherPort } from 'src/adapters';
+import { type Game, GameState, isStarted } from 'src/entities';
+import { type CommandHandler, DomainEvent } from 'src/interfaces';
+import { type GameRepository, type PlayerRepository } from 'src/persistence';
 import { TOKENS } from 'src/tokens';
 
 export class GameEndedEvent extends DomainEvent {

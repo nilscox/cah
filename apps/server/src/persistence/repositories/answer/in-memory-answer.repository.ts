@@ -1,11 +1,11 @@
 import { compareByProperty, hasProperty } from '@cah/utils';
 
-import { Answer } from 'src/entities';
+import { type Answer } from 'src/entities';
 
-import { EntityNotFoundError } from '../../entity-not-found-error';
-import { InMemoryRepository } from '../../in-memory-repository';
+import { EntityNotFoundError } from '../../entity-not-found-error.ts';
+import { InMemoryRepository } from '../../in-memory-repository.ts';
 
-import { AnswerRepository } from './answer.repository';
+import { type AnswerRepository } from './answer.repository.ts';
 
 export class InMemoryAnswerRepository extends InMemoryRepository<Answer> implements AnswerRepository {
   async findById(answerId: string): Promise<Answer> {

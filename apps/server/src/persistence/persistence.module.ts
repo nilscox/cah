@@ -2,24 +2,24 @@ import { declareModule, injectable } from 'ditox';
 
 import { TOKENS } from 'src/tokens';
 
-import { AnswerRepository } from './repositories/answer/answer.repository';
-import { InMemoryAnswerRepository } from './repositories/answer/in-memory-answer.repository';
-import { SqlAnswerRepository } from './repositories/answer/sql-answer.repository';
-import { ChoiceRepository } from './repositories/choice/choice.repository';
-import { InMemoryChoiceRepository } from './repositories/choice/in-memory-choice.repository';
-import { SqlChoiceRepository } from './repositories/choice/sql-choice.repository';
-import { GameRepository } from './repositories/game/game.repository';
-import { InMemoryGameRepository } from './repositories/game/in-memory-game.repository';
-import { SqlGameRepository } from './repositories/game/sql-game.repository';
-import { InMemoryPlayerRepository } from './repositories/player/in-memory-player.repository';
-import { PlayerRepository } from './repositories/player/player.repository';
-import { SqlPlayerRepository } from './repositories/player/sql-player.repository';
-import { InMemoryQuestionRepository } from './repositories/question/in-memory-question.repository';
-import { QuestionRepository } from './repositories/question/question.repository';
-import { SqlQuestionRepository } from './repositories/question/sql-question.repository';
-import { InMemoryTurnRepository } from './repositories/turn/in-memory-turn.repository';
-import { SqlTurnRepository } from './repositories/turn/sql-turn.repository';
-import { TurnRepository } from './repositories/turn/turn.repository';
+import { type AnswerRepository } from './repositories/answer/answer.repository.ts';
+import { InMemoryAnswerRepository } from './repositories/answer/in-memory-answer.repository.ts';
+import { SqlAnswerRepository } from './repositories/answer/sql-answer.repository.ts';
+import { type ChoiceRepository } from './repositories/choice/choice.repository.ts';
+import { InMemoryChoiceRepository } from './repositories/choice/in-memory-choice.repository.ts';
+import { SqlChoiceRepository } from './repositories/choice/sql-choice.repository.ts';
+import { type GameRepository } from './repositories/game/game.repository.ts';
+import { InMemoryGameRepository } from './repositories/game/in-memory-game.repository.ts';
+import { SqlGameRepository } from './repositories/game/sql-game.repository.ts';
+import { InMemoryPlayerRepository } from './repositories/player/in-memory-player.repository.ts';
+import { type PlayerRepository } from './repositories/player/player.repository.ts';
+import { SqlPlayerRepository } from './repositories/player/sql-player.repository.ts';
+import { InMemoryQuestionRepository } from './repositories/question/in-memory-question.repository.ts';
+import { type QuestionRepository } from './repositories/question/question.repository.ts';
+import { SqlQuestionRepository } from './repositories/question/sql-question.repository.ts';
+import { InMemoryTurnRepository } from './repositories/turn/in-memory-turn.repository.ts';
+import { SqlTurnRepository } from './repositories/turn/sql-turn.repository.ts';
+import { type TurnRepository } from './repositories/turn/turn.repository.ts';
 
 type PersistenceModule = {
   gameRepository: GameRepository;

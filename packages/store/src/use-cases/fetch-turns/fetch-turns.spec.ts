@@ -1,13 +1,20 @@
-import { Choice, Question, createAnswer, createChoice, createQuestion, createTurn } from '@cah/shared';
+import {
+  type Choice,
+  type Question,
+  createAnswer,
+  createChoice,
+  createQuestion,
+  createTurn,
+} from '@cah/shared';
 
-import { NormalizedTurn } from '../../normalization';
-import { AnswerViewModel, selectAllAnswers } from '../../slices/answers/answers.selectors';
-import { selectAllChoices } from '../../slices/choices/choices.selectors';
-import { selectAllQuestions } from '../../slices/questions/questions.selectors';
-import { selectTurns } from '../../slices/turns/turns.selectors';
-import { TestStore } from '../../test-store';
+import { type NormalizedTurn } from '../../normalization.ts';
+import { type AnswerViewModel, selectAllAnswers } from '../../slices/answers/answers.selectors.ts';
+import { selectAllChoices } from '../../slices/choices/choices.selectors.ts';
+import { selectAllQuestions } from '../../slices/questions/questions.selectors.ts';
+import { selectTurns } from '../../slices/turns/turns.selectors.ts';
+import { TestStore } from '../../test-store.ts';
 
-import { fetchTurns } from './fetch-turns';
+import { fetchTurns } from './fetch-turns.ts';
 
 describe('fetchTurns', () => {
   let store: TestStore;

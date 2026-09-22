@@ -1,6 +1,6 @@
-import { normalizeGame } from '../../normalization';
-import { createAction } from '../../store/create-action';
-import { createThunk } from '../../store/create-thunk';
+import { normalizeGame } from '../../normalization.ts';
+import { createAction } from '../../store/create-action.ts';
+import { createThunk } from '../../store/create-thunk.ts';
 
 export const fetchGame = createThunk(async ({ dispatch, client }, gameId: string) => {
   const game = await client.getGame(gameId);

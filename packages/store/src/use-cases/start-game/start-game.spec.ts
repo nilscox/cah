@@ -1,9 +1,9 @@
 import { GameState, createQuestion } from '@cah/shared';
 
-import { selectCurrentQuestion } from '../../slices/game/game.selectors';
-import { TestStore } from '../../test-store';
+import { selectCurrentQuestion } from '../../slices/game/game.selectors.ts';
+import { TestStore } from '../../test-store.ts';
 
-import { startGame } from './start-game';
+import { startGame } from './start-game.ts';
 
 describe('startGame', () => {
   let store: TestStore;

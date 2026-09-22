@@ -1,12 +1,12 @@
 import { eq } from 'drizzle-orm';
 
-import { Game, GameState, createGame } from 'src/entities';
+import { type Game, GameState, createGame } from 'src/entities';
 
-import { SqlGame, games } from '../../drizzle-schema';
-import { EntityNotFoundError } from '../../entity-not-found-error';
-import { TestRepository } from '../../test-repository';
+import { type SqlGame, games } from '../../drizzle-schema.ts';
+import { EntityNotFoundError } from '../../entity-not-found-error.ts';
+import { TestRepository } from '../../test-repository.ts';
 
-import { SqlGameRepository } from './sql-game.repository';
+import { SqlGameRepository } from './sql-game.repository.ts';
 
 describe('SqlGameRepository', () => {
   let test: TestRepository;

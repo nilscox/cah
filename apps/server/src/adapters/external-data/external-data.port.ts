@@ -1,6 +1,6 @@
-import { factory, createId } from '@cah/utils';
+import { createId, factory } from '@cah/utils';
 
-import { Choice, Question } from 'src/entities';
+import { type Choice, type Question } from 'src/entities';
 
 export type QuestionData = Pick<Question, 'text' | 'blanks'>;
 export type ChoiceData = Pick<Choice, 'text' | 'caseSensitive'>;

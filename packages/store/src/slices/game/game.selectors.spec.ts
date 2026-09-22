@@ -1,9 +1,9 @@
 import { createAnonymousAnswer, createAnswer, createStartedGame } from '@cah/shared';
 
-import { TestStore } from '../../test-store';
+import { TestStore } from '../../test-store.ts';
 
-import { selectPlayState } from './game.selectors';
-import { PlayState } from './game.slice';
+import { selectPlayState } from './game.selectors.ts';
+import { PlayState } from './game.slice.ts';
 
 describe('game selectors', () => {
   let store: TestStore;

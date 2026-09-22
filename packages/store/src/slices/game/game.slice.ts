@@ -1,17 +1,17 @@
 import {
-  AllPlayerAnsweredEvent,
+  type AllPlayerAnsweredEvent,
   GameState,
-  PlayerJoinedEvent,
-  PlayerLeftEvent,
-  TurnStartedEvent,
-  WinningAnswerSelectedEvent,
+  type PlayerJoinedEvent,
+  type PlayerLeftEvent,
+  type TurnStartedEvent,
+  type WinningAnswerSelectedEvent,
 } from '@cah/shared';
-import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { type PayloadAction, createSlice } from '@reduxjs/toolkit';
 
-import { assert } from '../../defined';
-import { unauthenticated } from '../../use-cases/clear-authentication/clear-authentication';
-import { gameFetched } from '../../use-cases/fetch-game/fetch-game';
-import { gameLeft } from '../../use-cases/leave-game/leave-game';
+import { assert } from '../../defined.ts';
+import { unauthenticated } from '../../use-cases/clear-authentication/clear-authentication.ts';
+import { gameFetched } from '../../use-cases/fetch-game/fetch-game.ts';
+import { gameLeft } from '../../use-cases/leave-game/leave-game.ts';
 
 export type GameSlice = {
   id: string;
