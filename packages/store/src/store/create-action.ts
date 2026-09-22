@@ -1,11 +1,11 @@
 import { type Action } from 'redux';
 
-export interface ActionCreator<Type, Args extends unknown[], Payload> {
+export interface ActionCreator<Type extends string, Args extends unknown[], Payload> {
   (...args: Args): Action<Type> & Payload;
   type: Type;
 }
 
-export const createAction = <Type, Args extends unknown[], Payload>(
+export const createAction = <Type extends string, Args extends unknown[], Payload>(
   type: Type,
   prepare: (...args: Args) => Payload,
 ) => {

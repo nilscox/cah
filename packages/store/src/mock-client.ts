@@ -1,28 +1,25 @@
 import { type ICahClient } from '@cah/client';
 import { type Mock } from 'vitest';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type MockFn<F extends (...args: any[]) => any> = Mock<Parameters<F>, ReturnType<F>>;
-
 export class MockClient implements ICahClient {
   addEventListener: ICahClient['addEventListener'] = vi.fn();
   removeEventListener: ICahClient['removeEventListener'] = vi.fn();
 
-  connect: MockFn<ICahClient['connect']> = vi.fn();
-  disconnect: MockFn<ICahClient['disconnect']> = vi.fn();
+  connect: Mock<ICahClient['connect']> = vi.fn();
+  disconnect: Mock<ICahClient['disconnect']> = vi.fn();
 
-  getGame: MockFn<ICahClient['getGame']> = vi.fn();
-  getGameTurns: MockFn<ICahClient['getGameTurns']> = vi.fn();
-  getAuthenticatedPlayer: MockFn<ICahClient['getAuthenticatedPlayer']> = vi.fn();
+  getGame: Mock<ICahClient['getGame']> = vi.fn();
+  getGameTurns: Mock<ICahClient['getGameTurns']> = vi.fn();
+  getAuthenticatedPlayer: Mock<ICahClient['getAuthenticatedPlayer']> = vi.fn();
 
-  authenticate: MockFn<ICahClient['authenticate']> = vi.fn();
-  clearAuthentication: MockFn<ICahClient['clearAuthentication']> = vi.fn();
+  authenticate: Mock<ICahClient['authenticate']> = vi.fn();
+  clearAuthentication: Mock<ICahClient['clearAuthentication']> = vi.fn();
 
-  createGame: MockFn<ICahClient['createGame']> = vi.fn();
-  joinGame: MockFn<ICahClient['joinGame']> = vi.fn();
-  leaveGame: MockFn<ICahClient['leaveGame']> = vi.fn();
-  startGame: MockFn<ICahClient['startGame']> = vi.fn();
-  createAnswer: MockFn<ICahClient['createAnswer']> = vi.fn();
-  selectAnswer: MockFn<ICahClient['selectAnswer']> = vi.fn();
-  endTurn: MockFn<ICahClient['endTurn']> = vi.fn();
+  createGame: Mock<ICahClient['createGame']> = vi.fn();
+  joinGame: Mock<ICahClient['joinGame']> = vi.fn();
+  leaveGame: Mock<ICahClient['leaveGame']> = vi.fn();
+  startGame: Mock<ICahClient['startGame']> = vi.fn();
+  createAnswer: Mock<ICahClient['createAnswer']> = vi.fn();
+  selectAnswer: Mock<ICahClient['selectAnswer']> = vi.fn();
+  endTurn: Mock<ICahClient['endTurn']> = vi.fn();
 }

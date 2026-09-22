@@ -1,5 +1,5 @@
 import { type CurrentPlayer, type Game, type GameEvent, GameState } from '@cah/shared';
-import { type Action, type Middleware } from 'redux';
+import { type Middleware } from 'redux';
 
 import { MockClient } from './mock-client.ts';
 import { selectGame } from './slices/game/game.selectors.ts';
@@ -13,7 +13,7 @@ export class TestStore {
   public debug = false;
 
   private logActionMiddleware: Middleware = () => {
-    return (next) => (action: Action<string>) => {
+    return (next) => (action) => {
       if (this.debug) {
         console.log(action);
       }
@@ -42,7 +42,7 @@ export class TestStore {
 
   select = <Params extends unknown[], Result>(
     selector: AppSelector<Params, Result>,
-    ...params: Params
+    ...params: [Params] extends [never] ? [] : Params
   ): Result => {
     return selector(this.getState(), ...params);
   };

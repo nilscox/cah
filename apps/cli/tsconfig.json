@@ -3,6 +3,7 @@
   "include": ["src/**/*"],
   "references": [{ "path": "../../packages/client" }, { "path": "../../packages/shared" }],
   "compilerOptions": {
-    "outDir": "dist"
+    "outDir": "dist",
+    "types": ["node"]
   }
 }

@@ -11,7 +11,7 @@
   },
   "devDependencies": {
     "@cah/eslint-config": "workspace:*",
-    "eslint": "^8.45.0"
+    "eslint": "^10.11.0"
   },
   "dependencies": {
     "yup": "^1.2.0"

@@ -88,7 +88,10 @@ class Player {
     return this.store.dispatch;
   }
 
-  select<Params extends unknown[], Result>(selector: AppSelector<Params, Result>, ...params: Params) {
+  select<Params extends unknown[], Result>(
+    selector: AppSelector<Params, Result>,
+    ...params: [Params] extends [never] ? [] : Params
+  ) {
     return selector(this.store.getState(), ...params);
   }
 

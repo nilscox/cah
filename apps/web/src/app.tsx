@@ -1,5 +1,5 @@
 import { initialize } from '@cah/store';
-import { Route, Routes } from '@solidjs/router';
+import { Route } from '@solidjs/router';
 import { Show, createEffect, createSignal, lazy, onMount } from 'solid-js';
 
 import { View } from './layout/view.tsx';
@@ -16,11 +16,9 @@ export function App() {
 
   return (
     <Show when={initialized()} fallback={<Loading />}>
-      <Routes>
-        <Route path="/auth" component={AuthenticationView} />
-        <Route path="/" component={LobbyView} />
-        <Route path="/game" component={GameView} />
-      </Routes>
+      <Route path="/auth" component={AuthenticationView} />
+      <Route path="/" component={LobbyView} />
+      <Route path="/game" component={GameView} />
     </Show>
   );
 }

@@ -204,7 +204,7 @@ export class HttpServer {
 
     router.put('/game/:code/join', this.authenticated, async (req, res) => {
       const playerId = defined(req.session.playerId);
-      const code = req.params.code;
+      const code = typeof req.params.code as string;
       const handler = this.container.resolve(TOKENS.commands.joinGame);
 
       const gameId = await handler.execute({ code, playerId });
@@ -245,7 +245,7 @@ export class HttpServer {
 
     router.put('/game/answer/:answerId/select', this.authenticated, async (req, res) => {
       const playerId = defined(req.session.playerId);
-      const answerId = req.params.answerId;
+      const answerId = req.params.answerId as string;
       const handler = this.container.resolve(TOKENS.commands.selectWinningAnswer);
 
       await handler.execute({ playerId, answerId });

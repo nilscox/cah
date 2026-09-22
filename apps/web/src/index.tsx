@@ -6,8 +6,6 @@ import { App } from './app.tsx';
 
 import './styles.css';
 
-Error.stackTraceLimit = Infinity;
-
 const root = document.getElementById('root');
 
 render(
