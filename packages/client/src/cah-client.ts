@@ -21,8 +21,8 @@ export interface ICahClient {
   addEventListener<Type extends GameEventType>(type: Type, listener: GameEventListener<Type>): void;
   removeEventListener<Type extends GameEventType>(type: Type, listener: GameEventListener<Type>): void;
 
-  connect(baseUrl?: string, path?: string): void;
-  disconnect(): void;
+  connect(baseUrl?: string, path?: string): Promise<void>;
+  disconnect(): Promise<void>;
 
   getGame(gameId: string): Promise<Game | StartedGame>;
   getGameTurns(gameId: string): Promise<Turn[]>;

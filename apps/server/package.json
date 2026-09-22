@@ -6,23 +6,7 @@
   "scripts": {
     "start": "tsx --env-file .env src/index.ts",
     "dev": "nodemon -w src -e ts -x 'pnpm start'",
-    "lint": "eslint src",
     "test": "NODE_ENV=test vitest"
-  },
-  "devDependencies": {
-    "@cah/eslint-config": "workspace:*",
-    "@cah/store": "workspace:*",
-    "@types/body-parser": "^1.19.2",
-    "@types/connect-pg-simple": "^7.0.0",
-    "@types/express": "^5.0.6",
-    "@types/express-session": "^1.17.7",
-    "@types/morgan": "^1.9.4",
-    "@types/node": "^26.6.2",
-    "dotenv": "^18.0.1",
-    "drizzle-kit": "1.0.0-rc.4",
-    "eslint": "^10.11.0",
-    "nodemon": "^3.0.1",
-    "vitest": "^5.0.1"
   },
   "dependencies": {
     "@cah/client": "workspace:*",
@@ -39,5 +23,18 @@
     "socket.io": "^4.7.1",
     "tsx": "^4.23.15",
     "yup": "^1.2.0"
+  },
+  "devDependencies": {
+    "@cah/store": "workspace:*",
+    "@types/body-parser": "^1.19.2",
+    "@types/connect-pg-simple": "^7.0.0",
+    "@types/express": "^5.0.6",
+    "@types/express-session": "^1.17.7",
+    "@types/morgan": "^1.9.4",
+    "@types/node": "^26.6.2",
+    "dotenv": "^18.0.1",
+    "drizzle-kit": "1.0.0-rc.4",
+    "nodemon": "^3.0.1",
+    "vitest": "^5.0.1"
   }
 }

@@ -222,7 +222,7 @@ describe('Server E2E', () => {
 
       log(`* all players answered:`);
       for (const answer of questionMaster.answers) {
-        log(`* answer ${answer.id}: [${answer.choices.join(', ')}]`);
+        log(`* answer ${answer.id}: [${answer.choices.map(String).join(', ')}]`);
       }
 
       await questionMaster.selectRandomAnswer();

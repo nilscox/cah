@@ -13,5 +13,6 @@ export const waitFor = async <T>(check: () => T | Promise<T>, timeout = 1000): P
     }
   }
 
+  // oxlint-disable-next-line typescript/only-throw-error
   throw error ?? new Error('Timeout');
 };

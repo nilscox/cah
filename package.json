@@ -2,16 +2,19 @@
   "name": "cah",
   "version": "2.0.0",
   "private": true,
-  "packageManager": "pnpm@12.5.1",
-  "runtime": "node@24.21.0",
+  "type": "module",
   "scripts": {
     "build": "tsc -b",
-    "clean": "pnpm run -r clean",
-    "lint": "pnpm --no-bail run -r lint",
-    "test": "pnpm --no-bail --workspace-concurrency=1 run -r test"
+    "lint": "oxlint",
+    "format:check": "oxfmt --check"
   },
   "devDependencies": {
-    "prettier": "^3.0.0",
+    "oxfmt": "^0.69.0",
+    "oxlint": "^1.84.0",
+    "oxlint-config-presets": "^0.1.20",
+    "oxlint-tsgolint": "^7.0.2002",
     "typescript": "^7.0.2"
-  }
+  },
+  "packageManager": "pnpm@12.5.1",
+  "runtime": "node@24.21.0"
 }

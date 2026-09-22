@@ -59,7 +59,7 @@ describe('SqlChoiceRepository', () => {
     await test.create.choice({ id: 'choiceId1', gameId: 'gameId', playerId: 'playerId' });
 
     await test.create.question({ id: 'questionId', gameId: 'gameId' });
-    // prettier-ignore
+    // oxfmt-ignore
     await test.create.answer({ id: 'answerId', gameId: 'gameId', playerId: 'playerId', questionId: 'questionId' });
     await test.create.choice({ id: 'choiceId2', gameId: 'gameId', playerId: null, answerId: 'answerId' });
 

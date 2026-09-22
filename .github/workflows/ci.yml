@@ -28,14 +28,14 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: pnpm/setup@v1
-      - run: pnpm -r --filter='!eslint-config' exec prettier --check src
+      - run: pnpm run format:check
 
   linter:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
       - uses: pnpm/setup@v1
-      - run: pnpm -r run lint
+      - run: pnpm run lint
 
   tests:
     runs-on: ubuntu-latest

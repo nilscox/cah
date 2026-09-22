@@ -6,13 +6,6 @@
     "default": "./src/index.ts",
     "types": "./src/index.ts"
   },
-  "scripts": {
-    "lint": "eslint src"
-  },
-  "devDependencies": {
-    "@cah/eslint-config": "workspace:*",
-    "eslint": "^10.11.0"
-  },
   "dependencies": {
     "yup": "^1.2.0"
   }

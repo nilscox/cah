@@ -24,8 +24,6 @@ declare module 'express-session' {
 
 const PgSessionStore = connectPgSimple(session);
 
-/* eslint-disable @typescript-eslint/no-misused-promises */
-
 export class HttpServer {
   private app: express.Express;
   private server: NodeServer;
@@ -204,7 +202,7 @@ export class HttpServer {
 
     router.put('/game/:code/join', this.authenticated, async (req, res) => {
       const playerId = defined(req.session.playerId);
-      const code = typeof req.params.code as string;
+      const code = req.params.code as string;
       const handler = this.container.resolve(TOKENS.commands.joinGame);
 
       const gameId = await handler.execute({ code, playerId });

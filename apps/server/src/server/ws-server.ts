@@ -1,6 +1,5 @@
 import assert from 'node:assert';
 import { IncomingMessage, Server } from 'node:http';
-import { promisify } from 'node:util';
 
 import { MapSet } from '@cah/utils';
 import { type RequestHandler } from 'express';
@@ -69,7 +68,7 @@ export class WsServer implements RtcPort {
   };
 
   async close() {
-    await promisify<void>((cb) => this.io.close(cb))();
+    await this.io.close();
   }
 
   async join(room: string, playerId: string): Promise<void> {

@@ -21,7 +21,7 @@ export const selectAnswers = combine(
     return answersIds.reduce(
       (obj, answerId) => ({
         ...obj,
-        [answerId]: denormalizeAnswer(state, answerId as string),
+        [answerId]: denormalizeAnswer(state, answerId),
       }),
       {},
     );

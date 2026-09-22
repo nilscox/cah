@@ -1,13 +1,12 @@
 {
   "name": "@cah/web",
-  "private": true,
   "version": "0.0.0",
+  "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "lint": "eslint src",
     "test": "vitest --pass-with-no-tests"
   },
   "dependencies": {
@@ -20,10 +19,8 @@
     "solid-js": "^1.7.8"
   },
   "devDependencies": {
-    "@cah/eslint-config": "workspace:*",
     "@testing-library/jest-dom": "^7.0.1",
     "autoprefixer": "^10.4.14",
-    "eslint": "^10.11.0",
     "eslint-plugin-solid": "^0.18.0",
     "eslint-plugin-tailwindcss": "^4.4.0",
     "happy-dom": "^20.14.5",

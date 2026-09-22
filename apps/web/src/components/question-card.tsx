@@ -1,5 +1,5 @@
 import { type QuestionChunk } from '@cah/store';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import { For } from 'solid-js';
 
 type QuestionCardProps = {

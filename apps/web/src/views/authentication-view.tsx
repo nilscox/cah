@@ -1,6 +1,6 @@
 import { authenticate, selectHasPlayer } from '@cah/store';
 import { useNavigate } from '@solidjs/router';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import { Icon } from 'solid-heroicons';
 import { check } from 'solid-heroicons/solid';
 import { createEffect, createSignal } from 'solid-js';

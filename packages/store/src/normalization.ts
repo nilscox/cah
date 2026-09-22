@@ -114,10 +114,10 @@ export function normalizeCurrentPlayer(data: CurrentPlayer) {
 
 export function selectNormalizedState(state: AppState): CahNormalizedState {
   return {
-    questions: state.questions.entities as EntitiesMap<NormalizedQuestion>,
-    choices: state.choices.entities as EntitiesMap<NormalizedChoice>,
-    answers: state.answers.entities as EntitiesMap<NormalizedAnswer>,
-    gamePlayers: state.players.entities as EntitiesMap<NormalizedGamePlayer>,
+    questions: state.questions.entities,
+    choices: state.choices.entities,
+    answers: state.answers.entities,
+    gamePlayers: state.players.entities,
   };
 }
 

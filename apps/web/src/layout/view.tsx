@@ -1,4 +1,4 @@
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import { type JSX } from 'solid-js';
 
 type ViewProps = {

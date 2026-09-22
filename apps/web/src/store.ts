@@ -13,7 +13,6 @@ const config = {
 export const store: ReturnType<typeof createReduxStore> = createReduxStore({ client, config });
 
 declare global {
-  // eslint-disable-next-line no-var
   var store: AppStore;
 }
 
