@@ -36,12 +36,10 @@ export const answersSlice = createSlice({
     builder.addCase('all-players-answered', (state, event: AllPlayerAnsweredEvent) => {
       answersAdapter.addMany(
         state,
-        event.answers.map(
-          (answer): AnswerSlice => ({
-            id: answer.id,
-            choices: answer.choices.map((choice) => choice.id),
-          }),
-        ),
+        event.answers.map((answer): AnswerSlice => ({
+          id: answer.id,
+          choices: answer.choices.map((choice) => choice.id),
+        })),
       );
     });
 

@@ -13,9 +13,6 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: pnpm/setup@v1
-        with:
-          cache: true
-          run_install: true
       - run: pnpm exec tsc -b
 
   spell-check:
@@ -23,21 +20,14 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: pnpm/setup@v1
-        with:
-          cache: true
-          run_install: true
-      - run: pnpm add -g cspell@6 @cspell/dict-fr-fr
-      - run: pnpm exec cspell link add @cspell/dict-fr-fr
-      - run: pnpm exec cspell --locale en 'packages/*/src/**/*.{ts,tsx}'
+      - run: pnpm add -g cspell
+      - run: pnpm exec cspell '{packages,apps}/*/src/**/*.{ts,tsx}'
 
   formatter:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
       - uses: pnpm/setup@v1
-        with:
-          cache: true
-          run_install: true
       - run: pnpm -r --filter='!eslint-config' exec prettier --check src
 
   linter:
@@ -45,14 +35,11 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: pnpm/setup@v1
-        with:
-          cache: true
-          run_install: true
       - run: pnpm -r run lint
 
   tests:
     runs-on: ubuntu-latest
-    container: node:24-slim
+    container: node:24
 
     services:
       postgres:
@@ -69,9 +56,6 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: pnpm/setup@v1
-        with:
-          cache: true
-          run_install: true
       - run: pnpm --filter @cah/server run test
         env:
           DATABASE_URL: postgres://postgres@postgres:5432/tests
