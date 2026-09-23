@@ -9,8 +9,8 @@
     "format:check": "oxfmt --check"
   },
   "devDependencies": {
-    "oxfmt": "^0.69.0",
-    "oxlint": "^1.84.0",
+    "oxfmt": "^0.70.0",
+    "oxlint": "^1.85.0",
     "oxlint-config-presets": "^0.1.20",
     "oxlint-tsgolint": "^7.0.2002",
     "typescript": "^7.0.2"
