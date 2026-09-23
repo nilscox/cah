@@ -4,6 +4,9 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   plugins: [solid(), tailwindcss()],
+  build: {
+    sourcemap: true,
+  },
   server: {
     port: 8000,
     proxy: {

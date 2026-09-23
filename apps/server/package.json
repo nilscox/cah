@@ -4,7 +4,7 @@
   "type": "module",
   "main": "src/index.ts",
   "scripts": {
-    "start": "tsx --env-file .env src/index.ts",
+    "start": "tsx --env-file-if-exists .env src/index.ts",
     "dev": "nodemon -w src -e ts -x 'pnpm start'",
     "test": "NODE_ENV=test vitest"
   },
