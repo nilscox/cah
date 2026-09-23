@@ -20,5 +20,5 @@ export function QuestionCard(props: QuestionCardProps) {
 }
 
 function Blank() {
-  return <span class="inline-block w-[3rem] border-b border-[#fff] leading-1">&nbsp;</span>;
+  return <span class="inline-block w-12 border-b border-white leading-none">&nbsp;</span>;
 }

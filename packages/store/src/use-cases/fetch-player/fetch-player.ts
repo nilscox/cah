@@ -10,7 +10,10 @@ export const fetchPlayer = createThunk(async ({ dispatch, client, config }) => {
 
     dispatch(playerFetched(player));
 
-    await client.connect(config.apiUrl, config.websocketPath);
+    await Promise.race([
+      client.connect(config.apiUrl, config.websocketPath),
+      new Promise((resolve) => setTimeout(resolve, 2000)).then(onTimeout),
+    ]);
   } catch (error) {
     if (error instanceof FetchError && error.status === 401) {
       return;
@@ -19,5 +22,9 @@ export const fetchPlayer = createThunk(async ({ dispatch, client, config }) => {
     }
   }
 });
+
+const onTimeout = () => {
+  throw new Error('Websocket connect timeout');
+};
 
 export const playerFetched = createAction('player-fetched', normalizeCurrentPlayer);

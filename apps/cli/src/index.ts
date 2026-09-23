@@ -1,6 +1,7 @@
 import { CahClient, ServerFetcher } from '@cah/client';
 import { isStarted } from '@cah/shared';
 import { Command, Option } from 'commander';
+
 import { inspectGame, inspectPlayer, inspectTurn } from './inspect.ts';
 
 const program = new Command();
@@ -94,6 +95,13 @@ program
   .description('join a game from its code')
   .action(async (code: string) => {
     await client.joinGame(code);
+  });
+
+program
+  .command('leave-game')
+  .description('leave the current game')
+  .action(async () => {
+    await client.leaveGame();
   });
 
 program

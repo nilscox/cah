@@ -1,12 +1,13 @@
-import solid from 'eslint-plugin-solid';
 import { defineConfig } from 'oxlint';
 
 import baseConfig from '../../oxlint.config.ts';
 
 export default defineConfig({
   extends: [baseConfig],
-  jsPlugins: ['eslint-plugin-solid'],
   rules: {
-    ...solid.configs['flat/recommended'].rules,
+    'eslint/no-restricted-imports': [
+      'error',
+      { patterns: ['src/adapters/**', 'src/interfaces/**', 'src/persistence/**'] },
+    ],
   },
 });

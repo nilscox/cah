@@ -15,7 +15,7 @@ export function ChoicesList(props: ChoicesListProps) {
   const canSelect = selector(selectCanSelectChoice);
 
   return (
-    <div class="col flex-1 overflow-auto bg-white text-dark">
+    <div class="col text-dark flex-1 overflow-auto bg-white">
       <div class="col flex-1 justify-evenly">
         <For each={props.choices}>
           {(choice, index) => (

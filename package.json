@@ -15,6 +15,14 @@
     "oxlint-tsgolint": "^7.0.2002",
     "typescript": "^7.0.2"
   },
-  "packageManager": "pnpm@12.5.1",
-  "runtime": "node@24.21.0"
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "12.5.1"
+    },
+    "runtime": {
+      "name": "node",
+      "version": "24.21.0"
+    }
+  }
 }

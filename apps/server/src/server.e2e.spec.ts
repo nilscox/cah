@@ -40,7 +40,7 @@ class Test {
   private container = createContainer();
 
   config = new StubConfigAdapter({
-    server: { host: '0.0.0.0', port: 0 },
+    server: { host: '127.0.0.1', port: 0 },
     database: { url: process.env.DATABASE_URL ?? 'postgres://postgres@localhost:5432/cah', debug: true },
   });
 
@@ -222,7 +222,7 @@ describe('Server E2E', () => {
 
       log(`* all players answered:`);
       for (const answer of questionMaster.answers) {
-        log(`* answer ${answer.id}: [${answer.choices.map(String).join(', ')}]`);
+        log(`* answer ${answer.id}: [${answer.choices.map((choice) => choice.text).join(', ')}]`);
       }
 
       await questionMaster.selectRandomAnswer();

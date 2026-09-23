@@ -30,7 +30,7 @@ export default function AuthenticationView() {
         <div>Humanity</div>
       </div>
 
-      <div class="flex-2 col">
+      <div class="col flex-2">
         <form
           class="row items-center gap-4"
           onSubmit={submitHandler((data) => void store.dispatch(authenticate(data.get('nick') as string)))}

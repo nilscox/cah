@@ -44,7 +44,7 @@ export function GameIdleView() {
 
         <div
           role="button"
-          class="self-center rounded border bg-muted px-6 py-2 text-xl"
+          class="self-center rounded border bg-neutral-900 px-6 py-2 text-xl"
           onClick={() => void navigator.clipboard.writeText(code())}
         >
           {code()}
@@ -58,11 +58,11 @@ export function GameIdleView() {
         </ul>
       </div>
 
-      <form onSubmit={submitHandler(handleStartGame)} class="mt-6 self-center text-large">
+      <form onSubmit={submitHandler(handleStartGame)} class="text-large mt-6 self-center">
         <button class="btn">Start</button>
       </form>
 
-      <form onSubmit={submitHandler(handleLeaveGame)} class="mt-6 self-center text-large">
+      <form onSubmit={submitHandler(handleLeaveGame)} class="text-large mt-6 self-center">
         <button class="px-3 py-2">Leave</button>
       </form>
     </View>

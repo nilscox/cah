@@ -1,14 +1,30 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@theme {
+  --color-dim: var(--color-gray-400);
+  --color-dark: var(--color-gray-900);
+  --color-line: var(--color-neutral-800);
+  --color-line-strong: var(--color-gray-400);
+
+  --text-sm: 0.875rem;
+  --text-body: 1rem;
+  --text-large: 1.25rem;
+  --text-xl: 2rem;
+}
 
 @layer base {
+  * {
+    border-color: var(--color-line);
+  }
+
   html {
     font-size: 14px;
   }
 
   body {
-    @apply bg-body text-body font-body;
+    background-color: var(--color-black);
+    color: var(--color-gray-200);
+    font-family: 'JetBrains Mono', monospace;
   }
 
   p {
@@ -16,12 +32,13 @@
   }
 
   input {
-    @apply bg-transparent border-b-2 outline-none py-1;
+    background-color: transparent;
+    @apply border-b-2 py-1 outline-none;
     @apply transition-colors;
   }
 
   input:focus {
-    @apply border-strong;
+    @apply border-line-strong;
   }
 
   input::placeholder {
@@ -29,22 +46,18 @@
   }
 }
 
-@layer utilities {
-  .flex-2 {
-    flex: 2;
-  }
-
-  .col {
-    @apply flex flex-col;
-  }
-
-  .row {
-    @apply flex flex-row;
-  }
-}
-
 @layer components {
   .btn {
     @apply rounded border px-4 py-2;
   }
+}
+
+@utility col {
+  display: flex;
+  flex-direction: column;
+}
+
+@utility row {
+  display: flex;
+  flex-direction: row;
 }

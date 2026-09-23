@@ -34,7 +34,7 @@ export default function LobbyView() {
     <View
       header={<Header>Create or join a game</Header>}
       footer={
-        <button onClick={handleLogOut} class="self-start p-2 text-dim">
+        <button onClick={handleLogOut} class="text-dim self-start p-2">
           Log out
         </button>
       }
@@ -63,7 +63,7 @@ function CreateGame() {
 
 function Or() {
   return (
-    <div class="row items-center gap-4 text-large">
+    <div class="row text-large items-center gap-4">
       <div class="flex-1 border-t border-dashed" />
       OR
       <div class="flex-1 border-t border-dashed" />

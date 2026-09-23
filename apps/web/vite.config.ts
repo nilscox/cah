@@ -1,8 +1,9 @@
+import tailwindcss from '@tailwindcss/vite';
 import solid from 'vite-plugin-solid';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
-  plugins: [solid()],
+  plugins: [solid(), tailwindcss()],
   server: {
     port: 8000,
     proxy: {
@@ -22,7 +23,6 @@ export default defineConfig({
     watch: false,
     reporters: ['verbose'],
     setupFiles: './src/vitest.setup.ts',
-    transformMode: { web: [/\.[jt]sx?$/] },
     environment: 'jsdom',
   },
 });

@@ -9,7 +9,7 @@ export function Header(props: HeaderProps) {
     <div class="row items-center border-b p-4">
       <div>
         <h1 class="text-large font-bold">Cards Against Humanity</h1>
-        <h2 class="text-sm text-dim">{props.children}</h2>
+        <h2 class="text-dim text-sm">{props.children}</h2>
       </div>
     </div>
   );

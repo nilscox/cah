@@ -49,10 +49,12 @@ type AnswerProps = {
 };
 
 function Answer(props: AnswerProps) {
+  // oxlint-disable-next-line solid/reactivity
   const player = selector((state) =>
     props.answer.playerId ? selectPlayerById(state, props.answer.playerId) : undefined,
   );
 
+  // oxlint-disable-next-line solid/reactivity
   const chunks = selector((state) => selectCurrentQuestionChunks(state, props.answer.choices));
   const isWinner = selector((state) => player()?.id && selectIsWinner(state, player()!.id));
 

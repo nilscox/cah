@@ -1,7 +1,4 @@
-export interface CommandHandler<
-  Command = unknown,
-  Result extends string | void = void,
-> {
+export interface CommandHandler<Command = unknown, Result extends string | void = void> {
   execute(command: Command): Promise<Result>;
 }
 

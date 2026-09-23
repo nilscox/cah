@@ -13,6 +13,7 @@
     "selektor",
     "solidjs",
     "tablename",
+    "tailwindcss",
     "varchar"
   ]
 }
